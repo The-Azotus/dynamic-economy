@@ -1,0 +1,8 @@
+{
+  "entries": [
+    { "item": "minecraft:iron_ingot",   "base_price": 16,  "markup": 0.5, "start_stock": 0,  "can_sell": true,  "can_buy": true },
+    { "item": "minecraft:diamond",      "base_price": 256, "markup": 0.5, "start_stock": 0,  "can_sell": true,  "can_buy": true },
+    { "item": "minecraft:oak_log",      "base_price": 2,   "markup": 0.5, "start_stock": 64, "can_sell": true,  "can_buy": true },
+    { "item": "minecraft:nether_star",  "base_price": 8192, "markup": 0.5, "start_stock": 0, "can_sell": false, "can_buy": true }
+  ]
+}
