@@ -45,10 +45,13 @@ public final class MarketStockData extends SavedData {
         return Collections.unmodifiableMap(stock);
     }
 
-    /** Gives each entry its start_stock, but only if the item has never been in the market before. */
+    /**
+     * Gives each finite entry its start_stock, but only if the item has never been in the market before. Unlimited
+     * entries are skipped so their stored value, if any, is still there when the catalog makes them finite again.
+     */
     public void seed(Iterable<CatalogEntry> entries) {
         for (CatalogEntry entry : entries) {
-            if (!stock.containsKey(entry.itemId())) {
+            if (!entry.unlimitedStock() && !stock.containsKey(entry.itemId())) {
                 setStock(entry.itemId(), entry.startStock());
             }
         }

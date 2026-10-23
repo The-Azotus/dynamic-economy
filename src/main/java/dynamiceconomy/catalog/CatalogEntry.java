@@ -9,28 +9,33 @@ import net.minecraft.world.item.ItemStack;
 /**
  * One listed item. Prices are in spurs.
  *
- * @param basePrice  what the market pays per unit before any supply/demand factor
- * @param markup     extra fraction charged when the market sells, e.g. 0.5 means buyers pay 150%
- * @param startStock stock given to the item the first time it appears in the market's saved data
+ * @param basePrice      what the market pays per unit before any supply/demand factor
+ * @param markup         extra fraction charged when the market sells, e.g. 0.5 means buyers pay 150%
+ * @param startStock     stock given to the item the first time it appears in the market's saved data; ignored for
+ *                       unlimited items
+ * @param unlimitedStock the market always has this item to sell and never stocks what players sell it
  */
 public record CatalogEntry(Item item, ResourceLocation itemId, int basePrice, double markup, long startStock,
-                           boolean canSell, boolean canBuy) {
+                           boolean canSell, boolean canBuy, boolean unlimitedStock) {
 
     public static final double DEFAULT_MARKUP = 0.5;
 
     /** The JSON shape, before the item ID is resolved against the registry. */
-    record Raw(ResourceLocation item, int basePrice, double markup, long startStock, boolean canSell, boolean canBuy) {
+    record Raw(ResourceLocation item, int basePrice, double markup, long startStock, boolean canSell, boolean canBuy,
+               boolean unlimitedStock) {
         static final Codec<Raw> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(Raw::item),
-                Codec.intRange(0, Integer.MAX_VALUE).fieldOf("base_price").forGetter(Raw::basePrice),
+                Codec.intRange(1, Integer.MAX_VALUE).fieldOf("base_price").forGetter(Raw::basePrice),
                 Codec.doubleRange(0, 1000).optionalFieldOf("markup", DEFAULT_MARKUP).forGetter(Raw::markup),
                 Codec.LONG.optionalFieldOf("start_stock", 0L).forGetter(Raw::startStock),
                 Codec.BOOL.optionalFieldOf("can_sell", true).forGetter(Raw::canSell),
-                Codec.BOOL.optionalFieldOf("can_buy", true).forGetter(Raw::canBuy)
+                Codec.BOOL.optionalFieldOf("can_buy", true).forGetter(Raw::canBuy),
+                Codec.BOOL.optionalFieldOf("unlimited_stock", false).forGetter(Raw::unlimitedStock)
         ).apply(i, Raw::new));
 
         CatalogEntry resolve(Item resolved) {
-            return new CatalogEntry(resolved, item, basePrice, markup, Math.max(0, startStock), canSell, canBuy);
+            return new CatalogEntry(resolved, item, basePrice, markup, Math.max(0, startStock), canSell, canBuy,
+                    unlimitedStock);
         }
     }
 

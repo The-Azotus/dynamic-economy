@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalLong;
 
 /** Every packet the market sends. Prices and totals are in spurs. */
 public final class MarketPayloads {
@@ -22,26 +23,49 @@ public final class MarketPayloads {
         return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, path));
     }
 
-    /** One listed item as every player sees it. Prices are per unit. */
-    public record Row(ResourceLocation item, long sellPrice, long buyPrice, boolean canSell, boolean canBuy, long stock) {
+    /** A stock level on the wire: a flag for unlimited, then the amount only when finite. */
+    private static final StreamCodec<ByteBuf, OptionalLong> STOCK_CODEC = StreamCodec.of(
+            (buf, stock) -> {
+                buf.writeBoolean(stock.isPresent());
+                if (stock.isPresent()) {
+                    ByteBufCodecs.VAR_LONG.encode(buf, stock.getAsLong());
+                }
+            },
+            buf -> buf.readBoolean() ? OptionalLong.of(ByteBufCodecs.VAR_LONG.decode(buf)) : OptionalLong.empty());
+
+    /** One listed item as every player sees it. Prices are per unit; {@code stock} is empty for unlimited items. */
+    public record Row(ResourceLocation item, long sellPrice, long buyPrice, boolean canSell, boolean canBuy,
+                      OptionalLong stock) {
         public static final StreamCodec<ByteBuf, Row> CODEC = StreamCodec.composite(
                 ResourceLocation.STREAM_CODEC, Row::item,
                 ByteBufCodecs.VAR_LONG, Row::sellPrice,
                 ByteBufCodecs.VAR_LONG, Row::buyPrice,
                 ByteBufCodecs.BOOL, Row::canSell,
                 ByteBufCodecs.BOOL, Row::canBuy,
-                ByteBufCodecs.VAR_LONG, Row::stock,
+                STOCK_CODEC, Row::stock,
                 Row::new);
+
+        public boolean unlimited() {
+            return stock.isEmpty();
+        }
+
+        /** Whether the market can supply {@code qty} right now. */
+        public boolean hasStock(long qty) {
+            return stock.isEmpty() || stock.getAsLong() >= qty;
+        }
     }
 
-    /** Client to server: buy or sell from the open market screen at the unit price the player was shown. */
-    public record TradeRequest(boolean buy, ResourceLocation item, int quantity, long quotedUnitPrice) implements CustomPacketPayload {
+    /**
+     * Client to server: buy or sell from the open market screen. {@code quotedTotal} is the total the player was
+     * shown; the server rejects the trade with PRICE_CHANGED if its own total differs.
+     */
+    public record TradeRequest(boolean buy, ResourceLocation item, int quantity, long quotedTotal) implements CustomPacketPayload {
         public static final Type<TradeRequest> TYPE = payloadType("trade_request");
         public static final StreamCodec<RegistryFriendlyByteBuf, TradeRequest> CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, TradeRequest::buy,
                 ResourceLocation.STREAM_CODEC, TradeRequest::item,
                 ByteBufCodecs.VAR_INT, TradeRequest::quantity,
-                ByteBufCodecs.VAR_LONG, TradeRequest::quotedUnitPrice,
+                ByteBufCodecs.VAR_LONG, TradeRequest::quotedTotal,
                 TradeRequest::new);
 
         @Override

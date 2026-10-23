@@ -46,23 +46,33 @@ public final class MarketService {
         }
     }
 
-    public record Quote(CatalogEntry entry, long sellPrice, long buyPrice, long stock) {
+    /** @param stock what the market can sell; empty means unlimited */
+    public record Quote(CatalogEntry entry, long sellPrice, long buyPrice, OptionalLong stock) {
     }
 
     public static Optional<Quote> quote(MinecraftServer server, Item item) {
         MarketStockData market = MarketStockData.get(server);
         return MarketCatalog.INSTANCE.get(item).map(entry -> {
             PriceModel.UnitPrices prices = PriceModel.unitPrices(entry, market);
-            return new Quote(entry, prices.sell(), prices.buy(), market.getStock(entry.itemId()));
+            return new Quote(entry, prices.sell(), prices.buy(), availableStock(entry, market));
         });
     }
 
     /**
-     * The player sells {@code qty} of {@code item} to the market.
-     *
-     * @param expectedUnitPrice the price the player was shown; empty to accept the current price
+     * What the market can sell of an item: empty for unlimited items, otherwise the stored stock. Unlimited is kept
+     * out of band rather than as a sentinel number so it can never leak into stock arithmetic.
      */
-    public static TradeResult trySell(ServerPlayer player, Item item, int qty, OptionalLong expectedUnitPrice) {
+    public static OptionalLong availableStock(CatalogEntry entry, MarketStockData market) {
+        return entry.unlimitedStock() ? OptionalLong.empty() : OptionalLong.of(market.getStock(entry.itemId()));
+    }
+
+    /**
+     * The player sells {@code qty} of {@code item} to the market. For an unlimited item the player is paid normally,
+     * the items leave the game and stored stock is not touched.
+     *
+     * @param expectedTotal the total the player was shown; empty to accept the current price
+     */
+    public static TradeResult trySell(ServerPlayer player, Item item, int qty, OptionalLong expectedTotal) {
         requireServerThread(player);
         Optional<CatalogEntry> listing = MarketCatalog.INSTANCE.get(item);
         if (listing.isEmpty()) {
@@ -79,13 +89,13 @@ public final class MarketService {
 
         MarketStockData market = MarketStockData.get(player.server);
         long unitPrice = PriceModel.unitPrices(entry, market).sell();
-        if (expectedUnitPrice.isPresent() && expectedUnitPrice.getAsLong() != unitPrice) {
-            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, 0);
-        }
         OptionalLong total = checkedTotal(unitPrice, qty);
         long stock = market.getStock(entry.itemId());
-        if (total.isEmpty() || stock > Long.MAX_VALUE - qty) {
+        if (total.isEmpty() || (!entry.unlimitedStock() && stock > Long.MAX_VALUE - qty)) {
             return new TradeResult(Result.TOO_LARGE, 0, unitPrice, 0);
+        }
+        if (expectedTotal.isPresent() && expectedTotal.getAsLong() != total.getAsLong()) {
+            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, total.getAsLong());
         }
 
         NonNullList<ItemStack> items = player.getInventory().items;
@@ -100,17 +110,20 @@ public final class MarketService {
         // Nothing has changed yet. Everything below always succeeds.
         removeMatching(items, entry, qty);
         player.getInventory().setChanged();
-        market.setStock(entry.itemId(), stock + qty);
+        if (!entry.unlimitedStock()) {
+            market.setStock(entry.itemId(), stock + qty);
+        }
         account.get().deposit((int) total.getAsLong());
         return new TradeResult(Result.OK, qty, unitPrice, total.getAsLong());
     }
 
     /**
-     * The player buys {@code qty} of {@code item} from the market.
+     * The player buys {@code qty} of {@code item} from the market. An unlimited item never runs out of stock, and
+     * its stored stock is not touched.
      *
-     * @param expectedUnitPrice the price the player was shown; empty to accept the current price
+     * @param expectedTotal the total the player was shown; empty to accept the current price
      */
-    public static TradeResult tryBuy(ServerPlayer player, Item item, int qty, OptionalLong expectedUnitPrice) {
+    public static TradeResult tryBuy(ServerPlayer player, Item item, int qty, OptionalLong expectedTotal) {
         requireServerThread(player);
         Optional<CatalogEntry> listing = MarketCatalog.INSTANCE.get(item);
         if (listing.isEmpty()) {
@@ -127,16 +140,16 @@ public final class MarketService {
 
         MarketStockData market = MarketStockData.get(player.server);
         long unitPrice = PriceModel.unitPrices(entry, market).buy();
-        if (expectedUnitPrice.isPresent() && expectedUnitPrice.getAsLong() != unitPrice) {
-            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, 0);
-        }
         OptionalLong total = checkedTotal(unitPrice, qty);
         if (total.isEmpty()) {
             return new TradeResult(Result.TOO_LARGE, 0, unitPrice, 0);
         }
+        if (expectedTotal.isPresent() && expectedTotal.getAsLong() != total.getAsLong()) {
+            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, total.getAsLong());
+        }
 
-        long stock = market.getStock(entry.itemId());
-        if (stock < qty) {
+        OptionalLong stock = availableStock(entry, market);
+        if (stock.isPresent() && stock.getAsLong() < qty) {
             return new TradeResult(Result.NO_STOCK, 0, unitPrice, total.getAsLong());
         }
         NonNullList<ItemStack> items = player.getInventory().items;
@@ -153,11 +166,14 @@ public final class MarketService {
         }
 
         // Money has been taken. Everything below always succeeds: stock and space were checked above.
-        market.setStock(entry.itemId(), stock - qty);
+        if (stock.isPresent()) {
+            market.setStock(entry.itemId(), stock.getAsLong() - qty);
+        }
         insert(items, entry, qty);
         player.getInventory().setChanged();
         return new TradeResult(Result.OK, qty, unitPrice, total.getAsLong());
     }
+
 
     /** {@code unitPrice × qty}, or empty if it would not fit in the {@code int} the bank accepts. */
     public static OptionalLong checkedTotal(long unitPrice, int qty) {

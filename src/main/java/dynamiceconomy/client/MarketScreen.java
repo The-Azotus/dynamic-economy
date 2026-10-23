@@ -179,7 +179,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         sellButton.setMessage(row.canSell()
                 ? Component.translatable("screen.dynamic_economy.sell_for", formatSpurs(sellTotal))
                 : Component.translatable("screen.dynamic_economy.sell"));
-        buyButton.active = row.canBuy() && row.stock() >= qty && ClientMarketState.balance() >= buyTotal;
+        buyButton.active = row.canBuy() && row.hasStock(qty) && ClientMarketState.balance() >= buyTotal;
         sellButton.active = row.canSell() && ClientMarketState.held(row.item()) >= qty;
     }
 
@@ -189,8 +189,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (row == null || qty <= 0) {
             return;
         }
-        long quoted = buy ? row.buyPrice() : row.sellPrice();
-        PacketDistributor.sendToServer(new MarketPayloads.TradeRequest(buy, row.item(), qty, quoted));
+        long quotedTotal = (buy ? row.buyPrice() : row.sellPrice()) * qty;
+        PacketDistributor.sendToServer(new MarketPayloads.TradeRequest(buy, row.item(), qty, quotedTotal));
     }
 
     @Override
@@ -313,7 +313,12 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int textY = rowY + 5;
         String name = font.plainSubstrByWidth(displayName(row), COL_STOCK - LIST_X - 22 - 34);
         graphics.drawString(font, name, x + LIST_X + 22, textY, TEXT, false);
-        drawRight(graphics, Component.literal(formatCount(row.stock())), x + COL_STOCK, textY, row.stock() > 0 ? TEXT : TEXT_BAD);
+        if (row.unlimited()) {
+            drawRight(graphics, Component.translatable("screen.dynamic_economy.unlimited_short"), x + COL_STOCK, textY, TEXT_GOOD);
+        } else {
+            long stock = row.stock().getAsLong();
+            drawRight(graphics, Component.literal(formatCount(stock)), x + COL_STOCK, textY, stock > 0 ? TEXT : TEXT_BAD);
+        }
         drawRight(graphics, Component.literal(row.canSell() ? formatCompact(row.sellPrice()) : "-"), x + COL_SELL, textY,
                 row.canSell() ? TEXT_GOOD : TEXT_DIM);
         drawRight(graphics, Component.literal(row.canBuy() ? formatCompact(row.buyPrice()) : "-"), x + COL_BUY, textY,
@@ -366,7 +371,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         lines.add(row.canBuy()
                 ? Component.translatable("screen.dynamic_economy.tooltip.buy", formatSpurs(row.buyPrice())).withColor(TEXT_MONEY)
                 : Component.translatable("screen.dynamic_economy.tooltip.buy_disabled").withColor(TEXT_DIM));
-        lines.add(Component.translatable("screen.dynamic_economy.tooltip.stock", formatSpurs(row.stock())).withColor(TEXT_DIM));
+        lines.add((row.unlimited()
+                ? Component.translatable("screen.dynamic_economy.tooltip.unlimited")
+                : Component.translatable("screen.dynamic_economy.tooltip.stock", formatSpurs(row.stock().getAsLong())))
+                .withColor(TEXT_DIM));
         return lines;
     }
 

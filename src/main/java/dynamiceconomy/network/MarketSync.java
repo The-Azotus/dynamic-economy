@@ -39,6 +39,8 @@ public final class MarketSync {
 
     /** Call right after the market screen opens. */
     public static void sendFullState(ServerPlayer player) {
+        // A newly opened screen starts empty, so resend even if nothing changed since the last send.
+        lastSentState.remove(player.getUUID());
         PacketDistributor.sendToPlayer(player, snapshot(player.server));
         sendPlayerState(player);
     }
@@ -91,9 +93,9 @@ public final class MarketSync {
         if (item.isEmpty()) {
             result = new MarketService.TradeResult(MarketService.Result.NOT_LISTED, 0, 0, 0);
         } else if (request.buy()) {
-            result = MarketService.tryBuy(player, item.get(), request.quantity(), OptionalLong.of(request.quotedUnitPrice()));
+            result = MarketService.tryBuy(player, item.get(), request.quantity(), OptionalLong.of(request.quotedTotal()));
         } else {
-            result = MarketService.trySell(player, item.get(), request.quantity(), OptionalLong.of(request.quotedUnitPrice()));
+            result = MarketService.trySell(player, item.get(), request.quantity(), OptionalLong.of(request.quotedTotal()));
         }
 
         PacketDistributor.sendToPlayer(player, new MarketPayloads.TradeOutcome(

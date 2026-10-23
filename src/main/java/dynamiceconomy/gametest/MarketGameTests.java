@@ -3,12 +3,15 @@ package dynamiceconomy.gametest;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketService.Result;
 import dynamiceconomy.service.MarketService.TradeResult;
 import dynamiceconomy.service.PriceModel;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -253,9 +256,12 @@ public final class MarketGameTests {
         f.deposit(1000);
         f.give(new ItemStack(Items.IRON_INGOT, 5));
 
+        // Quotes are order totals, so a unit price sent for a multi-unit order is stale too.
         f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 1, OptionalLong.of(15)));
+        f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 2, OptionalLong.of(16)));
         f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, OptionalLong.of(23)));
         f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, OptionalLong.of(24)), Result.OK);
+        f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 2, OptionalLong.of(32)), Result.OK);
         helper.succeed();
     }
 
@@ -315,16 +321,145 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    // ---- Unlimited stock (cobblestone: market pays 1, charges 2) -----------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void buyingUnlimitedItemNeverRunsOut(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        f.setStock(Items.COBBLESTONE, 0);
+        f.deposit(1000);
+
+        for (int i = 0; i < 3; i++) {
+            TradeResult result = MarketService.tryBuy(f.player, Items.COBBLESTONE, 64, ANY_PRICE);
+            f.assertResult(result, Result.OK);
+            helper.assertValueEqual(result.total(), 128L, "cost of 64 cobblestone");
+        }
+
+        helper.assertValueEqual(f.stock(Items.COBBLESTONE), 0L, "stored stock is never touched");
+        helper.assertValueEqual(f.count(Items.COBBLESTONE), 192L, "cobblestone received");
+        helper.assertValueEqual(f.balance(), 1000 - 3 * 128, "balance");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void sellingUnlimitedItemPaysAndKeepsStoredStock(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        f.setStock(Items.COBBLESTONE, 7);
+        f.give(new ItemStack(Items.COBBLESTONE, 10));
+
+        f.assertResult(MarketService.trySell(f.player, Items.COBBLESTONE, 10, ANY_PRICE), Result.OK);
+
+        helper.assertValueEqual(f.balance(), 10, "paid 1 spur each");
+        helper.assertValueEqual(f.count(Items.COBBLESTONE), 0L, "cobblestone removed");
+        helper.assertValueEqual(f.stock(Items.COBBLESTONE), 7L, "stored stock is never touched");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void unlimitedItemsStillCheckFundsSpaceQuoteAndSize(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        f.setStock(Items.COBBLESTONE, 0);
+        f.deposit(3);
+        f.give(new ItemStack(Items.COBBLESTONE, 5));
+
+        f.assertRejectedUnchanged(Result.NO_FUNDS, () -> MarketService.tryBuy(f.player, Items.COBBLESTONE, 2, ANY_PRICE));
+        f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.tryBuy(f.player, Items.COBBLESTONE, 1, OptionalLong.of(1)));
+        f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.trySell(f.player, Items.COBBLESTONE, 2, OptionalLong.of(3)));
+        f.assertRejectedUnchanged(Result.TOO_LARGE,
+                () -> MarketService.tryBuy(f.player, Items.COBBLESTONE, MarketConfig.maxQuantityPerRequest() + 1, ANY_PRICE));
+        f.assertRejectedUnchanged(Result.INVALID_QUANTITY, () -> MarketService.tryBuy(f.player, Items.COBBLESTONE, 0, ANY_PRICE));
+        f.assertRejectedUnchanged(Result.NOT_ENOUGH_ITEMS, () -> MarketService.trySell(f.player, Items.COBBLESTONE, 6, ANY_PRICE));
+
+        f.deposit(10_000);
+        NonNullList<ItemStack> items = f.player.getInventory().items;
+        for (int slot = 0; slot < items.size(); slot++) {
+            items.set(slot, new ItemStack(Items.DIRT, 64));
+        }
+        f.assertRejectedUnchanged(Result.NO_SPACE, () -> MarketService.tryBuy(f.player, Items.COBBLESTONE, 1, ANY_PRICE));
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void finiteToUnlimitedToFiniteRestoresStock(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        f.setStock(Items.IRON_INGOT, 33);
+        f.deposit(10_000);
+        f.give(new ItemStack(Items.IRON_INGOT, 5));
+        CatalogEntry finite = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+        CatalogEntry unlimited = new CatalogEntry(finite.item(), finite.itemId(), finite.basePrice(), finite.markup(),
+                finite.startStock(), finite.canSell(), finite.canBuy(), true);
+
+        Map<Item, CatalogEntry> original = swapEntry(unlimited);
+        try {
+            f.market.seed(MarketCatalog.INSTANCE.entries());
+            helper.assertTrue(MarketService.availableStock(unlimited, f.market).isEmpty(), "unlimited reports no stock number");
+            f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, 50, ANY_PRICE), Result.OK);
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 5, ANY_PRICE), Result.OK);
+            helper.assertValueEqual(f.stock(Items.IRON_INGOT), 33L, "stored stock while unlimited");
+        } finally {
+            MarketCatalog.INSTANCE.replaceForTesting(original);
+        }
+
+        helper.assertValueEqual(MarketService.availableStock(finite, f.market), OptionalLong.of(33), "stock is back once finite");
+        f.assertRejectedUnchanged(Result.NO_STOCK, () -> MarketService.tryBuy(f.player, Items.IRON_INGOT, 34, ANY_PRICE));
+        helper.succeed();
+    }
+
+    /** Replaces one listing in the live catalog and returns the whole previous catalog to restore. */
+    private static Map<Item, CatalogEntry> swapEntry(CatalogEntry entry) {
+        Map<Item, CatalogEntry> swapped = new java.util.LinkedHashMap<>();
+        MarketCatalog.INSTANCE.entries().forEach(e -> swapped.put(e.item(), e));
+        swapped.put(entry.item(), entry);
+        return MarketCatalog.INSTANCE.replaceForTesting(swapped);
+    }
+
+    // ---- Catalog parsing --------------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void fileDefaultsApplyUnlessEntryOverrides(GameTestHelper helper) {
+        JsonElement file = JsonParser.parseString("""
+                {
+                  "defaults": { "markup": 0.25, "unlimited_stock": true, "can_sell": false, "item": "minecraft:bedrock" },
+                  "entries": [
+                    { "item": "minecraft:stone", "base_price": 4 },
+                    { "item": "minecraft:dirt",  "base_price": 2, "markup": 1.0, "unlimited_stock": false, "can_sell": true },
+                    { "item": "minecraft:sand",  "base_price": 0 },
+                    { "base_price": 5 },
+                    { "item": "minecraft:not_a_real_item", "base_price": 5 }
+                  ]
+                }""");
+        Map<Item, CatalogEntry> parsed = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "defaults"), file));
+
+        helper.assertValueEqual(parsed.keySet(), java.util.Set.of(Items.STONE, Items.DIRT), "entries kept");
+        CatalogEntry stone = parsed.get(Items.STONE);
+        helper.assertValueEqual(stone.markup(), 0.25, "stone markup from defaults");
+        helper.assertTrue(stone.unlimitedStock() && !stone.canSell(), "stone flags from defaults");
+        CatalogEntry dirt = parsed.get(Items.DIRT);
+        helper.assertValueEqual(dirt.markup(), 1.0, "dirt markup overridden");
+        helper.assertTrue(!dirt.unlimitedStock() && dirt.canSell(), "dirt flags overridden");
+        helper.assertTrue(!parsed.containsKey(Items.BEDROCK), "item in defaults is ignored");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void badDefaultsSkipTheWholeFile(GameTestHelper helper) {
+        JsonElement file = JsonParser.parseString("""
+                { "defaults": 5, "entries": [ { "item": "minecraft:stone", "base_price": 4 } ] }""");
+        helper.assertTrue(MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "bad"), file)).isEmpty(),
+                "a file with malformed defaults loads nothing");
+        helper.succeed();
+    }
+
     // ---- Pricing ------------------------------------------------------------------------------------------------
 
     @GameTest(template = EMPTY)
     public static void pricesUseExactDecimalRounding(GameTestHelper helper) {
         MarketStockData market = MarketStockData.get(helper.getLevel().getServer());
         CatalogEntry tenTimesOnePointOne = new CatalogEntry(Items.STONE, ResourceLocation.withDefaultNamespace("stone"),
-                10, 0.1, 0, true, true);
+                10, 0.1, 0, true, true, false);
         helper.assertValueEqual(PriceModel.unitPrices(tenTimesOnePointOne, market), new PriceModel.UnitPrices(10, 11), "10 at 10% markup");
         CatalogEntry oddBase = new CatalogEntry(Items.STONE, ResourceLocation.withDefaultNamespace("stone"),
-                3, 0.5, 0, true, true);
+                3, 0.5, 0, true, true, false);
         helper.assertValueEqual(PriceModel.unitPrices(oddBase, market), new PriceModel.UnitPrices(3, 5), "ceil(4.5)");
         helper.succeed();
     }

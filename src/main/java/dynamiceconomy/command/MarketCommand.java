@@ -19,6 +19,7 @@ import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 
@@ -88,10 +89,10 @@ public final class MarketCommand {
         if (result.ok()) {
             MarketSync.broadcastRow(player.server, item);
             MarketSync.sendPlayerState(player);
-            long stock = MarketStockData.get(player.server).getStock(id(item));
+            String stock = describeStock(ctx.getSource().getServer(), item);
             String verb = selling ? "Sold" : "Bought";
             String direction = selling ? "received" : "paid";
-            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d spurs (%d each); you %s %d spurs. Market stock: %d"
+            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d spurs (%d each); you %s %d spurs. Market stock: %s"
                     .formatted(verb, result.quantity(), id(item), result.total(), result.unitPrice(), direction, result.total(), stock)), false);
             return result.quantity();
         }
@@ -100,24 +101,23 @@ public final class MarketCommand {
     }
 
     private static int listStock(CommandContext<CommandSourceStack> ctx) {
-        MarketStockData market = MarketStockData.get(ctx.getSource().getServer());
         if (MarketCatalog.INSTANCE.entries().isEmpty()) {
             ctx.getSource().sendFailure(Component.literal("The market catalog is empty"));
             return 0;
         }
         for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
-            long stock = market.getStock(entry.itemId());
-            ctx.getSource().sendSuccess(() -> Component.literal("%s: %d".formatted(entry.itemId(), stock)), false);
+            String stock = describeStock(ctx.getSource().getServer(), entry.item());
+            ctx.getSource().sendSuccess(() -> Component.literal("%s: %s".formatted(entry.itemId(), stock)), false);
         }
         return MarketCatalog.INSTANCE.entries().size();
     }
 
     private static int showStock(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
-        long stock = MarketStockData.get(ctx.getSource().getServer()).getStock(id(item));
+        String stock = describeStock(ctx.getSource().getServer(), item);
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (not listed)";
-        ctx.getSource().sendSuccess(() -> Component.literal("%s: %d%s".formatted(id(item), stock, listed)), false);
-        return (int) Math.min(stock, Integer.MAX_VALUE);
+        ctx.getSource().sendSuccess(() -> Component.literal("%s: %s%s".formatted(id(item), stock, listed)), false);
+        return 1;
     }
 
     private static int showPrice(CommandContext<CommandSourceStack> ctx) {
@@ -130,19 +130,32 @@ public final class MarketCommand {
         MarketService.Quote q = quote.get();
         String sell = q.entry().canSell() ? q.sellPrice() + " spurs" : "disabled";
         String buy = q.entry().canBuy() ? q.buyPrice() + " spurs" : "disabled";
-        ctx.getSource().sendSuccess(() -> Component.literal("%s — market pays %s, market charges %s, stock %d"
-                .formatted(id(item), sell, buy, q.stock())), false);
+        String stock = describeStock(ctx.getSource().getServer(), item);
+        ctx.getSource().sendSuccess(() -> Component.literal("%s — market pays %s, market charges %s, stock %s"
+                .formatted(id(item), sell, buy, stock)), false);
         return 1;
     }
 
     private static int setStock(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
         long qty = LongArgumentType.getLong(ctx, "qty");
+        if (MarketCatalog.INSTANCE.get(item).map(CatalogEntry::unlimitedStock).orElse(false)) {
+            ctx.getSource().sendFailure(Component.literal(("%s has unlimited stock in the market catalog, so its stock can't be set. "
+                    + "Set \"unlimited_stock\": false in the catalog and reload first.").formatted(id(item))));
+            return 0;
+        }
         MarketStockData.get(ctx.getSource().getServer()).setStock(id(item), qty);
         MarketSync.broadcastRow(ctx.getSource().getServer(), item);
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (warning: not listed in the catalog)";
         ctx.getSource().sendSuccess(() -> Component.literal("Set %s stock to %d%s".formatted(id(item), qty, listed)), true);
         return 1;
+    }
+
+    /** "unlimited" for unlimited items (with the stored value kept for if it turns finite), else the stock. */
+    private static String describeStock(MinecraftServer server, Item item) {
+        long stored = MarketStockData.get(server).getStock(id(item));
+        boolean unlimited = MarketCatalog.INSTANCE.get(item).map(CatalogEntry::unlimitedStock).orElse(false);
+        return unlimited ? "unlimited (stored %d, used if it becomes finite)".formatted(stored) : String.valueOf(stored);
     }
 
     /**

@@ -19,8 +19,8 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 1 — Server logic via commands | Done |
 | 2 — Validation hardening | Done |
 | 3 — GUI and sync | Done |
-| **3.5 — Unlimited stock** | **Next** |
-| 4 — Supply-and-demand pricing | To do |
+| 3.5 — Unlimited stock | Done |
+| **4 — Supply-and-demand pricing** | **Next** |
 | 5 — Pack integration and polish | To do |
 | 6 — Optional extensions | Only if asked |
 
