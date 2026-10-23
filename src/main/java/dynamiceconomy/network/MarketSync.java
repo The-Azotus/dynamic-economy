@@ -1,9 +1,11 @@
 package dynamiceconomy.network;
 
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.NumismaticsBridge;
+import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.service.MarketService;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -75,6 +77,11 @@ public final class MarketSync {
     }
 
     public static void tick(MinecraftServer server) {
+        // Recovery steps happen server-wide at interval boundaries; refresh open screens when any price moved.
+        long now = MarketStockData.now(server);
+        if (now % MarketConfig.intervalTicks() == 0 && !MarketStockData.get(server).factorsView().isEmpty()) {
+            broadcastSnapshot(server);
+        }
         if (server.getTickCount() % PLAYER_STATE_INTERVAL_TICKS != 0) {
             return;
         }
@@ -122,7 +129,7 @@ public final class MarketSync {
 
     private static Optional<MarketPayloads.Row> row(MinecraftServer server, Item item) {
         return MarketService.quote(server, item).map(q -> new MarketPayloads.Row(
-                q.entry().itemId(), q.sellPrice(), q.buyPrice(), q.entry().canSell(), q.entry().canBuy(), q.stock()));
+                q.entry().itemId(), q.entry().canSell(), q.entry().canBuy(), q.stock(), q.inputs(), q.factor()));
     }
 
     private static MarketPayloads.PlayerState playerState(ServerPlayer player) {

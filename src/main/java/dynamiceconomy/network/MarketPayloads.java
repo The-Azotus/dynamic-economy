@@ -2,6 +2,7 @@ package dynamiceconomy.network;
 
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.PriceModel;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -33,16 +34,38 @@ public final class MarketPayloads {
             },
             buf -> buf.readBoolean() ? OptionalLong.of(ByteBufCodecs.VAR_LONG.decode(buf)) : OptionalLong.empty());
 
-    /** One listed item as every player sees it. Prices are per unit; {@code stock} is empty for unlimited items. */
-    public record Row(ResourceLocation item, long sellPrice, long buyPrice, boolean canSell, boolean canBuy,
-                      OptionalLong stock) {
+    /** Pricing inputs on the wire. Doubles travel as exact bits so client and server price identically. */
+    private static final StreamCodec<ByteBuf, PriceModel.Inputs> INPUTS_CODEC = StreamCodec.of(
+            (buf, in) -> {
+                ByteBufCodecs.VAR_INT.encode(buf, in.basePrice());
+                buf.writeDouble(in.markup());
+                buf.writeDouble(in.sellFee());
+                buf.writeDouble(in.minBuyMarkup());
+                buf.writeBoolean(in.unlimited());
+                buf.writeBoolean(in.dynamic());
+                buf.writeDouble(in.sellImpact());
+                buf.writeDouble(in.buyImpact());
+                buf.writeDouble(in.floor());
+                buf.writeDouble(in.ceiling());
+                buf.writeDouble(in.recovery());
+            },
+            buf -> new PriceModel.Inputs(ByteBufCodecs.VAR_INT.decode(buf), buf.readDouble(), buf.readDouble(),
+                    buf.readDouble(), buf.readBoolean(), buf.readBoolean(), buf.readDouble(), buf.readDouble(),
+                    buf.readDouble(), buf.readDouble(), buf.readDouble()));
+
+    /**
+     * One listed item as every player sees it. The client prices orders itself from {@code inputs} and
+     * {@code factor} with the same {@link PriceModel} the server uses. {@code stock} is empty for unlimited items.
+     */
+    public record Row(ResourceLocation item, boolean canSell, boolean canBuy, OptionalLong stock,
+                      PriceModel.Inputs inputs, double factor) {
         public static final StreamCodec<ByteBuf, Row> CODEC = StreamCodec.composite(
                 ResourceLocation.STREAM_CODEC, Row::item,
-                ByteBufCodecs.VAR_LONG, Row::sellPrice,
-                ByteBufCodecs.VAR_LONG, Row::buyPrice,
                 ByteBufCodecs.BOOL, Row::canSell,
                 ByteBufCodecs.BOOL, Row::canBuy,
                 STOCK_CODEC, Row::stock,
+                INPUTS_CODEC, Row::inputs,
+                ByteBufCodecs.DOUBLE, Row::factor,
                 Row::new);
 
         public boolean unlimited() {
@@ -52,6 +75,26 @@ public final class MarketPayloads {
         /** Whether the market can supply {@code qty} right now. */
         public boolean hasStock(long qty) {
             return stock.isEmpty() || stock.getAsLong() >= qty;
+        }
+
+        /** What the market pays for the next unit. */
+        public long sellPrice() {
+            return PriceModel.unitSellPrice(inputs, factor);
+        }
+
+        /** What the market charges for the next unit. */
+        public long buyPrice() {
+            return PriceModel.unitBuyPrice(inputs, factor);
+        }
+
+        /** The exact total the server will pay for selling {@code qty}. */
+        public long sellTotal(int qty) {
+            return PriceModel.sell(inputs, factor, qty).total();
+        }
+
+        /** The exact total the server will charge for buying {@code qty}. */
+        public long buyTotal(int qty) {
+            return PriceModel.buy(inputs, factor, qty).total();
         }
     }
 

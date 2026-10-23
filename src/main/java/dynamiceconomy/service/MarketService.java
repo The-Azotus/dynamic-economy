@@ -35,7 +35,10 @@ public final class MarketService {
         BANK_UNAVAILABLE
     }
 
-    /** {@code unitPrice} and {@code total} are in spurs and are zero unless the trade got as far as pricing. */
+    /**
+     * {@code unitPrice} (what the first unit traded at) and {@code total} are in spurs, and are zero unless the trade
+     * got as far as pricing.
+     */
     public record TradeResult(Result result, int quantity, long unitPrice, long total) {
         static TradeResult fail(Result result) {
             return new TradeResult(result, 0, 0, 0);
@@ -46,16 +49,33 @@ public final class MarketService {
         }
     }
 
-    /** @param stock what the market can sell; empty means unlimited */
-    public record Quote(CatalogEntry entry, long sellPrice, long buyPrice, OptionalLong stock) {
+    /**
+     * An item's current market terms.
+     *
+     * @param factor    the supply/demand factor right now, recovery applied
+     * @param sellPrice what the market pays for the next unit
+     * @param buyPrice  what the market charges for the next unit
+     * @param stock     what the market can sell; empty means unlimited
+     */
+    public record Quote(CatalogEntry entry, PriceModel.Inputs inputs, double factor, long sellPrice, long buyPrice,
+                        OptionalLong stock) {
     }
 
     public static Optional<Quote> quote(MinecraftServer server, Item item) {
         MarketStockData market = MarketStockData.get(server);
+        long now = MarketStockData.now(server);
         return MarketCatalog.INSTANCE.get(item).map(entry -> {
-            PriceModel.UnitPrices prices = PriceModel.unitPrices(entry, market);
-            return new Quote(entry, prices.sell(), prices.buy(), availableStock(entry, market));
+            PriceModel.Inputs inputs = PriceModel.inputs(entry);
+            double factor = currentFactor(entry, inputs, market, now);
+            return new Quote(entry, inputs, factor, PriceModel.unitSellPrice(inputs, factor),
+                    PriceModel.unitBuyPrice(inputs, factor), availableStock(entry, market));
         });
+    }
+
+    /** The factor an item trades at right now: stored value, recovered to {@code now}, with the model's limits. */
+    public static double currentFactor(CatalogEntry entry, PriceModel.Inputs inputs, MarketStockData market, long now) {
+        double stored = market.factor(entry.itemId(), now, inputs.recovery(), MarketConfig.intervalTicks());
+        return PriceModel.effectiveFactor(inputs, stored);
     }
 
     /**
@@ -88,19 +108,22 @@ public final class MarketService {
         }
 
         MarketStockData market = MarketStockData.get(player.server);
-        long unitPrice = PriceModel.unitPrices(entry, market).sell();
-        OptionalLong total = checkedTotal(unitPrice, qty);
+        long now = MarketStockData.now(player.server);
+        PriceModel.Inputs inputs = PriceModel.inputs(entry);
+        double factor = currentFactor(entry, inputs, market, now);
+        long unitPrice = PriceModel.unitSellPrice(inputs, factor);
+        PriceModel.Order order = PriceModel.sell(inputs, factor, qty);
         long stock = market.getStock(entry.itemId());
-        if (total.isEmpty() || (!entry.unlimitedStock() && stock > Long.MAX_VALUE - qty)) {
+        if (!fitsBank(order) || (!entry.unlimitedStock() && stock > Long.MAX_VALUE - qty)) {
             return new TradeResult(Result.TOO_LARGE, 0, unitPrice, 0);
         }
-        if (expectedTotal.isPresent() && expectedTotal.getAsLong() != total.getAsLong()) {
-            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, total.getAsLong());
+        if (expectedTotal.isPresent() && expectedTotal.getAsLong() != order.total()) {
+            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, order.total());
         }
 
         NonNullList<ItemStack> items = player.getInventory().items;
         if (countMatching(items, entry) < qty) {
-            return new TradeResult(Result.NOT_ENOUGH_ITEMS, 0, unitPrice, total.getAsLong());
+            return new TradeResult(Result.NOT_ENOUGH_ITEMS, 0, unitPrice, order.total());
         }
         Optional<NumismaticsBridge.Account> account = NumismaticsBridge.account(player);
         if (account.isEmpty()) {
@@ -113,8 +136,9 @@ public final class MarketService {
         if (!entry.unlimitedStock()) {
             market.setStock(entry.itemId(), stock + qty);
         }
-        account.get().deposit((int) total.getAsLong());
-        return new TradeResult(Result.OK, qty, unitPrice, total.getAsLong());
+        updateFactor(entry, market, factor, order, now);
+        account.get().deposit((int) order.total());
+        return new TradeResult(Result.OK, qty, unitPrice, order.total());
     }
 
     /**
@@ -139,41 +163,57 @@ public final class MarketService {
         }
 
         MarketStockData market = MarketStockData.get(player.server);
-        long unitPrice = PriceModel.unitPrices(entry, market).buy();
-        OptionalLong total = checkedTotal(unitPrice, qty);
-        if (total.isEmpty()) {
+        long now = MarketStockData.now(player.server);
+        PriceModel.Inputs inputs = PriceModel.inputs(entry);
+        double factor = currentFactor(entry, inputs, market, now);
+        long unitPrice = PriceModel.unitBuyPrice(inputs, factor);
+        PriceModel.Order order = PriceModel.buy(inputs, factor, qty);
+        if (!fitsBank(order)) {
             return new TradeResult(Result.TOO_LARGE, 0, unitPrice, 0);
         }
-        if (expectedTotal.isPresent() && expectedTotal.getAsLong() != total.getAsLong()) {
-            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, total.getAsLong());
+        if (expectedTotal.isPresent() && expectedTotal.getAsLong() != order.total()) {
+            return new TradeResult(Result.PRICE_CHANGED, 0, unitPrice, order.total());
         }
 
         OptionalLong stock = availableStock(entry, market);
         if (stock.isPresent() && stock.getAsLong() < qty) {
-            return new TradeResult(Result.NO_STOCK, 0, unitPrice, total.getAsLong());
+            return new TradeResult(Result.NO_STOCK, 0, unitPrice, order.total());
         }
         NonNullList<ItemStack> items = player.getInventory().items;
         if (spaceFor(items, entry) < qty) {
-            return new TradeResult(Result.NO_SPACE, 0, unitPrice, total.getAsLong());
+            return new TradeResult(Result.NO_SPACE, 0, unitPrice, order.total());
         }
         Optional<NumismaticsBridge.Account> account = NumismaticsBridge.account(player);
         if (account.isEmpty()) {
             return TradeResult.fail(Result.BANK_UNAVAILABLE);
         }
         // The deduction is itself the funds check: it changes nothing when it returns false.
-        if (!account.get().deduct((int) total.getAsLong())) {
-            return new TradeResult(Result.NO_FUNDS, 0, unitPrice, total.getAsLong());
+        if (!account.get().deduct((int) order.total())) {
+            return new TradeResult(Result.NO_FUNDS, 0, unitPrice, order.total());
         }
 
         // Money has been taken. Everything below always succeeds: stock and space were checked above.
         if (stock.isPresent()) {
             market.setStock(entry.itemId(), stock.getAsLong() - qty);
         }
+        updateFactor(entry, market, factor, order, now);
         insert(items, entry, qty);
         player.getInventory().setChanged();
-        return new TradeResult(Result.OK, qty, unitPrice, total.getAsLong());
+        return new TradeResult(Result.OK, qty, unitPrice, order.total());
     }
 
+    /** Writes the factor an order left behind. Unchanged factors aren't rewritten, so their recovery isn't reset. */
+    private static void updateFactor(CatalogEntry entry, MarketStockData market, double before, PriceModel.Order order,
+                                     long now) {
+        if (entry.dynamic() && order.factorAfter() != before) {
+            market.setFactor(entry.itemId(), order.factorAfter(), now);
+        }
+    }
+
+    /** Whether an order total fits in the {@code int} the bank accepts. */
+    private static boolean fitsBank(PriceModel.Order order) {
+        return !order.overflow() && order.total() <= Integer.MAX_VALUE;
+    }
 
     /** {@code unitPrice × qty}, or empty if it would not fit in the {@code int} the bank accepts. */
     public static OptionalLong checkedTotal(long unitPrice, int qty) {

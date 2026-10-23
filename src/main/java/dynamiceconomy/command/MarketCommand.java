@@ -59,6 +59,11 @@ public final class MarketCommand {
                                 .then(Commands.argument("item", ItemArgument.item(context))
                                         .then(Commands.argument("qty", LongArgumentType.longArg(0))
                                                 .executes(MarketCommand::setStock))))
+                        .then(Commands.literal("resetprice")
+                                .then(Commands.literal("all")
+                                        .executes(MarketCommand::resetAllPrices))
+                                .then(Commands.argument("item", ItemArgument.item(context))
+                                        .executes(MarketCommand::resetPrice)))
                         .then(Commands.literal("reload")
                                 .executes(MarketCommand::reload))));
     }
@@ -92,7 +97,7 @@ public final class MarketCommand {
             String stock = describeStock(ctx.getSource().getServer(), item);
             String verb = selling ? "Sold" : "Bought";
             String direction = selling ? "received" : "paid";
-            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d spurs (%d each); you %s %d spurs. Market stock: %s"
+            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d spurs (first unit %d); you %s %d spurs. Market stock: %s"
                     .formatted(verb, result.quantity(), id(item), result.total(), result.unitPrice(), direction, result.total(), stock)), false);
             return result.quantity();
         }
@@ -131,8 +136,9 @@ public final class MarketCommand {
         String sell = q.entry().canSell() ? q.sellPrice() + " spurs" : "disabled";
         String buy = q.entry().canBuy() ? q.buyPrice() + " spurs" : "disabled";
         String stock = describeStock(ctx.getSource().getServer(), item);
-        ctx.getSource().sendSuccess(() -> Component.literal("%s — market pays %s, market charges %s, stock %s"
-                .formatted(id(item), sell, buy, stock)), false);
+        String factor = q.entry().dynamic() ? "%.4f".formatted(q.factor()) : "fixed";
+        ctx.getSource().sendSuccess(() -> Component.literal("%s — market pays %s, market charges %s, stock %s, price factor %s"
+                .formatted(id(item), sell, buy, stock, factor)), false);
         return 1;
     }
 
@@ -149,6 +155,25 @@ public final class MarketCommand {
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (warning: not listed in the catalog)";
         ctx.getSource().sendSuccess(() -> Component.literal("Set %s stock to %d%s".formatted(id(item), qty, listed)), true);
         return 1;
+    }
+
+    private static int resetPrice(CommandContext<CommandSourceStack> ctx) {
+        Item item = item(ctx);
+        var server = ctx.getSource().getServer();
+        boolean moved = MarketStockData.get(server).resetFactor(id(item));
+        MarketSync.broadcastRow(server, item);
+        ctx.getSource().sendSuccess(() -> Component.literal(moved
+                ? "Reset %s to its base price".formatted(id(item))
+                : "%s was already at its base price".formatted(id(item))), true);
+        return moved ? 1 : 0;
+    }
+
+    private static int resetAllPrices(CommandContext<CommandSourceStack> ctx) {
+        var server = ctx.getSource().getServer();
+        int count = MarketStockData.get(server).resetAllFactors();
+        MarketSync.broadcastSnapshot(server);
+        ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) to their base price".formatted(count)), true);
+        return count;
     }
 
     /** "unlimited" for unlimited items (with the stored value kept for if it turns finite), else the stock. */

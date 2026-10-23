@@ -54,6 +54,10 @@ public final class ClientMarketState {
             status = Component.translatable(outcome.buy() ? "screen.dynamic_economy.bought" : "screen.dynamic_economy.sold",
                     outcome.quantity(), itemName, outcome.total());
             statusIsError = false;
+        } else if (outcome.result() == MarketService.Result.PRICE_CHANGED) {
+            // The server also sent the refreshed row, so the button already shows the new total.
+            status = Component.translatable("screen.dynamic_economy.price_changed_to", outcome.total());
+            statusIsError = true;
         } else {
             status = Component.translatable("screen.dynamic_economy.result." + outcome.result().name().toLowerCase(Locale.ROOT));
             statusIsError = true;

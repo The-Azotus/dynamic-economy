@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dynamiceconomy.DynamicEconomy;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,6 +15,7 @@ import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 /**
  * Item listings loaded from {@code data/<namespace>/market/*.json}. Each file holds an {@code entries} array and may
@@ -77,6 +80,19 @@ public final class MarketCatalog extends SimpleJsonResourceReloadListener {
         return Collections.unmodifiableMap(loaded);
     }
 
+    /**
+     * The value only if decoding had no error at all. {@code resultOrPartial} would hand back a partial result, e.g.
+     * an entry with an out-of-range optional field silently replaced by its default.
+     */
+    @Nullable
+    private static <T> T strict(DataResult<T> result, Consumer<String> onError) {
+        if (result.error().isPresent()) {
+            onError.accept(result.error().get().message());
+            return null;
+        }
+        return result.result().orElse(null);
+    }
+
     private static void loadFile(ResourceLocation fileId, JsonElement json, Map<Item, CatalogEntry> into) {
         if (!(json instanceof JsonObject obj) || !obj.has("entries") || !obj.get("entries").isJsonArray()) {
             DynamicEconomy.LOGGER.error("Market file {} must be an object with an \"entries\" array; skipped", fileId);
@@ -105,9 +121,8 @@ public final class MarketCatalog extends SimpleJsonResourceReloadListener {
             JsonObject merged = defaults.deepCopy();
             element.getAsJsonObject().entrySet().forEach(field -> merged.add(field.getKey(), field.getValue()));
 
-            CatalogEntry.Raw raw = CatalogEntry.Raw.CODEC.parse(JsonOps.INSTANCE, merged)
-                    .resultOrPartial(err -> DynamicEconomy.LOGGER.error("Market file {} entry {}: {}; skipped", fileId, i, err))
-                    .orElse(null);
+            CatalogEntry.Raw raw = strict(CatalogEntry.Raw.CODEC.parse(JsonOps.INSTANCE, merged),
+                    err -> DynamicEconomy.LOGGER.error("Market file {} entry {}: {}; skipped", fileId, i, err));
             if (raw == null) {
                 continue;
             }
@@ -116,7 +131,12 @@ public final class MarketCatalog extends SimpleJsonResourceReloadListener {
                 DynamicEconomy.LOGGER.warn("Market file {} entry {}: unknown item {}; skipped", fileId, i, raw.item());
                 continue;
             }
-            CatalogEntry previous = into.put(item.get(), raw.resolve(item.get()));
+            CatalogEntry entry = strict(raw.resolve(item.get()),
+                    err -> DynamicEconomy.LOGGER.warn("Market file {} entry {} ({}): {}; skipped", fileId, i, raw.item(), err));
+            if (entry == null) {
+                continue;
+            }
+            CatalogEntry previous = into.put(item.get(), entry);
             if (previous != null) {
                 DynamicEconomy.LOGGER.warn("Market file {} overrides an earlier listing of {}", fileId, raw.item());
             }

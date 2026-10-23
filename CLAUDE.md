@@ -20,8 +20,8 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 2 — Validation hardening | Done |
 | 3 — GUI and sync | Done |
 | 3.5 — Unlimited stock | Done |
-| **4 — Supply-and-demand pricing** | **Next** |
-| 5 — Pack integration and polish | To do |
+| 4 — Supply-and-demand pricing | Done |
+| **5 — Pack integration and polish** | **Next** |
 | 6 — Optional extensions | Only if asked |
 
 **First task in a new session:** read the existing code, compare it with Phases 0–3 below, and report any gaps or differences before starting Phase 3.5. Don't fix gaps silently.
@@ -134,8 +134,8 @@ Done when:
 
 Each item has a factor `s`, starting at 1.0 and persisted in `MarketStockData` with the game time it was last updated.
 
-- **Sales push `s` down, purchases push it up.** Apply the change **per unit** inside an order, so a 640-item order can't all trade at the pre-order price: for each unit sold, `s = max(floor, s × (1 − sell_impact))`; for each unit bought, `s = min(ceiling, s × (1 + buy_impact))`. Price each unit at the `s` it trades at, and sum. The quote the client sends must be this same total.
-- **Recovery toward 1.0** is computed lazily from elapsed game time when an item is read, not with a ticking task: `s = 1 + (s − 1) × (1 − recovery)^(elapsed_ticks / interval_ticks)`. Use overworld game time so recovery pauses while the server is stopped.
+- **Sales push `s` down, purchases push it up.** Apply the change **per unit** inside an order, so a 640-item order can't all trade at the pre-order price: for each unit sold, `s = max(floor, s × (1 − sell_impact))`; for each unit bought, `s = min(ceiling, s × (1 + buy_impact))`. Value each unit at the `s` it trades at, add up the exact (unrounded) values, then round the order total once: down for payouts, up for charges. The quote the client sends must be this same total. (Decided: rounding each unit separately made cheap items pay 0 after the first sale.)
+- **Recovery toward 1.0** is computed lazily from elapsed game time when an item is read, not with a ticking task: `s = 1 + (s − 1) × (1 − recovery)^steps`, where `steps` is the number of `interval_ticks` boundaries of overworld game time crossed since the last update (server-wide boundaries, so prices only change at a step or on a trade, and open screens are refreshed at each step). Overworld game time pauses while the server is stopped. (Decided: continuous recovery made large-order quotes go stale between click and processing.)
 - `sell_fee` reduces payouts and is not paid to anyone (money sink).
 - `"dynamic": false` keeps `s` fixed at 1.0.
 - **Unlimited-stock items** (common resources):
@@ -148,7 +148,7 @@ Each item has a factor `s`, starting at 1.0 and persisted in `MarketStockData` w
 - Admin: `/market admin resetprice <item|all>` sets `s` back to 1.0.
 
 Done when:
-- [ ] Selling one unit at a time and selling the same amount in one order produce the same total payout.
+- [ ] Splitting an order never pays more (selling) or costs less (buying) than the same amount in one order, and leaves `s` in the same place.
 - [ ] Dumping 10,000 units lowers `s` but never below `floor`; buying raises it but never above `ceiling`.
 - [ ] After a configured interval with no trades, `s` has recovered by the expected amount; stopping the server doesn't count as elapsed time.
 - [ ] Buying N then immediately selling N never makes a profit (markup plus fee plus impact must prevent round-trip arbitrage). Add a GameTest for this with the default config.

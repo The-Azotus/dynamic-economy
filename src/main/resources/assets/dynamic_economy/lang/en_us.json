@@ -18,6 +18,8 @@
   "screen.dynamic_economy.tooltip.buy": "Market charges %s spurs each",
   "screen.dynamic_economy.tooltip.buy_disabled": "The market does not sell this",
   "screen.dynamic_economy.tooltip.stock": "%s in stock",
+  "screen.dynamic_economy.tooltip.factor": "Price at %s%% of base",
+  "screen.dynamic_economy.price_changed_to": "Price changed: now %s spurs for this order. Click again to confirm",
   "screen.dynamic_economy.tooltip.unlimited": "Unlimited stock",
   "screen.dynamic_economy.unlimited_short": "∞",
   "screen.dynamic_economy.select_hint": "Click an item to trade it",

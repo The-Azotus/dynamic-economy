@@ -48,6 +48,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private static final int TEXT_GOOD = 0x6EE07A;
     private static final int TEXT_BAD = 0xFF6B6B;
     private static final int TEXT_MONEY = 0xF2C94C;
+    /** How far the price factor must be from 1.0 before the row shows a trend arrow. */
+    private static final double TREND_THRESHOLD = 0.005;
 
     private EditBox search;
     private EditBox quantity;
@@ -171,8 +173,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             sellButton.active = false;
             return;
         }
-        long buyTotal = row.buyPrice() * qty;
-        long sellTotal = row.sellPrice() * qty;
+        // Each unit moves the price, so totals come from the same model the server uses, not unit price × qty.
+        long buyTotal = row.buyTotal(qty);
+        long sellTotal = row.sellTotal(qty);
         buyButton.setMessage(row.canBuy()
                 ? Component.translatable("screen.dynamic_economy.buy_for", formatSpurs(buyTotal))
                 : Component.translatable("screen.dynamic_economy.buy"));
@@ -189,7 +192,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (row == null || qty <= 0) {
             return;
         }
-        long quotedTotal = (buy ? row.buyPrice() : row.sellPrice()) * qty;
+        long quotedTotal = buy ? row.buyTotal(qty) : row.sellTotal(qty);
         PacketDistributor.sendToServer(new MarketPayloads.TradeRequest(buy, row.item(), qty, quotedTotal));
     }
 
@@ -311,8 +314,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private void renderRow(GuiGraphics graphics, MarketPayloads.Row row, int x, int rowY) {
         graphics.renderItem(stack(row), x + LIST_X + 2, rowY + 1);
         int textY = rowY + 5;
-        String name = font.plainSubstrByWidth(displayName(row), COL_STOCK - LIST_X - 22 - 34);
+        String name = font.plainSubstrByWidth(displayName(row), COL_STOCK - LIST_X - 22 - 42);
         graphics.drawString(font, name, x + LIST_X + 22, textY, TEXT, false);
+        renderTrend(graphics, row, x + COL_STOCK - 36, textY);
         if (row.unlimited()) {
             drawRight(graphics, Component.translatable("screen.dynamic_economy.unlimited_short"), x + COL_STOCK, textY, TEXT_GOOD);
         } else {
@@ -325,6 +329,15 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 row.canBuy() ? TEXT_MONEY : TEXT_DIM);
         int held = ClientMarketState.held(row.item());
         drawRight(graphics, Component.literal(formatCount(held)), x + COL_HAVE, textY, held > 0 ? TEXT : TEXT_DIM);
+    }
+
+    /** ▲ when the item trades above its base price, ▼ below; nothing within half a percent of it. */
+    private void renderTrend(GuiGraphics graphics, MarketPayloads.Row row, int x, int y) {
+        if (row.factor() > 1 + TREND_THRESHOLD) {
+            graphics.drawString(font, "▲", x, y, TEXT_BAD, false);
+        } else if (row.factor() < 1 - TREND_THRESHOLD) {
+            graphics.drawString(font, "▼", x, y, TEXT_GOOD, false);
+        }
     }
 
     private void renderScrollbar(GuiGraphics graphics, int x, int y) {
@@ -365,6 +378,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     /** The item's own tooltip plus the exact prices, which the list may abbreviate. */
     private List<Component> tooltip(MarketPayloads.Row row) {
         List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, stack(row)));
+        if (Math.abs(row.factor() - 1) > TREND_THRESHOLD) {
+            lines.add(Component.translatable("screen.dynamic_economy.tooltip.factor",
+                    String.format(Locale.ROOT, "%.1f", row.factor() * 100)).withColor(row.factor() > 1 ? TEXT_BAD : TEXT_GOOD));
+        }
         lines.add(row.canSell()
                 ? Component.translatable("screen.dynamic_economy.tooltip.sell", formatSpurs(row.sellPrice())).withColor(TEXT_GOOD)
                 : Component.translatable("screen.dynamic_economy.tooltip.sell_disabled").withColor(TEXT_DIM));

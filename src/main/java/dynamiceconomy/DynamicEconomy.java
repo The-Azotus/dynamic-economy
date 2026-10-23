@@ -1,6 +1,7 @@
 package dynamiceconomy;
 
 import com.mojang.logging.LogUtils;
+import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.command.MarketCommand;
 import dynamiceconomy.compat.NumismaticsBridge;
@@ -8,6 +9,7 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketNetwork;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.PriceModel;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -42,6 +44,7 @@ public final class DynamicEconomy {
                 LOGGER.error("Numismatics bank API not found; the market will refuse all trades");
             }
             MarketStockData.get(event.getServer()).seed(MarketCatalog.INSTANCE.entries());
+            warnAboutArbitrage();
         });
         NeoForge.EVENT_BUS.addListener((OnDatapackSyncEvent event) -> {
             if (event.getPlayer() == null) {
@@ -53,6 +56,15 @@ public final class DynamicEconomy {
     /** After the catalog is re-read: give new items their start stock and refresh every open market screen. */
     public static void catalogReloaded(MinecraftServer server) {
         MarketStockData.get(server).seed(MarketCatalog.INSTANCE.entries());
+        warnAboutArbitrage();
         MarketSync.broadcastSnapshot(server);
+    }
+
+    /** Checked once config and catalog are both loaded, since entries inherit config defaults. */
+    private static void warnAboutArbitrage() {
+        for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
+            PriceModel.arbitrageRisk(PriceModel.inputs(entry)).ifPresent(reason -> LOGGER.warn(
+                    "Market item {}: buying and reselling it may make a profit ({})", entry.itemId(), reason));
+        }
     }
 }
