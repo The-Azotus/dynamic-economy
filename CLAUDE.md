@@ -22,7 +22,7 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 3.5 — Unlimited stock | Done |
 | 4 — Supply-and-demand pricing | Done |
 | 5 — Pack integration and polish | Done |
-| 6 — Optional extensions | Only if asked |
+| **6 — Terminal, access, admin editing, tooltips** | **In progress on `explore`** (`v0.1.0` on `main` is the stable version) |
 
 **First task in a new session:** read the existing code, compare it with Phases 0–3 below, and report any gaps or differences before starting Phase 3.5. Don't fix gaps silently.
 
@@ -182,11 +182,20 @@ Done when:
 
 Done when: the export command runs in the full pack and its counts match the item registry; a priced CSV imports, reloads and shows correct prices in the GUI; the round-trip test passes; the pack's real catalog loads with no warnings, and a playtest server runs a session without errors in the log.
 
-## Phase 6 — Optional extensions (only if asked)
+## Phase 6 — Terminal, access, admin editing, tooltips (in progress, `explore` branch)
 
-- **Tag-based catalog entries.** A tag may pool *selling* (any log counts), but stock and buying must stay per item ID, or buyers get an arbitrary member of the tag. Investigate whether a tag shares one price and one `s`, and report options before building.
-- Physical coin payment via `CoinItem.extract`.
-- Accepting held Numismatics bank cards.
+Asked for after v0.1.0. Work happens on the `explore` branch (worktree `..\Economy Mod (explore)`); `main` holds v0.1.0 and only gets fixes.
+
+- **Market Terminal block.** Craftable (Create brass casing, electron tubes, Numismatics cog, gold, redstone; datapack-overridable recipe). Right-click opens the market; the screen closes beyond 8 blocks or if the block breaks.
+- **Access mode.** Server config `access_mode`: `COMMAND_AND_BLOCK` (default) or `BLOCK_ONLY`. In block-only mode, players without operator permission can't use any `/market` command (plain `/market` explains where to go); operators and the console keep everything.
+- **In-game catalog editing** (permission 2): `setprice`, `set <field>`, `unset`, `remove` (delist, stock kept), `clearstock`, `revert`, `info`. Saved with the world (`dynamic_economy_overrides`), checked with the loader's own rules, never touching stock or `s`.
+- **Live tag rules** (decided): `/market admin tag <tag> setprice|set|unset|remove|revert|info`, `/market admin tags`. A rule applies to every item in the tag at each build, including items added to the tag later. Precedence: catalog files < tag rules (in creation order) < per-item edits. A rule without a price never lists unpriced items. Stock and `s` stay per item ID.
+- **Sell price in tooltips.** Every item the market buys shows "Market pays X spurs" in its tooltip everywhere; nothing for unlisted, `can_sell: false` or modified copies. Client config `show_sell_price_in_tooltips`. The catalog is sent to every player on join; changes go to everyone.
+- **Docs.** `README.md` (front page), `docs/player-guide.md`, `docs/admin-guide.md` (was `catalog-guide.md`).
+
+Done when: terminal opens the market and closes at range; block-only mode stops `/market` for non-ops but terminals work; every admin edit command works, persists across restart and refuses rule-breaking edits; tag rules price all members with item edits winning; tooltips show correct sell prices; docs cover all of it; all GameTests pass.
+
+Still optional, only if asked: physical coin payment via `CoinItem.extract`; accepting held Numismatics bank cards; tag entries inside catalog JSON files.
 
 ## Report format (after every phase)
 

@@ -6,8 +6,10 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.MarketAccess;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
+import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketSync;
@@ -24,6 +26,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dynamiceconomy.io.CatalogExport;
 import dynamiceconomy.io.CatalogImport;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -55,24 +58,30 @@ public final class MarketCommand {
     }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
+        // In block-only mode, players without operator permission have to use a Market Terminal: the subcommands are
+        // hidden from them, and plain /market says where to go instead of "unknown command".
         dispatcher.register(Commands.literal("market")
                 .executes(MarketCommand::open)
                 .then(Commands.literal("sell")
+                        .requires(MarketAccess::commandsAllowed)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .then(Commands.argument("qty", IntegerArgumentType.integer(1))
                                         .executes(ctx -> trade(ctx, true)))))
                 .then(Commands.literal("buy")
+                        .requires(MarketAccess::commandsAllowed)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .then(Commands.argument("qty", IntegerArgumentType.integer(1))
                                         .executes(ctx -> trade(ctx, false)))))
                 .then(Commands.literal("stock")
+                        .requires(MarketAccess::commandsAllowed)
                         .executes(MarketCommand::listStock)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .executes(MarketCommand::showStock)))
                 .then(Commands.literal("price")
+                        .requires(MarketAccess::commandsAllowed)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .executes(MarketCommand::showPrice)))
-                .then(Commands.literal("admin")
+                .then(withAdminEdits(Commands.literal("admin"), context)
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("setstock")
                                 .then(Commands.argument("item", ItemArgument.item(context))
@@ -101,6 +110,13 @@ public final class MarketCommand {
                                                 .executes(ctx -> importCsv(ctx, true)))))));
     }
 
+    /** The in-game catalog editing commands live in their own class; they hang off {@code /market admin}. */
+    private static LiteralArgumentBuilder<CommandSourceStack> withAdminEdits(LiteralArgumentBuilder<CommandSourceStack> admin,
+                                                                             CommandBuildContext context) {
+        AdminCatalogCommands.addTo(admin, context);
+        return admin;
+    }
+
     private static Item item(CommandContext<CommandSourceStack> ctx) {
         return ItemArgument.getItem(ctx, "item").getItem();
     }
@@ -110,6 +126,10 @@ public final class MarketCommand {
     }
 
     private static int open(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        if (!MarketAccess.commandsAllowed(ctx.getSource())) {
+            ctx.getSource().sendFailure(Component.translatable("message.dynamic_economy.block_only"));
+            return 0;
+        }
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         MarketMenu.open(player);
         MarketSync.sendFullState(player);
@@ -294,6 +314,15 @@ public final class MarketCommand {
                 : " (backed up %d replaced file(s) as .json.bak)".formatted(written.backups().size());
         source.sendSuccess(() -> Component.literal("Wrote %d catalog file(s) to <world>/datapacks/%s%s"
                 .formatted(written.files().size(), CatalogImport.PACK_FOLDER, backups)), true);
+
+        // Admin edits sit above catalog files, so they still win for these items.
+        MarketOverrides overrides = MarketOverrides.get(server);
+        List<String> edited = report.decoded().stream().map(CatalogEntry::itemId)
+                .filter(id -> overrides.itemPatch(id) != null).map(ResourceLocation::toString).toList();
+        if (!edited.isEmpty()) {
+            source.sendFailure(Component.literal("%d imported item(s) also have in-game admin edits, which still take precedence: %s%s. Use /market admin revert <item> to drop them"
+                    .formatted(edited.size(), String.join(", ", edited.subList(0, Math.min(5, edited.size()))), edited.size() > 5 ? ", ..." : "")));
+        }
 
         PackRepository packs = server.getPackRepository();
         if (packs.getSelectedIds().contains(CatalogImport.PACK_ID)) {

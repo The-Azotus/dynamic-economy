@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "GCG",
+    "EBE",
+    "GRG"
+  ],
+  "key": {
+    "G": { "item": "minecraft:gold_ingot" },
+    "C": { "item": "numismatics:cog" },
+    "E": { "item": "create:electron_tube" },
+    "B": { "item": "create:brass_casing" },
+    "R": { "item": "minecraft:redstone" }
+  },
+  "result": { "id": "dynamic_economy:market_terminal", "count": 1 }
+}

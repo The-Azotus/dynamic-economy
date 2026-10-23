@@ -49,22 +49,33 @@ public final class MarketSync {
 
     /** After a catalog reload: prices or listings may have changed for everyone. */
     public static void broadcastSnapshot(MinecraftServer server) {
-        MarketPayloads.Snapshot snapshot = snapshot(server);
-        for (ServerPlayer viewer : viewers(server)) {
-            PacketDistributor.sendToPlayer(viewer, snapshot);
-            sendPlayerState(viewer);
-        }
+        // Every player keeps the catalog, so item tooltips can show what the market pays.
+        PacketDistributor.sendToAllPlayers(snapshot(server));
+        viewers(server).forEach(MarketSync::sendPlayerState);
     }
 
-    /** After an item's stock changed: every viewer sees the new row in the same tick. */
+    /** The catalog for one player, e.g. on joining; their tooltips need it even with the market closed. */
+    public static void sendCatalog(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, snapshot(player.server));
+    }
+
+    /** After an item's stock or price changed: every player sees the new row in the same tick. */
     public static void broadcastRow(MinecraftServer server, Item item) {
         row(server, item).ifPresent(row -> {
-            MarketPayloads.RowUpdate update = new MarketPayloads.RowUpdate(row);
-            List<ServerPlayer> viewers = viewers(server);
-            DynamicEconomy.LOGGER.debug("Market row update for {} (stock {}) to {}", row.item(), row.stock(),
-                    viewers.stream().map(p -> p.getGameProfile().getName()).toList());
-            viewers.forEach(viewer -> PacketDistributor.sendToPlayer(viewer, update));
+            DynamicEconomy.LOGGER.debug("Market row update for {} (stock {}, factor {})", row.item(), row.stock(), row.factor());
+            PacketDistributor.sendToAllPlayers(new MarketPayloads.RowUpdate(List.of(row)));
         });
+    }
+
+    /** At a recovery step only items whose price is away from base can have moved, so send just those. */
+    private static void broadcastRecoveredRows(MinecraftServer server) {
+        List<MarketPayloads.Row> rows = new ArrayList<>();
+        for (ResourceLocation id : MarketStockData.get(server).factorsView().keySet()) {
+            BuiltInRegistries.ITEM.getOptional(id).flatMap(item -> row(server, item)).ifPresent(rows::add);
+        }
+        if (!rows.isEmpty()) {
+            PacketDistributor.sendToAllPlayers(new MarketPayloads.RowUpdate(rows));
+        }
     }
 
     /** Sends a viewer their balance and held counts, but only if they changed since the last send. */
@@ -79,8 +90,8 @@ public final class MarketSync {
     public static void tick(MinecraftServer server) {
         // Recovery steps happen server-wide at interval boundaries; refresh open screens when any price moved.
         long now = MarketStockData.now(server);
-        if (now % MarketConfig.intervalTicks() == 0 && !MarketStockData.get(server).factorsView().isEmpty()) {
-            broadcastSnapshot(server);
+        if (now % MarketConfig.intervalTicks() == 0) {
+            broadcastRecoveredRows(server);
         }
         if (server.getTickCount() % PLAYER_STATE_INTERVAL_TICKS != 0) {
             return;
@@ -92,7 +103,7 @@ public final class MarketSync {
 
     static void handleTradeRequest(MarketPayloads.TradeRequest request, ServerPlayer player) {
         // Only trade from an open market screen; anything else is a stale or forged packet.
-        if (!(player.containerMenu instanceof MarketMenu)) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
             return;
         }
         Optional<Item> item = BuiltInRegistries.ITEM.getOptional(request.item());
@@ -113,14 +124,14 @@ public final class MarketSync {
             } else {
                 // A rejected trade usually means the client's view is stale (price, stock), so refresh just this row.
                 row(player.server, item.get()).ifPresent(row ->
-                        PacketDistributor.sendToPlayer(player, new MarketPayloads.RowUpdate(row)));
+                        PacketDistributor.sendToPlayer(player, new MarketPayloads.RowUpdate(List.of(row))));
             }
         }
         sendPlayerState(player);
     }
 
     static void handleHistoryRequest(MarketPayloads.HistoryRequest request, ServerPlayer player) {
-        if (!(player.containerMenu instanceof MarketMenu)) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
             return;
         }
         MarketStockData.History history = MarketStockData.get(player.server).history(request.item());

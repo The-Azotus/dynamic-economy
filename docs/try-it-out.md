@@ -26,7 +26,7 @@ This is the Phase 0–5 version (`v0.1.0`). Everything here works in your pack w
 4. Check it: `/market admin import "exports/<date-time>/items.csv" preview`. This writes nothing and lists any rows it would reject.
 5. Import it: run the same command without `preview`. The prices go live straight away.
 
-`docs/catalog-guide.md` explains every column, the pricing maths and the config file (`world/serverconfig/dynamic_economy-server.toml`).
+`docs/admin-guide.md` explains every column, the pricing maths and the config file (`config/dynamic_economy-server.toml`).
 
 To hide the five test items, set their `can_buy` and `can_sell` to `false` in the CSV and import again.
 

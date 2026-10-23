@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.data.MarketOverrides;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
@@ -45,7 +46,12 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
     public record SourceFile(ResourceLocation id, int packOrder, String packId, JsonElement json) {
     }
 
+    /** What the catalog files say, before admin edits. */
+    private volatile Map<Item, CatalogEntry> fileEntries = Map.of();
+    /** The live catalog: file entries with admin edits applied. */
     private volatile Map<Item, CatalogEntry> entries = Map.of();
+    private volatile MarketOverrides.Snapshot overrides = MarketOverrides.Snapshot.EMPTY;
+    private volatile Map<ResourceLocation, String> problems = Map.of();
 
     private MarketCatalog() {
     }
@@ -56,6 +62,34 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
 
     public Collection<CatalogEntry> entries() {
         return entries.values();
+    }
+
+    /** The item's entry as the catalog files have it, ignoring admin edits. */
+    public Optional<CatalogEntry> fileEntry(Item item) {
+        return Optional.ofNullable(fileEntries.get(item));
+    }
+
+    /** Admin edits that couldn't be applied at the last rebuild, by item. */
+    public Map<ResourceLocation, String> problems() {
+        return problems;
+    }
+
+    /**
+     * Uses a new set of admin edits and rebuilds the live catalog. Call on the server thread; tags must be loaded.
+     * Pass {@link MarketOverrides.Snapshot#EMPTY} when no world is running.
+     */
+    public Map<ResourceLocation, String> setOverrides(MarketOverrides.Snapshot snapshot) {
+        overrides = snapshot;
+        return rebuild();
+    }
+
+    /** Re-applies the current admin edits to the file entries, e.g. after tags changed. */
+    public Map<ResourceLocation, String> rebuild() {
+        CatalogOverlay.Result result = CatalogOverlay.apply(fileEntries, overrides, CatalogOverlay::registryTag);
+        entries = result.entries();
+        problems = result.problems();
+        result.problems().values().forEach(problem -> DynamicEconomy.LOGGER.warn("Market admin edit not applied: {}", problem));
+        return result.problems();
     }
 
     /** Re-reads only the market files from the server's current resource manager. */
@@ -97,7 +131,8 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
 
     @Override
     protected void apply(List<SourceFile> files, ResourceManager resourceManager, ProfilerFiller profiler) {
-        entries = parse(files);
+        fileEntries = parse(files);
+        rebuild();
         DynamicEconomy.LOGGER.info("Loaded {} market catalog entries from {} files", entries.size(), files.size());
     }
 

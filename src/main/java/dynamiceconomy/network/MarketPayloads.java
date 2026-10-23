@@ -117,7 +117,7 @@ public final class MarketPayloads {
         }
     }
 
-    /** Server to client: the whole catalog, sent when the screen opens and after a catalog reload. */
+    /** Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes. */
     public record Snapshot(List<Row> rows) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
         public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.composite(
@@ -130,11 +130,11 @@ public final class MarketPayloads {
         }
     }
 
-    /** Server to client: one item's stock or price changed. Sent to every player with the market open. */
-    public record RowUpdate(Row row) implements CustomPacketPayload {
+    /** Server to client: some items' stock or price changed. Sent to every player. */
+    public record RowUpdate(List<Row> rows) implements CustomPacketPayload {
         public static final Type<RowUpdate> TYPE = payloadType("row_update");
         public static final StreamCodec<RegistryFriendlyByteBuf, RowUpdate> CODEC = StreamCodec.composite(
-                Row.CODEC, RowUpdate::row,
+                Row.CODEC.apply(ByteBufCodecs.list()), RowUpdate::rows,
                 RowUpdate::new);
 
         @Override

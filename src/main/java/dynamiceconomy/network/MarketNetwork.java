@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public final class MarketNetwork {
-    private static final String PROTOCOL_VERSION = "4";
+    private static final String PROTOCOL_VERSION = "5";
 
     private MarketNetwork() {
     }
@@ -35,7 +35,7 @@ public final class MarketNetwork {
         registrar.playToClient(MarketPayloads.Snapshot.TYPE, MarketPayloads.Snapshot.CODEC,
                 (payload, context) -> ClientMarketState.applySnapshot(payload));
         registrar.playToClient(MarketPayloads.RowUpdate.TYPE, MarketPayloads.RowUpdate.CODEC,
-                (payload, context) -> ClientMarketState.applyRow(payload.row()));
+                (payload, context) -> payload.rows().forEach(ClientMarketState::applyRow));
         registrar.playToClient(MarketPayloads.PlayerState.TYPE, MarketPayloads.PlayerState.CODEC,
                 (payload, context) -> ClientMarketState.applyPlayerState(payload));
         registrar.playToClient(MarketPayloads.TradeOutcome.TYPE, MarketPayloads.TradeOutcome.CODEC,

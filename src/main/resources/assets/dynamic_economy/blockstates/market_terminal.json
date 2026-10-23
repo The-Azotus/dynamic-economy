@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "dynamic_economy:block/market_terminal" },
+    "facing=east":  { "model": "dynamic_economy:block/market_terminal", "y": 90 },
+    "facing=south": { "model": "dynamic_economy:block/market_terminal", "y": 180 },
+    "facing=west":  { "model": "dynamic_economy:block/market_terminal", "y": 270 }
+  }
+}

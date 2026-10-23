@@ -9,6 +9,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class MarketConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.IntValue MAX_QUANTITY_PER_REQUEST;
+    public static final ModConfigSpec.EnumValue<AccessMode> ACCESS_MODE;
     public static final ModConfigSpec.DoubleValue SELL_IMPACT;
     public static final ModConfigSpec.DoubleValue BUY_IMPACT;
     public static final ModConfigSpec.DoubleValue RECOVERY;
@@ -21,6 +22,12 @@ public final class MarketConfig {
         MAX_QUANTITY_PER_REQUEST = builder
                 .comment("Largest quantity a single buy or sell request may move. Larger orders are rejected with TOO_LARGE.")
                 .defineInRange("max_quantity_per_request", 640, 1, 1_000_000);
+        ACCESS_MODE = builder
+                .comment("How players reach the market.",
+                        "COMMAND_AND_BLOCK: the /market command or a Market Terminal block.",
+                        "BLOCK_ONLY: only a Market Terminal. Players without operator permission (level 2) can't use",
+                        "any /market command; operators and the console always can.")
+                .defineEnum("access_mode", AccessMode.COMMAND_AND_BLOCK);
 
         builder.comment("Supply and demand. Each item has a price factor s, starting at 1.0. These are defaults;",
                 "catalog entries may override them (except interval_ticks).").push("pricing");
@@ -49,6 +56,12 @@ public final class MarketConfig {
     }
 
     private MarketConfig() {
+    }
+
+    public enum AccessMode { COMMAND_AND_BLOCK, BLOCK_ONLY }
+
+    public static AccessMode accessMode() {
+        return SPEC.isLoaded() ? ACCESS_MODE.get() : ACCESS_MODE.getDefault();
     }
 
     // The config is per-world, so each getter falls back to the default before it has loaded.

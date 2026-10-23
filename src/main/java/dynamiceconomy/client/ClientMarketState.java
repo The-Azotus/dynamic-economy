@@ -15,8 +15,8 @@ import java.util.Map;
 
 /**
  * What the client knows about the market, filled only from server packets. Display only: every trade is re-checked
- * on the server. Render thread only. Deliberately uses no client-only classes, so the network code can reference it
- * on both sides.
+ * on the server. The catalog rows are kept for the whole session so item tooltips can show market prices.
+ * Render thread only. Deliberately uses no client-only classes, so the network code can reference it on both sides.
  */
 public final class ClientMarketState {
     private static final Map<ResourceLocation, MarketPayloads.Row> rows = new LinkedHashMap<>();
@@ -81,14 +81,20 @@ public final class ClientMarketState {
         return history != null && history.item().equals(item) ? history : null;
     }
 
+    /** When the market screen closes. The catalog is kept: item tooltips use it with the screen closed. */
     public static void clear() {
         history = null;
-        rows.clear();
         held = Map.of();
         balance = 0;
         status = Component.empty();
         statusIsError = false;
         version++;
+    }
+
+    /** When leaving a server: forget its catalog too. */
+    public static void reset() {
+        clear();
+        rows.clear();
     }
 
     public static Map<ResourceLocation, MarketPayloads.Row> rows() {

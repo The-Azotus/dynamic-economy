@@ -2,6 +2,12 @@ package dynamiceconomy.gametest;
 
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
+import dynamiceconomy.MarketAccess;
+import dynamiceconomy.block.MarketBlocks;
+import dynamiceconomy.block.MarketTerminalBlock;
+import dynamiceconomy.catalog.CatalogOverlay;
+import dynamiceconomy.data.MarketOverrides;
+import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.NumismaticsBridge;
@@ -32,12 +38,14 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -992,6 +1000,148 @@ public final class MarketGameTests {
         MarketStockData.History history = f.market.history(iron);
         helper.assertTrue(history.size() > 0, "a sale adds a point");
         helper.assertValueEqual(history.factors()[history.size() - 1], (float) f.factor(Items.IRON_INGOT), "latest point is the factor now");
+        helper.succeed();
+    }
+
+    // ---- Admin edits and tag rules ----------------------------------------------------------------------------
+
+    /** The catalog files as loaded in the test world (which has no admin edits of its own). */
+    private static Map<Item, CatalogEntry> files() {
+        Map<Item, CatalogEntry> files = new java.util.LinkedHashMap<>();
+        MarketCatalog.INSTANCE.entries().forEach(e -> files.put(e.item(), e));
+        return files;
+    }
+
+    private static CatalogOverlay.Result overlay(MarketOverrides edits) {
+        return CatalogOverlay.apply(files(), edits.snapshot(), CatalogOverlay::registryTag);
+    }
+
+    private static ResourceLocation key(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void adminEditsChangeOnlyWhatTheySet(GameTestHelper helper) {
+        MarketOverrides edits = new MarketOverrides();
+        CatalogEntry ironFile = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+
+        edits.setItemField(key(Items.IRON_INGOT), "base_price", new com.google.gson.JsonPrimitive(20));
+        edits.setItemField(key(Items.STONE), "base_price", new com.google.gson.JsonPrimitive(5));
+        edits.setItemField(key(Items.DIRT), "markup", new com.google.gson.JsonPrimitive(1.0));
+        CatalogOverlay.Result result = overlay(edits);
+
+        CatalogEntry iron = result.entries().get(Items.IRON_INGOT);
+        helper.assertValueEqual(iron.basePrice(), 20, "iron price edited");
+        helper.assertValueEqual(new CatalogEntry(iron.item(), iron.itemId(), ironFile.basePrice(), iron.markup(), iron.startStock(),
+                iron.canSell(), iron.canBuy(), iron.unlimitedStock(), iron.sellFee(), iron.dynamic(), iron.minBuyMarkup(),
+                iron.overrides()), ironFile, "iron keeps every other field");
+        helper.assertValueEqual(result.entries().get(Items.STONE).basePrice(), 5, "setprice lists an unlisted item");
+        helper.assertTrue(!result.entries().containsKey(Items.DIRT), "an unlisted item needs a price to be listed");
+        helper.assertTrue(result.problems().containsKey(key(Items.DIRT)), "and that is reported");
+
+        edits.unsetItemField(key(Items.DIRT), "markup");
+        edits.removeItem(key(Items.IRON_INGOT));
+        result = overlay(edits);
+        helper.assertTrue(!result.entries().containsKey(Items.IRON_INGOT), "remove delists");
+        helper.assertTrue(result.problems().isEmpty(), "no problems left: " + result.problems());
+
+        edits.revertItem(key(Items.IRON_INGOT));
+        helper.assertValueEqual(overlay(edits).entries().get(Items.IRON_INGOT), ironFile, "revert restores the file entry");
+
+        // A bad edit is reported and the item keeps its file entry rather than vanishing.
+        edits.setItemField(key(Items.IRON_INGOT), "min_buy_markup", new com.google.gson.JsonPrimitive(0.9));
+        result = overlay(edits);
+        helper.assertTrue(result.problems().get(key(Items.IRON_INGOT)).contains("min_buy_markup"), "bad edit reported");
+        helper.assertValueEqual(result.entries().get(Items.IRON_INGOT), ironFile, "falls back to the file entry");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void tagRulesApplyToEveryMemberAndItemEditsWin(GameTestHelper helper) {
+        ResourceLocation logs = ResourceLocation.withDefaultNamespace("logs");
+        Collection<Item> allLogs = CatalogOverlay.registryTag(logs);
+        helper.assertTrue(allLogs.size() > 10, "minecraft:logs has many items");
+        MarketOverrides edits = new MarketOverrides();
+
+        edits.setTagField(logs, "base_price", new com.google.gson.JsonPrimitive(4));
+        CatalogOverlay.Result result = overlay(edits);
+        for (Item log : allLogs) {
+            helper.assertValueEqual(result.entries().get(log).basePrice(), 4, key(log) + " priced by the tag rule");
+        }
+        helper.assertTrue(result.entries().get(Items.OAK_LOG).unlimitedStock(), "oak keeps its file settings apart from the price");
+        helper.assertTrue(!result.entries().get(Items.BIRCH_LOG).unlimitedStock(), "birch, unlisted before, gets the defaults");
+
+        // Pricing one log by hand beats the tag rule, even after a later rule removes the tag.
+        edits.setItemField(key(Items.BIRCH_LOG), "base_price", new com.google.gson.JsonPrimitive(9));
+        edits.removeTag(ResourceLocation.withDefaultNamespace("logs_that_burn"));
+        result = overlay(edits);
+        helper.assertValueEqual(result.entries().get(Items.BIRCH_LOG).basePrice(), 9, "item edit wins");
+        helper.assertTrue(!result.entries().containsKey(Items.SPRUCE_LOG), "the removal rule delists other burnable logs");
+        helper.assertTrue(result.entries().containsKey(Items.CRIMSON_STEM), "nether stems aren't burnable logs, so they stay at 4");
+
+        // A rule without a price only changes items that are already listed.
+        edits.revertTag(ResourceLocation.withDefaultNamespace("logs_that_burn"));
+        edits.setTagField(ResourceLocation.withDefaultNamespace("planks"), "markup", new com.google.gson.JsonPrimitive(1.0));
+        result = overlay(edits);
+        helper.assertTrue(!result.entries().containsKey(Items.OAK_PLANKS), "unpriced planks stay unlisted");
+        helper.assertTrue(result.problems().isEmpty(), "and nothing is reported: " + result.problems());
+
+        edits.revertTag(logs);
+        result = overlay(edits);
+        helper.assertTrue(!result.entries().containsKey(Items.SPRUCE_LOG), "reverting the rule unlists logs it had listed");
+        helper.assertValueEqual(result.entries().get(Items.OAK_LOG), MarketCatalog.INSTANCE.get(Items.OAK_LOG).orElseThrow(), "oak is back to its file entry");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void adminEditsAreSavedWithTheWorld(GameTestHelper helper) {
+        MarketOverrides edits = new MarketOverrides();
+        edits.setItemField(key(Items.IRON_INGOT), "base_price", new com.google.gson.JsonPrimitive(20));
+        edits.removeItem(key(Items.DIAMOND));
+        edits.setTagField(ResourceLocation.withDefaultNamespace("logs"), "base_price", new com.google.gson.JsonPrimitive(4));
+        edits.removeTag(ResourceLocation.withDefaultNamespace("wool"));
+        MarketOverrides reloaded = MarketOverrides.fromTag(edits.save(new CompoundTag(), helper.getLevel().registryAccess()),
+                helper.getLevel().registryAccess());
+        helper.assertValueEqual(reloaded.snapshot(), edits.snapshot(), "edits and tag-rule order survive a save");
+        helper.succeed();
+    }
+
+    // ---- Access and the terminal ------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void blockOnlyModeKeepsCommandsForOperators(GameTestHelper helper) {
+        helper.assertTrue(MarketAccess.commandsAllowed(MarketConfig.AccessMode.COMMAND_AND_BLOCK, false), "everyone, by default");
+        helper.assertTrue(!MarketAccess.commandsAllowed(MarketConfig.AccessMode.BLOCK_ONLY, false), "players need the block");
+        helper.assertTrue(MarketAccess.commandsAllowed(MarketConfig.AccessMode.BLOCK_ONLY, true), "operators keep commands");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void terminalScreenClosesWhenYouWalkAwayOrItBreaks(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        net.minecraft.core.BlockPos pos = helper.absolutePos(net.minecraft.core.BlockPos.ZERO);
+        helper.setBlock(net.minecraft.core.BlockPos.ZERO, MarketBlocks.MARKET_TERMINAL.get().defaultBlockState());
+        MarketMenu menu = MarketMenu.forTerminal(f.player, pos);
+
+        f.player.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 3.5);
+        helper.assertTrue(menu.stillValid(f.player), "valid next to the terminal");
+        f.player.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 20.5);
+        helper.assertTrue(!menu.stillValid(f.player), "closes 20 blocks away");
+        f.player.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 3.5);
+        helper.setBlock(net.minecraft.core.BlockPos.ZERO, Blocks.AIR);
+        helper.assertTrue(!menu.stillValid(f.player), "closes when the terminal is broken");
+        helper.assertTrue(MarketMenu.forCommand().stillValid(f.player), "a command-opened screen is valid in the default mode");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void terminalHasRecipeAndFacing(GameTestHelper helper) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "market_terminal");
+        helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(id).isPresent(),
+                "the recipe loads, so its Create and Numismatics ingredients resolve");
+        helper.setBlock(net.minecraft.core.BlockPos.ZERO, MarketBlocks.MARKET_TERMINAL.get().defaultBlockState()
+                .setValue(MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST));
+        helper.assertBlockProperty(net.minecraft.core.BlockPos.ZERO, MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST);
         helper.succeed();
     }
 

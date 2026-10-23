@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "dynamic_economy:block/market_terminal_top",
+    "front": "dynamic_economy:block/market_terminal_front",
+    "side": "dynamic_economy:block/market_terminal_side"
+  }
+}
