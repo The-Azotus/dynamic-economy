@@ -109,7 +109,7 @@ The server warns at startup about any item whose settings would let a player buy
 
 ## Server config
 
-Settings live in `<world>/serverconfig/dynamic_economy-server.toml`, created on first start. Catalog entries can override everything in `[pricing]` except `interval_ticks`.
+Settings live in `config/dynamic_economy-server.toml`, created on first start. Catalog entries can override everything in `[pricing]` except `interval_ticks`.
 
 | Option | Default | Range | What it does |
 | --- | --- | --- | --- |
