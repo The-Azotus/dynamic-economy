@@ -1,0 +1,97 @@
+package dynamiceconomy.client;
+
+import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.network.MarketPayloads;
+import dynamiceconomy.service.MarketService;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+
+/**
+ * What the client knows about the market, filled only from server packets. Display only: every trade is re-checked
+ * on the server. Render thread only. Deliberately uses no client-only classes, so the network code can reference it
+ * on both sides.
+ */
+public final class ClientMarketState {
+    private static final Map<ResourceLocation, MarketPayloads.Row> rows = new LinkedHashMap<>();
+    private static Map<ResourceLocation, Integer> held = Map.of();
+    private static int balance;
+    private static Component status = Component.empty();
+    private static boolean statusIsError;
+    private static int version;
+
+    private ClientMarketState() {
+    }
+
+    public static void applySnapshot(MarketPayloads.Snapshot snapshot) {
+        rows.clear();
+        snapshot.rows().forEach(row -> rows.put(row.item(), row));
+        DynamicEconomy.LOGGER.debug("Market snapshot: {} rows", rows.size());
+        version++;
+    }
+
+    public static void applyRow(MarketPayloads.Row row) {
+        DynamicEconomy.LOGGER.debug("Market row update: {} stock={} sell={} buy={}", row.item(), row.stock(), row.sellPrice(), row.buyPrice());
+        rows.put(row.item(), row);
+        version++;
+    }
+
+    public static void applyPlayerState(MarketPayloads.PlayerState state) {
+        DynamicEconomy.LOGGER.debug("Market player state: balance={} held={}", state.balance(), state.held());
+        balance = state.balance();
+        held = Map.copyOf(state.held());
+        version++;
+    }
+
+    public static void applyOutcome(MarketPayloads.TradeOutcome outcome) {
+        DynamicEconomy.LOGGER.debug("Market trade outcome: {}", outcome);
+        Component itemName = BuiltInRegistries.ITEM.get(outcome.item()).getDescription();
+        if (outcome.result() == MarketService.Result.OK) {
+            status = Component.translatable(outcome.buy() ? "screen.dynamic_economy.bought" : "screen.dynamic_economy.sold",
+                    outcome.quantity(), itemName, outcome.total());
+            statusIsError = false;
+        } else {
+            status = Component.translatable("screen.dynamic_economy.result." + outcome.result().name().toLowerCase(Locale.ROOT));
+            statusIsError = true;
+        }
+        version++;
+    }
+
+    public static void clear() {
+        rows.clear();
+        held = Map.of();
+        balance = 0;
+        status = Component.empty();
+        statusIsError = false;
+        version++;
+    }
+
+    public static Map<ResourceLocation, MarketPayloads.Row> rows() {
+        return rows;
+    }
+
+    public static int held(ResourceLocation item) {
+        return held.getOrDefault(item, 0);
+    }
+
+    public static int balance() {
+        return balance;
+    }
+
+    public static Component status() {
+        return status;
+    }
+
+    public static boolean statusIsError() {
+        return statusIsError;
+    }
+
+    /** Bumped on every change so the screen knows when to rebuild its filtered list. */
+    public static int version() {
+        return version;
+    }
+}

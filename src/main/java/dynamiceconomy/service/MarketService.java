@@ -182,6 +182,11 @@ public final class MarketService {
         }
     }
 
+    /** How many copies of a listed item the player could sell right now. */
+    public static long heldCount(ServerPlayer player, CatalogEntry entry) {
+        return countMatching(player.getInventory().items, entry);
+    }
+
     static long countMatching(NonNullList<ItemStack> items, CatalogEntry entry) {
         long count = 0;
         for (ItemStack stack : items) {

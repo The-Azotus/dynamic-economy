@@ -53,6 +53,15 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        // A second client for multiplayer testing, e.g. two players watching the same market. Separate game
+        // directory so options and logs don't collide with the first client.
+        client2 {
+            client()
+            gameDirectory = project.file('run-client2')
+            programArguments.addAll '--username', 'Dev2'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
         server {
             server()
             programArgument '--nogui'
@@ -66,12 +75,20 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        // `gradlew runClient -PjoinServer=127.0.0.1:25565` launches straight into that server.
+        [client, client2].each { run ->
+            if (project.hasProperty('joinServer')) {
+                run.programArguments.addAll '--quickPlayMultiplayer', project.property('joinServer').toString()
+            }
+        }
+
         configureEach { run ->
             // In dev, Numismatics re-reads log4j.configurationFile with URI.create(), which throws on a plain Windows
             // path containing spaces. Give it the same file MDG generates, as a valid file: URI.
             systemProperty 'log4j.configurationFile', project.file("build/moddev/${run.name}Log4j2.xml").toURI().toString()
             systemProperty 'forge.logging.markers', 'REGISTRIES'
-            logLevel = org.slf4j.event.Level.INFO
+            // `-PdebugLog` for debug output, e.g. the market packets a client receives.
+            logLevel = project.hasProperty('debugLog') ? org.slf4j.event.Level.DEBUG : org.slf4j.event.Level.INFO
         }
     }
 

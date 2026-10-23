@@ -259,6 +259,62 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    // ---- Concurrency and reconciliation ------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void twoBuyersForTheLastItemOnlyOneSucceeds(GameTestHelper helper) {
+        Fixture first = new Fixture(helper);
+        Fixture second = new Fixture(helper);
+        first.setStock(Items.DIAMOND, 1);
+        first.deposit(10_000);
+        second.deposit(10_000);
+
+        // Both requests arrive in the same tick; the server thread handles them one after the other.
+        TradeResult a = MarketService.tryBuy(first.player, Items.DIAMOND, 1, ANY_PRICE);
+        TradeResult b = MarketService.tryBuy(second.player, Items.DIAMOND, 1, ANY_PRICE);
+
+        first.assertResult(a, Result.OK);
+        second.assertResult(b, Result.NO_STOCK);
+        helper.assertValueEqual(first.stock(Items.DIAMOND), 0L, "diamond stock");
+        helper.assertValueEqual(second.balance(), 10_000, "losing buyer's balance");
+        helper.assertValueEqual(second.count(Items.DIAMOND), 0L, "losing buyer's diamonds");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void hundredRandomTradesReconcile(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        f.setStock(Items.IRON_INGOT, 200);
+        f.deposit(5_000);
+        f.give(new ItemStack(Items.IRON_INGOT, 64));
+        java.util.Random random = new java.util.Random(42);
+
+        long stockBefore = f.stock(Items.IRON_INGOT);
+        long heldBefore = f.count(Items.IRON_INGOT);
+        int balanceBefore = f.balance();
+        long expectedMoney = 0;
+        long netItemsToPlayer = 0;
+        int succeeded = 0;
+        for (int i = 0; i < 100; i++) {
+            int qty = 1 + random.nextInt(40);
+            boolean buy = random.nextBoolean();
+            TradeResult result = buy
+                    ? MarketService.tryBuy(f.player, Items.IRON_INGOT, qty, ANY_PRICE)
+                    : MarketService.trySell(f.player, Items.IRON_INGOT, qty, ANY_PRICE);
+            if (result.ok()) {
+                succeeded++;
+                expectedMoney += buy ? -result.total() : result.total();
+                netItemsToPlayer += buy ? qty : -qty;
+            }
+        }
+
+        helper.assertTrue(succeeded > 20, "too few trades succeeded to prove anything: " + succeeded);
+        helper.assertValueEqual((long) f.balance(), balanceBefore + expectedMoney, "balance reconciles with trade totals");
+        helper.assertValueEqual(f.count(Items.IRON_INGOT), heldBefore + netItemsToPlayer, "items held reconcile");
+        helper.assertValueEqual(f.stock(Items.IRON_INGOT), stockBefore - netItemsToPlayer, "stock reconciles");
+        helper.succeed();
+    }
+
     // ---- Pricing ------------------------------------------------------------------------------------------------
 
     @GameTest(template = EMPTY)

@@ -1,10 +1,14 @@
 package dynamiceconomy;
 
+import com.mojang.logging.LogUtils;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.command.MarketCommand;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
-import com.mojang.logging.LogUtils;
+import dynamiceconomy.menu.MarketMenu;
+import dynamiceconomy.network.MarketNetwork;
+import dynamiceconomy.network.MarketSync;
+import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -14,6 +18,7 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.slf4j.Logger;
 
 @Mod(DynamicEconomy.MOD_ID)
@@ -23,10 +28,13 @@ public final class DynamicEconomy {
 
     public DynamicEconomy(IEventBus modBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.SERVER, MarketConfig.SPEC);
+        MarketMenu.MENUS.register(modBus);
+        modBus.addListener(MarketNetwork::register);
 
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(MarketCatalog.INSTANCE));
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 MarketCommand.register(event.getDispatcher(), event.getBuildContext()));
+        NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> MarketSync.tick(event.getServer()));
 
         // Seed start_stock for newly listed items once the world is up, and again after every /reload.
         NeoForge.EVENT_BUS.addListener((ServerStartedEvent event) -> {
@@ -37,8 +45,14 @@ public final class DynamicEconomy {
         });
         NeoForge.EVENT_BUS.addListener((OnDatapackSyncEvent event) -> {
             if (event.getPlayer() == null) {
-                MarketStockData.get(event.getPlayerList().getServer()).seed(MarketCatalog.INSTANCE.entries());
+                catalogReloaded(event.getPlayerList().getServer());
             }
         });
+    }
+
+    /** After the catalog is re-read: give new items their start stock and refresh every open market screen. */
+    public static void catalogReloaded(MinecraftServer server) {
+        MarketStockData.get(server).seed(MarketCatalog.INSTANCE.entries());
+        MarketSync.broadcastSnapshot(server);
     }
 }

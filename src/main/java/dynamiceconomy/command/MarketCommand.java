@@ -1,14 +1,17 @@
 package dynamiceconomy.command;
 
-import dynamiceconomy.catalog.CatalogEntry;
-import dynamiceconomy.catalog.MarketCatalog;
-import dynamiceconomy.data.MarketStockData;
-import dynamiceconomy.service.MarketService;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.catalog.MarketCatalog;
+import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.menu.MarketMenu;
+import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.MarketService;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -23,7 +26,8 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 /**
- * Phase 1 test commands. These go away or change once the market screen exists.
+ * {@code /market} opens the market screen. The sell, buy, stock and price subcommands are the Phase 1 test commands,
+ * kept for scripting and testing without the screen.
  * Brigadier runs commands on the server thread, which is what {@link MarketService} requires.
  */
 public final class MarketCommand {
@@ -32,6 +36,7 @@ public final class MarketCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
         dispatcher.register(Commands.literal("market")
+                .executes(MarketCommand::open)
                 .then(Commands.literal("sell")
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .then(Commands.argument("qty", IntegerArgumentType.integer(1))
@@ -65,6 +70,13 @@ public final class MarketCommand {
         return BuiltInRegistries.ITEM.getKey(item);
     }
 
+    private static int open(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        ServerPlayer player = ctx.getSource().getPlayerOrException();
+        MarketMenu.open(player);
+        MarketSync.sendFullState(player);
+        return 1;
+    }
+
     private static int trade(CommandContext<CommandSourceStack> ctx, boolean selling) throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         Item item = item(ctx);
@@ -74,6 +86,8 @@ public final class MarketCommand {
                 : MarketService.tryBuy(player, item, qty, OptionalLong.empty());
 
         if (result.ok()) {
+            MarketSync.broadcastRow(player.server, item);
+            MarketSync.sendPlayerState(player);
             long stock = MarketStockData.get(player.server).getStock(id(item));
             String verb = selling ? "Sold" : "Bought";
             String direction = selling ? "received" : "paid";
@@ -125,6 +139,7 @@ public final class MarketCommand {
         Item item = item(ctx);
         long qty = LongArgumentType.getLong(ctx, "qty");
         MarketStockData.get(ctx.getSource().getServer()).setStock(id(item), qty);
+        MarketSync.broadcastRow(ctx.getSource().getServer(), item);
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (warning: not listed in the catalog)";
         ctx.getSource().sendSuccess(() -> Component.literal("Set %s stock to %d%s".formatted(id(item), qty, listed)), true);
         return 1;
@@ -137,7 +152,7 @@ public final class MarketCommand {
     private static int reload(CommandContext<CommandSourceStack> ctx) {
         var server = ctx.getSource().getServer();
         int count = MarketCatalog.INSTANCE.reloadNow(server.getResourceManager());
-        MarketStockData.get(server).seed(MarketCatalog.INSTANCE.entries());
+        DynamicEconomy.catalogReloaded(server);
         ctx.getSource().sendSuccess(() -> Component.literal("Reloaded market catalog: %d entries".formatted(count)), true);
         return count;
     }
