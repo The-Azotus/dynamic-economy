@@ -6,6 +6,9 @@ import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.io.CatalogExport;
+import dynamiceconomy.io.CatalogImport;
+import dynamiceconomy.io.Csv;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketService.Result;
 import dynamiceconomy.service.MarketService.TradeResult;
@@ -17,7 +20,9 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +35,8 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -763,6 +770,229 @@ public final class MarketGameTests {
 
     private static void assertClose(GameTestHelper helper, double actual, double expected, String what) {
         helper.assertTrue(Math.abs(actual - expected) < 1e-12, what + ": expected " + expected + " but was " + actual);
+    }
+
+    // ---- Export, import and catalog loading -------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void csvReaderHandlesSpreadsheetQuirks(GameTestHelper helper) {
+        // BOM, semicolons, header in another order and case, a quoted field with the delimiter, quotes and a line
+        // break, a decimal comma, an unknown column and a blank line.
+        String text = "\uFEFFMarkup;Item_ID;Notes;base_price;display_name\r\n"
+                + "0,25;minecraft:stone;whatever;5;\"Stone; \"\"smooth\"\"\nsecond line\"\r\n"
+                + "\r\n"
+                + ";minecraft:dirt;;7;Dirt\r\n";
+        Csv.Table table = Csv.parse(text);
+        helper.assertValueEqual(table.delimiter(), ';', "delimiter detected");
+        helper.assertValueEqual(table.headers(), List.of("markup", "item_id", "notes", "base_price", "display_name"), "headers");
+        helper.assertValueEqual(table.rows().size(), 2, "blank line ignored");
+        helper.assertValueEqual(table.rows().get(0).get("display_name"), "Stone; \"smooth\"\nsecond line", "quoted field");
+        helper.assertValueEqual(table.rows().get(1).line(), 5, "line numbers count the embedded line break");
+
+        CatalogImport.Report report = CatalogImport.analyze(text);
+        helper.assertValueEqual(report.toWrite(), 2, "both rows import");
+        CatalogEntry stone = report.decoded().stream().filter(e -> e.item() == Items.STONE).findFirst().orElseThrow();
+        helper.assertValueEqual(stone.markup(), 0.25, "decimal comma read");
+        CatalogEntry dirt = report.decoded().stream().filter(e -> e.item() == Items.DIRT).findFirst().orElseThrow();
+        helper.assertValueEqual(dirt.markup(), CatalogEntry.DEFAULT_MARKUP, "blank markup falls back to the default");
+
+        String commas = "item_id,base_price,display_name\nminecraft:stone,5,\"Stone, smooth\"\n";
+        helper.assertValueEqual(Csv.parse(commas).rows().get(0).get("display_name"), "Stone, smooth", "comma file");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void importRejectsBadRowsWithReasons(GameTestHelper helper) {
+        String text = """
+                item_id,base_price,markup,min_buy_markup,unlimited_stock,can_sell
+                minecraft:stone,5,,,,
+                minecraft:dirt,,,,,
+                minecraft:not_a_real_item,5,,,,
+                minecraft:sand,abc,,,,
+                minecraft:gravel,0,,,,
+                minecraft:clay_ball,-5,,,,
+                minecraft:flint,1.5,,,,
+                minecraft:glass,5,0.5,0.9,true,
+                minecraft:stone,6,,,,
+                minecraft:brick,5,,,maybe,
+                Not An Id,5,,,,
+                minecraft:bone,5,,,,no
+                """;
+        CatalogImport.Report report = CatalogImport.analyze(text);
+        helper.assertValueEqual(report.toWrite(), 2, "stone and bone import");
+        helper.assertValueEqual(report.skippedBlank(), 1, "dirt has no price");
+        helper.assertValueEqual(report.rejected().size(), 9, "rejections: " + report.rejected());
+        String all = String.join("\n", report.rejected());
+        for (String expected : List.of("line 4", "unknown item", "line 5", "line 6", "line 7", "line 8", "min_buy_markup",
+                "duplicate of line 2", "must be true or false", "not a valid item ID")) {
+            helper.assertTrue(all.contains(expected), "expected a rejection mentioning \"" + expected + "\" in:\n" + all);
+        }
+        CatalogEntry bone = report.decoded().stream().filter(e -> e.item() == Items.BONE).findFirst().orElseThrow();
+        helper.assertTrue(!bone.canSell(), "\"no\" reads as false");
+        helper.assertTrue(CatalogImport.analyze("name,price\nx,1\n").rejected().get(0).contains("item_id"), "missing columns");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void exportThenImportGivesTheSameCatalog(GameTestHelper helper) {
+        try {
+            Path root = Files.createTempDirectory("market-export");
+            // Include an override and a min_buy_markup so the extra columns are covered too.
+            CatalogEntry iron = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+            CatalogEntry tuned = iron.withPricing(0.05, true, Optional.empty(), new CatalogEntry.Overrides(
+                    Optional.of(0.001), Optional.empty(), Optional.of(0.1), Optional.empty(), Optional.of(3.0)));
+            CatalogEntry cobble = MarketCatalog.INSTANCE.get(Items.COBBLESTONE).orElseThrow()
+                    .withPricing(0.0, true, Optional.of(0.25), CatalogEntry.Overrides.NONE);
+            List<CatalogEntry> catalog = new ArrayList<>(MarketCatalog.INSTANCE.entries());
+            catalog.replaceAll(e -> e.item() == Items.IRON_INGOT ? tuned : e.item() == Items.COBBLESTONE ? cobble : e);
+
+            CatalogExport.Result result = CatalogExport.export(root, Optional.empty(), catalog);
+            long registered = BuiltInRegistries.ITEM.stream().filter(item -> item != Items.AIR).count();
+            helper.assertValueEqual((long) result.total(), registered, "every item but air exported");
+            helper.assertValueEqual(result.priced(), catalog.size(), "already priced");
+            helper.assertValueEqual(result.unpriced(), result.total() - catalog.size(), "new");
+
+            CatalogImport.Report report = CatalogImport.analyze(Files.readString(result.folder().resolve("items.csv")));
+            helper.assertValueEqual(report.rejected(), List.of(), "an unchanged export imports cleanly");
+            helper.assertValueEqual(report.skippedBlank(), result.unpriced(), "unpriced rows are skipped");
+            helper.assertValueEqual(new java.util.HashSet<>(report.decoded()), new java.util.HashSet<>(catalog), "entries identical");
+
+            // Templates load without error, and every entry is skipped as unpriced until someone prices it.
+            Path templates = result.folder().resolve("templates");
+            Path minecraft = templates.resolve("minecraft.json");
+            helper.assertTrue(Files.exists(minecraft), "a template for minecraft");
+            Map<Item, CatalogEntry> loaded = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "template"),
+                    JsonParser.parseString(Files.readString(minecraft))));
+            helper.assertTrue(loaded.isEmpty(), "unpriced template entries are skipped");
+
+            CatalogExport.Result onlyMinecraft = CatalogExport.export(root, Optional.of("minecraft"), catalog);
+            long minecraftItems = BuiltInRegistries.ITEM.keySet().stream()
+                    .filter(id -> id.getNamespace().equals("minecraft") && !id.getPath().equals("air")).count();
+            helper.assertValueEqual((long) onlyMinecraft.total(), minecraftItems, "modid filter");
+            helper.assertTrue(!onlyMinecraft.folder().equals(result.folder()), "a second export never reuses a folder");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void importWritesThePackAndBacksUpReplacedFiles(GameTestHelper helper) {
+        try {
+            Path datapacks = Files.createTempDirectory("market-datapacks");
+            CatalogImport.Report first = CatalogImport.analyze("item_id,base_price\nminecraft:stone,5\nminecraft:dirt,2\n");
+            CatalogImport.Written written = CatalogImport.write(first, datapacks);
+            Path pack = datapacks.resolve(CatalogImport.PACK_FOLDER);
+            Path file = pack.resolve("data/dynamic_economy/market/imported_minecraft.json");
+            helper.assertTrue(written.createdPack(), "pack created");
+            helper.assertTrue(Files.exists(pack.resolve("pack.mcmeta")), "pack.mcmeta written");
+            helper.assertValueEqual(written.files(), List.of(file), "one file for one mod");
+            Map<Item, CatalogEntry> loaded = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "imported"),
+                    JsonParser.parseString(Files.readString(file))));
+            helper.assertValueEqual(new java.util.HashSet<>(loaded.values()), new java.util.HashSet<>(first.decoded()), "written file loads back");
+
+            CatalogImport.Report second = CatalogImport.analyze("item_id,base_price\nminecraft:stone,9\n");
+            CatalogImport.Written again = CatalogImport.write(second, datapacks);
+            helper.assertTrue(!again.createdPack(), "pack already existed");
+            Path backup = file.resolveSibling("imported_minecraft.json.bak");
+            helper.assertValueEqual(again.backups(), List.of(backup), "backup made");
+            helper.assertTrue(Files.readString(backup).contains("minecraft:dirt"), "backup holds the previous file");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void importPathsCannotLeaveTheConfigFolder(GameTestHelper helper) {
+        Path root = Path.of("config", "dynamic_economy");
+        for (String bad : List.of("../server.properties", "exports/../../x.csv", "/etc/passwd", "C:/x.csv", "C:x.csv",
+                "\\\\server\\share\\x.csv", "exports\\..\\..\\x.csv", "")) {
+            try {
+                CatalogImport.resolveInside(root, bad);
+                throw new GameTestAssertException("accepted \"" + bad + "\"");
+            } catch (IllegalArgumentException expected) {
+                // Rejected, as it should be.
+            }
+        }
+        Path ok = CatalogImport.resolveInside(root, "exports/2026-10-23_09-30-00/items.csv");
+        helper.assertTrue(ok.startsWith(root.toAbsolutePath().normalize()), "a normal path resolves inside the folder");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void unpricedEntriesAreSkipped(GameTestHelper helper) {
+        JsonElement file = JsonParser.parseString("""
+                { "defaults": { "base_price": 0 },
+                  "entries": [
+                    { "item": "minecraft:stone" },
+                    { "item": "minecraft:dirt", "base_price": -3 },
+                    { "item": "minecraft:sand", "base_price": 4 }
+                  ] }""");
+        Map<Item, CatalogEntry> parsed = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "unpriced"), file));
+        helper.assertValueEqual(parsed.keySet(), java.util.Set.of(Items.SAND), "only the priced entry loads");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void higherPriorityPackWins(GameTestHelper helper) {
+        JsonElement cheap = JsonParser.parseString("{ \"entries\": [ { \"item\": \"minecraft:iron_ingot\", \"base_price\": 10 } ] }");
+        JsonElement dear = JsonParser.parseString("{ \"entries\": [ { \"item\": \"minecraft:iron_ingot\", \"base_price\": 20 } ] }");
+        // The world pack's file sorts first by name but must still win over the mod's built-in file.
+        Map<Item, CatalogEntry> parsed = MarketCatalog.parse(List.of(
+                new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("dynamic_economy", "test_catalog"), 0, "mod_data", cheap),
+                new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("dynamic_economy", "imported_minecraft"), 1, "file/x", dear)));
+        helper.assertValueEqual(parsed.get(Items.IRON_INGOT).basePrice(), 20, "higher pack wins");
+        Map<Item, CatalogEntry> samePack = MarketCatalog.parse(List.of(
+                new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("x", "b"), 0, "p", cheap),
+                new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("x", "a"), 0, "p", dear)));
+        helper.assertValueEqual(samePack.get(Items.IRON_INGOT).basePrice(), 10, "within a pack, the file sorting last wins");
+        helper.succeed();
+    }
+
+    // ---- Price history ----------------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void historyKeepsOnePointPerIntervalAndIsCapped(GameTestHelper helper) {
+        MarketStockData data = new MarketStockData();
+        ResourceLocation stone = ResourceLocation.withDefaultNamespace("stone");
+        int interval = 1200;
+        data.recordHistory(stone, 1.0, 0, interval);
+        helper.assertValueEqual(data.history(stone).size(), 0, "an item at base price keeps no history");
+        data.recordHistory(stone, 0.9, 0, interval);
+        data.recordHistory(stone, 0.8, 10, interval);
+        helper.assertValueEqual(data.history(stone).size(), 1, "same interval replaces the point");
+        helper.assertValueEqual(data.history(stone).factors()[0], 0.8f, "with the newer value");
+        data.recordHistory(stone, 0.8, 1300, interval);
+        helper.assertValueEqual(data.history(stone).size(), 1, "an unchanged value adds nothing");
+        for (int i = 0; i < 100; i++) {
+            data.recordHistory(stone, 0.5 + i * 0.001, 2400L + i * interval, interval);
+        }
+        MarketStockData.History history = data.history(stone);
+        helper.assertValueEqual(history.size(), MarketStockData.HISTORY_CAP, "capped");
+        helper.assertValueEqual(history.ticks()[history.size() - 1], 2400L + 99L * interval, "newest kept");
+
+        data.setStock(stone, 42);
+        data.setFactor(stone, 0.75, 5000);
+        MarketStockData reloaded = MarketStockData.fromTag(data.save(new CompoundTag(), helper.getLevel().registryAccess()),
+                helper.getLevel().registryAccess());
+        helper.assertValueEqual(reloaded.getStock(stone), 42L, "stock saved");
+        helper.assertValueEqual(reloaded.factorsView().get(stone), new MarketStockData.Factor(0.75, 5000), "factor saved");
+        helper.assertTrue(java.util.Arrays.equals(reloaded.history(stone).ticks(), history.ticks())
+                && java.util.Arrays.equals(reloaded.history(stone).factors(), history.factors()), "history saved");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void tradesAddToPriceHistory(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        ResourceLocation iron = BuiltInRegistries.ITEM.getKey(Items.IRON_INGOT);
+        f.giveMany(Items.IRON_INGOT, 100);
+        f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 100, ANY_PRICE), Result.OK);
+        MarketStockData.History history = f.market.history(iron);
+        helper.assertTrue(history.size() > 0, "a sale adds a point");
+        helper.assertValueEqual(history.factors()[history.size() - 1], (float) f.factor(Items.IRON_INGOT), "latest point is the factor now");
+        helper.succeed();
     }
 
     // ---- Fixture ------------------------------------------------------------------------------------------------

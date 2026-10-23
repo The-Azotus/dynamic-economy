@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,9 +22,11 @@ import java.util.Map;
  */
 public final class MarketStockData extends SavedData {
     public static final String ID = "dynamic_economy_market";
-    private static final int FORMAT_VERSION = 2;
+    private static final int FORMAT_VERSION = 3;
     private static final SavedData.Factory<MarketStockData> FACTORY =
-            new SavedData.Factory<>(MarketStockData::new, MarketStockData::load, null);
+            new SavedData.Factory<>(MarketStockData::new, MarketStockData::fromTag, null);
+    /** Most points kept per item. At one point per recovery interval that is about an hour at the default. */
+    public static final int HISTORY_CAP = 64;
 
     /** A factor as last written. Absent from the map means 1.0. */
     public record Factor(double value, long lastTick) {
@@ -31,6 +34,17 @@ public final class MarketStockData extends SavedData {
 
     private final Map<ResourceLocation, Long> stock = new HashMap<>();
     private final Map<ResourceLocation, Factor> factors = new HashMap<>();
+    private final Map<ResourceLocation, History> history = new HashMap<>();
+
+    /**
+     * Recent factor values for one item, oldest first, at most {@link #HISTORY_CAP}. Each point is the factor from
+     * that game tick until the next point; the last one holds until now.
+     */
+    public record History(long[] ticks, float[] factors) {
+        public int size() {
+            return ticks.length;
+        }
+    }
 
     public static MarketStockData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(FACTORY, ID);
@@ -92,6 +106,50 @@ public final class MarketStockData extends SavedData {
         return count;
     }
 
+    /**
+     * Adds a history point, keeping at most one per recovery interval: a newer value in the same interval replaces the
+     * last point, and an unchanged value adds nothing. Items that never left 1.0 keep no history at all.
+     */
+    public void recordHistory(ResourceLocation item, double factor, long now, int intervalTicks) {
+        History old = history.get(item);
+        float value = (float) factor;
+        if (old == null) {
+            if (factor == 1.0) {
+                return;
+            }
+            history.put(item, new History(new long[] {now}, new float[] {value}));
+            setDirty();
+            return;
+        }
+        int last = old.size() - 1;
+        if (old.factors()[last] == value) {
+            return;
+        }
+        long[] ticks;
+        float[] values;
+        if (Math.floorDiv(old.ticks()[last], intervalTicks) == Math.floorDiv(now, intervalTicks)) {
+            ticks = old.ticks().clone();
+            values = old.factors().clone();
+            ticks[last] = now;
+            values[last] = value;
+        } else {
+            int keep = Math.min(old.size(), HISTORY_CAP - 1);
+            ticks = new long[keep + 1];
+            values = new float[keep + 1];
+            System.arraycopy(old.ticks(), old.size() - keep, ticks, 0, keep);
+            System.arraycopy(old.factors(), old.size() - keep, values, 0, keep);
+            ticks[keep] = now;
+            values[keep] = value;
+        }
+        history.put(item, new History(ticks, values));
+        setDirty();
+    }
+
+    /** An item's history, or an empty one. */
+    public History history(ResourceLocation item) {
+        return history.getOrDefault(item, new History(new long[0], new float[0]));
+    }
+
     public Map<ResourceLocation, Factor> factorsView() {
         return Collections.unmodifiableMap(factors);
     }
@@ -108,7 +166,8 @@ public final class MarketStockData extends SavedData {
         }
     }
 
-    private static MarketStockData load(CompoundTag tag, HolderLookup.Provider registries) {
+    /** Reads saved data. Public so tests can check that a save reads back unchanged. */
+    public static MarketStockData fromTag(CompoundTag tag, HolderLookup.Provider registries) {
         MarketStockData data = new MarketStockData();
         CompoundTag stockTag = tag.getCompound("stock");
         for (String key : stockTag.getAllKeys()) {
@@ -125,6 +184,22 @@ public final class MarketStockData extends SavedData {
             double value = entry.getDouble("s");
             if (id != null && value > 0 && Double.isFinite(value)) {
                 data.factors.put(id, new Factor(value, entry.getLong("t")));
+            }
+        }
+        // Absent before Phase 5 saves.
+        CompoundTag historyTag = tag.getCompound("history");
+        for (String key : historyTag.getAllKeys()) {
+            ResourceLocation id = ResourceLocation.tryParse(key);
+            CompoundTag entry = historyTag.getCompound(key);
+            long[] ticks = entry.getLongArray("t");
+            int[] bits = entry.getIntArray("s");
+            if (id != null && ticks.length == bits.length && ticks.length > 0) {
+                int keep = Math.min(ticks.length, HISTORY_CAP);
+                float[] values = new float[keep];
+                for (int i = 0; i < keep; i++) {
+                    values[i] = Float.intBitsToFloat(bits[ticks.length - keep + i]);
+                }
+                data.history.put(id, new History(Arrays.copyOfRange(ticks, ticks.length - keep, ticks.length), values));
             }
         }
         return data;
@@ -144,6 +219,18 @@ public final class MarketStockData extends SavedData {
         tag.putInt("version", FORMAT_VERSION);
         tag.put("stock", stockTag);
         tag.put("factors", factorTag);
+        CompoundTag historyTag = new CompoundTag();
+        history.forEach((id, points) -> {
+            CompoundTag entry = new CompoundTag();
+            entry.putLongArray("t", points.ticks());
+            int[] bits = new int[points.size()];
+            for (int i = 0; i < bits.length; i++) {
+                bits[i] = Float.floatToIntBits(points.factors()[i]);
+            }
+            entry.putIntArray("s", bits);
+            historyTag.put(id.toString(), entry);
+        });
+        tag.put("history", historyTag);
         return tag;
     }
 }

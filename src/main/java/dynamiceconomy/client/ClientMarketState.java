@@ -7,6 +7,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -23,6 +25,8 @@ public final class ClientMarketState {
     private static Component status = Component.empty();
     private static boolean statusIsError;
     private static int version;
+    @Nullable
+    private static MarketPayloads.History history;
 
     private ClientMarketState() {
     }
@@ -65,7 +69,20 @@ public final class ClientMarketState {
         version++;
     }
 
+    /** Only the most recently requested item's history is kept: the screen shows one at a time. */
+    public static void applyHistory(MarketPayloads.History received) {
+        history = received;
+        version++;
+    }
+
+    /** The history for {@code item}, if that's the one last received. */
+    @Nullable
+    public static MarketPayloads.History history(ResourceLocation item) {
+        return history != null && history.item().equals(item) ? history : null;
+    }
+
     public static void clear() {
+        history = null;
         rows.clear();
         held = Map.of();
         balance = 0;

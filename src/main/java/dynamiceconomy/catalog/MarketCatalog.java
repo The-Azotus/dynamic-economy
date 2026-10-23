@@ -1,44 +1,53 @@
 package dynamiceconomy.catalog;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dynamiceconomy.DynamicEconomy;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
-import java.util.function.Consumer;
 
 /**
  * Item listings loaded from {@code data/<namespace>/market/*.json}. Each file holds an {@code entries} array and may
  * hold a {@code defaults} object whose fields apply to every entry in that file unless the entry sets them itself.
- * A bad entry is logged and skipped without discarding the rest of its file. If two files list the same item,
- * the file whose ID sorts last wins.
+ * <p>
+ * A bad entry is logged and skipped without discarding the rest of its file; entries with {@code base_price} ≤ 0
+ * (unfilled templates) are skipped with one summary warning. If several files list the same item, the file from the
+ * higher-priority datapack wins, as with any datapack override; within one pack, the file whose ID sorts last wins.
  */
-public final class MarketCatalog extends SimpleJsonResourceReloadListener {
-    private static final Gson GSON = new GsonBuilder().create();
+public final class MarketCatalog extends SimplePreparableReloadListener<List<MarketCatalog.SourceFile>> {
     public static final MarketCatalog INSTANCE = new MarketCatalog();
+    private static final FileToIdConverter FILES = FileToIdConverter.json("market");
+
+    /** One market file as read from a pack. Higher {@code packOrder} means higher priority. */
+    public record SourceFile(ResourceLocation id, int packOrder, String packId, JsonElement json) {
+    }
 
     private volatile Map<Item, CatalogEntry> entries = Map.of();
 
     private MarketCatalog() {
-        super(GSON, "market");
     }
 
     public Optional<CatalogEntry> get(Item item) {
@@ -66,44 +75,94 @@ public final class MarketCatalog extends SimpleJsonResourceReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected List<SourceFile> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+        Map<String, Integer> packOrder = new HashMap<>();
+        List<PackResources> packs = resourceManager.listPacks().toList();
+        for (int i = 0; i < packs.size(); i++) {
+            packOrder.put(packs.get(i).packId(), i);
+        }
+        List<SourceFile> files = new ArrayList<>();
+        for (Map.Entry<ResourceLocation, Resource> found : FILES.listMatchingResources(resourceManager).entrySet()) {
+            ResourceLocation id = FILES.fileToId(found.getKey());
+            Resource resource = found.getValue();
+            try (Reader reader = resource.openAsReader()) {
+                files.add(new SourceFile(id, packOrder.getOrDefault(resource.sourcePackId(), -1), resource.sourcePackId(),
+                        JsonParser.parseReader(reader)));
+            } catch (Exception e) {
+                DynamicEconomy.LOGGER.error("Market file {} in pack {} could not be read; skipped", id, resource.sourcePackId(), e);
+            }
+        }
+        return files;
+    }
+
+    @Override
+    protected void apply(List<SourceFile> files, ResourceManager resourceManager, ProfilerFiller profiler) {
         entries = parse(files);
         DynamicEconomy.LOGGER.info("Loaded {} market catalog entries from {} files", entries.size(), files.size());
     }
 
-    /** Turns market files (keyed by file ID) into listings. Pure: logs problems but changes no state. */
+    /** Parses files that all come from one pack, keyed by file ID. Pure: logs problems but changes no state. */
     public static Map<Item, CatalogEntry> parse(Map<ResourceLocation, JsonElement> files) {
+        List<SourceFile> list = new ArrayList<>();
+        files.forEach((id, json) -> list.add(new SourceFile(id, 0, "test", json)));
+        return parse(list);
+    }
+
+    /** Turns market files into listings, lowest priority first so higher packs override. Pure apart from logging. */
+    public static Map<Item, CatalogEntry> parse(List<SourceFile> files) {
+        List<SourceFile> ordered = new ArrayList<>(files);
+        ordered.sort(Comparator.comparingInt(SourceFile::packOrder).thenComparing(SourceFile::id));
         Map<Item, CatalogEntry> loaded = new LinkedHashMap<>();
-        for (Map.Entry<ResourceLocation, JsonElement> file : new TreeMap<>(files).entrySet()) {
-            loadFile(file.getKey(), file.getValue(), loaded);
+        Map<Item, SourceFile> origin = new HashMap<>();
+        int unpriced = 0;
+        for (SourceFile file : ordered) {
+            unpriced += loadFile(file, loaded, origin);
+        }
+        if (unpriced > 0) {
+            DynamicEconomy.LOGGER.warn("{} unpriced market entries (base_price 0 or below) skipped", unpriced);
         }
         return Collections.unmodifiableMap(loaded);
     }
 
     /**
-     * The value only if decoding had no error at all. {@code resultOrPartial} would hand back a partial result, e.g.
-     * an entry with an out-of-range optional field silently replaced by its default.
+     * Decodes one entry, already merged with its file's defaults, using exactly the loader's rules. The importer uses
+     * this too, so a CSV row is accepted only if the same entry would load from a catalog file.
      */
-    @Nullable
-    private static <T> T strict(DataResult<T> result, Consumer<String> onError) {
-        if (result.error().isPresent()) {
-            onError.accept(result.error().get().message());
-            return null;
+    public static DataResult<CatalogEntry> decode(JsonObject entry) {
+        DataResult<CatalogEntry.Raw> raw = CatalogEntry.Raw.CODEC.parse(JsonOps.INSTANCE, entry);
+        if (raw.error().isPresent()) {
+            return DataResult.error(raw.error().get().messageSupplier());
         }
-        return result.result().orElse(null);
+        CatalogEntry.Raw value = raw.result().orElseThrow();
+        Optional<Item> item = BuiltInRegistries.ITEM.getOptional(value.item());
+        if (item.isEmpty() || item.get() == Items.AIR) {
+            return DataResult.error(() -> "unknown item " + value.item());
+        }
+        DataResult<CatalogEntry> resolved = value.resolve(item.get());
+        // Strict: never accept a partial result, e.g. an out-of-range optional field replaced by its default.
+        return resolved.error().isPresent() ? DataResult.error(resolved.error().get().messageSupplier()) : resolved;
     }
 
-    private static void loadFile(ResourceLocation fileId, JsonElement json, Map<Item, CatalogEntry> into) {
-        if (!(json instanceof JsonObject obj) || !obj.has("entries") || !obj.get("entries").isJsonArray()) {
+    /** Whether an entry's base_price is present but not positive: an unfilled template entry. */
+    public static boolean isUnpriced(JsonObject entry) {
+        JsonElement price = entry.get("base_price");
+        return price != null && price.isJsonPrimitive() && price.getAsJsonPrimitive().isNumber()
+                && price.getAsDouble() <= 0;
+    }
+
+    /** Loads one file's entries into {@code into}; returns how many were skipped as unpriced. */
+    private static int loadFile(SourceFile file, Map<Item, CatalogEntry> into, Map<Item, SourceFile> origin) {
+        ResourceLocation fileId = file.id();
+        if (!(file.json() instanceof JsonObject obj) || !obj.has("entries") || !obj.get("entries").isJsonArray()) {
             DynamicEconomy.LOGGER.error("Market file {} must be an object with an \"entries\" array; skipped", fileId);
-            return;
+            return 0;
         }
         JsonObject defaults = new JsonObject();
         if (obj.has("defaults")) {
             if (!obj.get("defaults").isJsonObject()) {
                 // Skipping is safer than guessing: the entries would otherwise trade at unintended prices.
                 DynamicEconomy.LOGGER.error("Market file {}: \"defaults\" must be an object; file skipped", fileId);
-                return;
+                return 0;
             }
             defaults = obj.getAsJsonObject("defaults").deepCopy();
             if (defaults.remove("item") != null) {
@@ -111,6 +170,7 @@ public final class MarketCatalog extends SimpleJsonResourceReloadListener {
             }
         }
 
+        int unpriced = 0;
         int index = 0;
         for (JsonElement element : obj.getAsJsonArray("entries")) {
             int i = index++;
@@ -120,26 +180,29 @@ public final class MarketCatalog extends SimpleJsonResourceReloadListener {
             }
             JsonObject merged = defaults.deepCopy();
             element.getAsJsonObject().entrySet().forEach(field -> merged.add(field.getKey(), field.getValue()));
+            if (isUnpriced(merged)) {
+                unpriced++;
+                continue;
+            }
 
-            CatalogEntry.Raw raw = strict(CatalogEntry.Raw.CODEC.parse(JsonOps.INSTANCE, merged),
-                    err -> DynamicEconomy.LOGGER.error("Market file {} entry {}: {}; skipped", fileId, i, err));
-            if (raw == null) {
+            DataResult<CatalogEntry> decoded = decode(merged);
+            if (decoded.error().isPresent()) {
+                DynamicEconomy.LOGGER.warn("Market file {} entry {}: {}; skipped", fileId, i, decoded.error().get().message());
                 continue;
             }
-            Optional<Item> item = BuiltInRegistries.ITEM.getOptional(raw.item());
-            if (item.isEmpty() || item.get() == Items.AIR) {
-                DynamicEconomy.LOGGER.warn("Market file {} entry {}: unknown item {}; skipped", fileId, i, raw.item());
-                continue;
-            }
-            CatalogEntry entry = strict(raw.resolve(item.get()),
-                    err -> DynamicEconomy.LOGGER.warn("Market file {} entry {} ({}): {}; skipped", fileId, i, raw.item(), err));
-            if (entry == null) {
-                continue;
-            }
-            CatalogEntry previous = into.put(item.get(), entry);
-            if (previous != null) {
-                DynamicEconomy.LOGGER.warn("Market file {} overrides an earlier listing of {}", fileId, raw.item());
+            CatalogEntry entry = decoded.result().orElseThrow();
+            CatalogEntry previous = into.put(entry.item(), entry);
+            SourceFile previousFile = origin.put(entry.item(), file);
+            if (previous != null && previousFile != null) {
+                if (previousFile.packOrder() == file.packOrder()) {
+                    DynamicEconomy.LOGGER.warn("Market file {} overrides {} listed earlier in {} of the same pack",
+                            fileId, entry.itemId(), previousFile.id());
+                } else {
+                    DynamicEconomy.LOGGER.debug("Market file {} (pack {}) overrides {} from {} (pack {})",
+                            fileId, file.packId(), entry.itemId(), previousFile.id(), previousFile.packId());
+                }
             }
         }
+        return unpriced;
     }
 }

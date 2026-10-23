@@ -9,6 +9,7 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketNetwork;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
@@ -36,7 +37,12 @@ public final class DynamicEconomy {
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(MarketCatalog.INSTANCE));
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 MarketCommand.register(event.getDispatcher(), event.getBuildContext()));
-        NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> MarketSync.tick(event.getServer()));
+        NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> {
+            if (MarketStockData.now(event.getServer()) % MarketConfig.intervalTicks() == 0) {
+                MarketService.sampleHistory(event.getServer());
+            }
+            MarketSync.tick(event.getServer());
+        });
 
         // Seed start_stock for newly listed items once the world is up, and again after every /reload.
         NeoForge.EVENT_BUS.addListener((ServerStartedEvent event) -> {

@@ -21,7 +21,7 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 3 — GUI and sync | Done |
 | 3.5 — Unlimited stock | Done |
 | 4 — Supply-and-demand pricing | Done |
-| **5 — Pack integration and polish** | **Next** |
+| 5 — Pack integration and polish | Done |
 | 6 — Optional extensions | Only if asked |
 
 **First task in a new session:** read the existing code, compare it with Phases 0–3 below, and report any gaps or differences before starting Phase 3.5. Don't fix gaps silently.
@@ -159,12 +159,28 @@ Done when:
 
 ## Phase 5 — Pack integration and polish (to do)
 
-- Write a catalog-generation helper (command or script) that exports every item ID in the loaded modlist to a template file, so prices can be filled in by hand.
+- **Item export command.** Don't ask for the modlist: build an in-game exporter that reads the live item registry (`BuiltInRegistries.ITEM`), so it works in any modpack.
+  - `/market admin export [modid]`, permission 4 (server owner or console), since it writes files to disk. With `modid`, export only that mod's items.
+  - Writes to `config/dynamic_economy/exports/<yyyy-MM-dd_HH-mm-ss>/`, never into the live catalog folder, and never overwrites an earlier export.
+  - `items.csv`: one row per item with `item_id, mod_id, display_name, max_stack_size, in_catalog, base_price, unlimited_stock, markup, min_buy_markup, sell_fee, can_sell, can_buy, start_stock, dynamic`. Existing catalog values are filled in; anything unset is left blank. Skip `minecraft:air`.
+  - `templates/<modid>.json`: one catalog file per mod, in the catalog format above, containing only items **not** already in the catalog, each with `base_price: 0`.
+  - The catalog loader must skip entries with `base_price` ≤ 0 and log one summary warning ("N unpriced entries skipped"), so a half-filled template can be dropped in safely.
+  - Reply in chat with the export path and counts (total items, already priced, new).
+- **CSV import command.** Pricing happens in a spreadsheet, so the edited CSV must turn back into catalog files.
+  - `/market admin import <path-to-csv> [preview]`, permission 4. Paths are relative to `config/dynamic_economy/` and must stay inside it (reject `..` and absolute paths).
+  - Parse robustly: header row in any column order, unknown columns ignored, quoted fields (display names can contain commas), a UTF-8 BOM, and comma **or** semicolon delimiters (some spreadsheet locales save with semicolons).
+  - Per row: skip rows with a blank `base_price`. Reject, and list in the report, rows whose item ID isn't in the registry, whose price isn't a positive integer, or whose values break catalog rules (e.g. bad `min_buy_markup`). Blank optional columns fall back to catalog defaults.
+  - `preview` validates and reports counts (to write, skipped blank, rejected with reasons) without writing anything.
+  - Otherwise write one catalog file per mod, `imported_<modid>.json`, into a world datapack at `<world>/datapacks/dynamic_economy_catalog/data/dynamic_economy/market/`, creating the pack and its `pack.mcmeta` if missing. Before replacing an existing file, copy it to `<name>.json.bak`.
+  - If the pack was just created, enable it, or tell the admin the exact `/datapack enable` command if enabling isn't possible at runtime. Then reload the catalog the same way `/market admin reload` does.
+  - Importing never changes saved stock or price factors `s`.
+  - Round-trip test: export → import the unchanged CSV produces catalog entries identical to what was exported.
+- Hand-editing the JSON templates stays supported. The CSV route is optional.
 - Config validation: log clear warnings for unknown item IDs, negative prices, `floor > ceiling`, etc., and skip bad entries rather than crashing.
 - A per-item price history view in the GUI (a simple line of recent prices), stored compactly in `SavedData` with a cap on entries. Must be original code; don't copy Stock Market's.
 - Write `docs/catalog-guide.md` explaining every catalog field and config option for the server admin.
 
-Done when: the pack's real catalog loads with no warnings, and a playtest server runs a session without errors in the log.
+Done when: the export command runs in the full pack and its counts match the item registry; a priced CSV imports, reloads and shows correct prices in the GUI; the round-trip test passes; the pack's real catalog loads with no warnings, and a playtest server runs a session without errors in the log.
 
 ## Phase 6 — Optional extensions (only if asked)
 

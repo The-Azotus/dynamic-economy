@@ -207,6 +207,22 @@ public final class MarketService {
                                      long now) {
         if (entry.dynamic() && order.factorAfter() != before) {
             market.setFactor(entry.itemId(), order.factorAfter(), now);
+            market.recordHistory(entry.itemId(), order.factorAfter(), now, MarketConfig.intervalTicks());
+        }
+    }
+
+    /**
+     * Adds the current factor of every dynamic listed item to its price history. Called at each recovery step, so the
+     * history shows recovery as well as trades.
+     */
+    public static void sampleHistory(MinecraftServer server) {
+        MarketStockData market = MarketStockData.get(server);
+        long now = MarketStockData.now(server);
+        int interval = MarketConfig.intervalTicks();
+        for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
+            if (entry.dynamic()) {
+                market.recordHistory(entry.itemId(), currentFactor(entry, PriceModel.inputs(entry), market, now), now, interval);
+            }
         }
     }
 

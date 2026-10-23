@@ -160,6 +160,54 @@ public final class MarketPayloads {
         }
     }
 
+    /** Client to server: send me this item's price history (the screen asks when an item is selected). */
+    public record HistoryRequest(ResourceLocation item) implements CustomPacketPayload {
+        public static final Type<HistoryRequest> TYPE = payloadType("history_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, HistoryRequest> CODEC = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC, HistoryRequest::item,
+                HistoryRequest::new);
+
+        @Override
+        public Type<HistoryRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * Server to client: an item's recent price factors, oldest first. Each point holds from its tick until the next;
+     * the last holds until {@code now}, the server's game time when this was sent.
+     */
+    public record History(ResourceLocation item, long now, long[] ticks, float[] factors) implements CustomPacketPayload {
+        public static final Type<History> TYPE = payloadType("history");
+        public static final StreamCodec<RegistryFriendlyByteBuf, History> CODEC = StreamCodec.of(
+                (buf, history) -> {
+                    ResourceLocation.STREAM_CODEC.encode(buf, history.item());
+                    buf.writeVarLong(history.now());
+                    buf.writeVarInt(history.ticks().length);
+                    for (int i = 0; i < history.ticks().length; i++) {
+                        buf.writeVarLong(history.ticks()[i]);
+                        buf.writeFloat(history.factors()[i]);
+                    }
+                },
+                buf -> {
+                    ResourceLocation item = ResourceLocation.STREAM_CODEC.decode(buf);
+                    long now = buf.readVarLong();
+                    int count = Math.min(buf.readVarInt(), 1024);
+                    long[] ticks = new long[count];
+                    float[] factors = new float[count];
+                    for (int i = 0; i < count; i++) {
+                        ticks[i] = buf.readVarLong();
+                        factors[i] = buf.readFloat();
+                    }
+                    return new History(item, now, ticks, factors);
+                });
+
+        @Override
+        public Type<History> type() {
+            return TYPE;
+        }
+    }
+
     /** Server to client: the outcome of this player's last trade request. */
     public record TradeOutcome(boolean buy, ResourceLocation item, MarketService.Result result, int quantity, long total)
             implements CustomPacketPayload {

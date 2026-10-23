@@ -119,6 +119,15 @@ public final class MarketSync {
         sendPlayerState(player);
     }
 
+    static void handleHistoryRequest(MarketPayloads.HistoryRequest request, ServerPlayer player) {
+        if (!(player.containerMenu instanceof MarketMenu)) {
+            return;
+        }
+        MarketStockData.History history = MarketStockData.get(player.server).history(request.item());
+        PacketDistributor.sendToPlayer(player, new MarketPayloads.History(request.item(), MarketStockData.now(player.server),
+                history.ticks(), history.factors()));
+    }
+
     private static MarketPayloads.Snapshot snapshot(MinecraftServer server) {
         List<MarketPayloads.Row> rows = new ArrayList<>();
         for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {

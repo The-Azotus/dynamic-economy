@@ -48,6 +48,12 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private static final int TEXT_GOOD = 0x6EE07A;
     private static final int TEXT_BAD = 0xFF6B6B;
     private static final int TEXT_MONEY = 0xF2C94C;
+    // The price history line, beside the selected item's name.
+    private static final int CHART_X = 150;
+    private static final int CHART_WIDTH = 118;
+    private static final int CHART_HEIGHT = 16;
+    /** Shortest time span the line covers, so a fresh history isn't squeezed into one point (4 minutes). */
+    private static final long MIN_CHART_TICKS = 4800;
     /** How far the price factor must be from 1.0 before the row shows a trend arrow. */
     private static final double TREND_THRESHOLD = 0.005;
 
@@ -62,6 +68,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private int scroll;
     @Nullable
     private ResourceLocation selected;
+    /** The item and factor the last history request was for, so a price change triggers a fresh request. */
+    @Nullable
+    private ResourceLocation historyFor;
+    private double historyFactor = Double.NaN;
+    private int ticksSinceHistoryRequest;
 
     public MarketScreen(MarketMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -114,6 +125,22 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             rebuildList(query);
         }
         refreshButtons();
+        requestHistoryIfStale();
+    }
+
+    /** Asks for the selected item's history when the selection or its price changed, at most twice a second. */
+    private void requestHistoryIfStale() {
+        ticksSinceHistoryRequest++;
+        MarketPayloads.Row row = selectedRow();
+        if (row == null || ticksSinceHistoryRequest < 10) {
+            return;
+        }
+        if (!row.item().equals(historyFor) || row.factor() != historyFactor) {
+            historyFor = row.item();
+            historyFactor = row.factor();
+            ticksSinceHistoryRequest = 0;
+            PacketDistributor.sendToServer(new MarketPayloads.HistoryRequest(row.item()));
+        }
     }
 
     private void rebuildList(String query) {
@@ -265,7 +292,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
         int index = rowAt(mouseX, mouseY);
-        if (index >= 0) {
+        MarketPayloads.Row chartRow = selectedRow();
+        if (chartRow != null && isOverChart(mouseX, mouseY)) {
+            graphics.renderTooltip(font, chartTooltip(chartRow), Optional.empty(), mouseX, mouseY);
+        } else if (index >= 0) {
             graphics.renderTooltip(font, tooltip(visible.get(index)), Optional.empty(), mouseX, mouseY);
         }
     }
@@ -305,7 +335,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int selectedY = y + 172;
         if (row != null) {
             graphics.renderItem(stack(row), x + 8, selectedY);
-            graphics.drawString(font, displayName(row), x + 28, selectedY + 4, TEXT, false);
+            graphics.drawString(font, font.plainSubstrByWidth(displayName(row), CHART_X - 32), x + 28, selectedY + 4, TEXT, false);
+            renderHistory(graphics, row, x + CHART_X, selectedY);
         } else {
             graphics.drawString(font, Component.translatable("screen.dynamic_economy.select_hint"), x + 8, selectedY + 4, TEXT_DIM, false);
         }
@@ -338,6 +369,94 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         } else if (row.factor() < 1 - TREND_THRESHOLD) {
             graphics.drawString(font, "▼", x, y, TEXT_GOOD, false);
         }
+    }
+
+    /**
+     * The selected item's recent price factor as a line: points hold until the next one, the last until now. The
+     * dim line marks the base price (factor 1.0).
+     */
+    private void renderHistory(GuiGraphics graphics, MarketPayloads.Row row, int left, int top) {
+        graphics.fill(left, top, left + CHART_WIDTH, top + CHART_HEIGHT, 0x30000000);
+        HistoryLine line = historyLine(row);
+        int base = chartY(1.0, line, top);
+        for (int x = 0; x < CHART_WIDTH; x += 2) {
+            graphics.fill(left + x, base, left + x + 1, base + 1, 0x50FFFFFF);
+        }
+        int previous = -1;
+        for (int x = 0; x < CHART_WIDTH; x++) {
+            long tick = line.start + (line.end - line.start) * x / (CHART_WIDTH - 1);
+            int y = chartY(line.valueAt(tick), line, top);
+            int from = previous < 0 ? y : Math.min(previous, y);
+            int to = previous < 0 ? y : Math.max(previous, y);
+            // Text colours have no alpha byte; fill() needs one or the line is transparent.
+            graphics.fill(left + x, from, left + x + 1, to + 1, 0xFF000000 | TEXT_MONEY);
+            previous = y;
+        }
+    }
+
+    /** A history plus the current factor, with the window and vertical range to draw it in. */
+    private record HistoryLine(long[] ticks, float[] values, long start, long end, double low, double high) {
+        double valueAt(long tick) {
+            double value = values[0];
+            for (int i = 0; i < ticks.length && ticks[i] <= tick; i++) {
+                value = values[i];
+            }
+            return value;
+        }
+    }
+
+    private static HistoryLine historyLine(MarketPayloads.Row row) {
+        MarketPayloads.History history = ClientMarketState.history(row.item());
+        long now = history != null ? history.now() : 0;
+        int count = history == null ? 0 : history.ticks().length;
+        long[] ticks = new long[count + 1];
+        float[] values = new float[count + 1];
+        if (count > 0) {
+            System.arraycopy(history.ticks(), 0, ticks, 0, count);
+            System.arraycopy(history.factors(), 0, values, 0, count);
+        }
+        // The row's factor is the freshest value; it holds from the last point until now.
+        ticks[count] = Math.max(now, count > 0 ? ticks[count - 1] : now);
+        values[count] = (float) row.factor();
+        long start = Math.min(ticks[0], now - MIN_CHART_TICKS);
+        double low = 1.0;
+        double high = 1.0;
+        for (float value : values) {
+            low = Math.min(low, value);
+            high = Math.max(high, value);
+        }
+        double pad = Math.max(0.01, (high - low) * 0.1);
+        return new HistoryLine(ticks, values, start, Math.max(now, start + 1), low - pad, high + pad);
+    }
+
+    private static int chartY(double value, HistoryLine line, int top) {
+        double fraction = (value - line.low()) / (line.high() - line.low());
+        return top + CHART_HEIGHT - 1 - (int) Math.round(Mth.clamp(fraction, 0, 1) * (CHART_HEIGHT - 1));
+    }
+
+    private boolean isOverChart(double mouseX, double mouseY) {
+        double x = mouseX - leftPos - CHART_X;
+        double y = mouseY - topPos - 172;
+        return selectedRow() != null && x >= 0 && x < CHART_WIDTH && y >= 0 && y < CHART_HEIGHT;
+    }
+
+    private List<Component> chartTooltip(MarketPayloads.Row row) {
+        HistoryLine line = historyLine(row);
+        long minutes = Math.max(1, (line.end() - line.start()) / 1200);
+        double low = Double.MAX_VALUE;
+        double high = -Double.MAX_VALUE;
+        for (float value : line.values()) {
+            low = Math.min(low, value);
+            high = Math.max(high, value);
+        }
+        return List.of(
+                Component.translatable("screen.dynamic_economy.history.title", minutes),
+                Component.translatable("screen.dynamic_economy.history.range", percent(low), percent(high)).withColor(TEXT_DIM),
+                Component.translatable("screen.dynamic_economy.history.now", percent(row.factor())).withColor(TEXT_MONEY));
+    }
+
+    private static String percent(double factor) {
+        return String.format(Locale.ROOT, "%.1f%%", factor * 100);
     }
 
     private void renderScrollbar(GuiGraphics graphics, int x, int y) {
