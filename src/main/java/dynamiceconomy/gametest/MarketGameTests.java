@@ -15,8 +15,11 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.io.CatalogExport;
 import dynamiceconomy.io.CatalogImport;
 import dynamiceconomy.io.Csv;
+import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.OrderMath;
 import dynamiceconomy.service.MarketService.Result;
 import dynamiceconomy.service.MarketService.TradeResult;
 import dynamiceconomy.service.PriceModel;
@@ -1376,7 +1379,7 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = EMPTY)
-    public static void heldCountsMatchPerItemCounting(GameTestHelper helper) {
+    public static void playerStateMatchesTheServerChecks(GameTestHelper helper) {
         Fixture f = new Fixture(helper);
         f.giveMany(Items.IRON_INGOT, 70);
         f.give(new ItemStack(Items.DIAMOND, 3));
@@ -1393,8 +1396,104 @@ public final class MarketGameTests {
                 expected.put(entry.itemId(), (int) count);
             }
         }
-        helper.assertValueEqual(MarketSync.heldCounts(f.player), expected, "one pass over the inventory counts the same");
+        MarketPayloads.PlayerState state = MarketSync.playerState(f.player);
+        helper.assertValueEqual(state.held(), expected, "one pass over the inventory counts the same");
         helper.assertValueEqual(expected.get(key(Items.DIAMOND)), 3, "the renamed diamonds don't count");
+        helper.assertValueEqual(state.emptySlots(), 36 - 6, "36 slots, 6 used");
+        // The room the screen works out must be exactly what a purchase checks, or Max would suggest failing orders.
+        for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
+            helper.assertValueEqual(state.room(entry.itemId(), new ItemStack(entry.item()).getMaxStackSize()),
+                    MarketService.spaceFor(f.player.getInventory().items, entry), "room for " + entry.itemId());
+        }
+        helper.succeed();
+    }
+
+    // ---- Player usability (Phase 7) ---------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void maxBuyRespectsEveryLimitAndItsQuantityTrades(GameTestHelper helper) {
+        PriceModel.Inputs iron = PriceModel.inputs(MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow());
+        PriceModel.Inputs cobble = PriceModel.inputs(MarketCatalog.INSTANCE.get(Items.COBBLESTONE).orElseThrow());
+        helper.assertValueEqual(OrderMath.maxBuy(iron, 1.0, 1_000_000, OptionalLong.of(5), 10_000, 640), 5, "stock limits");
+        helper.assertValueEqual(OrderMath.maxBuy(iron, 1.0, 1_000_000, OptionalLong.of(5_000), 70, 640), 70, "room limits");
+        helper.assertValueEqual(OrderMath.maxBuy(iron, 1.0, 1_000_000, OptionalLong.of(5_000), 10_000, 640), 640, "order limit");
+        helper.assertValueEqual(OrderMath.maxBuy(iron, 1.0, 23, OptionalLong.of(5_000), 10_000, 640), 0, "can't afford one at 24");
+        helper.assertValueEqual(OrderMath.maxBuy(cobble, 1.0, 1_000_000, OptionalLong.empty(), 10_000, 640), 640,
+                "unlimited stock isn't a limit");
+        helper.assertValueEqual(OrderMath.maxBuy(iron, 1.0, 1_000_000, OptionalLong.of(0), 10_000, 640), 0, "out of stock");
+        // With money the limit, Max is the largest order the balance covers at its true total, not balance ÷ price.
+        for (double factor : List.of(1.0, 0.5, 3.0)) {
+            for (long balance : List.of(24L, 1_000L, 7_777L, 15_000L)) {
+                int max = OrderMath.maxBuy(iron, factor, balance, OptionalLong.of(5_000), 10_000, 640);
+                helper.assertTrue(max == 0 || PriceModel.buy(iron, factor, max).total() <= balance, "max " + max + " is affordable");
+                helper.assertTrue(max == 640 || PriceModel.buy(iron, factor, max + 1).total() > balance, "one more isn't: " + max);
+            }
+        }
+        helper.assertValueEqual(OrderMath.sellAll(1_000, 640), 640, "all is capped at the order limit");
+        helper.assertValueEqual(OrderMath.sellAll(12, 640), 12, "all held");
+        helper.assertValueEqual(OrderMath.sellAll(0, 640), 0, "none held");
+
+        // What Max suggests goes through the real purchase; one more is refused.
+        Fixture f = new Fixture(helper);
+        f.setStock(Items.IRON_INGOT, 5_000);
+        f.deposit(2_000);
+        MarketPayloads.PlayerState state = MarketSync.playerState(f.player);
+        MarketService.Quote quote = f.quote(Items.IRON_INGOT);
+        int max = OrderMath.maxBuy(quote.inputs(), quote.factor(), state.balance(), quote.stock(),
+                state.room(key(Items.IRON_INGOT), 64), MarketConfig.maxQuantityPerRequest());
+        long cost = PriceModel.buy(quote.inputs(), quote.factor(), max).total();
+        f.assertRejectedUnchanged(Result.NO_FUNDS, () -> MarketService.tryBuy(f.player, Items.IRON_INGOT, max + 1, ANY_PRICE));
+        f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, max, OptionalLong.of(cost)), Result.OK);
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void shownUnitPricesRoundToTheTradedPrice(GameTestHelper helper) {
+        for (Item item : List.of(Items.COBBLESTONE, Items.IRON_INGOT, Items.DIAMOND, Items.NETHER_STAR)) {
+            PriceModel.Inputs in = PriceModel.inputs(MarketCatalog.INSTANCE.get(item).orElseThrow());
+            for (double factor : List.of(0.2, 0.37, 0.9995, 1.0, 1.7, 5.0)) {
+                double s = in.unlimited() ? Math.min(1.0, factor) : factor;
+                helper.assertValueEqual(PriceModel.exactUnitSellPrice(in, s).setScale(0, RoundingMode.FLOOR).longValueExact(),
+                        PriceModel.unitSellPrice(in, s), "sell " + item + " at " + s);
+                helper.assertValueEqual(PriceModel.exactUnitBuyPrice(in, s).setScale(0, RoundingMode.CEILING).longValueExact(),
+                        PriceModel.unitBuyPrice(in, s), "buy " + item + " at " + s);
+            }
+        }
+        PriceModel.Inputs cobble = PriceModel.inputs(MarketCatalog.INSTANCE.get(Items.COBBLESTONE).orElseThrow());
+        helper.assertTrue(PriceModel.exactUnitSellPrice(cobble, 0.9995).signum() > 0,
+                "a cheap item below base still shows a price above 0");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void listSortsAndFiltersWithoutTouchingTheMarket(GameTestHelper helper) {
+        PriceModel.Inputs cheap = inputs(2, 0.5, 0.0, false);
+        PriceModel.Inputs dear = inputs(100, 0.5, 0.0, false);
+        MarketPayloads.Row apple = new MarketPayloads.Row(ResourceLocation.withDefaultNamespace("apple"), true, true,
+                OptionalLong.of(0), cheap, 1.0);
+        MarketPayloads.Row bread = new MarketPayloads.Row(ResourceLocation.withDefaultNamespace("bread"), true, false,
+                OptionalLong.of(50), dear, 1.0);
+        MarketPayloads.Row cake = new MarketPayloads.Row(ResourceLocation.withDefaultNamespace("cake"), false, true,
+                OptionalLong.empty(), dear, 0.5);
+        List<MarketPayloads.Row> rows = List.of(cake, bread, apple);
+        java.util.function.Function<MarketPayloads.Row, String> name = row -> row.item().getPath();
+
+        java.util.function.BiFunction<MarketListing.Sort, MarketListing.Filter, List<String>> view = (sort, filter) ->
+                rows.stream().filter(row -> MarketListing.shows(filter, row, row == bread ? 3 : 0))
+                        .sorted(MarketListing.order(sort, name)).map(name).toList();
+        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.ALL), List.of("apple", "bread", "cake"), "by name");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.CHEAPEST, MarketListing.Filter.ALL), List.of("apple", "cake", "bread"),
+                "cheapest first; bread can't be bought so it goes last");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.BEST_PAYOUT, MarketListing.Filter.ALL), List.of("bread", "apple", "cake"),
+                "best payout first; cake can't be sold so it goes last");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.STOCK, MarketListing.Filter.ALL), List.of("cake", "bread", "apple"),
+                "unlimited first, then most stock");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.CAN_BUY), List.of("cake"),
+                "buyable means sold and in stock");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.CAN_SELL), List.of("apple", "bread"), "sellable");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.HELD), List.of("bread"), "held");
+        helper.assertValueEqual(MarketListing.Sort.STOCK.next(), MarketListing.Sort.NAME, "sorts cycle");
+        helper.assertValueEqual(MarketListing.Filter.HELD.next(), MarketListing.Filter.ALL, "filters cycle");
         helper.succeed();
     }
 

@@ -145,7 +145,7 @@ public final class MarketSync {
         for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
             row(server, entry.item()).ifPresent(rows::add);
         }
-        return new MarketPayloads.Snapshot(rows);
+        return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest());
     }
 
     private static Optional<MarketPayloads.Row> row(MinecraftServer server, Item item) {
@@ -153,23 +153,26 @@ public final class MarketSync {
                 q.entry().itemId(), q.entry().canSell(), q.entry().canBuy(), q.stock(), q.inputs(), q.factor()));
     }
 
-    private static MarketPayloads.PlayerState playerState(ServerPlayer player) {
-        int balance = NumismaticsBridge.account(player).map(NumismaticsBridge.Account::balance).orElse(0);
-        return new MarketPayloads.PlayerState(balance, heldCounts(player));
-    }
-
     /**
-     * How many sellable copies of each listed item the player holds in their main inventory. One pass over the
-     * inventory, so the cost doesn't grow with the size of the catalog.
+     * The player's balance and main inventory as the market sees it: sellable copies of each listed item, empty slots,
+     * and the room left in stacks of each listed item, counted exactly as {@code MarketService} counts space for a
+     * purchase. One pass over the inventory, so the cost doesn't grow with the size of the catalog.
      */
-    public static Map<ResourceLocation, Integer> heldCounts(ServerPlayer player) {
+    public static MarketPayloads.PlayerState playerState(ServerPlayer player) {
+        int balance = NumismaticsBridge.account(player).map(NumismaticsBridge.Account::balance).orElse(0);
         Map<ResourceLocation, Integer> held = new HashMap<>();
+        Map<ResourceLocation, Integer> stackRoom = new HashMap<>();
+        int emptySlots = 0;
         for (ItemStack stack : player.getInventory().items) {
-            if (!stack.isEmpty()) {
-                MarketCatalog.INSTANCE.get(stack.getItem()).filter(entry -> entry.matches(stack))
-                        .ifPresent(entry -> held.merge(entry.itemId(), stack.getCount(), Integer::sum));
+            if (stack.isEmpty()) {
+                emptySlots++;
+                continue;
             }
+            MarketCatalog.INSTANCE.get(stack.getItem()).filter(entry -> entry.matches(stack)).ifPresent(entry -> {
+                held.merge(entry.itemId(), stack.getCount(), Integer::sum);
+                stackRoom.merge(entry.itemId(), Math.max(0, stack.getMaxStackSize() - stack.getCount()), Integer::sum);
+            });
         }
-        return held;
+        return new MarketPayloads.PlayerState(balance, held, emptySlots, stackRoom);
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,16 @@ public final class MarketPayloads {
             return PriceModel.unitBuyPrice(inputs, factor);
         }
 
+        /** What the market pays for the next unit, unrounded, so cheap items don't show as 0. Display only. */
+        public BigDecimal exactSellPrice() {
+            return PriceModel.exactUnitSellPrice(inputs, factor);
+        }
+
+        /** What the market charges for the next unit, unrounded. Display only. */
+        public BigDecimal exactBuyPrice() {
+            return PriceModel.exactUnitBuyPrice(inputs, factor);
+        }
+
         /** The exact total the server will pay for selling {@code qty}. */
         public long sellTotal(int qty) {
             return PriceModel.sell(inputs, factor, qty).total();
@@ -117,11 +128,15 @@ public final class MarketPayloads {
         }
     }
 
-    /** Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes. */
-    public record Snapshot(List<Row> rows) implements CustomPacketPayload {
+    /**
+     * Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes, with
+     * the server's order limit so the screen can stop an oversized order before it is sent.
+     */
+    public record Snapshot(List<Row> rows, int maxQuantity) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
         public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.composite(
                 Row.CODEC.apply(ByteBufCodecs.list()), Snapshot::rows,
+                ByteBufCodecs.VAR_INT, Snapshot::maxQuantity,
                 Snapshot::new);
 
         @Override
@@ -144,15 +159,24 @@ public final class MarketPayloads {
     }
 
     /**
-     * Server to client: this player's balance and how many tradeable copies of each listed item they hold. The client
-     * cannot work this out itself: vanilla does not sync the inventory while a slotless menu is open.
+     * Server to client: this player's balance, how many tradeable copies of each listed item they hold, and how much
+     * room their main inventory has (empty slots, plus the space left in stacks of each held item). The client cannot
+     * work this out itself: vanilla does not sync the inventory while a slotless menu is open.
      */
-    public record PlayerState(int balance, Map<ResourceLocation, Integer> held) implements CustomPacketPayload {
+    public record PlayerState(int balance, Map<ResourceLocation, Integer> held, int emptySlots,
+                              Map<ResourceLocation, Integer> stackRoom) implements CustomPacketPayload {
         public static final Type<PlayerState> TYPE = payloadType("player_state");
         public static final StreamCodec<RegistryFriendlyByteBuf, PlayerState> CODEC = StreamCodec.composite(
                 ByteBufCodecs.VAR_INT, PlayerState::balance,
                 ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::held,
+                ByteBufCodecs.VAR_INT, PlayerState::emptySlots,
+                ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::stackRoom,
                 PlayerState::new);
+
+        /** Room for {@code item}, counted the way the server's purchase check counts it. */
+        public long room(ResourceLocation item, int maxStackSize) {
+            return (long) emptySlots * maxStackSize + stackRoom.getOrDefault(item, 0);
+        }
 
         @Override
         public Type<PlayerState> type() {

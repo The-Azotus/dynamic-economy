@@ -2,6 +2,8 @@ package dynamiceconomy.client;
 
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketPayloads;
+import dynamiceconomy.service.MarketListing;
+import dynamiceconomy.service.OrderMath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -17,13 +19,16 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-/** The market catalog: a searchable list of items with stock and prices, and buy/sell controls for the selection. */
+/**
+ * The market catalog: a searchable, sortable list of items with stock and prices, and buy/sell controls for the
+ * selection. Everything here is a hint; the server re-checks every trade.
+ */
 public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private static final int LIST_X = 8;
     private static final int LIST_Y = 46;
@@ -31,6 +36,13 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private static final int ROW_HEIGHT = 18;
     private static final int VISIBLE_ROWS = 7;
     private static final int SCROLLBAR_X = LIST_X + LIST_WIDTH + 2;
+    // Rows below the list: the selected item, the quantity controls, the trade buttons, the status line.
+    private static final int SELECTED_Y = 174;
+    private static final int CONTROLS_Y = 194;
+    private static final int TRADE_Y = 214;
+    private static final int STATUS_Y = 236;
+    /** Where the quantity note starts, right of the All button. */
+    private static final int NOTE_X = 144;
 
     // Right edges of the numeric columns, relative to the panel.
     private static final int COL_STOCK = 146;
@@ -57,14 +69,21 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     /** How far the price factor must be from 1.0 before the row shows a trend arrow. */
     private static final double TREND_THRESHOLD = 0.005;
 
+    // Kept while the game runs, so the list looks the same the next time the market opens.
+    private static MarketListing.Sort sort = MarketListing.Sort.NAME;
+    private static MarketListing.Filter filter = MarketListing.Filter.ALL;
+
     private EditBox search;
     private EditBox quantity;
+    private Button sortButton;
+    private Button filterButton;
     private Button buyButton;
     private Button sellButton;
 
     private final List<MarketPayloads.Row> visible = new ArrayList<>();
     private int seenVersion = -1;
     private String seenQuery = "";
+    private boolean listDirty = true;
     private int scroll;
     @Nullable
     private ResourceLocation selected;
@@ -74,10 +93,21 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private double historyFactor = Double.NaN;
     private int ticksSinceHistoryRequest;
 
+    /** A short explanation under the quantity, set by All and Max; it lasts until the quantity changes. */
+    private Component quantityNote = Component.empty();
+    private int quantityNoteFor = -1;
+
+    // Order totals for the current row and quantity. Each unit moves the price, so they cost more than a multiply.
+    @Nullable
+    private MarketPayloads.Row totalsRow;
+    private int totalsQty = -1;
+    private long buyTotal;
+    private long sellTotal;
+
     public MarketScreen(MarketMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth = 276;
-        this.imageHeight = 228;
+        this.imageHeight = 248;
     }
 
     @Override
@@ -86,30 +116,50 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int x = leftPos;
         int y = topPos;
 
-        search = new EditBox(font, x + LIST_X, y + 18, LIST_WIDTH + 8, 14, Component.translatable("screen.dynamic_economy.search"));
+        search = new EditBox(font, x + LIST_X, y + 18, 148, 14, Component.translatable("screen.dynamic_economy.search"));
         search.setHint(Component.translatable("screen.dynamic_economy.search").withColor(TEXT_DIM));
         search.setMaxLength(50);
         addRenderableWidget(search);
+        sortButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
+            sort = sort.next();
+            listDirty = true;
+            updateListButtons();
+        }).bounds(x + 160, y + 17, 54, 16).build());
+        filterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
+            filter = filter.next();
+            listDirty = true;
+            updateListButtons();
+        }).bounds(x + 216, y + 17, 52, 16).build());
+        updateListButtons();
 
         addRenderableWidget(Button.builder(Component.literal("-"), b -> adjustQuantity(-step()))
-                .bounds(x + 8, y + 192, 16, 18)
+                .bounds(x + 8, y + CONTROLS_Y, 16, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.step_hint")))
                 .build());
-        quantity = new EditBox(font, x + 26, y + 194, 40, 14, Component.translatable("screen.dynamic_economy.quantity"));
-        quantity.setFilter(s -> s.isEmpty() || (s.length() <= 5 && s.chars().allMatch(Character::isDigit)));
+        quantity = new EditBox(font, x + 26, y + CONTROLS_Y + 2, 40, 14, Component.translatable("screen.dynamic_economy.quantity"));
+        quantity.setFilter(s -> s.isEmpty() || (s.length() <= 7 && s.chars().allMatch(Character::isDigit)));
         quantity.setValue("1");
         addRenderableWidget(quantity);
         addRenderableWidget(Button.builder(Component.literal("+"), b -> adjustQuantity(step()))
-                .bounds(x + 68, y + 192, 16, 18)
+                .bounds(x + 68, y + CONTROLS_Y, 16, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.step_hint")))
+                .build());
+        addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.max"), b -> fillMaxBuy())
+                .bounds(x + 86, y + CONTROLS_Y, 28, 18)
+                .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.max.tooltip")))
+                .build());
+        addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.all"), b -> fillSellAll())
+                .bounds(x + 116, y + CONTROLS_Y, 24, 18)
+                .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.all.tooltip")))
                 .build());
 
         buyButton = addRenderableWidget(Button.builder(Component.empty(), b -> trade(true))
-                .bounds(x + 90, y + 192, 88, 18).build());
+                .bounds(x + 8, y + TRADE_Y, 129, 18).build());
         sellButton = addRenderableWidget(Button.builder(Component.empty(), b -> trade(false))
-                .bounds(x + 180, y + 192, 88, 18).build());
+                .bounds(x + 139, y + TRADE_Y, 129, 18).build());
 
         seenVersion = -1;
+        totalsRow = null;
         refreshButtons();
     }
 
@@ -119,7 +169,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     protected void containerTick() {
         super.containerTick();
         String query = search.getValue().trim().toLowerCase(Locale.ROOT);
-        if (seenVersion != ClientMarketState.version() || !query.equals(seenQuery)) {
+        if (listDirty || seenVersion != ClientMarketState.version() || !query.equals(seenQuery)) {
+            listDirty = false;
             seenVersion = ClientMarketState.version();
             seenQuery = query;
             rebuildList(query);
@@ -146,12 +197,21 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private void rebuildList(String query) {
         visible.clear();
         for (MarketPayloads.Row row : ClientMarketState.rows().values()) {
-            if (matches(row, query)) {
+            if (matches(row, query) && MarketListing.shows(filter, row, ClientMarketState.held(row.item()))) {
                 visible.add(row);
             }
         }
-        visible.sort(Comparator.comparing(MarketScreen::displayName, String.CASE_INSENSITIVE_ORDER));
+        visible.sort(MarketListing.order(sort, MarketScreen::displayName));
         scroll = Mth.clamp(scroll, 0, maxScroll());
+    }
+
+    private void updateListButtons() {
+        String sortKey = sort.name().toLowerCase(Locale.ROOT);
+        sortButton.setMessage(Component.translatable("screen.dynamic_economy.sort." + sortKey));
+        sortButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.sort." + sortKey + ".tooltip")));
+        String filterKey = filter.name().toLowerCase(Locale.ROOT);
+        filterButton.setMessage(Component.translatable("screen.dynamic_economy.filter." + filterKey));
+        filterButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.filter." + filterKey + ".tooltip")));
     }
 
     /**
@@ -186,41 +246,119 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     }
 
     private void adjustQuantity(int delta) {
-        quantity.setValue(String.valueOf(Mth.clamp(quantityValue() + delta, 1, 99_999)));
+        setQuantity(Mth.clamp(quantityValue() + delta, 1, ClientMarketState.maxQuantity()), Component.empty());
+    }
+
+    private void setQuantity(int value, Component note) {
+        quantity.setValue(String.valueOf(value));
+        quantityNote = note;
+        quantityNoteFor = value;
+    }
+
+    /** "Max": as many as the balance, stock, inventory room and order limit allow, priced the way the server will. */
+    private void fillMaxBuy() {
+        MarketPayloads.Row row = selectedRow();
+        if (row == null) {
+            return;
+        }
+        if (!row.canBuy()) {
+            quantityNote = Component.translatable("screen.dynamic_economy.note.not_sold");
+            quantityNoteFor = quantityValue();
+            return;
+        }
+        int limit = ClientMarketState.maxQuantity();
+        long room = ClientMarketState.room(row.item(), stack(row).getMaxStackSize());
+        long balance = ClientMarketState.balance();
+        int best = OrderMath.maxBuy(row.inputs(), row.factor(), balance, row.stock(), room, limit);
+        if (best == 0) {
+            String reason = !row.hasStock(1) ? "none_stock" : room < 1 ? "none_room" : "none_afford";
+            quantityNote = Component.translatable("screen.dynamic_economy.note." + reason);
+            quantityNoteFor = quantityValue();
+            return;
+        }
+        // Say which limit stopped it, checking the hard limits before money.
+        String reason = best == limit ? "max_limit"
+                : row.stock().isPresent() && best == row.stock().getAsLong() ? "max_stock"
+                : best == room ? "max_room"
+                : "max_afford";
+        setQuantity(best, Component.translatable("screen.dynamic_economy.note." + reason, PriceFormat.spurs(limit)));
+    }
+
+    /** "All": every copy held, up to the order limit. */
+    private void fillSellAll() {
+        MarketPayloads.Row row = selectedRow();
+        if (row == null) {
+            return;
+        }
+        int held = ClientMarketState.held(row.item());
+        if (!row.canSell() || held == 0) {
+            quantityNote = Component.translatable(!row.canSell() ? "screen.dynamic_economy.note.not_bought"
+                    : "screen.dynamic_economy.note.none_held");
+            quantityNoteFor = quantityValue();
+            return;
+        }
+        int limit = ClientMarketState.maxQuantity();
+        int amount = OrderMath.sellAll(held, limit);
+        setQuantity(amount, held > limit
+                ? Component.translatable("screen.dynamic_economy.note.capped", PriceFormat.spurs(amount), PriceFormat.spurs(held))
+                : Component.empty());
     }
 
     /** Client-side hints only; the server re-checks everything and replies with the real outcome. */
     private void refreshButtons() {
         MarketPayloads.Row row = selectedRow();
         int qty = quantityValue();
-        if (row == null || qty <= 0) {
+        if (qty != quantityNoteFor) {
+            quantityNote = Component.empty();
+        }
+        if (row == null || qty <= 0 || qty > ClientMarketState.maxQuantity()) {
             buyButton.setMessage(Component.translatable("screen.dynamic_economy.buy"));
             sellButton.setMessage(Component.translatable("screen.dynamic_economy.sell"));
+            buyButton.setTooltip(null);
+            sellButton.setTooltip(null);
             buyButton.active = false;
             sellButton.active = false;
+            totalsRow = null; // So the totals and their tooltips are rebuilt when the order is valid again.
             return;
         }
-        // Each unit moves the price, so totals come from the same model the server uses, not unit price × qty.
-        long buyTotal = row.buyTotal(qty);
-        long sellTotal = row.sellTotal(qty);
+        if (row != totalsRow || qty != totalsQty) {
+            // Each unit moves the price, so totals come from the same model the server uses, not unit price × qty.
+            totalsRow = row;
+            totalsQty = qty;
+            buyTotal = row.buyTotal(qty);
+            sellTotal = row.sellTotal(qty);
+            buyButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.average",
+                    PriceFormat.decimal(OrderMath.average(buyTotal, qty)))));
+            sellButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.average",
+                    PriceFormat.decimal(OrderMath.average(sellTotal, qty)))));
+        }
         buyButton.setMessage(row.canBuy()
-                ? Component.translatable("screen.dynamic_economy.buy_for", formatSpurs(buyTotal))
+                ? Component.translatable("screen.dynamic_economy.buy_for", PriceFormat.spurs(buyTotal))
                 : Component.translatable("screen.dynamic_economy.buy"));
         sellButton.setMessage(row.canSell()
-                ? Component.translatable("screen.dynamic_economy.sell_for", formatSpurs(sellTotal))
+                ? Component.translatable("screen.dynamic_economy.sell_for", PriceFormat.spurs(sellTotal))
                 : Component.translatable("screen.dynamic_economy.sell"));
-        buyButton.active = row.canBuy() && row.hasStock(qty) && ClientMarketState.balance() >= buyTotal;
+        buyButton.active = row.canBuy() && row.hasStock(qty) && ClientMarketState.looksAffordable(buyTotal)
+                && ClientMarketState.room(row.item(), stack(row).getMaxStackSize()) >= qty;
         sellButton.active = row.canSell() && ClientMarketState.held(row.item()) >= qty;
+        if (!row.canBuy()) {
+            buyButton.setTooltip(null);
+        }
+        if (!row.canSell()) {
+            sellButton.setTooltip(null);
+        }
     }
 
     private void trade(boolean buy) {
         MarketPayloads.Row row = selectedRow();
         int qty = quantityValue();
-        if (row == null || qty <= 0) {
+        if (row == null || qty <= 0 || qty > ClientMarketState.maxQuantity()) {
             return;
         }
-        long quotedTotal = buy ? row.buyTotal(qty) : row.sellTotal(qty);
-        PacketDistributor.sendToServer(new MarketPayloads.TradeRequest(buy, row.item(), qty, quotedTotal));
+        MarketPayloads.TradeRequest request = new MarketPayloads.TradeRequest(buy, row.item(), qty,
+                buy ? row.buyTotal(qty) : row.sellTotal(qty));
+        ClientMarketState.sent(request);
+        PacketDistributor.sendToServer(request);
     }
 
     @Override
@@ -332,7 +470,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         renderScrollbar(graphics, x, y);
 
         MarketPayloads.Row row = selectedRow();
-        int selectedY = y + 172;
+        int selectedY = y + SELECTED_Y;
         if (row != null) {
             graphics.renderItem(stack(row), x + 8, selectedY);
             graphics.drawString(font, font.plainSubstrByWidth(displayName(row), CHART_X - 32), x + 28, selectedY + 4, TEXT, false);
@@ -340,6 +478,23 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         } else {
             graphics.drawString(font, Component.translatable("screen.dynamic_economy.select_hint"), x + 8, selectedY + 4, TEXT_DIM, false);
         }
+        renderQuantityNote(graphics, x + NOTE_X, y + CONTROLS_Y + 5);
+    }
+
+    /** The note from All or Max, a warning when the quantity is over the order limit, or else the limit itself. */
+    private void renderQuantityNote(GuiGraphics graphics, int x, int y) {
+        int limit = ClientMarketState.maxQuantity();
+        Component text;
+        int color = TEXT_DIM;
+        if (quantityValue() > limit) {
+            text = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.spurs(limit));
+            color = TEXT_BAD;
+        } else if (!quantityNote.getString().isEmpty()) {
+            text = quantityNote;
+        } else {
+            text = Component.translatable("screen.dynamic_economy.note.limit", PriceFormat.spurs(limit));
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(text.getString(), imageWidth - 8 - NOTE_X), x, y, color, false);
     }
 
     private void renderRow(GuiGraphics graphics, MarketPayloads.Row row, int x, int rowY) {
@@ -352,14 +507,14 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             drawRight(graphics, Component.translatable("screen.dynamic_economy.unlimited_short"), x + COL_STOCK, textY, TEXT_GOOD);
         } else {
             long stock = row.stock().getAsLong();
-            drawRight(graphics, Component.literal(formatCount(stock)), x + COL_STOCK, textY, stock > 0 ? TEXT : TEXT_BAD);
+            drawRight(graphics, Component.literal(PriceFormat.count(stock)), x + COL_STOCK, textY, stock > 0 ? TEXT : TEXT_BAD);
         }
-        drawRight(graphics, Component.literal(row.canSell() ? formatCompact(row.sellPrice()) : "-"), x + COL_SELL, textY,
-                row.canSell() ? TEXT_GOOD : TEXT_DIM);
-        drawRight(graphics, Component.literal(row.canBuy() ? formatCompact(row.buyPrice()) : "-"), x + COL_BUY, textY,
-                row.canBuy() ? TEXT_MONEY : TEXT_DIM);
+        drawRight(graphics, Component.literal(row.canSell() ? PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR) : "-"),
+                x + COL_SELL, textY, row.canSell() ? TEXT_GOOD : TEXT_DIM);
+        drawRight(graphics, Component.literal(row.canBuy() ? PriceFormat.unitPrice(row.exactBuyPrice(), RoundingMode.CEILING) : "-"),
+                x + COL_BUY, textY, row.canBuy() ? TEXT_MONEY : TEXT_DIM);
         int held = ClientMarketState.held(row.item());
-        drawRight(graphics, Component.literal(formatCount(held)), x + COL_HAVE, textY, held > 0 ? TEXT : TEXT_DIM);
+        drawRight(graphics, Component.literal(PriceFormat.count(held)), x + COL_HAVE, textY, held > 0 ? TEXT : TEXT_DIM);
     }
 
     /** ▲ when the item trades above its base price, ▼ below; nothing within half a percent of it. */
@@ -436,7 +591,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     private boolean isOverChart(double mouseX, double mouseY) {
         double x = mouseX - leftPos - CHART_X;
-        double y = mouseY - topPos - 172;
+        double y = mouseY - topPos - SELECTED_Y;
         return selectedRow() != null && x >= 0 && x < CHART_WIDTH && y >= 0 && y < CHART_HEIGHT;
     }
 
@@ -473,11 +628,13 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
         graphics.drawString(font, title, 8, 6, TEXT, false);
-        drawRight(graphics, Component.translatable("screen.dynamic_economy.balance", formatSpurs(ClientMarketState.balance())),
+        int balance = ClientMarketState.balance();
+        drawRight(graphics, Component.translatable(balance >= ClientMarketState.DISPLAYED_BALANCE_CAP
+                        ? "screen.dynamic_economy.balance_capped" : "screen.dynamic_economy.balance", PriceFormat.spurs(balance)),
                 imageWidth - 8, 6, TEXT_MONEY);
         Component status = ClientMarketState.status();
         if (!status.getString().isEmpty()) {
-            graphics.drawString(font, font.plainSubstrByWidth(status.getString(), imageWidth - 16), 8, 214,
+            graphics.drawString(font, font.plainSubstrByWidth(status.getString(), imageWidth - 16), 8, STATUS_Y,
                     ClientMarketState.statusIsError() ? TEXT_BAD : TEXT_GOOD, false);
         }
     }
@@ -502,39 +659,17 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                     String.format(Locale.ROOT, "%.1f", row.factor() * 100)).withColor(row.factor() > 1 ? TEXT_BAD : TEXT_GOOD));
         }
         lines.add(row.canSell()
-                ? Component.translatable("screen.dynamic_economy.tooltip.sell", formatSpurs(row.sellPrice())).withColor(TEXT_GOOD)
+                ? Component.translatable("screen.dynamic_economy.tooltip.sell",
+                        PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR)).withColor(TEXT_GOOD)
                 : Component.translatable("screen.dynamic_economy.tooltip.sell_disabled").withColor(TEXT_DIM));
         lines.add(row.canBuy()
-                ? Component.translatable("screen.dynamic_economy.tooltip.buy", formatSpurs(row.buyPrice())).withColor(TEXT_MONEY)
+                ? Component.translatable("screen.dynamic_economy.tooltip.buy",
+                        PriceFormat.unitPrice(row.exactBuyPrice(), RoundingMode.CEILING)).withColor(TEXT_MONEY)
                 : Component.translatable("screen.dynamic_economy.tooltip.buy_disabled").withColor(TEXT_DIM));
         lines.add((row.unlimited()
                 ? Component.translatable("screen.dynamic_economy.tooltip.unlimited")
-                : Component.translatable("screen.dynamic_economy.tooltip.stock", formatSpurs(row.stock().getAsLong())))
+                : Component.translatable("screen.dynamic_economy.tooltip.stock", PriceFormat.spurs(row.stock().getAsLong())))
                 .withColor(TEXT_DIM));
         return lines;
-    }
-
-    private static String formatSpurs(long spurs) {
-        return String.format(Locale.ROOT, "%,d", spurs);
-    }
-
-    /** Full digits up to 99,999; abbreviated above that so the price columns keep their width. */
-    private static String formatCompact(long spurs) {
-        if (spurs < 100_000) {
-            return formatSpurs(spurs);
-        }
-        return spurs < 1_000_000
-                ? String.format(Locale.ROOT, "%.0fk", spurs / 1_000.0)
-                : String.format(Locale.ROOT, "%.2fM", spurs / 1_000_000.0);
-    }
-
-    private static String formatCount(long count) {
-        if (count >= 1_000_000) {
-            return String.format(Locale.ROOT, "%.1fM", count / 1_000_000.0);
-        }
-        if (count >= 10_000) {
-            return String.format(Locale.ROOT, "%.1fk", count / 1_000.0);
-        }
-        return String.valueOf(count);
     }
 }

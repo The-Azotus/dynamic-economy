@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
+import java.math.RoundingMode;
 import java.util.Locale;
 
 /**
@@ -29,19 +30,15 @@ public final class SellPriceTooltip {
         if (row == null || !row.canSell() || !ItemStack.isSameItemSameComponents(stack, new ItemStack(stack.getItem()))) {
             return;
         }
-        long each = row.sellPrice();
+        String each = PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR);
         Component line = stack.getCount() > 1
-                ? Component.translatable("tooltip.dynamic_economy.sell_price_stack", spurs(each),
-                spurs(row.sellTotal(stack.getCount())), stack.getCount())
-                : Component.translatable("tooltip.dynamic_economy.sell_price", spurs(each));
+                ? Component.translatable("tooltip.dynamic_economy.sell_price_stack", each,
+                PriceFormat.spurs(row.sellTotal(stack.getCount())), stack.getCount())
+                : Component.translatable("tooltip.dynamic_economy.sell_price", each);
         event.getToolTip().add(line.copy().withColor(GOLD));
         if (Math.abs(row.factor() - 1) > 0.005) {
             event.getToolTip().add(Component.translatable("tooltip.dynamic_economy.sell_price_trend",
                     String.format(Locale.ROOT, "%.0f", row.factor() * 100)).withColor(GREY));
         }
-    }
-
-    private static String spurs(long amount) {
-        return String.format(Locale.ROOT, "%,d", amount);
     }
 }

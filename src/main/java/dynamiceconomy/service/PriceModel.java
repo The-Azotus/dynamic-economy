@@ -103,6 +103,22 @@ public final class PriceModel {
         return order(sum.setScale(0, RoundingMode.CEILING), s);
     }
 
+    /** What the market pays for the next unit, before rounding. For display: orders are priced by {@link #sell}. */
+    public static BigDecimal exactUnitSellPrice(Inputs in, double factor) {
+        return BigDecimal.valueOf(in.basePrice()).multiply(BigDecimal.ONE.subtract(BigDecimal.valueOf(in.sellFee())))
+                .multiply(BigDecimal.valueOf(factor));
+    }
+
+    /** What the market charges for the next unit, before rounding. For display: orders are priced by {@link #buy}. */
+    public static BigDecimal exactUnitBuyPrice(Inputs in, double factor) {
+        BigDecimal base = BigDecimal.valueOf(in.basePrice());
+        BigDecimal markup = BigDecimal.ONE.add(BigDecimal.valueOf(in.markup()));
+        if (in.unlimited()) {
+            return base.multiply(BigDecimal.valueOf(factor).multiply(markup).max(BigDecimal.ONE.add(BigDecimal.valueOf(in.minBuyMarkup()))));
+        }
+        return base.multiply(markup).multiply(BigDecimal.valueOf(factor));
+    }
+
     /** What the market pays for one unit right now. */
     public static long unitSellPrice(Inputs in, double factor) {
         return sell(in, factor, 1).total();

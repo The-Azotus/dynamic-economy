@@ -310,7 +310,7 @@ public final class MarketService {
      * How many default copies of the item fit in the main inventory. Counted here rather than with
      * {@code Inventory.add}, which in creative mode reports success after deleting what did not fit.
      */
-    static long spaceFor(NonNullList<ItemStack> items, CatalogEntry entry) {
+    public static long spaceFor(NonNullList<ItemStack> items, CatalogEntry entry) {
         int maxStack = new ItemStack(entry.item()).getMaxStackSize();
         long space = 0;
         for (ItemStack stack : items) {

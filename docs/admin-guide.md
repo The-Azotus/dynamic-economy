@@ -191,7 +191,7 @@ The market has **no balance of its own**. It's a source and a sink, not a bank:
 
 `/market admin stats` shows the lifetime totals: money paid to sellers (created), money paid by buyers (removed), items moved each way, and the net amount the market has added to (or removed from) the economy, plus the five busiest items. `/market admin stats <item>` shows one item. Counting starts when a world first runs a version with this command; earlier trades aren't included. A steadily growing net means players are mostly selling, so money is piling up. Raise markups, add a `sell_fee`, or lower base prices of farmable items to slow it.
 
-**Cheap items get coarse.** Prices are whole spurs, so an item with a `base_price` of 1 or 2 has little room to move. A single unit sold below normal price rounds down to 0, though bulk orders still pay because the total is rounded only once. Give common items a base of 8 or 16 if you want their movements to show.
+**Cheap items get coarse.** Payments are whole spurs, so an item with a `base_price` of 1 or 2 has little room to move. A single unit sold below normal price rounds down to 0, though bulk orders still pay because the total is rounded only once. The screen and tooltips show such prices with decimals (e.g. *0.99*) so players can see what's happening. Give common items a base of 8 or 16 if you want their movements to show.
 
 ## Tooltips
 
