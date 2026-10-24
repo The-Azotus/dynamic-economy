@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -153,14 +154,22 @@ public final class MarketSync {
     }
 
     private static MarketPayloads.PlayerState playerState(ServerPlayer player) {
+        int balance = NumismaticsBridge.account(player).map(NumismaticsBridge.Account::balance).orElse(0);
+        return new MarketPayloads.PlayerState(balance, heldCounts(player));
+    }
+
+    /**
+     * How many sellable copies of each listed item the player holds in their main inventory. One pass over the
+     * inventory, so the cost doesn't grow with the size of the catalog.
+     */
+    public static Map<ResourceLocation, Integer> heldCounts(ServerPlayer player) {
         Map<ResourceLocation, Integer> held = new HashMap<>();
-        for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
-            long count = MarketService.heldCount(player, entry);
-            if (count > 0) {
-                held.put(entry.itemId(), (int) Math.min(count, Integer.MAX_VALUE));
+        for (ItemStack stack : player.getInventory().items) {
+            if (!stack.isEmpty()) {
+                MarketCatalog.INSTANCE.get(stack.getItem()).filter(entry -> entry.matches(stack))
+                        .ifPresent(entry -> held.merge(entry.itemId(), stack.getCount(), Integer::sum));
             }
         }
-        int balance = NumismaticsBridge.account(player).map(NumismaticsBridge.Account::balance).orElse(0);
-        return new MarketPayloads.PlayerState(balance, held);
+        return held;
     }
 }

@@ -45,10 +45,15 @@ public final class DynamicEconomy {
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 MarketCommand.register(event.getDispatcher(), event.getBuildContext()));
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> {
-            if (MarketStockData.now(event.getServer()) % MarketConfig.intervalTicks() == 0) {
+            boolean recoveryStep = MarketStockData.now(event.getServer()) % MarketConfig.intervalTicks() == 0;
+            if (recoveryStep) {
                 MarketService.sampleHistory(event.getServer());
             }
             MarketSync.tick(event.getServer());
+            if (recoveryStep) {
+                // After the sync, so players are sent the step that brought each item back to 1.0.
+                MarketService.pruneRecovered(event.getServer());
+            }
         });
 
         // Once the world is up its admin edits can be applied; again after every /reload, since tags may change.

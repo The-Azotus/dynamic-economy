@@ -44,7 +44,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 
@@ -94,6 +96,10 @@ public final class MarketCommand {
                                         .executes(MarketCommand::resetPrice)))
                         .then(Commands.literal("reload")
                                 .executes(MarketCommand::reload))
+                        .then(Commands.literal("stats")
+                                .executes(MarketCommand::stats)
+                                .then(Commands.argument("item", ItemArgument.item(context))
+                                        .executes(MarketCommand::itemStats)))
                         // Writing files on the server's disk is for the owner and console only.
                         .then(Commands.literal("export")
                                 .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
@@ -229,6 +235,42 @@ public final class MarketCommand {
         MarketSync.broadcastSnapshot(server);
         ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) to their base price".formatted(count)), true);
         return count;
+    }
+
+    private static final int TOP_ITEMS_SHOWN = 5;
+
+    /**
+     * Lifetime money flow. The market has no balance: payouts to sellers are new money and payments from buyers leave
+     * the economy, so the figures are "created" and "removed", never revenue.
+     */
+    private static int stats(CommandContext<CommandSourceStack> ctx) {
+        MarketStockData market = MarketStockData.get(ctx.getSource().getServer());
+        describeTotals(ctx.getSource(), "Market since counting began", market.totals());
+        List<Map.Entry<ResourceLocation, MarketStockData.Totals>> busiest = market.itemTotalsView().entrySet().stream()
+                .sorted(Comparator.comparingLong((Map.Entry<ResourceLocation, MarketStockData.Totals> e) ->
+                        e.getValue().paidOut() + e.getValue().collected()).reversed())
+                .limit(TOP_ITEMS_SHOWN).toList();
+        if (!busiest.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("Busiest items (by money moved):"), false);
+            busiest.forEach(e -> ctx.getSource().sendSuccess(() -> Component.literal("  %s: created %,d, removed %,d"
+                    .formatted(e.getKey(), e.getValue().paidOut(), e.getValue().collected())), false));
+        }
+        return 1;
+    }
+
+    private static int itemStats(CommandContext<CommandSourceStack> ctx) {
+        Item item = item(ctx);
+        describeTotals(ctx.getSource(), id(item).toString(), MarketStockData.get(ctx.getSource().getServer()).totals(id(item)));
+        return 1;
+    }
+
+    private static void describeTotals(CommandSourceStack source, String title, MarketStockData.Totals totals) {
+        long net = totals.netCreated();
+        List.of(title + ":",
+                "  Paid to sellers: %,d spurs for %,d items (new money)".formatted(totals.paidOut(), totals.unitsSold()),
+                "  Paid by buyers: %,d spurs for %,d items (removed from the economy)".formatted(totals.collected(), totals.unitsBought()),
+                "  Net: %s%,d spurs %s".formatted(net >= 0 ? "+" : "", net, net >= 0 ? "added to the economy" : "removed from the economy"))
+                .forEach(line -> source.sendSuccess(() -> Component.literal(line), false));
     }
 
     /** {@code config/dynamic_economy/}: the only folder export writes to and import reads from. */

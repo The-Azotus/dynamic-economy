@@ -22,9 +22,12 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 3.5 — Unlimited stock | Done |
 | 4 — Supply-and-demand pricing | Done |
 | 5 — Pack integration and polish | Done |
-| **6 — Terminal, access, admin editing, tooltips** | **In progress on `explore`** (`v0.1.0` on `main` is the stable version) |
+| 6 — Terminal, access, admin editing, tooltips | Built on `explore`; GameTests pass, manual playtest pending |
+| **7 — Integrity, usability, admin tooling** | **In progress on `phase7`** |
 
-**First task in a new session:** read the existing code, compare it with Phases 0–3 below, and report any gaps or differences before starting Phase 3.5. Don't fix gaps silently.
+Branches: `main` holds the stable `v0.1.0`; `explore` holds Phase 6; `phase7` branches from `explore`. Each has its own worktree folder next to this one (`git worktree list`).
+
+**First task in a new session:** read the existing code on the current branch, compare it with the in-progress phase below, and report any gaps or differences before continuing. Don't fix gaps silently.
 
 ## Decisions already made (don't revisit)
 
@@ -109,7 +112,7 @@ Done when each of these is rejected with the right result and changes nothing: u
 
 Done when: two clients see stock change within one tick of each other's trades; spam-clicking 100 times leaves totals that reconcile.
 
-## Phase 3.5 — Unlimited stock (next)
+## Phase 3.5 — Unlimited stock (done)
 
 Some items are common resources the market always sells, no matter how many have been sold to it.
 
@@ -130,7 +133,7 @@ Done when:
 - [ ] The GUI shows "Unlimited" on both a fresh open and after a reload.
 - [ ] GameTests cover the cases above.
 
-## Phase 4 — Supply-and-demand pricing (to do)
+## Phase 4 — Supply-and-demand pricing (done)
 
 Each item has a factor `s`, starting at 1.0 and persisted in `MarketStockData` with the game time it was last updated.
 
@@ -157,7 +160,7 @@ Done when:
 - [ ] After heavy selling of an unlimited-stock item, its buy price is still at least `base × (1 + min_buy_markup)` and above base price; with default config it hasn't changed at all.
 - [ ] Round-trip arbitrage on an unlimited-stock item never makes a profit.
 
-## Phase 5 — Pack integration and polish (to do)
+## Phase 5 — Pack integration and polish (done)
 
 - **Item export command.** Don't ask for the modlist: build an in-game exporter that reads the live item registry (`BuiltInRegistries.ITEM`), so it works in any modpack.
   - `/market admin export [modid]`, permission 4 (server owner or console), since it writes files to disk. With `modid`, export only that mod's items.
@@ -182,7 +185,7 @@ Done when:
 
 Done when: the export command runs in the full pack and its counts match the item registry; a priced CSV imports, reloads and shows correct prices in the GUI; the round-trip test passes; the pack's real catalog loads with no warnings, and a playtest server runs a session without errors in the log.
 
-## Phase 6 — Terminal, access, admin editing, tooltips (in progress, `explore` branch)
+## Phase 6 — Terminal, access, admin editing, tooltips (built, `explore` branch)
 
 Asked for after v0.1.0. Work happens on the `explore` branch (worktree `..\Economy Mod (explore)`); `main` holds v0.1.0 and only gets fixes.
 
@@ -196,6 +199,29 @@ Asked for after v0.1.0. Work happens on the `explore` branch (worktree `..\Econo
 Done when: terminal opens the market and closes at range; block-only mode stops `/market` for non-ops but terminals work; every admin edit command works, persists across restart and refuses rule-breaking edits; tag rules price all members with item edits winning; tooltips show correct sell prices; docs cover all of it; all GameTests pass.
 
 Still optional, only if asked: physical coin payment via `CoinItem.extract`; accepting held Numismatics bank cards; tag entries inside catalog JSON files.
+
+## Phase 7 — Integrity, usability, admin tooling (in progress, `phase7` branch)
+
+Priorities, in order: economic correctness, then player usability, then admin observability and recovery. Work in the stages below; each stage is one commit, ends with tests and a report, and waits for approval.
+
+**Out of scope:** selling from Create machines or other inventories, automated-trading policies or quotas, progression or quest systems, physical coins or bank cards, player-specific pricing, replacing the catalog architecture, GUI redesign beyond identified problems.
+
+**Decided:**
+- Admin actions go to an append-only, size-capped JSONL file in the world folder; recent player trades (capped per player) go in world save data.
+- The 5-item test catalog becomes a built-in datapack that is off by default. GameTests install their own catalog instead of relying on it.
+- Max Buy and Sell All only fill the quantity box; the trade still goes through the normal buttons and checks.
+- No quote reservations: a stale price is still rejected with `PRICE_CHANGED` and the refreshed total.
+- The market holds no balance. Sales create money, purchases destroy it, `sell_fee` reduces what is created. Statistics must say this, not call purchases "revenue".
+
+**Stage 1 — Economic integrity.** Boundary, overflow, sell-then-buy and anti-exploit-boundary tests; a test that every rejection changes nothing; constant-time pricing once `s` stops moving (exactly the same totals); single-pass held counts; drop fully recovered factors; lifetime money counters and `/market admin stats`; check reload with tag rules for spurious warnings.
+
+**Stage 2 — Player usability.** Server order limit sent to the client; inventory room in player state; Sell All / Max Buy; sort and filters; average unit price, % of base and limits in the selection; decimal unit prices for cheap items; clearer stale-price message.
+
+**Stage 3 — Catalog diagnostics.** Per-field source in `info`; `/market admin diagnose`; `preview` for tag rules and price resets; reset by tag; `prune` saved data for removed items; the optional example datapack.
+
+**Stage 4 — Audit and recovery.** Admin audit log with rotation and `/market admin audit`; per-player trade history in the screen; `backup` / `restore` of stock, prices and edits with validation, preview and confirm.
+
+Done when: every stage's tests pass alongside all earlier GameTests; saves from earlier versions load; docs cover each new command and the money model; manual checks (GUI layout, two clients, example pack on a real server) are listed in the report as manual.
 
 ## Report format (after every phase)
 

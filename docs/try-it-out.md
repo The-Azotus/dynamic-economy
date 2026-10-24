@@ -28,7 +28,7 @@ This is the Phase 0–5 version (`v0.1.0`). Everything here works in your pack w
 
 `docs/admin-guide.md` explains every column, the pricing maths and the config file (`config/dynamic_economy-server.toml`).
 
-To hide the five test items, set their `can_buy` and `can_sell` to `false` in the CSV and import again.
+To take the five test items off the market, run `/market admin remove <item>` for each (their stock is kept). Setting `can_buy` and `can_sell` to `false` stops trading but still shows them in the list.
 
 ## Worth noting while you play
 

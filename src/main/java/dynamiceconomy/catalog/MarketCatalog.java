@@ -85,10 +85,16 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
 
     /** Re-applies the current admin edits to the file entries, e.g. after tags changed. */
     public Map<ResourceLocation, String> rebuild() {
+        return rebuild(true);
+    }
+
+    private Map<ResourceLocation, String> rebuild(boolean report) {
         CatalogOverlay.Result result = CatalogOverlay.apply(fileEntries, overrides, CatalogOverlay::registryTag);
         entries = result.entries();
         problems = result.problems();
-        result.problems().values().forEach(problem -> DynamicEconomy.LOGGER.warn("Market admin edit not applied: {}", problem));
+        if (report) {
+            result.problems().values().forEach(problem -> DynamicEconomy.LOGGER.warn("Market admin edit not applied: {}", problem));
+        }
         return result.problems();
     }
 
@@ -132,7 +138,9 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
     @Override
     protected void apply(List<SourceFile> files, ResourceManager resourceManager, ProfilerFiller profiler) {
         fileEntries = parse(files);
-        rebuild();
+        // Tags are bound only after every reload listener has run, so tag rules here may still see the old tags.
+        // Build quietly; DynamicEconomy.catalogReloaded rebuilds and reports once tags are current.
+        rebuild(false);
         DynamicEconomy.LOGGER.info("Loaded {} market catalog entries from {} files", entries.size(), files.size());
     }
 

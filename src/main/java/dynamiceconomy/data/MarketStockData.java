@@ -17,12 +17,13 @@ import java.util.Map;
 /**
  * The market's shared state, saved with the overworld: stock per item, and each item's supply/demand factor with
  * the overworld game tick it was last written. Kept apart from the catalog so editing prices never touches it.
+ * It also counts the money and units that have gone through the market (see {@link Totals}).
  * Items dropped from the catalog keep their state in case they are listed again.
  * Only {@code MarketService} and admin commands should change it.
  */
 public final class MarketStockData extends SavedData {
     public static final String ID = "dynamic_economy_market";
-    private static final int FORMAT_VERSION = 3;
+    private static final int FORMAT_VERSION = 4;
     private static final SavedData.Factory<MarketStockData> FACTORY =
             new SavedData.Factory<>(MarketStockData::new, MarketStockData::fromTag, null);
     /** Most points kept per item. At one point per recovery interval that is about an hour at the default. */
@@ -35,6 +36,8 @@ public final class MarketStockData extends SavedData {
     private final Map<ResourceLocation, Long> stock = new HashMap<>();
     private final Map<ResourceLocation, Factor> factors = new HashMap<>();
     private final Map<ResourceLocation, History> history = new HashMap<>();
+    private Totals totals = Totals.ZERO;
+    private final Map<ResourceLocation, Totals> itemTotals = new HashMap<>();
 
     /**
      * Recent factor values for one item, oldest first, at most {@link #HISTORY_CAP}. Each point is the factor from
@@ -43,6 +46,42 @@ public final class MarketStockData extends SavedData {
     public record History(long[] ticks, float[] factors) {
         public int size() {
             return ticks.length;
+        }
+    }
+
+    /**
+     * Lifetime money and units through the market, in spurs. The market keeps no balance of its own: what it pays
+     * sellers is new money, and what buyers pay it leaves the economy. Counts saturate rather than overflow.
+     *
+     * @param paidOut   paid to players for items they sold (money created)
+     * @param collected paid by players for items they bought (money destroyed)
+     */
+    public record Totals(long paidOut, long collected, long unitsSold, long unitsBought) {
+        public static final Totals ZERO = new Totals(0, 0, 0, 0);
+
+        Totals plus(boolean buy, long qty, long total) {
+            return buy
+                    ? new Totals(paidOut, add(collected, total), unitsSold, add(unitsBought, qty))
+                    : new Totals(add(paidOut, total), collected, add(unitsSold, qty), unitsBought);
+        }
+
+        /** Money the market has added to the economy overall; negative when it has removed more than it created. */
+        public long netCreated() {
+            return paidOut - collected;
+        }
+
+        private static long add(long a, long b) {
+            long sum = a + b;
+            return sum < a ? Long.MAX_VALUE : sum;
+        }
+
+        long[] toArray() {
+            return new long[] {paidOut, collected, unitsSold, unitsBought};
+        }
+
+        static Totals fromArray(long[] values) {
+            return values.length == 4 ? new Totals(Math.max(0, values[0]), Math.max(0, values[1]), Math.max(0, values[2]),
+                    Math.max(0, values[3])) : ZERO;
         }
     }
 
@@ -150,6 +189,30 @@ public final class MarketStockData extends SavedData {
         return history.getOrDefault(item, new History(new long[0], new float[0]));
     }
 
+    /** Every item's history. A changed history is always a new {@link History} object, so identity shows change. */
+    public Map<ResourceLocation, History> historyView() {
+        return Collections.unmodifiableMap(history);
+    }
+
+    /** Counts a completed trade. Called after the trade can no longer fail; it can't fail itself. */
+    public void recordTrade(ResourceLocation item, boolean buy, int qty, long total) {
+        totals = totals.plus(buy, qty, total);
+        itemTotals.put(item, itemTotals.getOrDefault(item, Totals.ZERO).plus(buy, qty, total));
+        setDirty();
+    }
+
+    public Totals totals() {
+        return totals;
+    }
+
+    public Totals totals(ResourceLocation item) {
+        return itemTotals.getOrDefault(item, Totals.ZERO);
+    }
+
+    public Map<ResourceLocation, Totals> itemTotalsView() {
+        return Collections.unmodifiableMap(itemTotals);
+    }
+
     public Map<ResourceLocation, Factor> factorsView() {
         return Collections.unmodifiableMap(factors);
     }
@@ -202,6 +265,17 @@ public final class MarketStockData extends SavedData {
                 data.history.put(id, new History(Arrays.copyOfRange(ticks, ticks.length - keep, ticks.length), values));
             }
         }
+        // Absent before format 4: counting starts from zero.
+        CompoundTag totalsTag = tag.getCompound("totals");
+        data.totals = Totals.fromArray(totalsTag.getLongArray("all"));
+        CompoundTag itemTotalsTag = totalsTag.getCompound("items");
+        for (String key : itemTotalsTag.getAllKeys()) {
+            ResourceLocation id = ResourceLocation.tryParse(key);
+            Totals itemTotal = Totals.fromArray(itemTotalsTag.getLongArray(key));
+            if (id != null && !itemTotal.equals(Totals.ZERO)) {
+                data.itemTotals.put(id, itemTotal);
+            }
+        }
         return data;
     }
 
@@ -231,6 +305,12 @@ public final class MarketStockData extends SavedData {
             historyTag.put(id.toString(), entry);
         });
         tag.put("history", historyTag);
+        CompoundTag totalsTag = new CompoundTag();
+        totalsTag.putLongArray("all", totals.toArray());
+        CompoundTag itemTotalsTag = new CompoundTag();
+        itemTotals.forEach((id, itemTotal) -> itemTotalsTag.putLongArray(id.toString(), itemTotal.toArray()));
+        totalsTag.put("items", itemTotalsTag);
+        tag.put("totals", totalsTag);
         return tag;
     }
 }

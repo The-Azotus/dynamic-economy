@@ -3,7 +3,8 @@ package dynamiceconomy;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
- * Server config (per world). The pricing values are server-wide defaults; catalog entries and file defaults can
+ * Server config ({@code config/dynamic_economy-server.toml}, loaded when a server starts). The pricing values are
+ * server-wide defaults; catalog entries and file defaults can
  * override all of them except the recovery interval.
  */
 public final class MarketConfig {
@@ -36,7 +37,9 @@ public final class MarketConfig {
                 .defineInRange("sell_impact", 0.0005, 0.0, 0.5);
         BUY_IMPACT = builder
                 .comment("Each unit bought multiplies s by (1 + buy_impact). Keep it no higher than the smallest markup,",
-                        "and no higher than sell_impact / (1 - sell_impact), or buying and reselling can make a profit.")
+                        "and no higher than sell_impact / (1 - sell_impact), or buying and reselling can make a profit.",
+                        "Don't set it far below sell_impact either, or selling and buying back can. Equal values are safe;",
+                        "the server log warns at startup about any item whose settings allow a profitable round trip.")
                 .defineInRange("buy_impact", 0.0005, 0.0, 0.5);
         RECOVERY = builder
                 .comment("Fraction of the distance back to 1.0 that s recovers at each interval step.")
@@ -64,7 +67,7 @@ public final class MarketConfig {
         return SPEC.isLoaded() ? ACCESS_MODE.get() : ACCESS_MODE.getDefault();
     }
 
-    // The config is per-world, so each getter falls back to the default before it has loaded.
+    // A server config only loads when a server starts, so each getter falls back to the default before then.
 
     public static int maxQuantityPerRequest() {
         return SPEC.isLoaded() ? MAX_QUANTITY_PER_REQUEST.get() : MAX_QUANTITY_PER_REQUEST.getDefault();

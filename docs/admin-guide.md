@@ -173,7 +173,23 @@ Unlimited items charge `base_price × max(s × (1 + markup), 1 + min_buy_markup)
 
 **Example (default settings):** iron has `base_price: 16` and `markup: 0.5`. Before any trades, the market pays 16 and charges 24. Selling 640 ingots in one order pays about 8,765 spurs in total, not 10,240, and leaves `s` at about 0.73: the market then pays 11 and charges 18. After an hour without trades, iron is back to about 99% of base.
 
-**Keeping it fair.** At startup, the server warns about any item whose settings would let players buy and immediately sell back at a profit. To stay safe, keep `buy_impact` no higher than `markup`, and no higher than `sell_impact / (1 − sell_impact)`. Equal impacts are always safe.
+**Keeping it fair.** At startup and after every reload, the server log warns about any item whose settings would let a player make money from a round trip in either order: buying and immediately selling back, or selling and buying back. To stay safe:
+
+- keep `buy_impact` no higher than `markup`, and no higher than `sell_impact / (1 − sell_impact)`;
+- don't set `buy_impact` far below `sell_impact`. Otherwise a player can sell a large amount, crashing the price, and buy the same items back at the bottom for less than they were paid. For example, the default settings with `buy_impact = 0` let 3,000 iron be sold and bought back at a profit.
+
+Equal impacts, as in the default config, are safe.
+
+## Where the money goes
+
+The market has **no balance of its own**. It's a source and a sink, not a bank:
+
+- When a player **sells**, the payout is **new money** added to the economy.
+- When a player **buys**, what they pay **leaves the economy**. Nobody receives it.
+- `sell_fee` doesn't collect anything: it just means less new money is created per sale.
+- Admin commands (`setstock`, `clearstock`, `resetprice`, catalog edits) never create or remove money.
+
+`/market admin stats` shows the lifetime totals: money paid to sellers (created), money paid by buyers (removed), items moved each way, and the net amount the market has added to (or removed from) the economy, plus the five busiest items. `/market admin stats <item>` shows one item. Counting starts when a world first runs a version with this command; earlier trades aren't included. A steadily growing net means players are mostly selling, so money is piling up. Raise markups, add a `sell_fee`, or lower base prices of farmable items to slow it.
 
 **Cheap items get coarse.** Prices are whole spurs, so an item with a `base_price` of 1 or 2 has little room to move. A single unit sold below normal price rounds down to 0, though bulk orders still pay because the total is rounded only once. Give common items a base of 8 or 16 if you want their movements to show.
 
@@ -190,7 +206,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `max_quantity_per_request` | 640 | 1 – 1,000,000 | Largest quantity one buy or sell can move. |
 | `access_mode` | `COMMAND_AND_BLOCK` | `COMMAND_AND_BLOCK`, `BLOCK_ONLY` | How players reach the market; see [Letting players in](#letting-players-in). |
 | `pricing.sell_impact` | 0.0005 | 0 – 0.5 | Each unit sold multiplies the factor by `1 − sell_impact`. At the default, selling 640 drops a price to about 73%. |
-| `pricing.buy_impact` | 0.0005 | 0 – 0.5 | Each unit bought multiplies the factor by `1 + buy_impact`. |
+| `pricing.buy_impact` | 0.0005 | 0 – 0.5 | Each unit bought multiplies the factor by `1 + buy_impact`. Keep it close to `sell_impact`; see [Keeping it fair](#supply-and-demand). |
 | `pricing.recovery` | 0.05 | 0 – 1 | Fraction of the gap back to 1.0 closed at each step. |
 | `pricing.interval_ticks` | 1200 | 1 – 1,728,000 | Game ticks between recovery steps. 20 ticks is 1 second. |
 | `pricing.floor` | 0.2 | 0.001 – 1 | Lowest factor selling can reach. |
@@ -202,13 +218,14 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | --- | --- | --- |
 | `/market` | everyone* | Opens the market. |
 | `/market stock [item]`, `/market price <item>` | everyone* | Shows stock, or an item's prices and price factor. |
-| `/market sell <item> <qty>`, `/market buy <item> <qty>` | everyone* | Trades without the screen, at the current price. |
+| `/market sell <item> <qty>`, `/market buy <item> <qty>` | everyone* | Trades without the screen, at whatever the price is when the command runs. Unlike the screen, there's no "price changed, confirm again" step. Use `BLOCK_ONLY` if you don't want players trading this way. |
 | `/market admin setstock <item> <qty>` | 2 | Sets an item's stock. Refused for unlimited items. |
 | `/market admin clearstock <item>` | 2 | Empties an item's stock. |
 | `/market admin resetprice <item>` or `all` | 2 | Puts the price factor back to 1.0. |
 | `/market admin setprice`, `set`, `unset`, `remove`, `revert`, `info` | 2 | In-game editing; see [Editing prices in game](#editing-prices-in-game). |
 | `/market admin tag <tag> ...`, `/market admin tags` | 2 | Tag rules; see [Tag rules](#tag-rules-pricing-many-items-at-once). |
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
+| `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
 | `/market admin import "<path>" [preview]` | 4 | Imports a priced CSV. The path is relative to `config/dynamic_economy/`. |
 

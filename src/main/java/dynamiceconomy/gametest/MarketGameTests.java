@@ -15,6 +15,7 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.io.CatalogExport;
 import dynamiceconomy.io.CatalogImport;
 import dynamiceconomy.io.Csv;
+import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketService.Result;
 import dynamiceconomy.service.MarketService.TradeResult;
@@ -42,6 +43,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -1145,6 +1148,313 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    // ---- Economic integrity (Phase 7) -------------------------------------------------------------------------
+
+    /** Selling priced unit by unit, as {@link PriceModel#sell} did before it stopped looping once s stops moving. */
+    private static PriceModel.Order referenceSell(PriceModel.Inputs in, double factor, int qty) {
+        BigDecimal perUnit = BigDecimal.valueOf(in.basePrice()).multiply(BigDecimal.ONE.subtract(BigDecimal.valueOf(in.sellFee())));
+        BigDecimal sum = BigDecimal.ZERO;
+        double s = factor;
+        for (int i = 0; i < qty; i++) {
+            sum = sum.add(perUnit.multiply(BigDecimal.valueOf(s)));
+            s = PriceModel.afterSale(in, s);
+        }
+        return referenceOrder(sum.setScale(0, RoundingMode.FLOOR), s);
+    }
+
+    /** Buying a finite item priced unit by unit, as {@link PriceModel#buy} did before the same change. */
+    private static PriceModel.Order referenceBuy(PriceModel.Inputs in, double factor, int qty) {
+        BigDecimal perUnit = BigDecimal.valueOf(in.basePrice()).multiply(BigDecimal.ONE.add(BigDecimal.valueOf(in.markup())));
+        BigDecimal sum = BigDecimal.ZERO;
+        double s = factor;
+        for (int i = 0; i < qty; i++) {
+            sum = sum.add(perUnit.multiply(BigDecimal.valueOf(s)));
+            s = PriceModel.afterPurchase(in, s);
+        }
+        return referenceOrder(sum.setScale(0, RoundingMode.CEILING), s);
+    }
+
+    private static PriceModel.Order referenceOrder(BigDecimal total, double factorAfter) {
+        return total.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) > 0
+                ? new PriceModel.Order(Long.MAX_VALUE, factorAfter, true)
+                : new PriceModel.Order(total.longValueExact(), factorAfter, false);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void pricingShortcutMatchesUnitByUnitPricing(GameTestHelper helper) {
+        java.util.Random random = new java.util.Random(7);
+        int[] bases = {1, 2, 3, 7, 16, 256, 100_000, Integer.MAX_VALUE};
+        double[] markups = {0, 0.1, 0.5, 1000};
+        double[] fees = {0, 0.1, 0.99};
+        double[] impacts = {0, 0.0005, 0.01, 0.3, 0.5};
+        double[] floors = {0.001, 0.2, 1.0};
+        double[] ceilings = {1.0, 5.0, 1000};
+        int[] quantities = {1, 2, 7, 64, 640, 5000};
+        for (int i = 0; i < 400; i++) {
+            double floor = floors[random.nextInt(floors.length)];
+            double ceiling = ceilings[random.nextInt(ceilings.length)];
+            double markup = markups[random.nextInt(markups.length)];
+            PriceModel.Inputs in = new PriceModel.Inputs(bases[random.nextInt(bases.length)], markup,
+                    fees[random.nextInt(fees.length)], markup, false, random.nextInt(4) != 0,
+                    impacts[random.nextInt(impacts.length)], impacts[random.nextInt(impacts.length)], floor, ceiling, 0.05);
+            double start = switch (random.nextInt(4)) {
+                case 0 -> floor;
+                case 1 -> ceiling;
+                case 2 -> 1.0;
+                default -> floor + (ceiling - floor) * random.nextDouble();
+            };
+            int qty = quantities[random.nextInt(quantities.length)];
+            String what = "%s from %s × %d".formatted(in, start, qty);
+            helper.assertValueEqual(PriceModel.sell(in, start, qty), referenceSell(in, start, qty), "sell " + what);
+            helper.assertValueEqual(PriceModel.buy(in, start, qty), referenceBuy(in, start, qty), "buy " + what);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void smallPricesRoundOncePerOrder(GameTestHelper helper) {
+        PriceModel.Inputs one = inputs(1, 0.5, 0.0, false);
+        helper.assertValueEqual(PriceModel.sell(one, 1.0, 1).total(), 1L, "one unit at base 1 pays 1");
+        helper.assertValueEqual(PriceModel.unitSellPrice(one, PriceModel.afterSale(one, 1.0)), 0L,
+                "the next single unit rounds down to 0");
+        helper.assertValueEqual(PriceModel.sell(one, 1.0, 64).total(), 63L, "but a stack pays 63: rounding is once per order");
+        helper.assertValueEqual(PriceModel.buy(one, 1.0, 1).total(), 2L, "1.5 rounds up to 2");
+        helper.assertValueEqual(PriceModel.buy(one, 1.0, 2).total(), 4L, "1.5 + 1.50075 rounds up to 4");
+        helper.assertValueEqual(PriceModel.buy(inputs(1, 0.5, 0.0, true), 1.0, 2).total(), 3L,
+                "unlimited items don't move, so 2 × 1.5 is exactly 3");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void extremePricesAndFeesStayExact(GameTestHelper helper) {
+        PriceModel.Inputs iron = inputs(16, 0.5, 0.0, false);
+        helper.assertValueEqual(PriceModel.sell(iron, iron.floor(), 10), new PriceModel.Order(32, iron.floor(), false),
+                "at the floor every unit pays exactly floor × base");
+        helper.assertValueEqual(PriceModel.buy(iron, iron.ceiling(), 10), new PriceModel.Order(1200, iron.ceiling(), false),
+                "at the ceiling every unit costs exactly ceiling × base × 1.5");
+        PriceModel.Inputs fixed = new PriceModel.Inputs(16, 0.0, 0.99, 0.0, false, false, 0.0005, 0.0005, 0.2, 5.0, 0.05);
+        helper.assertValueEqual(PriceModel.sell(fixed, 1.0, 100).total(), 16L, "a 99% fee keeps 1% of 1,600");
+        helper.assertValueEqual(PriceModel.buy(fixed, 1.0, 10).total(), 160L, "markup 0 charges exactly base");
+        PriceModel.Inputs dear = new PriceModel.Inputs(16, 1000, 0.0, 1000, false, false, 0.0005, 0.0005, 0.2, 5.0, 0.05);
+        helper.assertValueEqual(PriceModel.buy(dear, 1.0, 1).total(), 16_016L, "markup 1000 charges 1001 × base");
+        PriceModel.Inputs huge = new PriceModel.Inputs(Integer.MAX_VALUE, 1000, 0.0, 1000, false, false, 0, 0, 0.2, 1000, 0.05);
+        helper.assertTrue(PriceModel.buy(huge, 1000, 1_000_000).overflow(), "a total beyond a long is flagged, not wrapped");
+
+        // The largest base price: one unit sold just fits the bank's int, two don't, and buying one doesn't either.
+        CatalogEntry listed = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+        withEntry(new CatalogEntry(listed.item(), listed.itemId(), Integer.MAX_VALUE, 0.5, 0, true, true, false, 0.0, false,
+                Optional.empty(), CatalogEntry.Overrides.NONE), () -> {
+            Fixture f = new Fixture(helper);
+            f.setStock(Items.IRON_INGOT, 5);
+            f.give(new ItemStack(Items.IRON_INGOT, 2));
+            f.assertRejectedUnchanged(Result.TOO_LARGE, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 2, ANY_PRICE));
+            f.assertRejectedUnchanged(Result.TOO_LARGE, () -> MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, ANY_PRICE));
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 1, ANY_PRICE), Result.OK);
+            // Numismatics shows at most 2^30 − 1 and keeps the rest in a hidden overflow; nothing is lost.
+            helper.assertValueEqual(f.balance(), 1_073_741_823, "the displayed balance is capped");
+            helper.assertTrue(f.account().deduct(Integer.MAX_VALUE), "but the whole payout can be spent");
+            helper.assertValueEqual(f.balance(), 0, "and then the account is empty");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void recoveryEdgeCases(GameTestHelper helper) {
+        int interval = 1200;
+        helper.assertValueEqual(PriceModel.recovered(0.5, 0, 100_000, 0.0, interval), 0.5, "recovery 0 never moves");
+        helper.assertValueEqual(PriceModel.recovered(0.5, 0, interval, 1.0, interval), 1.0, "recovery 1 is back in one step");
+        helper.assertValueEqual(PriceModel.recovered(3.0, 0, interval, 1.0, interval), 1.0, "from above too");
+        assertClose(helper, PriceModel.recovered(0.5, 0, 3, 0.5, 1), 0.9375, "interval 1 steps every tick");
+        helper.assertValueEqual(PriceModel.recovered(1.0, 0, 1_000_000, 0.05, interval), 1.0, "at base it stays at base");
+        helper.assertValueEqual(PriceModel.recovered(0.5, 5000, 1000, 0.05, interval), 0.5,
+                "a clock that went backwards recovers nothing");
+        double below = 0.2;
+        double above = 5.0;
+        for (long steps = 1; steps <= 3000; steps *= 3) {
+            double up = PriceModel.recovered(0.2, 0, steps * interval, 0.05, interval);
+            double down = PriceModel.recovered(5.0, 0, steps * interval, 0.05, interval);
+            helper.assertTrue(up >= below && up <= 1.0, "rising toward 1.0 without passing it: " + up);
+            helper.assertTrue(down <= above && down >= 1.0, "falling toward 1.0 without passing it: " + down);
+            below = up;
+            above = down;
+        }
+        helper.assertValueEqual(PriceModel.recovered(0.2, 0, 1_000_000L * interval, 0.05, interval), 1.0, "eventually exactly 1.0");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void roundTripsNeverProfitEitherWay(GameTestHelper helper) {
+        CatalogEntry iron = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+        // A steep entry reaches the floor or ceiling within one order, so clamped trades are covered too.
+        CatalogEntry steep = iron.withPricing(0.0, true, Optional.empty(), new CatalogEntry.Overrides(Optional.of(0.01),
+                Optional.of(0.01), Optional.empty(), Optional.empty(), Optional.empty()));
+        helper.assertTrue(PriceModel.arbitrageRisk(PriceModel.inputs(steep)).isEmpty(), "the steep entry is a safe config");
+        for (CatalogEntry entry : List.of(iron, steep)) {
+            withEntry(entry, () -> {
+                for (double start : List.of(1.0, MarketConfig.floor(), MarketConfig.ceiling(), 0.7, 2.5)) {
+                    for (int qty : List.of(1, 7, 64, 640)) {
+                        for (boolean sellFirst : List.of(true, false)) {
+                            Fixture f = new Fixture(helper);
+                            f.setStock(Items.IRON_INGOT, 5_000);
+                            f.deposit(5_000_000);
+                            f.giveMany(Items.IRON_INGOT, sellFirst ? qty : 0);
+                            f.market.setFactor(entry.itemId(), start, MarketStockData.now(helper.getLevel().getServer()));
+                            int before = f.balance();
+                            if (sellFirst) {
+                                f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, qty, ANY_PRICE), Result.OK);
+                                f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, qty, ANY_PRICE), Result.OK);
+                            } else {
+                                f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, qty, ANY_PRICE), Result.OK);
+                                f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, qty, ANY_PRICE), Result.OK);
+                            }
+                            helper.assertTrue(f.balance() <= before, "%s %d (impact %s) from %s made %d spurs".formatted(
+                                    sellFirst ? "selling then buying back" : "buying then reselling", qty,
+                                    entry.overrides().sellImpact().orElse(MarketConfig.sellImpact()), start, f.balance() - before));
+                        }
+                    }
+                }
+            });
+        }
+        helper.succeed();
+    }
+
+    /** The most a round trip in either order makes (negative: it loses), over a few starting factors and sizes. */
+    private static long bestRoundTripProfit(PriceModel.Inputs in) {
+        long best = Long.MIN_VALUE;
+        for (double start : List.of(in.floor(), 1.0, in.ceiling())) {
+            for (int qty : List.of(1, 64, 640, 3000)) {
+                PriceModel.Order bought = PriceModel.buy(in, start, qty);
+                PriceModel.Order resold = PriceModel.sell(in, bought.factorAfter(), qty);
+                PriceModel.Order sold = PriceModel.sell(in, start, qty);
+                PriceModel.Order boughtBack = PriceModel.buy(in, sold.factorAfter(), qty);
+                best = Math.max(best, Math.max(resold.total() - bought.total(), sold.total() - boughtBack.total()));
+            }
+        }
+        return best;
+    }
+
+    @GameTest(template = EMPTY)
+    public static void sellingThenBuyingBackIsCheckedForProfit(GameTestHelper helper) {
+        // Default settings except buy_impact 0. Before Phase 7 the check only looked at buying then reselling and
+        // called this safe, but crashing the price by selling and buying the same items back at the bottom pays.
+        PriceModel.Inputs noBuyImpact = new PriceModel.Inputs(16, 0.5, 0.0, 0.5, false, true, MarketConfig.sellImpact(),
+                0.0, MarketConfig.floor(), MarketConfig.ceiling(), MarketConfig.recovery());
+        PriceModel.Order sold = PriceModel.sell(noBuyImpact, 1.0, 3000);
+        PriceModel.Order boughtBack = PriceModel.buy(noBuyImpact, sold.factorAfter(), 3000);
+        helper.assertTrue(sold.total() > boughtBack.total(), "the round trip pays: sold 3,000 for %d, bought them back for %d"
+                .formatted(sold.total(), boughtBack.total()));
+        helper.assertTrue(PriceModel.arbitrageRisk(noBuyImpact).isPresent(), "and it is now reported");
+        helper.assertTrue(PriceModel.arbitrageRisk(inputs(16, 0.5, 0.0, false)).isEmpty(), "the default config is still safe");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void configurationsCalledSafeNeverProfit(GameTestHelper helper) {
+        int safe = 0;
+        int flagged = 0;
+        for (double a : List.of(0.0, 0.0005, 0.01, 0.1)) {
+            for (double b : List.of(0.0, 0.0005, 0.01, 0.1)) {
+                for (double markup : List.of(0.0, 0.1, 0.5)) {
+                    for (double fee : List.of(0.0, 0.1)) {
+                        for (double[] range : List.of(new double[] {0.2, 5.0}, new double[] {0.9, 1.1}, new double[] {0.001, 1000})) {
+                            PriceModel.Inputs in = new PriceModel.Inputs(10_000, markup, fee, markup, false, true, a, b,
+                                    range[0], range[1], 0.05);
+                            if (PriceModel.arbitrageRisk(in).isPresent()) {
+                                flagged++;
+                                continue;
+                            }
+                            safe++;
+                            long profit = bestRoundTripProfit(in);
+                            helper.assertTrue(profit <= 0, "%s is called safe but a round trip made %d".formatted(in, profit));
+                        }
+                    }
+                }
+            }
+        }
+        helper.assertTrue(safe > 20 && flagged > 20, "the sweep covers both outcomes: %d safe, %d flagged".formatted(safe, flagged));
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void heldCountsMatchPerItemCounting(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        f.giveMany(Items.IRON_INGOT, 70);
+        f.give(new ItemStack(Items.DIAMOND, 3));
+        ItemStack renamed = new ItemStack(Items.DIAMOND, 5);
+        renamed.set(DataComponents.CUSTOM_NAME, Component.literal("Not for sale"));
+        f.give(renamed);
+        f.give(new ItemStack(Items.STONE, 12));
+        f.give(new ItemStack(Items.COBBLESTONE, 40));
+
+        Map<ResourceLocation, Integer> expected = new java.util.HashMap<>();
+        for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
+            long count = MarketService.heldCount(f.player, entry);
+            if (count > 0) {
+                expected.put(entry.itemId(), (int) count);
+            }
+        }
+        helper.assertValueEqual(MarketSync.heldCounts(f.player), expected, "one pass over the inventory counts the same");
+        helper.assertValueEqual(expected.get(key(Items.DIAMOND)), 3, "the renamed diamonds don't count");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void fullyRecoveredFactorsAreDropped(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        long now = MarketStockData.now(helper.getLevel().getServer());
+        long longAgo = now - 10_000L * MarketConfig.intervalTicks();
+        f.market.setFactor(key(Items.IRON_INGOT), 0.5, longAgo);
+        f.market.setFactor(key(Items.DIAMOND), 0.5, now);
+        f.market.setFactor(key(Items.STONE), 0.5, longAgo);
+
+        MarketService.pruneRecovered(helper.getLevel().getServer());
+
+        helper.assertTrue(!f.market.factorsView().containsKey(key(Items.IRON_INGOT)), "recovered iron is dropped");
+        helper.assertValueEqual(f.factor(Items.IRON_INGOT), 1.0, "and still prices at base");
+        helper.assertTrue(f.market.factorsView().containsKey(key(Items.DIAMOND)), "diamond is still recovering");
+        helper.assertTrue(f.market.factorsView().containsKey(key(Items.STONE)), "unlisted items are left alone");
+        f.market.resetFactor(key(Items.STONE));
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void tradesAreCountedAsMoneyCreatedAndRemoved(GameTestHelper helper) {
+        withFixedPrice(Items.IRON_INGOT, () -> {
+            Fixture f = new Fixture(helper);
+            f.setStock(Items.IRON_INGOT, 100);
+            f.deposit(1000);
+            f.giveMany(Items.IRON_INGOT, 10);
+            MarketStockData.Totals before = f.market.totals();
+            MarketStockData.Totals ironBefore = f.market.totals(key(Items.IRON_INGOT));
+
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.OK);
+            f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, 5, ANY_PRICE), Result.OK);
+
+            MarketStockData.Totals expected = new MarketStockData.Totals(before.paidOut() + 160, before.collected() + 120,
+                    before.unitsSold() + 10, before.unitsBought() + 5);
+            helper.assertValueEqual(f.market.totals(), expected, "160 paid out for 10, 120 collected for 5");
+            helper.assertValueEqual(f.market.totals(key(Items.IRON_INGOT)), new MarketStockData.Totals(ironBefore.paidOut() + 160,
+                    ironBefore.collected() + 120, ironBefore.unitsSold() + 10, ironBefore.unitsBought() + 5), "per item too");
+            helper.assertValueEqual(expected.netCreated() - before.netCreated(), 40L, "net 40 spurs added to the economy");
+        });
+
+        MarketStockData data = new MarketStockData();
+        ResourceLocation stone = ResourceLocation.withDefaultNamespace("stone");
+        data.recordTrade(stone, false, 3, 30);
+        data.recordTrade(stone, true, 1, 15);
+        MarketStockData reloaded = MarketStockData.fromTag(data.save(new CompoundTag(), helper.getLevel().registryAccess()),
+                helper.getLevel().registryAccess());
+        helper.assertValueEqual(reloaded.totals(), data.totals(), "totals saved");
+        helper.assertValueEqual(reloaded.totals(stone), new MarketStockData.Totals(30, 15, 3, 1), "item totals saved");
+
+        CompoundTag version3 = data.save(new CompoundTag(), helper.getLevel().registryAccess());
+        version3.remove("totals");
+        version3.putInt("version", 3);
+        MarketStockData old = MarketStockData.fromTag(version3, helper.getLevel().registryAccess());
+        helper.assertValueEqual(old.totals(), MarketStockData.Totals.ZERO, "a save from before counting starts at zero");
+        helper.succeed();
+    }
+
     // ---- Fixture ------------------------------------------------------------------------------------------------
 
     /** A fresh player with an empty inventory and a new, empty bank account (Numismatics' starter coins default to 0). */
@@ -1227,16 +1537,25 @@ public final class MarketGameTests {
             helper.assertValueEqual(result.result(), expected, "trade result");
         }
 
+        /** A rejected trade must leave balance, inventory, stock, price factors, history and money counts as they were. */
         void assertRejectedUnchanged(Result expected, java.util.function.Supplier<TradeResult> trade) {
             List<ItemStack> inventoryBefore = new ArrayList<>();
             player.getInventory().items.forEach(s -> inventoryBefore.add(s.copy()));
             Map<ResourceLocation, Long> stockBefore = Map.copyOf(market.view());
+            Map<ResourceLocation, MarketStockData.Factor> factorsBefore = Map.copyOf(market.factorsView());
+            Map<ResourceLocation, MarketStockData.History> historyBefore = Map.copyOf(market.historyView());
+            Map<ResourceLocation, MarketStockData.Totals> itemTotalsBefore = Map.copyOf(market.itemTotalsView());
+            MarketStockData.Totals totalsBefore = market.totals();
             int balanceBefore = balance();
 
             assertResult(trade.get(), expected);
 
             helper.assertValueEqual(balance(), balanceBefore, "balance after " + expected);
             helper.assertValueEqual(Map.copyOf(market.view()), stockBefore, "stock after " + expected);
+            helper.assertValueEqual(Map.copyOf(market.factorsView()), factorsBefore, "price factors after " + expected);
+            helper.assertValueEqual(Map.copyOf(market.historyView()), historyBefore, "price history after " + expected);
+            helper.assertValueEqual(Map.copyOf(market.itemTotalsView()), itemTotalsBefore, "item money counts after " + expected);
+            helper.assertValueEqual(market.totals(), totalsBefore, "money counts after " + expected);
             NonNullList<ItemStack> after = player.getInventory().items;
             for (int slot = 0; slot < after.size(); slot++) {
                 helper.assertTrue(ItemStack.matches(after.get(slot), inventoryBefore.get(slot)),
