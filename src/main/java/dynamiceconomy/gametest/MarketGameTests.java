@@ -1455,6 +1455,78 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    /** Runs a command at permission 4, the way an operator or the console would, and returns what it printed. */
+    private static List<String> runCommand(GameTestHelper helper, String command) {
+        List<String> output = new ArrayList<>();
+        net.minecraft.commands.CommandSource capture = new net.minecraft.commands.CommandSource() {
+            @Override
+            public void sendSystemMessage(Component message) {
+                output.add(message.getString());
+            }
+
+            @Override
+            public boolean acceptsSuccess() {
+                return true;
+            }
+
+            @Override
+            public boolean acceptsFailure() {
+                return true;
+            }
+
+            @Override
+            public boolean shouldInformAdmins() {
+                return false;
+            }
+        };
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        try {
+            server.getCommands().getDispatcher().execute(command, server.createCommandSourceStack().withSource(capture).withPermission(4));
+        } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+            throw new GameTestAssertException("/" + command + " was rejected: " + e.getMessage());
+        }
+        return output;
+    }
+
+    @GameTest(template = EMPTY)
+    public static void statsCommandReportsTheMoneyFlow(GameTestHelper helper) {
+        withFixedPrice(Items.IRON_INGOT, () -> {
+            Fixture f = new Fixture(helper);
+            f.giveMany(Items.IRON_INGOT, 10);
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.OK);
+
+            List<String> overall = runCommand(helper, "market admin stats");
+            helper.assertTrue(overall.size() >= 4 && overall.get(1).contains("%,d spurs".formatted(f.market.totals().paidOut())),
+                    "overall stats show what sellers were paid: " + overall);
+            List<String> iron = runCommand(helper, "market admin stats minecraft:iron_ingot");
+            MarketStockData.Totals ironTotals = f.market.totals(key(Items.IRON_INGOT));
+            helper.assertTrue(iron.get(0).startsWith("minecraft:iron_ingot")
+                            && iron.get(1).contains("%,d spurs for %,d items".formatted(ironTotals.paidOut(), ironTotals.unitsSold())),
+                    "item stats: " + iron);
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void tagRulesSurviveReloadsWithoutProblems(GameTestHelper helper) {
+        runCommand(helper, "market admin tag minecraft:logs setprice 4");
+        try {
+            helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.BIRCH_LOG).map(CatalogEntry::basePrice), Optional.of(4),
+                    "the rule lists birch logs");
+            for (String reload : List.of("market admin reload", "reload")) {
+                runCommand(helper, reload);
+                helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.BIRCH_LOG).map(CatalogEntry::basePrice), Optional.of(4),
+                        "birch logs still listed after /" + reload);
+                helper.assertTrue(MarketCatalog.INSTANCE.problems().isEmpty(), "no problems after /" + reload + ": "
+                        + MarketCatalog.INSTANCE.problems());
+            }
+        } finally {
+            runCommand(helper, "market admin tag minecraft:logs revert");
+        }
+        helper.assertTrue(MarketCatalog.INSTANCE.get(Items.BIRCH_LOG).isEmpty(), "reverting the rule unlists birch logs again");
+        helper.succeed();
+    }
+
     // ---- Fixture ------------------------------------------------------------------------------------------------
 
     /** A fresh player with an empty inventory and a new, empty bank account (Numismatics' starter coins default to 0). */
