@@ -28,7 +28,7 @@ Install the mod on the **server and every client**. Clients need it for the mark
 
 **Admins:**
 
-1. Install the mod and start the server. A small test catalog lists five items so you can try it straight away.
+1. Install the mod and start the server. The market starts empty. To try it out first, `/datapack enable "mod/dynamic_economy:example_catalog"` lists five example items at placeholder prices; `/datapack disable` with the same name takes them off again.
 2. Price your pack. From the server console, run `/market admin export`, fill in `base_price` in the exported `items.csv`, then run `/market admin import "<path to the csv>"`.
 3. Tune it in game. For example, `/market admin setprice minecraft:diamond 300` prices one item, and `/market admin tag minecraft:logs setprice 4` prices every log.
 4. To make terminals the only way in, set `access_mode = "BLOCK_ONLY"` in `config/dynamic_economy-server.toml`.

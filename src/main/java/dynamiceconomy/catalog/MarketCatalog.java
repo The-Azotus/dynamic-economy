@@ -37,8 +37,10 @@ import java.util.Optional;
  * A bad entry is logged and skipped without discarding the rest of its file; entries with {@code base_price} ≤ 0
  * (unfilled templates) are skipped with one summary warning. If several files list the same item, the file from the
  * higher-priority datapack wins, as with any datapack override; within one pack, the file whose ID sorts last wins.
+ * The loader also records where each field of each entry came from, and keeps its problems for
+ * {@code /market admin diagnose}.
  */
-public final class MarketCatalog extends SimplePreparableReloadListener<List<MarketCatalog.SourceFile>> {
+public final class MarketCatalog extends SimplePreparableReloadListener<MarketCatalog.Prepared> {
     public static final MarketCatalog INSTANCE = new MarketCatalog();
     private static final FileToIdConverter FILES = FileToIdConverter.json("market");
 
@@ -46,10 +48,29 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
     public record SourceFile(ResourceLocation id, int packOrder, String packId, JsonElement json) {
     }
 
+    /** The files read off the main thread, and the ones that couldn't be read. */
+    public record Prepared(List<SourceFile> files, List<Problem> unreadable) {
+    }
+
+    /** Something the loader noticed. {@code skipped} means an entry or file was left out; otherwise it's a warning. */
+    public record Problem(boolean skipped, String message) {
+    }
+
+    /**
+     * What a set of files loads to.
+     *
+     * @param sources  where each entry's fields came from (see {@link FieldSource})
+     * @param unpriced entries skipped because their {@code base_price} is 0 or below (unfilled templates)
+     */
+    public record Loaded(Map<Item, CatalogEntry> entries, Map<Item, Map<String, List<FieldSource>>> sources,
+                         List<Problem> problems, int unpriced) {
+    }
+
     /** What the catalog files say, before admin edits. */
-    private volatile Map<Item, CatalogEntry> fileEntries = Map.of();
+    private volatile Loaded files = new Loaded(Map.of(), Map.of(), List.of(), 0);
     /** The live catalog: file entries with admin edits applied. */
     private volatile Map<Item, CatalogEntry> entries = Map.of();
+    private volatile Map<Item, Map<String, List<FieldSource>>> sources = Map.of();
     private volatile MarketOverrides.Snapshot overrides = MarketOverrides.Snapshot.EMPTY;
     private volatile Map<ResourceLocation, String> problems = Map.of();
 
@@ -66,7 +87,17 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
 
     /** The item's entry as the catalog files have it, ignoring admin edits. */
     public Optional<CatalogEntry> fileEntry(Item item) {
-        return Optional.ofNullable(fileEntries.get(item));
+        return Optional.ofNullable(files.entries().get(item));
+    }
+
+    /** The catalog files as last loaded, before admin edits, with their sources and problems. */
+    public Loaded files() {
+        return files;
+    }
+
+    /** Where each field of a listed item's live entry came from; empty if it isn't listed. */
+    public Map<String, List<FieldSource>> sources(Item item) {
+        return sources.getOrDefault(item, FieldSource.NONE);
     }
 
     /** Admin edits that couldn't be applied at the last rebuild, by item. */
@@ -89,8 +120,9 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
     }
 
     private Map<ResourceLocation, String> rebuild(boolean report) {
-        CatalogOverlay.Result result = CatalogOverlay.apply(fileEntries, overrides, CatalogOverlay::registryTag);
+        CatalogOverlay.Result result = CatalogOverlay.apply(files.entries(), files.sources(), overrides, CatalogOverlay::registryTag);
         entries = result.entries();
+        sources = result.sources();
         problems = result.problems();
         if (report) {
             result.problems().values().forEach(problem -> DynamicEconomy.LOGGER.warn("Market admin edit not applied: {}", problem));
@@ -115,33 +147,39 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
     }
 
     @Override
-    protected List<SourceFile> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected Prepared prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<String, Integer> packOrder = new HashMap<>();
         List<PackResources> packs = resourceManager.listPacks().toList();
         for (int i = 0; i < packs.size(); i++) {
             packOrder.put(packs.get(i).packId(), i);
         }
-        List<SourceFile> files = new ArrayList<>();
-        for (Map.Entry<ResourceLocation, Resource> found : FILES.listMatchingResources(resourceManager).entrySet()) {
-            ResourceLocation id = FILES.fileToId(found.getKey());
-            Resource resource = found.getValue();
+        List<SourceFile> found = new ArrayList<>();
+        List<Problem> unreadable = new ArrayList<>();
+        for (Map.Entry<ResourceLocation, Resource> file : FILES.listMatchingResources(resourceManager).entrySet()) {
+            ResourceLocation id = FILES.fileToId(file.getKey());
+            Resource resource = file.getValue();
             try (Reader reader = resource.openAsReader()) {
-                files.add(new SourceFile(id, packOrder.getOrDefault(resource.sourcePackId(), -1), resource.sourcePackId(),
+                found.add(new SourceFile(id, packOrder.getOrDefault(resource.sourcePackId(), -1), resource.sourcePackId(),
                         JsonParser.parseReader(reader)));
             } catch (Exception e) {
                 DynamicEconomy.LOGGER.error("Market file {} in pack {} could not be read; skipped", id, resource.sourcePackId(), e);
+                unreadable.add(new Problem(true, "Market file %s in pack %s could not be read: %s".formatted(id, resource.sourcePackId(),
+                        e.getMessage())));
             }
         }
-        return files;
+        return new Prepared(found, unreadable);
     }
 
     @Override
-    protected void apply(List<SourceFile> files, ResourceManager resourceManager, ProfilerFiller profiler) {
-        fileEntries = parse(files);
+    protected void apply(Prepared prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
+        Loaded loaded = load(prepared.files());
+        List<Problem> allProblems = new ArrayList<>(prepared.unreadable());
+        allProblems.addAll(loaded.problems());
+        files = new Loaded(loaded.entries(), loaded.sources(), List.copyOf(allProblems), loaded.unpriced());
         // Tags are bound only after every reload listener has run, so tag rules here may still see the old tags.
         // Build quietly; DynamicEconomy.catalogReloaded rebuilds and reports once tags are current.
         rebuild(false);
-        DynamicEconomy.LOGGER.info("Loaded {} market catalog entries from {} files", entries.size(), files.size());
+        DynamicEconomy.LOGGER.info("Loaded {} market catalog entries from {} files", entries.size(), prepared.files().size());
     }
 
     /** Parses files that all come from one pack, keyed by file ID. Pure: logs problems but changes no state. */
@@ -153,18 +191,25 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
 
     /** Turns market files into listings, lowest priority first so higher packs override. Pure apart from logging. */
     public static Map<Item, CatalogEntry> parse(List<SourceFile> files) {
+        return load(files).entries();
+    }
+
+    /** As {@link #parse(List)}, also returning where each field came from and what went wrong. */
+    public static Loaded load(List<SourceFile> files) {
         List<SourceFile> ordered = new ArrayList<>(files);
         ordered.sort(Comparator.comparingInt(SourceFile::packOrder).thenComparing(SourceFile::id));
         Map<Item, CatalogEntry> loaded = new LinkedHashMap<>();
+        Map<Item, Map<String, List<FieldSource>>> sources = new LinkedHashMap<>();
         Map<Item, SourceFile> origin = new HashMap<>();
+        List<Problem> problems = new ArrayList<>();
         int unpriced = 0;
         for (SourceFile file : ordered) {
-            unpriced += loadFile(file, loaded, origin);
+            unpriced += loadFile(file, loaded, sources, origin, problems);
         }
         if (unpriced > 0) {
             DynamicEconomy.LOGGER.warn("{} unpriced market entries (base_price 0 or below) skipped", unpriced);
         }
-        return Collections.unmodifiableMap(loaded);
+        return new Loaded(Collections.unmodifiableMap(loaded), Collections.unmodifiableMap(sources), List.copyOf(problems), unpriced);
     }
 
     /**
@@ -194,22 +239,23 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
     }
 
     /** Loads one file's entries into {@code into}; returns how many were skipped as unpriced. */
-    private static int loadFile(SourceFile file, Map<Item, CatalogEntry> into, Map<Item, SourceFile> origin) {
+    private static int loadFile(SourceFile file, Map<Item, CatalogEntry> into, Map<Item, Map<String, List<FieldSource>>> sources,
+                                Map<Item, SourceFile> origin, List<Problem> problems) {
         ResourceLocation fileId = file.id();
         if (!(file.json() instanceof JsonObject obj) || !obj.has("entries") || !obj.get("entries").isJsonArray()) {
-            DynamicEconomy.LOGGER.error("Market file {} must be an object with an \"entries\" array; skipped", fileId);
+            skipped(problems, "Market file %s must be an object with an \"entries\" array; skipped".formatted(fileId));
             return 0;
         }
         JsonObject defaults = new JsonObject();
         if (obj.has("defaults")) {
             if (!obj.get("defaults").isJsonObject()) {
                 // Skipping is safer than guessing: the entries would otherwise trade at unintended prices.
-                DynamicEconomy.LOGGER.error("Market file {}: \"defaults\" must be an object; file skipped", fileId);
+                skipped(problems, "Market file %s: \"defaults\" must be an object; file skipped".formatted(fileId));
                 return 0;
             }
             defaults = obj.getAsJsonObject("defaults").deepCopy();
             if (defaults.remove("item") != null) {
-                DynamicEconomy.LOGGER.warn("Market file {}: \"item\" is not allowed in defaults; ignored", fileId);
+                warning(problems, "Market file %s: \"item\" is not allowed in defaults; ignored".formatted(fileId));
             }
         }
 
@@ -218,11 +264,12 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
         for (JsonElement element : obj.getAsJsonArray("entries")) {
             int i = index++;
             if (!element.isJsonObject()) {
-                DynamicEconomy.LOGGER.error("Market file {} entry {}: must be an object; skipped", fileId, i);
+                skipped(problems, "Market file %s entry %d: must be an object; skipped".formatted(fileId, i));
                 continue;
             }
+            JsonObject own = element.getAsJsonObject();
             JsonObject merged = defaults.deepCopy();
-            element.getAsJsonObject().entrySet().forEach(field -> merged.add(field.getKey(), field.getValue()));
+            own.entrySet().forEach(field -> merged.add(field.getKey(), field.getValue()));
             if (isUnpriced(merged)) {
                 unpriced++;
                 continue;
@@ -230,16 +277,26 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
 
             DataResult<CatalogEntry> decoded = decode(merged);
             if (decoded.error().isPresent()) {
-                DynamicEconomy.LOGGER.warn("Market file {} entry {}: {}; skipped", fileId, i, decoded.error().get().message());
+                String where = merged.has("item") ? " (" + merged.get("item") + ")" : "";
+                skipped(problems, "Market file %s entry %d%s: %s; skipped".formatted(fileId, i, where, decoded.error().get().message()));
                 continue;
             }
             CatalogEntry entry = decoded.result().orElseThrow();
+            Map<String, List<FieldSource>> fields = new LinkedHashMap<>();
+            for (Map.Entry<String, JsonElement> field : merged.entrySet()) {
+                if (!field.getKey().equals("item")) {
+                    String layer = own.has(field.getKey()) ? "file " + fileId : "file " + fileId + " defaults";
+                    fields.put(field.getKey(), List.of(new FieldSource(layer, field.getValue())));
+                }
+            }
+            // A higher-priority file replaces the whole entry, so its sources replace the earlier file's too.
+            sources.put(entry.item(), Collections.unmodifiableMap(fields));
             CatalogEntry previous = into.put(entry.item(), entry);
             SourceFile previousFile = origin.put(entry.item(), file);
             if (previous != null && previousFile != null) {
                 if (previousFile.packOrder() == file.packOrder()) {
-                    DynamicEconomy.LOGGER.warn("Market file {} overrides {} listed earlier in {} of the same pack",
-                            fileId, entry.itemId(), previousFile.id());
+                    warning(problems, "Market file %s overrides %s listed earlier in %s of the same pack"
+                            .formatted(fileId, entry.itemId(), previousFile.id()));
                 } else {
                     DynamicEconomy.LOGGER.debug("Market file {} (pack {}) overrides {} from {} (pack {})",
                             fileId, file.packId(), entry.itemId(), previousFile.id(), previousFile.packId());
@@ -247,5 +304,15 @@ public final class MarketCatalog extends SimplePreparableReloadListener<List<Mar
             }
         }
         return unpriced;
+    }
+
+    private static void skipped(List<Problem> problems, String message) {
+        DynamicEconomy.LOGGER.warn(message);
+        problems.add(new Problem(true, message));
+    }
+
+    private static void warning(List<Problem> problems, String message) {
+        DynamicEconomy.LOGGER.warn(message);
+        problems.add(new Problem(false, message));
     }
 }

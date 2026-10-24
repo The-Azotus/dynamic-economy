@@ -17,6 +17,7 @@ import dynamiceconomy.io.CatalogImport;
 import dynamiceconomy.io.Csv;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.OrderMath;
@@ -61,7 +62,8 @@ import java.util.function.Consumer;
 
 /**
  * Server-side market tests. Each test runs synchronously inside one tick, so tests sharing the global stock and
- * catalog cannot interleave. Relies on {@code test_catalog.json}. Run with {@code gradlew runGameTestServer}.
+ * catalog cannot interleave. Relies on the example catalog pack, which the GameTest server enables like every
+ * available pack. Run with {@code gradlew runGameTestServer}.
  */
 @GameTestHolder(DynamicEconomy.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -1551,6 +1553,206 @@ public final class MarketGameTests {
         version3.putInt("version", 3);
         MarketStockData old = MarketStockData.fromTag(version3, helper.getLevel().registryAccess());
         helper.assertValueEqual(old.totals(), MarketStockData.Totals.ZERO, "a save from before counting starts at zero");
+        helper.succeed();
+    }
+
+    // ---- Catalog diagnostics and admin safety (Phase 7) ---------------------------------------------------------
+
+    private static JsonElement number(double value) {
+        return new com.google.gson.JsonPrimitive(value);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void fieldSourcesFollowEveryLayer(GameTestHelper helper) {
+        ResourceLocation woods = ResourceLocation.fromNamespaceAndPath("test", "woods");
+        JsonElement file = JsonParser.parseString("""
+                { "defaults": { "markup": 0.25 },
+                  "entries": [ { "item": "minecraft:oak_log", "base_price": 2, "unlimited_stock": true } ] }""");
+        MarketCatalog.Loaded loaded = MarketCatalog.load(List.of(new MarketCatalog.SourceFile(woods, 0, "test", file)));
+        Map<String, List<dynamiceconomy.catalog.FieldSource>> oakFile = loaded.sources().get(Items.OAK_LOG);
+        helper.assertValueEqual(oakFile.get("base_price"), List.of(new dynamiceconomy.catalog.FieldSource("file test:woods", number(2))),
+                "base_price set by the entry");
+        helper.assertValueEqual(oakFile.get("markup").get(0).layer(), "file test:woods defaults", "markup inherited from defaults");
+        helper.assertTrue(!oakFile.containsKey("sell_fee"), "sell_fee is set nowhere, so it's a built-in default");
+
+        ResourceLocation logs = ResourceLocation.withDefaultNamespace("logs");
+        MarketOverrides edits = new MarketOverrides();
+        edits.setTagField(logs, "base_price", number(4));
+        edits.setTagField(logs, "sell_fee", number(0.1));
+        edits.setItemField(key(Items.OAK_LOG), "base_price", number(9));
+        CatalogOverlay.Result result = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), CatalogOverlay::registryTag);
+        Map<String, List<dynamiceconomy.catalog.FieldSource>> oak = result.sources().get(Items.OAK_LOG);
+        helper.assertValueEqual(oak.get("base_price").stream().map(dynamiceconomy.catalog.FieldSource::layer).toList(),
+                List.of("file test:woods", "tag rule #minecraft:logs", "item edit"), "base_price layers, lowest first");
+        helper.assertValueEqual(oak.get("sell_fee").get(0).layer(), "tag rule #minecraft:logs", "sell_fee from the tag rule");
+        helper.assertValueEqual(oak.get("markup").get(0).layer(), "file test:woods defaults", "markup untouched by the edits");
+        helper.assertValueEqual(result.sources().get(Items.BIRCH_LOG).get("base_price").get(0).layer(), "tag rule #minecraft:logs",
+                "birch is listed by the tag rule alone");
+
+        // A later rule removing the item sends the item edit back to the file entry: the first rule's fields drop out.
+        edits.removeTag(ResourceLocation.withDefaultNamespace("logs_that_burn"));
+        result = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), CatalogOverlay::registryTag);
+        oak = result.sources().get(Items.OAK_LOG);
+        helper.assertValueEqual(oak.get("base_price").stream().map(dynamiceconomy.catalog.FieldSource::layer).toList(),
+                List.of("file test:woods", "item edit"), "after a removal, layers restart from the file");
+        helper.assertTrue(!oak.containsKey("sell_fee") && result.entries().get(Items.OAK_LOG).sellFee() == 0.0,
+                "the removed rule's sell_fee is gone from both the entry and its sources");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void infoShowsWhereEachFieldComesFrom(GameTestHelper helper) {
+        List<String> info = runCommand(helper, "market admin info minecraft:iron_ingot");
+        for (String expected : List.of(
+                "  base_price = 16 [file dynamic_economy:example_catalog]",
+                "  markup = 0.5 [file dynamic_economy:example_catalog defaults]",
+                "  can_sell = true [default]",
+                "  min_buy_markup = 0.5 [same as markup]",
+                "  sell_impact = " + java.math.BigDecimal.valueOf(MarketConfig.sellImpact()).stripTrailingZeros().toPlainString()
+                        + " [server config]")) {
+            helper.assertTrue(info.contains(expected), "info shows \"" + expected + "\": " + info);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void diagnoseFindsPlantedProblemsAndChangesNothing(GameTestHelper helper) {
+        JsonElement file = JsonParser.parseString("""
+                { "entries": [
+                    { "item": "minecraft:iron_ingot",  "base_price": 16, "buy_impact": 0 },
+                    { "item": "minecraft:diamond",     "base_price": 256, "can_sell": false },
+                    { "item": "minecraft:cobblestone", "base_price": 1, "unlimited_stock": true },
+                    { "item": "minecraft:stone",       "base_price": 1, "can_buy": false, "can_sell": false },
+                    { "item": "minecraft:gold_ingot",  "base_price": 32 },
+                    { "item": "minecraft:sand",        "base_price": 0 },
+                    { "item": "minecraft:not_a_real_item", "base_price": 5 }
+                ] }""");
+        MarketCatalog.Loaded loaded = MarketCatalog.load(List.of(
+                new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("test", "planted"), 0, "test", file)));
+        MarketOverrides edits = new MarketOverrides();
+        edits.setItemField(key(Items.IRON_INGOT), "base_price", number(16));
+        edits.setItemField(key(Items.DIRT), "markup", number(1.0));
+        edits.setTagField(ResourceLocation.fromNamespaceAndPath("test", "no_such_tag"), "markup", number(1.0));
+        edits.setTagField(ResourceLocation.fromNamespaceAndPath("test", "huge"), "markup", number(1.0));
+        List<Item> hundred = BuiltInRegistries.ITEM.stream().limit(100).toList();
+        java.util.function.Function<ResourceLocation, Collection<Item>> tags = tag -> tag.getPath().equals("huge") ? hundred
+                : CatalogOverlay.registryTag(tag);
+        CatalogOverlay.Result result = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), tags);
+
+        MarketStockData market = new MarketStockData();
+        long now = MarketStockData.now(helper.getLevel().getServer());
+        market.setFactor(key(Items.GOLD_INGOT), MarketConfig.floor(), now);
+        market.setStock(ResourceLocation.fromNamespaceAndPath("gone_mod", "widget"), 5);
+        Map<ResourceLocation, Long> stockBefore = Map.copyOf(market.view());
+        Map<ResourceLocation, MarketStockData.Factor> factorsBefore = Map.copyOf(market.factorsView());
+        MarketOverrides.Snapshot editsBefore = edits.snapshot();
+
+        List<MarketDiagnostics.Finding> findings = MarketDiagnostics.run(loaded, result.entries().values(),
+                item -> result.sources().getOrDefault(item, dynamiceconomy.catalog.FieldSource.NONE), result.problems(),
+                edits.snapshot(), market, now, tags);
+
+        java.util.function.BiConsumer<MarketDiagnostics.Severity, String> expect = (severity, text) -> helper.assertTrue(
+                findings.stream().anyMatch(f -> f.severity() == severity && f.message().contains(text)),
+                "expected a " + severity + " containing \"" + text + "\" in " + findings);
+        expect.accept(MarketDiagnostics.Severity.ERROR, "unknown item minecraft:not_a_real_item");
+        expect.accept(MarketDiagnostics.Severity.ERROR, "minecraft:dirt has edits but no base_price");
+        expect.accept(MarketDiagnostics.Severity.WARNING, "minecraft:iron_ingot: a round trip can make a profit");
+        expect.accept(MarketDiagnostics.Severity.WARNING, "minecraft:diamond can never be bought");
+        expect.accept(MarketDiagnostics.Severity.WARNING, "minecraft:gold_ingot is at its price floor");
+        expect.accept(MarketDiagnostics.Severity.WARNING, "Tag rule #test:no_such_tag matches no items");
+        expect.accept(MarketDiagnostics.Severity.WARNING, "The admin edit of base_price on minecraft:iron_ingot has no effect");
+        expect.accept(MarketDiagnostics.Severity.NOTE, "minecraft:cobblestone has unlimited stock and can be sold");
+        expect.accept(MarketDiagnostics.Severity.NOTE, "minecraft:stone is listed but can be neither bought nor sold");
+        expect.accept(MarketDiagnostics.Severity.NOTE, "Tag rule #test:huge covers 100 items");
+        expect.accept(MarketDiagnostics.Severity.NOTE, "1 catalog entries have base_price 0");
+        expect.accept(MarketDiagnostics.Severity.NOTE, "1 item(s) with saved market data no longer exist");
+        helper.assertValueEqual(findings.get(0).severity(), MarketDiagnostics.Severity.ERROR, "errors come first");
+
+        helper.assertValueEqual(Map.copyOf(market.view()), stockBefore, "diagnosis leaves stock alone");
+        helper.assertValueEqual(Map.copyOf(market.factorsView()), factorsBefore, "and prices");
+        helper.assertValueEqual(edits.snapshot(), editsBefore, "and edits");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void diagnoseCommandRunsOnTheLiveMarket(GameTestHelper helper) {
+        List<String> output = runCommand(helper, "market admin diagnose");
+        helper.assertTrue(output.get(0).startsWith("Market check:"), "summary line first: " + output);
+        helper.assertTrue(output.stream().anyMatch(line -> line.contains("minecraft:nether_star can never be bought")),
+                "the example catalog's nether star can't be sold, so it can never be stocked: " + output);
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void tagRulePreviewsChangeNothing(GameTestHelper helper) {
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        MarketOverrides.Snapshot before = MarketOverrides.get(server).snapshot();
+        int logs = CatalogOverlay.registryTag(ResourceLocation.withDefaultNamespace("logs")).size();
+
+        List<String> setPrice = runCommand(helper, "market admin tag minecraft:logs setprice 4 preview");
+        helper.assertTrue(setPrice.get(1).contains("Of the tag's %d items: %d newly listed, 0 taken off, 1 changed".formatted(logs, logs - 1)),
+                "oak is already listed and changes; every other log would be listed: " + setPrice);
+        helper.assertTrue(setPrice.stream().anyMatch(line -> line.contains("minecraft:oak_log: base_price 2 → 4")), "oak's change shown: " + setPrice);
+        List<String> remove = runCommand(helper, "market admin tag minecraft:logs remove preview");
+        helper.assertTrue(remove.get(1).contains("1 taken off"), "removing the tag would delist oak: " + remove);
+        List<String> markup = runCommand(helper, "market admin tag minecraft:logs set markup 1.0 preview");
+        helper.assertTrue(markup.get(1).contains("0 newly listed, 0 taken off, 1 changed"), "a rule without a price lists nothing: " + markup);
+
+        helper.assertValueEqual(MarketOverrides.get(server).snapshot(), before, "no edit was saved");
+        helper.assertTrue(MarketCatalog.INSTANCE.get(Items.BIRCH_LOG).isEmpty(), "the live catalog is unchanged");
+        helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.OAK_LOG).map(CatalogEntry::basePrice), Optional.of(2), "oak still at 2");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void priceResetsCanBePreviewedAndScopedToATag(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        long now = MarketStockData.now(helper.getLevel().getServer());
+        f.market.setFactor(key(Items.IRON_INGOT), 0.5, now);
+        f.market.setFactor(key(Items.OAK_LOG), 0.6, now);
+        Map<ResourceLocation, MarketStockData.Factor> before = Map.copyOf(f.market.factorsView());
+
+        List<String> all = runCommand(helper, "market admin resetprice all preview");
+        helper.assertTrue(all.get(0).contains("2 item(s) would go back to base price"), "preview counts both: " + all);
+        helper.assertTrue(all.get(1).contains("minecraft:iron_ingot: now 50% of base"), "furthest first: " + all);
+        helper.assertValueEqual(Map.copyOf(f.market.factorsView()), before, "the preview reset nothing");
+
+        runCommand(helper, "market admin resetprice tag minecraft:logs");
+        helper.assertValueEqual(f.factor(Items.OAK_LOG), 1.0, "oak, a log, is reset");
+        helper.assertValueEqual(f.factor(Items.IRON_INGOT), 0.5, "iron, not a log, is untouched");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void pruneListsFirstThenRemovesOnlyMissingItems(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        ResourceLocation gone = ResourceLocation.fromNamespaceAndPath("gone_mod", "widget");
+        f.market.setStock(gone, 5);
+        f.market.setFactor(gone, 0.5, MarketStockData.now(server));
+        MarketOverrides.get(server).setItemField(gone, "base_price", number(3));
+        f.setStock(Items.IRON_INGOT, 7);
+
+        List<String> listing = runCommand(helper, "market admin prune");
+        helper.assertTrue(listing.contains("  gone_mod:widget"), "the missing item is listed: " + listing);
+        helper.assertValueEqual(f.market.getStock(gone), 5L, "listing deletes nothing");
+
+        runCommand(helper, "market admin prune confirm");
+        helper.assertTrue(!f.market.view().containsKey(gone) && !f.market.factorsView().containsKey(gone), "its stock and price are gone");
+        helper.assertTrue(MarketOverrides.get(server).itemPatch(gone) == null, "and its admin edit");
+        helper.assertValueEqual(f.stock(Items.IRON_INGOT), 7L, "items that exist are untouched");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void exampleCatalogIsAnOptionalPack(GameTestHelper helper) {
+        net.minecraft.server.packs.repository.Pack pack = helper.getLevel().getServer().getPackRepository()
+                .getPack(DynamicEconomy.EXAMPLE_PACK_ID);
+        helper.assertTrue(pack != null, "the example catalog is registered as a data pack");
+        helper.assertTrue(!pack.getPackSource().shouldAddAutomatically(),
+                "and Minecraft won't switch it on by itself; an admin has to enable it");
+        helper.assertTrue(MarketCatalog.INSTANCE.sources(Items.IRON_INGOT).get("base_price").get(0).layer()
+                .equals("file dynamic_economy:example_catalog"), "the test world's items come from it");
         helper.succeed();
     }
 

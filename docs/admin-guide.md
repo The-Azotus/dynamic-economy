@@ -60,6 +60,13 @@ There are three ways to price items, and you can mix them:
 | [Catalog files](#catalog-files) | Keeping prices in a datapack you version or share. |
 | [In-game commands](#editing-prices-in-game) | Quick changes, and whole tags such as "all logs". |
 
+The market starts empty. The mod includes a small **example catalog**: cobblestone and oak log (unlimited stock), iron, diamond and nether star, at placeholder prices. It's a datapack that is **off** until you enable it:
+
+- `/datapack enable "mod/dynamic_economy:example_catalog"` turns it on; `/datapack disable "mod/dynamic_economy:example_catalog"` turns it off.
+- Its file, `data/dynamic_economy/market/example_catalog.json`, is a handy starting point for your own catalog.
+
+**Upgrading from an earlier version:** before Phase 7 these five items were always on. After upgrading they disappear from the market unless you enable the example pack. Their saved stock and price history are kept, so enabling the pack (or listing them some other way) brings them back as they were.
+
 ### Pricing from a spreadsheet
 
 1. Run `/market admin export` from the server console or as a level-4 operator. It writes a folder like `config/dynamic_economy/exports/2026-10-23_09-30-00/` containing:
@@ -114,7 +121,9 @@ These commands need operator level 2. Items can be typed with tab completion, su
 | `/market admin remove <item>` | Takes the item off the market. Its stock is kept for if you list it again. |
 | `/market admin revert <item>` | Drops all your edits for the item, back to what the catalog files and tag rules say. |
 | `/market admin clearstock <item>` | Empties the item's stock; it stays listed. |
-| `/market admin info <item>` | Shows the live entry, and what the catalog files, tag rules and your edits each say. |
+| `/market admin info <item>` | For a listed item, every field's value and where it comes from: a catalog file (and whether from the entry itself or the file's `defaults`), a tag rule, your edit, the server config, or the built-in default. It also shows any lower-layer values a field overrides. For an unlisted item, it shows what each layer says. |
+
+For example, `info minecraft:oak_log` might show `base_price = 9 [item edit; overrides 4 from tag rule #minecraft:logs, then 2 from file dynamic_economy:example_catalog]` and `markup = 0.5 [file dynamic_economy:example_catalog defaults]`.
 
 Every edit is checked before it's saved. If it would break a rule, it's refused with the reason and nothing changes; for example, a `min_buy_markup` above the `markup`, or a field set on an item that has no price.
 
@@ -135,6 +144,22 @@ A tag rule sets fields for every item in an item tag. It's **live**: when a mod 
 **Example:** `/market admin tag minecraft:logs setprice 4` prices every log at 4 spurs. `/market admin setprice minecraft:birch_log 9` then makes birch the exception. Oak logs keep `unlimited_stock: true` from the catalog file, because the rule only sets the price.
 
 Where rules overlap, rules created later win. Item edits always win over rules.
+
+**Preview first.** A tag can hold dozens of items, so `setprice`, `set`, `remove` and `revert` all accept `preview` at the end. For example, `/market admin tag minecraft:logs setprice 4 preview` says how many of the tag's items would be newly listed, taken off, changed or unaffected, with examples (removals and changes first). It also says whether the change would be refused. Nothing is saved.
+
+## Checking the catalog
+
+`/market admin diagnose` looks over the catalog, your edits and the saved market data, and lists what it finds, ten per page (`/market admin diagnose 2` for the next page). It never changes anything.
+
+| Level | Means | Examples |
+| --- | --- | --- |
+| **Error** | Something was left out of the market. | A catalog entry skipped (unknown item, bad value); an in-game edit that can't be applied. |
+| **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
+| **Note** | Possibly deliberate; worth a look. | Unlimited items that can be sold (farms can sell them forever); items listed but neither buyable nor sellable; tag rules covering more than 64 items; unpriced template entries; saved data for items that no longer exist. |
+
+**Removed mods.** When you remove a mod, the market keeps its items' saved stock, prices, history and edits. `/market admin prune` lists those items, and `/market admin prune confirm` deletes their data. The overall money counts are kept. There's no undo yet, so back up the world first.
+
+**Price resets.** `/market admin resetprice all preview` shows how many items would go back to base price, the furthest-moved first. `/market admin resetprice tag <tag>` resets only that tag's items, and also takes `preview`.
 
 ## Catalog fields
 
@@ -221,8 +246,10 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market sell <item> <qty>`, `/market buy <item> <qty>` | everyone* | Trades without the screen, at whatever the price is when the command runs. Unlike the screen, there's no "price changed, confirm again" step. Use `BLOCK_ONLY` if you don't want players trading this way. |
 | `/market admin setstock <item> <qty>` | 2 | Sets an item's stock. Refused for unlimited items. |
 | `/market admin clearstock <item>` | 2 | Empties an item's stock. |
-| `/market admin resetprice <item>` or `all` | 2 | Puts the price factor back to 1.0. |
+| `/market admin resetprice <item>`, `all [preview]` or `tag <tag> [preview]` | 2 | Puts price factors back to 1.0. |
 | `/market admin setprice`, `set`, `unset`, `remove`, `revert`, `info` | 2 | In-game editing; see [Editing prices in game](#editing-prices-in-game). |
+| `/market admin diagnose [page]` | 2 | Lists catalog problems and things worth checking; see [Checking the catalog](#checking-the-catalog). |
+| `/market admin prune [confirm]` | 2 | Lists, then deletes, saved data for items that no longer exist. |
 | `/market admin tag <tag> ...`, `/market admin tags` | 2 | Tag rules; see [Tag rules](#tag-rules-pricing-many-items-at-once). |
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
@@ -270,6 +297,7 @@ The rest of the file still imports. The first 15 reasons appear in chat, and all
 | `Market file … entry N: Value … outside of range …; skipped` | A field's value is out of range; see [Catalog fields](#catalog-fields). |
 | `Market file … overrides … listed earlier in … of the same pack` | Two files in one datapack list the same item; the later name wins. |
 | `Market admin edit not applied: …` | A saved in-game edit no longer fits, for example because a catalog file changed. Check `/market admin info <item>`. |
-| `Market item …: buying and reselling it may make a profit` | The item's impacts, markup and fee allow a buy-then-sell profit; see [Supply and demand](#supply-and-demand). |
+| `Market item …: a round trip may make a profit` | The item's impacts, markup and fee allow a profit from buying then selling back, or selling then buying back; see [Supply and demand](#supply-and-demand). |
+| The market is empty after upgrading | The example items are now an optional datapack; see [Pricing items](#pricing-items). |
 | `Numismatics bank API not found; the market will refuse all trades` | The installed Numismatics version isn't compatible. This mod was built against 1.1.0. |
 | A player sees "The market is only available at a Market Terminal" | `access_mode` is `BLOCK_ONLY`. |

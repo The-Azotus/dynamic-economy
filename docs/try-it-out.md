@@ -2,6 +2,8 @@
 
 This is the Phase 0–5 version (`v0.1.0`). Everything here works in your pack without touching the source.
 
+> Later versions differ: from Phase 7 the five test items are an optional datapack that starts off. See the [README](../README.md) and the [admin guide](admin-guide.md).
+
 ## Before you start
 
 - **Back up the world.** The mod adds `world/data/dynamic_economy_market.dat` (stock, prices, price history) and, after an import, a world datapack at `world/datapacks/dynamic_economy_catalog/`.

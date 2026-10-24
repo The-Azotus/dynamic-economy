@@ -15,10 +15,14 @@ import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.CatalogJson;
 import dynamiceconomy.catalog.CatalogOverlay;
+import dynamiceconomy.catalog.FieldSource;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.MarketDiagnostics;
+import dynamiceconomy.service.PriceModel;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -37,6 +41,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -89,7 +94,7 @@ final class AdminCatalogCommands {
                         .then(Commands.argument("base_price", IntegerArgumentType.integer(1))
                                 .executes(ctx -> editItem(ctx, "base_price", new JsonPrimitive(IntegerArgumentType.getInteger(ctx, "base_price")))))));
         admin.then(fieldCommands(Commands.literal("set"), Commands.argument("item", ItemArgument.item(context)),
-                (ctx, field, value) -> editItem(ctx, field, value)));
+                (ctx, field, value, preview) -> editItem(ctx, field, value), false));
         admin.then(Commands.literal("unset")
                 .then(fieldNames(Commands.argument("item", ItemArgument.item(context)), AdminCatalogCommands::unsetItem)));
         admin.then(Commands.literal("remove")
@@ -104,21 +109,30 @@ final class AdminCatalogCommands {
         var tag = Commands.argument("tag", ResourceLocationArgument.id())
                 .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
                         BuiltInRegistries.ITEM.getTagNames().map(TagKey::location), builder));
+        // Tag rules can change many items at once, so each change can be previewed first by adding "preview".
         tag.then(Commands.literal("setprice")
                 .then(Commands.argument("base_price", IntegerArgumentType.integer(1))
-                        .executes(ctx -> editTag(ctx, "base_price", new JsonPrimitive(IntegerArgumentType.getInteger(ctx, "base_price"))))));
-        tag.then(fieldCommands(Commands.literal("set"), null, AdminCatalogCommands::editTag));
+                        .executes(ctx -> editTag(ctx, "base_price", new JsonPrimitive(IntegerArgumentType.getInteger(ctx, "base_price")), false))
+                        .then(Commands.literal("preview")
+                                .executes(ctx -> editTag(ctx, "base_price", new JsonPrimitive(IntegerArgumentType.getInteger(ctx, "base_price")), true)))));
+        tag.then(fieldCommands(Commands.literal("set"), null, AdminCatalogCommands::editTag, true));
         tag.then(fieldNames(Commands.literal("unset"), AdminCatalogCommands::unsetTag));
-        tag.then(Commands.literal("remove").executes(AdminCatalogCommands::removeTag));
-        tag.then(Commands.literal("revert").executes(AdminCatalogCommands::revertTag));
+        tag.then(Commands.literal("remove").executes(ctx -> removeTag(ctx, false))
+                .then(Commands.literal("preview").executes(ctx -> removeTag(ctx, true))));
+        tag.then(Commands.literal("revert").executes(ctx -> revertTag(ctx, false))
+                .then(Commands.literal("preview").executes(ctx -> revertTag(ctx, true))));
         tag.then(Commands.literal("info").executes(AdminCatalogCommands::tagInfo));
         admin.then(Commands.literal("tag").then(tag));
         admin.then(Commands.literal("tags").executes(AdminCatalogCommands::listTags));
+        admin.then(Commands.literal("diagnose").executes(ctx -> diagnose(ctx, 1))
+                .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                        .executes(ctx -> diagnose(ctx, IntegerArgumentType.getInteger(ctx, "page")))));
     }
 
     @FunctionalInterface
     private interface FieldEdit {
-        int run(CommandContext<CommandSourceStack> ctx, String field, JsonElement value) throws com.mojang.brigadier.exceptions.CommandSyntaxException;
+        int run(CommandContext<CommandSourceStack> ctx, String field, JsonElement value, boolean preview)
+                throws com.mojang.brigadier.exceptions.CommandSyntaxException;
     }
 
     @FunctionalInterface
@@ -126,14 +140,19 @@ final class AdminCatalogCommands {
         int run(CommandContext<CommandSourceStack> ctx, String field) throws com.mojang.brigadier.exceptions.CommandSyntaxException;
     }
 
-    /** {@code <literal> [target] <field> <value>} for every settable field. */
+    /** {@code <literal> [target] <field> <value> [preview]} for every settable field. */
     private static <T extends ArgumentBuilder<CommandSourceStack, T>> LiteralArgumentBuilder<CommandSourceStack> fieldCommands(
-            LiteralArgumentBuilder<CommandSourceStack> literal, ArgumentBuilder<CommandSourceStack, ?> target, FieldEdit edit) {
+            LiteralArgumentBuilder<CommandSourceStack> literal, ArgumentBuilder<CommandSourceStack, ?> target, FieldEdit edit,
+            boolean withPreview) {
         ArgumentBuilder<CommandSourceStack, ?> parent = target == null ? literal : target;
         for (Field field : FIELDS) {
-            parent.then(Commands.literal(field.name())
-                    .then(Commands.argument("value", field.type())
-                            .executes(ctx -> edit.run(ctx, field.name(), field.read().apply(ctx, "value")))));
+            var value = Commands.argument("value", field.type())
+                    .executes(ctx -> edit.run(ctx, field.name(), field.read().apply(ctx, "value"), false));
+            if (withPreview) {
+                value.then(Commands.literal("preview")
+                        .executes(ctx -> edit.run(ctx, field.name(), field.read().apply(ctx, "value"), true)));
+            }
+            parent.then(Commands.literal(field.name()).then(value));
         }
         if (target != null) {
             literal.then(target);
@@ -206,27 +225,123 @@ final class AdminCatalogCommands {
         return 1;
     }
 
+    /** Catalog fields in the order {@code info} lists them. */
+    private static final List<String> INFO_FIELDS = List.of("base_price", "markup", "sell_fee", "can_sell", "can_buy",
+            "unlimited_stock", "start_stock", "dynamic", "min_buy_markup", "sell_impact", "buy_impact", "recovery", "floor", "ceiling");
+
+    /**
+     * For a listed item, every field's value and the layer it comes from, with the lower layers it overrides. For an
+     * unlisted one, what each layer says, so the admin can see why it isn't listed.
+     */
     private static int info(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
         ResourceLocation id = id(item);
         MinecraftServer server = ctx.getSource().getServer();
         MarketOverrides.Snapshot overrides = MarketOverrides.get(server).snapshot();
         List<String> lines = new ArrayList<>();
-        lines.add(MarketCatalog.INSTANCE.get(item).map(e -> id + " is listed: " + describe(e)).orElse(id + " is not listed"));
-        lines.add("  Catalog files: " + MarketCatalog.INSTANCE.fileEntry(item).map(AdminCatalogCommands::describe).orElse("not listed"));
-        String rules = overrides.tags().stream()
-                .filter(rule -> CatalogOverlay.registryTag(rule.tag()).contains(item))
-                .map(rule -> "#" + rule.tag() + " " + rule.patch())
-                .collect(Collectors.joining(", "));
-        lines.add("  Tag rules: " + (rules.isEmpty() ? "none" : rules));
-        JsonObject own = overrides.items().get(id);
-        lines.add("  Admin edits: " + (own == null ? "none" : own.toString()));
+        Optional<CatalogEntry> listed = MarketCatalog.INSTANCE.get(item);
+        if (listed.isPresent()) {
+            lines.add(id + " is listed. Each field: value [where it comes from]");
+            JsonObject values = CatalogJson.toJson(listed.get());
+            PriceModel.Inputs inputs = PriceModel.inputs(listed.get());
+            Map<String, List<FieldSource>> sources = MarketCatalog.INSTANCE.sources(item);
+            INFO_FIELDS.forEach(field -> lines.add("  " + describeField(field, values, inputs, sources.get(field))));
+        } else {
+            lines.add(id + " is not listed");
+            lines.add("  Catalog files: " + MarketCatalog.INSTANCE.fileEntry(item).map(AdminCatalogCommands::describe).orElse("not listed"));
+            String rules = overrides.tags().stream()
+                    .filter(rule -> CatalogOverlay.registryTag(rule.tag()).contains(item))
+                    .map(rule -> "#" + rule.tag() + " " + rule.patch())
+                    .collect(Collectors.joining(", "));
+            lines.add("  Tag rules: " + (rules.isEmpty() ? "none" : rules));
+            JsonObject own = overrides.items().get(id);
+            lines.add("  Admin edits: " + (own == null ? "none" : own.toString()));
+        }
         String problem = MarketCatalog.INSTANCE.problems().get(id);
         if (problem != null) {
             lines.add("  Not applied: " + problem);
         }
         lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), false));
         return 1;
+    }
+
+    /**
+     * {@code markup = 0.75 [item edit; overrides 0.5 from file a:ores defaults]}. A field nothing sets shows its
+     * built-in default, the server config value, or (for min_buy_markup) the markup it follows.
+     */
+    static String describeField(String field, JsonObject values, PriceModel.Inputs inputs, List<FieldSource> layers) {
+        String value = values.has(field) ? show(values.get(field)) : switch (field) {
+            case "sell_impact" -> plain(inputs.sellImpact());
+            case "buy_impact" -> plain(inputs.buyImpact());
+            case "recovery" -> plain(inputs.recovery());
+            case "floor" -> plain(inputs.floor());
+            case "ceiling" -> plain(inputs.ceiling());
+            case "min_buy_markup" -> plain(inputs.minBuyMarkup());
+            default -> "?";
+        };
+        if (layers == null || layers.isEmpty()) {
+            String from = switch (field) {
+                case "sell_impact", "buy_impact", "recovery", "floor", "ceiling" -> "server config";
+                case "min_buy_markup" -> "same as markup";
+                default -> "default";
+            };
+            return "%s = %s [%s]".formatted(field, value, from);
+        }
+        StringBuilder line = new StringBuilder("%s = %s [%s".formatted(field, value, layers.get(layers.size() - 1).layer()));
+        for (int i = layers.size() - 2; i >= 0; i--) {
+            line.append(i == layers.size() - 2 ? "; overrides " : ", then ")
+                    .append(show(layers.get(i).value())).append(" from ").append(layers.get(i).layer());
+        }
+        return line.append(']').toString();
+    }
+
+    /** Numbers in plain form (0.0005, not 5.0E-4; 16, not 16.0); anything else as JSON. */
+    private static String show(JsonElement value) {
+        if (value.isJsonPrimitive() && value.getAsJsonPrimitive().isNumber()) {
+            return new java.math.BigDecimal(value.getAsString()).stripTrailingZeros().toPlainString();
+        }
+        return value.toString();
+    }
+
+    private static String plain(double value) {
+        return java.math.BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
+    }
+
+    // ---- Diagnosis --------------------------------------------------------------------------------------------
+
+    private static final int FINDINGS_PER_PAGE = 10;
+
+    private static int diagnose(CommandContext<CommandSourceStack> ctx, int page) {
+        MinecraftServer server = ctx.getSource().getServer();
+        List<MarketDiagnostics.Finding> findings = MarketDiagnostics.run(MarketCatalog.INSTANCE.files(),
+                MarketCatalog.INSTANCE.entries(), MarketCatalog.INSTANCE::sources, MarketCatalog.INSTANCE.problems(),
+                MarketOverrides.get(server).snapshot(), MarketStockData.get(server), MarketStockData.now(server),
+                CatalogOverlay::registryTag);
+        if (findings.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("Market check: nothing to report"), false);
+            return 0;
+        }
+        Map<MarketDiagnostics.Severity, Long> counts = findings.stream()
+                .collect(Collectors.groupingBy(MarketDiagnostics.Finding::severity, Collectors.counting()));
+        int pages = (findings.size() + FINDINGS_PER_PAGE - 1) / FINDINGS_PER_PAGE;
+        int shown = Math.min(page, pages);
+        ctx.getSource().sendSuccess(() -> Component.literal("Market check: %d error(s), %d warning(s), %d note(s); page %d of %d"
+                .formatted(counts.getOrDefault(MarketDiagnostics.Severity.ERROR, 0L),
+                        counts.getOrDefault(MarketDiagnostics.Severity.WARNING, 0L),
+                        counts.getOrDefault(MarketDiagnostics.Severity.NOTE, 0L), shown, pages)), false);
+        findings.stream().skip((long) (shown - 1) * FINDINGS_PER_PAGE).limit(FINDINGS_PER_PAGE).forEach(finding -> {
+            ChatFormatting colour = switch (finding.severity()) {
+                case ERROR -> ChatFormatting.RED;
+                case WARNING -> ChatFormatting.YELLOW;
+                case NOTE -> ChatFormatting.GRAY;
+            };
+            ctx.getSource().sendSuccess(() -> Component.literal("[" + finding.severity().name().toLowerCase(java.util.Locale.ROOT)
+                    + "] " + finding.message()).withStyle(colour), false);
+        });
+        if (shown < pages) {
+            ctx.getSource().sendSuccess(() -> Component.literal("/market admin diagnose " + (shown + 1) + " for more"), false);
+        }
+        return findings.size();
     }
 
     // ---- Tag rules --------------------------------------------------------------------------------------------
@@ -247,12 +362,16 @@ final class AdminCatalogCommands {
         return true;
     }
 
-    private static int editTag(CommandContext<CommandSourceStack> ctx, String field, JsonElement value) {
+    private static int editTag(CommandContext<CommandSourceStack> ctx, String field, JsonElement value, boolean preview) {
         ResourceLocation tag = tag(ctx);
         if (!checkTagExists(ctx, tag)) {
             return 0;
         }
-        return apply(ctx, members(tag), data -> data.setTagField(tag, field, value),
+        Consumer<MarketOverrides> edit = data -> data.setTagField(tag, field, value);
+        if (preview) {
+            return preview(ctx, tag, edit, "setting %s = %s on #%s".formatted(field, value, tag));
+        }
+        return apply(ctx, members(tag), edit,
                 "Tag rule #%s: %s = %s. It applies to every item in the tag, now and as the tag changes; items with their own edits keep them"
                         .formatted(tag, field, value), null);
     }
@@ -263,23 +382,103 @@ final class AdminCatalogCommands {
                 "Removed %s from the tag rule #%s".formatted(field, tag), null);
     }
 
-    private static int removeTag(CommandContext<CommandSourceStack> ctx) {
+    private static int removeTag(CommandContext<CommandSourceStack> ctx, boolean preview) {
         ResourceLocation tag = tag(ctx);
         if (!checkTagExists(ctx, tag)) {
             return 0;
         }
-        return apply(ctx, members(tag), data -> data.removeTag(tag),
+        Consumer<MarketOverrides> edit = data -> data.removeTag(tag);
+        if (preview) {
+            return preview(ctx, tag, edit, "taking #%s off the market".formatted(tag));
+        }
+        return apply(ctx, members(tag), edit,
                 "Took every item in #%s off the market (stock kept); items with their own edits stay listed".formatted(tag), null);
     }
 
-    private static int revertTag(CommandContext<CommandSourceStack> ctx) {
+    private static int revertTag(CommandContext<CommandSourceStack> ctx, boolean preview) {
         ResourceLocation tag = tag(ctx);
         boolean exists = MarketOverrides.get(ctx.getSource().getServer()).snapshot().tags().stream().anyMatch(r -> r.tag().equals(tag));
         if (!exists) {
             ctx.getSource().sendFailure(Component.literal("There's no tag rule for #" + tag));
             return 0;
         }
-        return apply(ctx, members(tag), data -> data.revertTag(tag), "Deleted the tag rule #" + tag, null);
+        Consumer<MarketOverrides> edit = data -> data.revertTag(tag);
+        if (preview) {
+            return preview(ctx, tag, edit, "deleting the tag rule #" + tag);
+        }
+        return apply(ctx, members(tag), edit, "Deleted the tag rule #" + tag, null);
+    }
+
+    private static final int PREVIEW_EXAMPLES = 5;
+
+    /**
+     * Shows what a tag-rule change would do to the tag's items, without changing anything: the edit is made to a
+     * copy of the admin edits and the catalog is built from that copy on the side.
+     */
+    private static int preview(CommandContext<CommandSourceStack> ctx, ResourceLocation tag, Consumer<MarketOverrides> edit,
+                               String what) {
+        MarketOverrides copy = new MarketOverrides();
+        copy.restore(MarketOverrides.get(ctx.getSource().getServer()).snapshot());
+        edit.accept(copy);
+        MarketCatalog.Loaded files = MarketCatalog.INSTANCE.files();
+        CatalogOverlay.Result after = CatalogOverlay.apply(files.entries(), files.sources(), copy.snapshot(), CatalogOverlay::registryTag);
+
+        // Items already on the market matter most, so removals and changes are shown before new listings.
+        List<String> taken = new ArrayList<>();
+        List<String> changed = new ArrayList<>();
+        List<String> added = new ArrayList<>();
+        int same = 0;
+        List<Item> items = new ArrayList<>(CatalogOverlay.registryTag(tag));
+        items.sort(java.util.Comparator.comparing(item -> id(item).toString()));
+        for (Item item : items) {
+            CatalogEntry now = MarketCatalog.INSTANCE.get(item).orElse(null);
+            CatalogEntry next = after.entries().get(item);
+            if (now == null && next != null) {
+                added.add(id(item) + ": listed at " + next.basePrice() + " spurs");
+            } else if (now != null && next == null) {
+                taken.add(id(item) + ": taken off the market");
+            } else if (now != null && !now.equals(next)) {
+                changed.add(id(item) + ": " + differences(now, next));
+            } else {
+                same++;
+            }
+        }
+        List<String> examples = new ArrayList<>(taken);
+        examples.addAll(changed);
+        examples.addAll(added);
+        List<String> refused = after.problems().entrySet().stream()
+                .filter(problem -> BuiltInRegistries.ITEM.getOptional(problem.getKey()).map(items::contains).orElse(false))
+                .map(Map.Entry::getValue).toList();
+
+        List<String> lines = new ArrayList<>();
+        lines.add("Preview of " + what + " (nothing has been changed):");
+        lines.add("  Of the tag's %d items: %d newly listed, %d taken off, %d changed, %d unaffected"
+                .formatted(items.size(), added.size(), taken.size(), changed.size(), same));
+        examples.stream().limit(PREVIEW_EXAMPLES).forEach(example -> lines.add("  " + example));
+        if (examples.size() > PREVIEW_EXAMPLES) {
+            lines.add("  ...and %d more".formatted(examples.size() - PREVIEW_EXAMPLES));
+        }
+        if (!refused.isEmpty()) {
+            lines.add("  The change would be refused, since it breaks the catalog rules for %d item(s), e.g. %s"
+                    .formatted(refused.size(), refused.get(0)));
+        }
+        lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), false));
+        return 1;
+    }
+
+    /** {@code base_price 2 → 4, markup 0.5 → 1.0}: the fields that differ between two entries for the same item. */
+    private static String differences(CatalogEntry before, CatalogEntry after) {
+        JsonObject a = CatalogJson.toJson(before);
+        JsonObject b = CatalogJson.toJson(after);
+        List<String> changes = new ArrayList<>();
+        for (String field : INFO_FIELDS) {
+            JsonElement from = a.get(field);
+            JsonElement to = b.get(field);
+            if (!java.util.Objects.equals(from, to)) {
+                changes.add(field + " " + (from == null ? "default" : from) + " → " + (to == null ? "default" : to));
+            }
+        }
+        return String.join(", ", changes);
     }
 
     private static int tagInfo(CommandContext<CommandSourceStack> ctx) {

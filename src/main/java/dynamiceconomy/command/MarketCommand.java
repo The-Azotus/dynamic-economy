@@ -3,35 +3,39 @@ package dynamiceconomy.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketAccess;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.catalog.CatalogOverlay;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.io.CatalogExport;
+import dynamiceconomy.io.CatalogImport;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.PriceModel;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
-
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import dynamiceconomy.io.CatalogExport;
-import dynamiceconomy.io.CatalogImport;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.commands.ReloadCommand;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.fml.loading.FMLPaths;
 
@@ -49,6 +53,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.stream.Collectors;
 
 /**
  * {@code /market} opens the market screen. The sell, buy, stock and price subcommands are the Phase 1 test commands,
@@ -91,9 +98,22 @@ public final class MarketCommand {
                                                 .executes(MarketCommand::setStock))))
                         .then(Commands.literal("resetprice")
                                 .then(Commands.literal("all")
-                                        .executes(MarketCommand::resetAllPrices))
+                                        .executes(MarketCommand::resetAllPrices)
+                                        .then(Commands.literal("preview")
+                                                .executes(ctx -> previewReset(ctx, "every item", id -> true))))
+                                .then(Commands.literal("tag")
+                                        .then(Commands.argument("tag", ResourceLocationArgument.id())
+                                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
+                                                        BuiltInRegistries.ITEM.getTagNames().map(TagKey::location), builder))
+                                                .executes(ctx -> resetTagPrices(ctx, false))
+                                                .then(Commands.literal("preview")
+                                                        .executes(ctx -> resetTagPrices(ctx, true)))))
                                 .then(Commands.argument("item", ItemArgument.item(context))
                                         .executes(MarketCommand::resetPrice)))
+                        .then(Commands.literal("prune")
+                                .executes(ctx -> prune(ctx, false))
+                                .then(Commands.literal("confirm")
+                                        .executes(ctx -> prune(ctx, true))))
                         .then(Commands.literal("reload")
                                 .executes(MarketCommand::reload))
                         .then(Commands.literal("stats")
@@ -235,6 +255,95 @@ public final class MarketCommand {
         MarketSync.broadcastSnapshot(server);
         ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) to their base price".formatted(count)), true);
         return count;
+    }
+
+    /** Puts every item in a tag back to its base price, or with {@code preview} says what that would do. */
+    private static int resetTagPrices(CommandContext<CommandSourceStack> ctx, boolean preview) {
+        ResourceLocation tag = ResourceLocationArgument.getId(ctx, "tag");
+        Set<ResourceLocation> members = CatalogOverlay.registryTag(tag).stream().map(MarketCommand::id).collect(Collectors.toSet());
+        if (members.isEmpty()) {
+            ctx.getSource().sendFailure(Component.literal("No items are in the tag #%s (check the spelling)".formatted(tag)));
+            return 0;
+        }
+        if (preview) {
+            return previewReset(ctx, "#" + tag, members::contains);
+        }
+        var server = ctx.getSource().getServer();
+        MarketStockData market = MarketStockData.get(server);
+        int count = 0;
+        for (ResourceLocation id : members) {
+            if (market.resetFactor(id)) {
+                count++;
+            }
+        }
+        MarketService.sampleHistory(server);
+        MarketSync.broadcastSnapshot(server);
+        int reset = count;
+        ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) in #%s to their base price".formatted(reset, tag)), true);
+        return count;
+    }
+
+    /** Lists the items a price reset would move back to base, furthest first. Changes nothing. */
+    private static int previewReset(CommandContext<CommandSourceStack> ctx, String what, java.util.function.Predicate<ResourceLocation> include) {
+        var server = ctx.getSource().getServer();
+        MarketStockData market = MarketStockData.get(server);
+        long now = MarketStockData.now(server);
+        Map<ResourceLocation, Double> moved = new java.util.HashMap<>();
+        for (ResourceLocation id : market.factorsView().keySet()) {
+            if (include.test(id)) {
+                double factor = BuiltInRegistries.ITEM.getOptional(id).flatMap(MarketCatalog.INSTANCE::get)
+                        .map(entry -> MarketService.currentFactor(entry, PriceModel.inputs(entry), market, now))
+                        .orElse(market.factorsView().get(id).value());
+                if (factor != 1.0) {
+                    moved.put(id, factor);
+                }
+            }
+        }
+        List<String> lines = new ArrayList<>();
+        lines.add("Preview of resetting %s (nothing has been changed): %d item(s) would go back to base price"
+                .formatted(what, moved.size()));
+        moved.entrySet().stream()
+                .sorted(Comparator.comparingDouble((Map.Entry<ResourceLocation, Double> e) -> Math.abs(e.getValue() - 1)).reversed())
+                .limit(TOP_ITEMS_SHOWN)
+                .forEach(e -> lines.add("  %s: now %d%% of base".formatted(e.getKey(), Math.round(e.getValue() * 100))));
+        lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), false));
+        return moved.size();
+    }
+
+    private static final int PRUNE_SHOWN = 10;
+
+    /**
+     * Deletes saved data (stock, prices, history, item money counts, admin edits) for items that no longer exist in
+     * the game, typically because their mod was removed. Without {@code confirm} it only lists them.
+     */
+    private static int prune(CommandContext<CommandSourceStack> ctx, boolean confirm) {
+        var server = ctx.getSource().getServer();
+        MarketStockData market = MarketStockData.get(server);
+        MarketOverrides overrides = MarketOverrides.get(server);
+        SortedSet<ResourceLocation> gone = MarketDiagnostics.unregisteredItems(market, overrides.snapshot());
+        if (gone.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("Nothing to prune: every item with saved market data exists"), false);
+            return 0;
+        }
+        if (!confirm) {
+            List<String> lines = new ArrayList<>();
+            lines.add("%d item(s) with saved market data no longer exist in the game:".formatted(gone.size()));
+            gone.stream().limit(PRUNE_SHOWN).forEach(id -> lines.add("  " + id));
+            if (gone.size() > PRUNE_SHOWN) {
+                lines.add("  ...and %d more".formatted(gone.size() - PRUNE_SHOWN));
+            }
+            lines.add("/market admin prune confirm deletes their stock, prices, price history, money counts and admin "
+                    + "edits. The overall money counts are kept. This can't be undone, so back up the world first");
+            lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), false));
+            return gone.size();
+        }
+        for (ResourceLocation id : gone) {
+            market.forget(id);
+            overrides.revertItem(id);
+        }
+        ctx.getSource().sendSuccess(() -> Component.literal("Deleted saved market data for %d item(s) that no longer exist, e.g. %s"
+                .formatted(gone.size(), gone.first())), true);
+        return gone.size();
     }
 
     private static final int TOP_ITEMS_SHOWN = 5;

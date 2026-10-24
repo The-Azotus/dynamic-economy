@@ -13,13 +13,18 @@ import dynamiceconomy.network.MarketNetwork;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -40,6 +45,7 @@ public final class DynamicEconomy {
         MarketMenu.MENUS.register(modBus);
         MarketBlocks.register(modBus);
         modBus.addListener(MarketNetwork::register);
+        modBus.addListener(DynamicEconomy::addExampleCatalog);
 
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(MarketCatalog.INSTANCE));
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
@@ -90,7 +96,20 @@ public final class DynamicEconomy {
     private static void warnAboutArbitrage() {
         for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
             PriceModel.arbitrageRisk(PriceModel.inputs(entry)).ifPresent(reason -> LOGGER.warn(
-                    "Market item {}: buying and reselling it may make a profit ({})", entry.itemId(), reason));
+                    "Market item {}: a round trip may make a profit ({})", entry.itemId(), reason));
         }
+    }
+
+    /** The ID admins enable the example catalog with: {@code /datapack enable "mod/dynamic_economy:example_catalog"}. */
+    public static final String EXAMPLE_PACK_ID = "mod/" + MOD_ID + ":example_catalog";
+
+    /**
+     * The five-item example catalog ships as an optional data pack, off unless an admin enables it, so placeholder
+     * prices never appear on a server by surprise. Minecraft never switches on packs from the "feature" source by
+     * itself. (The GameTest server enables every available pack, so the tests still see the example items.)
+     */
+    private static void addExampleCatalog(AddPackFindersEvent event) {
+        event.addPackFinders(ResourceLocation.fromNamespaceAndPath(MOD_ID, "example_catalog"), PackType.SERVER_DATA,
+                Component.literal("Dynamic Economy example catalog"), PackSource.FEATURE, false, Pack.Position.TOP);
     }
 }

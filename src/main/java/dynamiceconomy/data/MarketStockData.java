@@ -135,6 +135,21 @@ public final class MarketStockData extends SavedData {
         return had;
     }
 
+    /**
+     * Drops everything saved about an item: stock, price factor, history and its own money counts. The overall money
+     * counts keep what it traded. For items that no longer exist in the game; returns whether anything was saved.
+     */
+    public boolean forget(ResourceLocation item) {
+        boolean had = stock.remove(item) != null;
+        had |= factors.remove(item) != null;
+        had |= history.remove(item) != null;
+        had |= itemTotals.remove(item) != null;
+        if (had) {
+            setDirty();
+        }
+        return had;
+    }
+
     /** Puts every item back at 1.0. Returns how many had moved. */
     public int resetAllFactors() {
         int count = factors.size();
