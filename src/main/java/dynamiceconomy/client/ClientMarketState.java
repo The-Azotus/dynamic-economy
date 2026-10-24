@@ -38,6 +38,9 @@ public final class ClientMarketState {
     /** The last trade request sent, so a "price changed" reply can show the old total next to the new one. */
     @Nullable
     private static MarketPayloads.TradeRequest lastRequest;
+    /** This player's recent trades, once the screen has asked for them. */
+    @Nullable
+    private static MarketPayloads.Trades trades;
 
     private ClientMarketState() {
     }
@@ -65,6 +68,17 @@ public final class ClientMarketState {
         player = new MarketPayloads.PlayerState(state.balance(), Map.copyOf(state.held()), state.emptySlots(),
                 Map.copyOf(state.stackRoom()));
         version++;
+    }
+
+    public static void applyTrades(MarketPayloads.Trades received) {
+        trades = received;
+        version++;
+    }
+
+    /** The player's recent trades, newest first, or null until they've been received. */
+    @Nullable
+    public static MarketPayloads.Trades trades() {
+        return trades;
     }
 
     /** Remembers a request as it is sent. */
@@ -111,6 +125,7 @@ public final class ClientMarketState {
         history = null;
         player = emptyPlayer();
         lastRequest = null;
+        trades = null;
         status = Component.empty();
         statusIsError = false;
         version++;

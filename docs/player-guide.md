@@ -23,6 +23,8 @@ The market is run by the server. You can sell it items for money and buy items f
 
 The sort and filter you pick stay the same the next time you open the market, until you quit the game.
 
+**Trades** (top right) swaps the list for your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the market with that item selected; **Items** returns without one. Only you see your trades.
+
 Click an item to select it. Set a quantity with the box and the **−** / **+** buttons; hold Shift to change it by 16. Or use:
 
 - **Max**: sets the quantity to the most you can buy in one order. It counts your bank balance, the market's stock, the room in your inventory and the order limit, and allows for the price rising as you buy.

@@ -6,6 +6,7 @@ import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.service.MarketService;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -122,6 +123,7 @@ public final class MarketSync {
         if (item.isPresent()) {
             if (result.ok()) {
                 broadcastRow(player.server, item.get());
+                sendTrades(player);
             } else {
                 // A rejected trade usually means the client's view is stale (price, stock), so refresh just this row.
                 row(player.server, item.get()).ifPresent(row ->
@@ -129,6 +131,18 @@ public final class MarketSync {
             }
         }
         sendPlayerState(player);
+    }
+
+    static void handleTradesRequest(ServerPlayer player) {
+        if (player.containerMenu instanceof MarketMenu menu && menu.stillValid(player)) {
+            sendTrades(player);
+        }
+    }
+
+    /** The player's own recent trades; nobody else's are ever sent. */
+    private static void sendTrades(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, new MarketPayloads.Trades(System.currentTimeMillis(),
+                TradeHistory.get(player.server).recent(player.getUUID())));
     }
 
     static void handleHistoryRequest(MarketPayloads.HistoryRequest request, ServerPlayer player) {

@@ -1,6 +1,7 @@
 package dynamiceconomy.network;
 
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
 import io.netty.buffer.ByteBuf;
@@ -180,6 +181,42 @@ public final class MarketPayloads {
 
         @Override
         public Type<PlayerState> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: send me my recent trades (the screen asks when its trade list is opened). */
+    public record TradesRequest() implements CustomPacketPayload {
+        public static final Type<TradesRequest> TYPE = payloadType("trades_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, TradesRequest> CODEC = StreamCodec.unit(new TradesRequest());
+
+        @Override
+        public Type<TradesRequest> type() {
+            return TYPE;
+        }
+    }
+
+    private static final StreamCodec<ByteBuf, TradeHistory.Trade> TRADE_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_LONG, TradeHistory.Trade::time,
+            ResourceLocation.STREAM_CODEC, TradeHistory.Trade::item,
+            ByteBufCodecs.BOOL, TradeHistory.Trade::buy,
+            ByteBufCodecs.VAR_INT, TradeHistory.Trade::quantity,
+            ByteBufCodecs.VAR_LONG, TradeHistory.Trade::total,
+            TradeHistory.Trade::new);
+
+    /**
+     * Server to client: this player's recent trades, newest first, with the server's clock so the screen can say
+     * "3 min ago" even if the player's clock differs.
+     */
+    public record Trades(long now, List<TradeHistory.Trade> trades) implements CustomPacketPayload {
+        public static final Type<Trades> TYPE = payloadType("trades");
+        public static final StreamCodec<RegistryFriendlyByteBuf, Trades> CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_LONG, Trades::now,
+                TRADE_CODEC.apply(ByteBufCodecs.list(TradeHistory.CAP)), Trades::trades,
+                Trades::new);
+
+        @Override
+        public Type<Trades> type() {
             return TYPE;
         }
     }

@@ -23,7 +23,7 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 4 — Supply-and-demand pricing | Done |
 | 5 — Pack integration and polish | Done |
 | 6 — Terminal, access, admin editing, tooltips | Built on `explore`; GameTests pass, manual playtest pending |
-| **7 — Integrity, usability, admin tooling** | **In progress on `phase7`** |
+| **7 — Integrity, usability, admin tooling** | **Built on `phase7`; 80 GameTests pass, manual playtest pending** |
 
 Branches: `main` holds the stable `v0.1.0`; `explore` holds Phase 6; `phase7` branches from `explore`. Each has its own worktree folder next to this one (`git worktree list`).
 
@@ -200,7 +200,7 @@ Done when: terminal opens the market and closes at range; block-only mode stops 
 
 Still optional, only if asked: physical coin payment via `CoinItem.extract`; accepting held Numismatics bank cards; tag entries inside catalog JSON files.
 
-## Phase 7 — Integrity, usability, admin tooling (in progress, `phase7` branch)
+## Phase 7 — Integrity, usability, admin tooling (built, `phase7` branch)
 
 Priorities, in order: economic correctness, then player usability, then admin observability and recovery. Work in the stages below; each stage is one commit, ends with tests and a report, and waits for approval.
 
@@ -208,7 +208,7 @@ Priorities, in order: economic correctness, then player usability, then admin ob
 
 **Decided:**
 - Admin actions go to an append-only, size-capped JSONL file in the world folder; recent player trades (capped per player) go in world save data.
-- The 5-item test catalog becomes a built-in datapack that is off by default. GameTests install their own catalog instead of relying on it.
+- The 5-item test catalog becomes a built-in datapack that is off by default (`mod/dynamic_economy:example_catalog`, "feature" pack source). The GameTest server enables every pack, so the tests still use it.
 - Max Buy and Sell All only fill the quantity box; the trade still goes through the normal buttons and checks.
 - No quote reservations: a stale price is still rejected with `PRICE_CHANGED` and the refreshed total.
 - The market holds no balance. Sales create money, purchases destroy it, `sell_fee` reduces what is created. Statistics must say this, not call purchases "revenue".
@@ -219,7 +219,9 @@ Priorities, in order: economic correctness, then player usability, then admin ob
 
 **Stage 3 — Catalog diagnostics.** Per-field source in `info`; `/market admin diagnose`; `preview` for tag rules and price resets; reset by tag; `prune` saved data for removed items; the optional example datapack.
 
-**Stage 4 — Audit and recovery.** Admin audit log with rotation and `/market admin audit`; per-player trade history in the screen; `backup` / `restore` of stock, prices and edits with validation, preview and confirm.
+**Stage 4 — Audit and recovery.** Admin audit log with rotation and `/market admin audit`; per-player trade history in the screen; `backup` / `restore` of stock, prices and edits with validation, preview and confirm. An automatic backup is taken before `restore` and `prune`, not before `import` (an import changes only catalog files, which it already keeps as `.json.bak`).
+
+The GameTest world in `run-gametest/world` persists between runs, so tests must undo any lasting change they make (edits, tag rules); stock, prices and money counts are reset or compared relatively.
 
 Done when: every stage's tests pass alongside all earlier GameTests; saves from earlier versions load; docs cover each new command and the money model; manual checks (GUI layout, two clients, example pack on a real server) are listed in the report as manual.
 

@@ -5,6 +5,7 @@ import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.data.TradeHistory;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -141,6 +142,8 @@ public final class MarketService {
         }
         updateFactor(entry, market, factor, order, now);
         market.recordTrade(entry.itemId(), false, qty, order.total());
+        TradeHistory.get(player.server).record(player.getUUID(),
+                new TradeHistory.Trade(System.currentTimeMillis(), entry.itemId(), false, qty, order.total()));
         account.get().deposit((int) order.total());
         return new TradeResult(Result.OK, qty, unitPrice, order.total());
     }
@@ -202,6 +205,8 @@ public final class MarketService {
         }
         updateFactor(entry, market, factor, order, now);
         market.recordTrade(entry.itemId(), true, qty, order.total());
+        TradeHistory.get(player.server).record(player.getUUID(),
+                new TradeHistory.Trade(System.currentTimeMillis(), entry.itemId(), true, qty, order.total()));
         insert(items, entry, qty);
         player.getInventory().setChanged();
         return new TradeResult(Result.OK, qty, unitPrice, order.total());

@@ -150,6 +150,29 @@ public final class MarketStockData extends SavedData {
         return had;
     }
 
+    /** Replaces all stock with {@code restored}, e.g. from a backup. Amounts must not be negative. */
+    public void replaceStock(Map<ResourceLocation, Long> restored) {
+        restored.forEach((id, amount) -> {
+            if (amount < 0) {
+                throw new IllegalArgumentException("Stock cannot be negative: " + id + " = " + amount);
+            }
+        });
+        stock.clear();
+        stock.putAll(restored);
+        setDirty();
+    }
+
+    /** Replaces every price factor with {@code restored}, e.g. from a backup. Factors of exactly 1.0 aren't stored. */
+    public void replaceFactors(Map<ResourceLocation, Factor> restored) {
+        factors.clear();
+        restored.forEach((id, factor) -> {
+            if (factor.value() != 1.0) {
+                factors.put(id, factor);
+            }
+        });
+        setDirty();
+    }
+
     /** Puts every item back at 1.0. Returns how many had moved. */
     public int resetAllFactors() {
         int count = factors.size();

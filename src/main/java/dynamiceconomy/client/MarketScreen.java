@@ -43,6 +43,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private static final int STATUS_Y = 236;
     /** Where the quantity note starts, right of the All button. */
     private static final int NOTE_X = 144;
+    /** Right edge of the money column in the trade list. */
+    private static final int TRADE_AMOUNT_RIGHT = 196;
 
     // Right edges of the numeric columns, relative to the panel.
     private static final int COL_STOCK = 146;
@@ -77,6 +79,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private EditBox quantity;
     private Button sortButton;
     private Button filterButton;
+    private Button tradesButton;
+    /** Whether the list shows the player's recent trades instead of the catalog. */
+    private boolean showingTrades;
     private Button buyButton;
     private Button sellButton;
 
@@ -116,7 +121,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int x = leftPos;
         int y = topPos;
 
-        search = new EditBox(font, x + LIST_X, y + 18, 148, 14, Component.translatable("screen.dynamic_economy.search"));
+        search = new EditBox(font, x + LIST_X, y + 18, 118, 14, Component.translatable("screen.dynamic_economy.search"));
         search.setHint(Component.translatable("screen.dynamic_economy.search").withColor(TEXT_DIM));
         search.setMaxLength(50);
         addRenderableWidget(search);
@@ -124,12 +129,14 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             sort = sort.next();
             listDirty = true;
             updateListButtons();
-        }).bounds(x + 160, y + 17, 54, 16).build());
+        }).bounds(x + 128, y + 17, 52, 16).build());
         filterButton = addRenderableWidget(Button.builder(Component.empty(), b -> {
             filter = filter.next();
             listDirty = true;
             updateListButtons();
-        }).bounds(x + 216, y + 17, 52, 16).build());
+        }).bounds(x + 182, y + 17, 48, 16).build());
+        tradesButton = addRenderableWidget(Button.builder(Component.empty(), b -> showTrades(!showingTrades))
+                .bounds(x + 232, y + 17, 36, 16).build());
         updateListButtons();
 
         addRenderableWidget(Button.builder(Component.literal("-"), b -> adjustQuantity(-step()))
@@ -205,7 +212,22 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         scroll = Mth.clamp(scroll, 0, maxScroll());
     }
 
+    /** Switches the list between the catalog and the player's recent trades, asking the server for the latter. */
+    private void showTrades(boolean show) {
+        showingTrades = show;
+        scroll = 0;
+        if (show) {
+            PacketDistributor.sendToServer(new MarketPayloads.TradesRequest());
+        }
+        updateListButtons();
+    }
+
     private void updateListButtons() {
+        tradesButton.setMessage(Component.translatable(showingTrades ? "screen.dynamic_economy.trades.back" : "screen.dynamic_economy.trades"));
+        tradesButton.setTooltip(Tooltip.create(Component.translatable(showingTrades
+                ? "screen.dynamic_economy.trades.back.tooltip" : "screen.dynamic_economy.trades.tooltip")));
+        sortButton.active = !showingTrades;
+        filterButton.active = !showingTrades;
         String sortKey = sort.name().toLowerCase(Locale.ROOT);
         sortButton.setMessage(Component.translatable("screen.dynamic_economy.sort." + sortKey));
         sortButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.sort." + sortKey + ".tooltip")));
@@ -373,12 +395,26 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int index = rowAt(mouseX, mouseY);
         if (index >= 0 && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            selected = visible.get(index).item();
+            // Clicking a past trade goes back to the market with that item selected, to trade it again.
+            selected = showingTrades ? trades().get(index).item() : visible.get(index).item();
+            if (showingTrades) {
+                showTrades(false);
+            }
             setFocused(null);
             refreshButtons();
             return true;
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private static List<dynamiceconomy.data.TradeHistory.Trade> trades() {
+        MarketPayloads.Trades received = ClientMarketState.trades();
+        return received == null ? List.of() : received.trades();
+    }
+
+    /** How many rows the list has in its current mode. */
+    private int listSize() {
+        return showingTrades ? trades().size() : visible.size();
     }
 
     @Override
@@ -417,11 +453,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             return -1;
         }
         int index = scroll + (int) ((y - LIST_Y) / ROW_HEIGHT);
-        return index < visible.size() ? index : -1;
+        return index < listSize() ? index : -1;
     }
 
     private int maxScroll() {
-        return Math.max(0, visible.size() - VISIBLE_ROWS);
+        return Math.max(0, listSize() - VISIBLE_ROWS);
     }
 
     // ---- Rendering -------------------------------------------------------------------------------------------
@@ -433,8 +469,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         MarketPayloads.Row chartRow = selectedRow();
         if (chartRow != null && isOverChart(mouseX, mouseY)) {
             graphics.renderTooltip(font, chartTooltip(chartRow), Optional.empty(), mouseX, mouseY);
-        } else if (index >= 0) {
+        } else if (index >= 0 && !showingTrades) {
             graphics.renderTooltip(font, tooltip(visible.get(index)), Optional.empty(), mouseX, mouseY);
+        } else if (index >= 0) {
+            graphics.renderTooltip(font, Component.translatable("screen.dynamic_economy.trades.row_hint"), mouseX, mouseY);
         }
     }
 
@@ -446,6 +484,72 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         graphics.fill(x, y, x + imageWidth, y + imageHeight, PANEL);
 
         int headerY = y + 36;
+        if (showingTrades) {
+            renderTradeList(graphics, x, y, headerY, mouseX, mouseY);
+        } else {
+            renderCatalogList(graphics, x, y, headerY, mouseX, mouseY);
+        }
+        renderScrollbar(graphics, x, y);
+
+        MarketPayloads.Row row = selectedRow();
+        int selectedY = y + SELECTED_Y;
+        if (row != null) {
+            graphics.renderItem(stack(row), x + 8, selectedY);
+            graphics.drawString(font, font.plainSubstrByWidth(displayName(row), CHART_X - 32), x + 28, selectedY + 4, TEXT, false);
+            renderHistory(graphics, row, x + CHART_X, selectedY);
+        } else {
+            graphics.drawString(font, Component.translatable("screen.dynamic_economy.select_hint"), x + 8, selectedY + 4, TEXT_DIM, false);
+        }
+        renderQuantityNote(graphics, x + NOTE_X, y + CONTROLS_Y + 5);
+    }
+
+    /** The player's recent trades, newest first: what, how many, the total, and how long ago. */
+    private void renderTradeList(GuiGraphics graphics, int x, int y, int headerY, int mouseX, int mouseY) {
+        MarketPayloads.Trades received = ClientMarketState.trades();
+        List<dynamiceconomy.data.TradeHistory.Trade> trades = trades();
+        graphics.drawString(font, Component.translatable("screen.dynamic_economy.trades.title", trades.size()),
+                x + LIST_X + 22, headerY, TEXT_DIM, false);
+        int hovered = rowAt(mouseX, mouseY);
+        for (int i = 0; i < VISIBLE_ROWS && scroll + i < trades.size(); i++) {
+            dynamiceconomy.data.TradeHistory.Trade trade = trades.get(scroll + i);
+            int rowY = y + LIST_Y + i * ROW_HEIGHT;
+            int background = scroll + i == hovered ? ROW_HOVER : i % 2 == 1 ? ROW_ALT : 0;
+            if (background != 0) {
+                graphics.fill(x + LIST_X, rowY, x + LIST_X + LIST_WIDTH, rowY + ROW_HEIGHT, background);
+            }
+            graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(trade.item())), x + LIST_X + 2, rowY + 1);
+            int textY = rowY + 5;
+            String name = BuiltInRegistries.ITEM.get(trade.item()).getDescription().getString();
+            Component what = Component.translatable(trade.buy() ? "screen.dynamic_economy.trades.bought"
+                    : "screen.dynamic_economy.trades.sold", PriceFormat.spurs(trade.quantity()), name);
+            graphics.drawString(font, font.plainSubstrByWidth(what.getString(), TRADE_AMOUNT_RIGHT - 60 - LIST_X - 22),
+                    x + LIST_X + 22, textY, TEXT, false);
+            drawRight(graphics, Component.literal((trade.buy() ? "-" : "+") + PriceFormat.spurs(trade.total())),
+                    x + TRADE_AMOUNT_RIGHT, textY, trade.buy() ? TEXT_MONEY : TEXT_GOOD);
+            drawRight(graphics, ago(received.now() - trade.time()), x + COL_HAVE, textY, TEXT_DIM);
+        }
+        if (trades.isEmpty()) {
+            graphics.drawCenteredString(font, Component.translatable(received == null
+                    ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.trades.none"),
+                    x + LIST_X + LIST_WIDTH / 2, y + LIST_Y + 20, TEXT_DIM);
+        }
+    }
+
+    /** "just now", "5 min ago", "3 h ago", "2 d ago". */
+    private static Component ago(long millis) {
+        long minutes = Math.max(0, millis) / 60_000;
+        if (minutes < 1) {
+            return Component.translatable("screen.dynamic_economy.ago.now");
+        }
+        if (minutes < 60) {
+            return Component.translatable("screen.dynamic_economy.ago.minutes", minutes);
+        }
+        long hours = minutes / 60;
+        return hours < 48 ? Component.translatable("screen.dynamic_economy.ago.hours", hours)
+                : Component.translatable("screen.dynamic_economy.ago.days", hours / 24);
+    }
+
+    private void renderCatalogList(GuiGraphics graphics, int x, int y, int headerY, int mouseX, int mouseY) {
         graphics.drawString(font, Component.translatable("screen.dynamic_economy.col.item"), x + LIST_X + 22, headerY, TEXT_DIM, false);
         drawRight(graphics, Component.translatable("screen.dynamic_economy.col.stock"), x + COL_STOCK, headerY, TEXT_DIM);
         drawRight(graphics, Component.translatable("screen.dynamic_economy.col.sell"), x + COL_SELL, headerY, TEXT_DIM);
@@ -467,18 +571,6 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                     ? "screen.dynamic_economy.empty" : "screen.dynamic_economy.no_matches");
             graphics.drawCenteredString(font, empty, x + LIST_X + LIST_WIDTH / 2, y + LIST_Y + 20, TEXT_DIM);
         }
-        renderScrollbar(graphics, x, y);
-
-        MarketPayloads.Row row = selectedRow();
-        int selectedY = y + SELECTED_Y;
-        if (row != null) {
-            graphics.renderItem(stack(row), x + 8, selectedY);
-            graphics.drawString(font, font.plainSubstrByWidth(displayName(row), CHART_X - 32), x + 28, selectedY + 4, TEXT, false);
-            renderHistory(graphics, row, x + CHART_X, selectedY);
-        } else {
-            graphics.drawString(font, Component.translatable("screen.dynamic_economy.select_hint"), x + 8, selectedY + 4, TEXT_DIM, false);
-        }
-        renderQuantityNote(graphics, x + NOTE_X, y + CONTROLS_Y + 5);
     }
 
     /** The note from All or Max, a warning when the quantity is over the order limit, or else the limit itself. */
@@ -619,7 +711,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int height = VISIBLE_ROWS * ROW_HEIGHT;
         graphics.fill(x + SCROLLBAR_X, top, x + SCROLLBAR_X + 4, top + height, 0x40000000);
         if (maxScroll() > 0) {
-            int thumb = Math.max(12, height * VISIBLE_ROWS / visible.size());
+            int thumb = Math.max(12, height * VISIBLE_ROWS / listSize());
             int thumbY = top + (height - thumb) * scroll / maxScroll();
             graphics.fill(x + SCROLLBAR_X, thumbY, x + SCROLLBAR_X + 4, thumbY + thumb, 0xFFA0A0A8);
         }

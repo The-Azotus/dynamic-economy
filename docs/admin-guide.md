@@ -157,9 +157,35 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 | **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
 | **Note** | Possibly deliberate; worth a look. | Unlimited items that can be sold (farms can sell them forever); items listed but neither buyable nor sellable; tag rules covering more than 64 items; unpriced template entries; saved data for items that no longer exist. |
 
-**Removed mods.** When you remove a mod, the market keeps its items' saved stock, prices, history and edits. `/market admin prune` lists those items, and `/market admin prune confirm` deletes their data. The overall money counts are kept. There's no undo yet, so back up the world first.
+**Removed mods.** When you remove a mod, the market keeps its items' saved stock, prices, history and edits. `/market admin prune` lists those items, and `/market admin prune confirm` deletes their data. The overall money counts are kept. A backup of stock, prices and edits is taken automatically first (see [Backups](#backups-and-restoring)).
 
 **Price resets.** `/market admin resetprice all preview` shows how many items would go back to base price, the furthest-moved first. `/market admin resetprice tag <tag>` resets only that tag's items, and also takes `preview`.
+
+## Audit log
+
+Every admin change to the market is logged to `<world>/dynamic_economy/audit.log`, one JSON line each. Each line records when, who (player name and UUID, or `Server` for the console), the action, its target, the result, and the old and new values where that makes sense. Logged actions:
+
+- catalog edits and tag-rule changes, including ones refused for breaking a rule
+- `setstock`, `clearstock`, `resetprice`, `reload`, `export`, `import` (with the files written), `prune` (with the items removed), `backup` and `restore`
+
+Previews and read-only commands (`info`, `diagnose`, `stats`) aren't logged.
+
+`/market admin audit` shows the newest ten in chat; `/market admin audit 2` shows the next ten. The file is on the server's disk, out of players' reach. When it reaches 1 MB it's renamed `audit.log.1` (older ones become `.2`, `.3`, `.4`), and at most five files are kept.
+
+## Backups and restoring
+
+`/market admin backup` saves the market's **stock**, **price factors** and **in-game edits** (item edits and tag rules) to `<world>/dynamic_economy/backups/<date-time>.json`. `/market admin backups` lists them, newest first.
+
+Backups don't include catalog files (an import keeps `.json.bak` copies of those), price history or money counts. A world backup still covers everything.
+
+To restore, name a backup and which part to restore: `stock`, `prices`, `edits` or `all`:
+
+1. `/market admin restore <name> all` checks the backup and says what restoring would change. It also says how long ago the backup was taken, and how many admin actions have been logged since. Nothing is changed.
+2. `/market admin restore <name> all confirm` restores it. The current state is backed up first (as `<date-time>_auto-restore`), so you can undo the restore by restoring that.
+
+A damaged backup (unreadable, or with a negative stock, a missing field, and so on) is refused as a whole, with the reasons. Nothing is partly restored. Restored prices are as they were when the backup was taken. They then start recovering from the moment of the restore, rather than catching up on the time in between.
+
+Automatic backups (taken before a restore or a prune) are kept up to the newest 20; older automatic ones are deleted. Backups you make yourself are never deleted.
 
 ## Catalog fields
 
@@ -249,7 +275,10 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin resetprice <item>`, `all [preview]` or `tag <tag> [preview]` | 2 | Puts price factors back to 1.0. |
 | `/market admin setprice`, `set`, `unset`, `remove`, `revert`, `info` | 2 | In-game editing; see [Editing prices in game](#editing-prices-in-game). |
 | `/market admin diagnose [page]` | 2 | Lists catalog problems and things worth checking; see [Checking the catalog](#checking-the-catalog). |
-| `/market admin prune [confirm]` | 2 | Lists, then deletes, saved data for items that no longer exist. |
+| `/market admin prune [confirm]` | 2 | Lists, then deletes, saved data for items that no longer exist (backing up first). |
+| `/market admin backup`, `/market admin backups` | 2 | Saves, or lists, backups of stock, prices and edits; see [Backups](#backups-and-restoring). |
+| `/market admin restore <name> <stock\|prices\|edits\|all> [confirm]` | 2 | Shows what restoring would change, then restores with `confirm`. |
+| `/market admin audit [page]` | 2 | The latest admin actions from the [audit log](#audit-log). |
 | `/market admin tag <tag> ...`, `/market admin tags` | 2 | Tag rules; see [Tag rules](#tag-rules-pricing-many-items-at-once). |
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |

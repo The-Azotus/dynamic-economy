@@ -1,5 +1,6 @@
 package dynamiceconomy.command;
 
+import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
@@ -12,6 +13,8 @@ import dynamiceconomy.MarketAccess;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.CatalogOverlay;
 import dynamiceconomy.catalog.MarketCatalog;
+import dynamiceconomy.data.AuditLog;
+import dynamiceconomy.data.MarketBackup;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.io.CatalogExport;
@@ -140,6 +143,7 @@ public final class MarketCommand {
     private static LiteralArgumentBuilder<CommandSourceStack> withAdminEdits(LiteralArgumentBuilder<CommandSourceStack> admin,
                                                                              CommandBuildContext context) {
         AdminCatalogCommands.addTo(admin, context);
+        AdminRecoveryCommands.addTo(admin);
         return admin;
     }
 
@@ -229,8 +233,10 @@ public final class MarketCommand {
                     + "Set \"unlimited_stock\": false in the catalog and reload first.").formatted(id(item))));
             return 0;
         }
+        long before = MarketStockData.get(ctx.getSource().getServer()).getStock(id(item));
         MarketStockData.get(ctx.getSource().getServer()).setStock(id(item), qty);
         MarketSync.broadcastRow(ctx.getSource().getServer(), item);
+        AuditLog.record(ctx.getSource(), "setstock", id(item).toString(), "ok", new JsonPrimitive(before), new JsonPrimitive(qty));
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (warning: not listed in the catalog)";
         ctx.getSource().sendSuccess(() -> Component.literal("Set %s stock to %d%s".formatted(id(item), qty, listed)), true);
         return 1;
@@ -239,9 +245,12 @@ public final class MarketCommand {
     private static int resetPrice(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
         var server = ctx.getSource().getServer();
+        MarketStockData.Factor before = MarketStockData.get(server).factorsView().get(id(item));
         boolean moved = MarketStockData.get(server).resetFactor(id(item));
         MarketService.sampleHistory(server);
         MarketSync.broadcastRow(server, item);
+        AuditLog.record(ctx.getSource(), "resetprice", id(item).toString(), moved ? "ok" : "already at base",
+                before == null ? null : new JsonPrimitive(before.value()), new JsonPrimitive(1.0));
         ctx.getSource().sendSuccess(() -> Component.literal(moved
                 ? "Reset %s to its base price".formatted(id(item))
                 : "%s was already at its base price".formatted(id(item))), true);
@@ -253,6 +262,7 @@ public final class MarketCommand {
         int count = MarketStockData.get(server).resetAllFactors();
         MarketService.sampleHistory(server);
         MarketSync.broadcastSnapshot(server);
+        AuditLog.record(ctx.getSource(), "resetprice", "all", "ok: %d item(s) reset".formatted(count), null, null);
         ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) to their base price".formatted(count)), true);
         return count;
     }
@@ -279,6 +289,7 @@ public final class MarketCommand {
         MarketService.sampleHistory(server);
         MarketSync.broadcastSnapshot(server);
         int reset = count;
+        AuditLog.record(ctx.getSource(), "resetprice", "#" + tag, "ok: %d item(s) reset".formatted(reset), null, null);
         ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) in #%s to their base price".formatted(reset, tag)), true);
         return count;
     }
@@ -333,16 +344,26 @@ public final class MarketCommand {
                 lines.add("  ...and %d more".formatted(gone.size() - PRUNE_SHOWN));
             }
             lines.add("/market admin prune confirm deletes their stock, prices, price history, money counts and admin "
-                    + "edits. The overall money counts are kept. This can't be undone, so back up the world first");
+                    + "edits. The overall money counts are kept. A backup of stock, prices and edits is taken first");
             lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), false));
             return gone.size();
+        }
+        String backup;
+        try {
+            backup = MarketBackup.create(server, "prune");
+        } catch (IOException e) {
+            ctx.getSource().sendFailure(Component.literal("Couldn't back up first, so nothing was deleted: " + e.getMessage()));
+            return 0;
         }
         for (ResourceLocation id : gone) {
             market.forget(id);
             overrides.revertItem(id);
         }
-        ctx.getSource().sendSuccess(() -> Component.literal("Deleted saved market data for %d item(s) that no longer exist, e.g. %s"
-                .formatted(gone.size(), gone.first())), true);
+        com.google.gson.JsonArray removed = new com.google.gson.JsonArray();
+        gone.forEach(id -> removed.add(id.toString()));
+        AuditLog.record(ctx.getSource(), "prune", "%d item(s)".formatted(gone.size()), "ok, backed up first as " + backup, removed, null);
+        ctx.getSource().sendSuccess(() -> Component.literal("Deleted saved market data for %d item(s) that no longer exist, e.g. %s. "
+                .formatted(gone.size(), gone.first()) + "The state before is saved as \"%s\"".formatted(backup)), true);
         return gone.size();
     }
 
@@ -395,6 +416,7 @@ public final class MarketCommand {
         try {
             CatalogExport.Result result = CatalogExport.export(configRoot().resolve("exports"), modId, MarketCatalog.INSTANCE.entries());
             String folder = "config/" + DynamicEconomy.MOD_ID + "/exports/" + result.folder().getFileName();
+            AuditLog.record(ctx.getSource(), "export", modId.orElse("all mods"), "ok: %d items to %s".formatted(result.total(), folder), null, null);
             ctx.getSource().sendSuccess(() -> Component.literal(
                     "Exported %d items to %s: %d already priced, %d new (templates for %d mod(s))"
                             .formatted(result.total(), folder, result.priced(), result.unpriced(), result.modsWithTemplates())), true);
@@ -458,9 +480,14 @@ public final class MarketCommand {
             written = CatalogImport.write(report, server.getWorldPath(LevelResource.DATAPACK_DIR));
         } catch (IOException e) {
             DynamicEconomy.LOGGER.error("Market import failed while writing", e);
+            AuditLog.record(source, "import", typed, "failed: " + e.getMessage(), null, null);
             source.sendFailure(Component.literal("Writing the catalog files failed: " + e.getMessage()));
             return 0;
         }
+        com.google.gson.JsonArray files = new com.google.gson.JsonArray();
+        written.files().forEach(file -> files.add(file.getFileName().toString()));
+        AuditLog.record(source, "import", typed, "ok: %d entries, %d rejected rows, %d file(s) backed up as .json.bak"
+                .formatted(report.toWrite(), report.rejected().size(), written.backups().size()), null, files);
         String backups = written.backups().isEmpty() ? ""
                 : " (backed up %d replaced file(s) as .json.bak)".formatted(written.backups().size());
         source.sendSuccess(() -> Component.literal("Wrote %d catalog file(s) to <world>/datapacks/%s%s"
@@ -524,6 +551,7 @@ public final class MarketCommand {
         var server = ctx.getSource().getServer();
         int count = MarketCatalog.INSTANCE.reloadNow(server.getResourceManager());
         DynamicEconomy.catalogReloaded(server);
+        AuditLog.record(ctx.getSource(), "reload", "catalog", "ok: %d entries".formatted(count), null, null);
         ctx.getSource().sendSuccess(() -> Component.literal("Reloaded market catalog: %d entries".formatted(count)), true);
         return count;
     }

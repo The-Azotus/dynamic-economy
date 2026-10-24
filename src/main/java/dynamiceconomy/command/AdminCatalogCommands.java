@@ -17,6 +17,7 @@ import dynamiceconomy.catalog.CatalogJson;
 import dynamiceconomy.catalog.CatalogOverlay;
 import dynamiceconomy.catalog.FieldSource;
 import dynamiceconomy.catalog.MarketCatalog;
+import dynamiceconomy.data.AuditLog;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.network.MarketSync;
@@ -181,7 +182,7 @@ final class AdminCatalogCommands {
     private static int editItem(CommandContext<CommandSourceStack> ctx, String field, JsonElement value) {
         ResourceLocation item = id(item(ctx));
         return apply(ctx, Set.of(item), data -> data.setItemField(item, field, value),
-                "Set %s for %s to %s".formatted(field, item, value), item);
+                "Set %s for %s to %s".formatted(field, item, value), item, "set " + field, null);
     }
 
     private static int unsetItem(CommandContext<CommandSourceStack> ctx, String field) {
@@ -192,13 +193,14 @@ final class AdminCatalogCommands {
             return 0;
         }
         return apply(ctx, Set.of(item), data -> data.unsetItemField(item, field),
-                "Removed the %s edit for %s; the catalog files decide it again".formatted(field, item), item);
+                "Removed the %s edit for %s; the catalog files decide it again".formatted(field, item), item, "unset " + field, null);
     }
 
     private static int removeItem(CommandContext<CommandSourceStack> ctx) {
         ResourceLocation item = id(item(ctx));
         return apply(ctx, Set.of(item), data -> data.removeItem(item),
-                "Took %s off the market. Its stock is kept; /market admin revert %s lists it again".formatted(item, item), item);
+                "Took %s off the market. Its stock is kept; /market admin revert %s lists it again".formatted(item, item), item,
+                "remove", null);
     }
 
     private static int revertItem(CommandContext<CommandSourceStack> ctx) {
@@ -208,7 +210,8 @@ final class AdminCatalogCommands {
             return 0;
         }
         return apply(ctx, Set.of(item), data -> data.revertItem(item),
-                "Dropped every admin edit for %s; it's back to what the catalog files and tag rules say".formatted(item), item);
+                "Dropped every admin edit for %s; it's back to what the catalog files and tag rules say".formatted(item), item,
+                "revert", null);
     }
 
     private static int clearStock(CommandContext<CommandSourceStack> ctx) {
@@ -221,6 +224,7 @@ final class AdminCatalogCommands {
         long before = MarketStockData.get(server).getStock(id(item));
         MarketStockData.get(server).setStock(id(item), 0);
         MarketSync.broadcastRow(server, item);
+        AuditLog.record(ctx.getSource(), "clearstock", id(item).toString(), "ok", new JsonPrimitive(before), new JsonPrimitive(0));
         ctx.getSource().sendSuccess(() -> Component.literal("Cleared %s stock (was %d). It stays listed".formatted(id(item), before)), true);
         return 1;
     }
@@ -373,13 +377,13 @@ final class AdminCatalogCommands {
         }
         return apply(ctx, members(tag), edit,
                 "Tag rule #%s: %s = %s. It applies to every item in the tag, now and as the tag changes; items with their own edits keep them"
-                        .formatted(tag, field, value), null);
+                        .formatted(tag, field, value), null, "tag set " + field, tag);
     }
 
     private static int unsetTag(CommandContext<CommandSourceStack> ctx, String field) {
         ResourceLocation tag = tag(ctx);
         return apply(ctx, members(tag), data -> data.unsetTagField(tag, field),
-                "Removed %s from the tag rule #%s".formatted(field, tag), null);
+                "Removed %s from the tag rule #%s".formatted(field, tag), null, "tag unset " + field, tag);
     }
 
     private static int removeTag(CommandContext<CommandSourceStack> ctx, boolean preview) {
@@ -392,7 +396,8 @@ final class AdminCatalogCommands {
             return preview(ctx, tag, edit, "taking #%s off the market".formatted(tag));
         }
         return apply(ctx, members(tag), edit,
-                "Took every item in #%s off the market (stock kept); items with their own edits stay listed".formatted(tag), null);
+                "Took every item in #%s off the market (stock kept); items with their own edits stay listed".formatted(tag), null,
+                "tag remove", tag);
     }
 
     private static int revertTag(CommandContext<CommandSourceStack> ctx, boolean preview) {
@@ -406,7 +411,7 @@ final class AdminCatalogCommands {
         if (preview) {
             return preview(ctx, tag, edit, "deleting the tag rule #" + tag);
         }
-        return apply(ctx, members(tag), edit, "Deleted the tag rule #" + tag, null);
+        return apply(ctx, members(tag), edit, "Deleted the tag rule #" + tag, null, "tag revert", tag);
     }
 
     private static final int PREVIEW_EXAMPLES = 5;
@@ -509,24 +514,30 @@ final class AdminCatalogCommands {
 
     /**
      * Makes an edit, rebuilds the catalog and, if any of the items it concerns ends up breaking a catalog rule, undoes
-     * it and reports why. Never touches stock or price factors.
+     * it and reports why. Never touches stock or price factors. Either way it goes in the audit log, with the edits of
+     * the item ({@code single}) or tag rule ({@code tag}) before and after.
      */
     private static int apply(CommandContext<CommandSourceStack> ctx, Set<ResourceLocation> concerns, Consumer<MarketOverrides> edit,
-                             String success, ResourceLocation single) {
+                             String success, ResourceLocation single, String action, ResourceLocation tag) {
         MinecraftServer server = ctx.getSource().getServer();
         MarketOverrides data = MarketOverrides.get(server);
         MarketOverrides.Snapshot before = data.snapshot();
+        String target = single != null ? single.toString() : "#" + tag;
+        java.util.function.Supplier<JsonElement> state = () -> single != null ? data.itemPatch(single) : data.tagRulePatch(tag);
+        JsonElement stateBefore = state.get();
         edit.accept(data);
         Map<ResourceLocation, String> problems = new LinkedHashMap<>(DynamicEconomy.catalogReloaded(server));
         problems.keySet().retainAll(concerns);
         if (!problems.isEmpty()) {
             data.restore(before);
             DynamicEconomy.catalogReloaded(server);
+            AuditLog.record(ctx.getSource(), action, target, "refused: " + problems.values().iterator().next(), stateBefore, null);
             ctx.getSource().sendFailure(Component.literal("Not changed: the edit would break the catalog rules for %d item(s):"
                     .formatted(problems.size())));
             problems.values().stream().limit(PROBLEMS_SHOWN).forEach(p -> ctx.getSource().sendFailure(Component.literal("  " + p)));
             return 0;
         }
+        AuditLog.record(ctx.getSource(), action, target, "ok", stateBefore, state.get());
         ctx.getSource().sendSuccess(() -> Component.literal(success), true);
         if (single != null) {
             BuiltInRegistries.ITEM.getOptional(single).flatMap(MarketCatalog.INSTANCE::get).ifPresent(entry ->

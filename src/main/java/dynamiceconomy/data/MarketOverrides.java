@@ -108,6 +108,12 @@ public final class MarketOverrides extends SavedData {
 
     // ---- Tag rules --------------------------------------------------------------------------------------------
 
+    /** A copy of a tag rule's fields, or null if there's no rule for the tag. */
+    public JsonObject tagRulePatch(ResourceLocation tag) {
+        JsonObject patch = tagPatch(tag, false);
+        return patch == null ? null : patch.deepCopy();
+    }
+
     /** Sets one field on a tag rule, creating the rule at the end of the order if it's new. */
     public void setTagField(ResourceLocation tag, String field, JsonElement value) {
         JsonObject patch = tagPatch(tag, true);

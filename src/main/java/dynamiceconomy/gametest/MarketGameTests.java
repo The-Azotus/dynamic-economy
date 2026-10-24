@@ -6,7 +6,10 @@ import dynamiceconomy.MarketAccess;
 import dynamiceconomy.block.MarketBlocks;
 import dynamiceconomy.block.MarketTerminalBlock;
 import dynamiceconomy.catalog.CatalogOverlay;
+import dynamiceconomy.data.AuditLog;
+import dynamiceconomy.data.MarketBackup;
 import dynamiceconomy.data.MarketOverrides;
+import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
@@ -1753,6 +1756,162 @@ public final class MarketGameTests {
                 "and Minecraft won't switch it on by itself; an admin has to enable it");
         helper.assertTrue(MarketCatalog.INSTANCE.sources(Items.IRON_INGOT).get("base_price").get(0).layer()
                 .equals("file dynamic_economy:example_catalog"), "the test world's items come from it");
+        helper.succeed();
+    }
+
+    // ---- Audit history and recovery (Phase 7) -----------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void auditLogRotatesAndReadsBackNewestFirst(GameTestHelper helper) {
+        try {
+            Path file = Files.createTempDirectory("market-audit").resolve("audit.log");
+            for (int i = 0; i < 80; i++) {
+                AuditLog.append(file, "{\"n\":" + i + "}", 100, AuditLog.KEEP);
+            }
+            helper.assertTrue(Files.size(file) <= 100, "the current file stays under the cap");
+            for (int i = 1; i < AuditLog.KEEP; i++) {
+                helper.assertTrue(Files.exists(file.resolveSibling("audit.log." + i)), "rotated file " + i + " kept");
+            }
+            helper.assertTrue(!Files.exists(file.resolveSibling("audit.log." + AuditLog.KEEP)), "nothing beyond the limit is kept");
+            List<Integer> newest = AuditLog.recent(file, 12).stream().map(entry -> entry.get("n").getAsInt()).toList();
+            helper.assertValueEqual(newest, java.util.stream.IntStream.iterate(79, n -> n - 1).limit(12).boxed().toList(),
+                    "newest first, reading back into rotated files");
+        } catch (java.io.IOException e) {
+            throw new GameTestAssertException("audit log test failed: " + e);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void everyAdminChangeIsLoggedOnce(GameTestHelper helper) {
+        Path file = AuditLog.file(helper.getLevel().getServer());
+        int before = AuditLog.recent(file, 100_000).size();
+        List<String> commands = List.of(
+                "market admin setstock minecraft:iron_ingot 5",
+                "market admin set minecraft:iron_ingot markup 0.75",
+                "market admin set minecraft:iron_ingot min_buy_markup 0.9",
+                "market admin tag minecraft:logs setprice 4 preview",
+                "market admin revert minecraft:iron_ingot",
+                "market admin clearstock minecraft:iron_ingot",
+                "market admin resetprice all",
+                "market admin reload");
+        commands.forEach(command -> runCommand(helper, command));
+
+        List<com.google.gson.JsonObject> entries = AuditLog.recent(file, 100_000);
+        helper.assertValueEqual(entries.size() - before, 7, "one entry per change; the preview changes nothing and isn't logged");
+        List<String> actions = entries.subList(0, 7).stream().map(entry -> entry.get("action").getAsString()).toList();
+        helper.assertValueEqual(actions, List.of("reload", "resetprice", "clearstock", "revert", "set min_buy_markup",
+                "set markup", "setstock"), "logged in order, newest first");
+        helper.assertTrue(entries.get(3 + 0).get("result").getAsString().equals("ok")
+                        && entries.get(4).get("result").getAsString().startsWith("refused"),
+                "the rule-breaking edit is logged as refused");
+        com.google.gson.JsonObject setStock = entries.get(6);
+        helper.assertTrue(setStock.get("actor").getAsString().equals("Server") && setStock.get("target").getAsString().equals("minecraft:iron_ingot")
+                && setStock.get("after").getAsLong() == 5, "who, what and the new value: " + setStock);
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void tradeHistoryKeepsEachPlayersNewestFifty(GameTestHelper helper) {
+        TradeHistory data = new TradeHistory();
+        UUID player = UUID.randomUUID();
+        for (int i = 0; i < 60; i++) {
+            data.record(player, new TradeHistory.Trade(i, key(Items.IRON_INGOT), i % 2 == 0, i + 1, i * 10L));
+        }
+        List<TradeHistory.Trade> recent = data.recent(player);
+        helper.assertValueEqual(recent.size(), TradeHistory.CAP, "capped at 50");
+        helper.assertValueEqual(recent.get(0).quantity(), 60, "newest first");
+        TradeHistory reloaded = TradeHistory.fromTag(data.save(new CompoundTag(), helper.getLevel().registryAccess()),
+                helper.getLevel().registryAccess());
+        helper.assertValueEqual(reloaded.recent(player), recent, "saved with the world");
+        helper.assertTrue(data.recent(UUID.randomUUID()).isEmpty(), "other players have their own (empty) list");
+
+        // Real trades: a completed one is recorded, a rejected one isn't.
+        withFixedPrice(Items.IRON_INGOT, () -> {
+            Fixture f = new Fixture(helper);
+            TradeHistory world = TradeHistory.get(helper.getLevel().getServer());
+            f.giveMany(Items.IRON_INGOT, 10);
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.OK);
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.NOT_ENOUGH_ITEMS);
+            List<TradeHistory.Trade> mine = world.recent(f.player.getUUID());
+            helper.assertValueEqual(mine.size(), 1, "only the completed trade");
+            helper.assertTrue(!mine.get(0).buy() && mine.get(0).quantity() == 10 && mine.get(0).total() == 160, "what was sold: " + mine);
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void backupChangeRestoreRoundTrips(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        f.setStock(Items.IRON_INGOT, 11);
+        f.market.setFactor(key(Items.IRON_INGOT), 0.5, MarketStockData.now(server));
+        List<String> made = runCommand(helper, "market admin backup");
+        String name = made.get(0).replaceAll(".*as \"([^\"]+)\".*", "$1");
+
+        f.setStock(Items.IRON_INGOT, 99);
+        f.market.resetFactor(key(Items.IRON_INGOT));
+        runCommand(helper, "market admin set minecraft:iron_ingot markup 0.75");
+        try {
+            checkRestore(helper, f, name);
+        } finally {
+            // Other tests price iron at its file markup, so never leave the edit behind, even if this test fails.
+            if (MarketOverrides.get(server).itemPatch(key(Items.IRON_INGOT)) != null) {
+                runCommand(helper, "market admin revert minecraft:iron_ingot");
+            }
+        }
+        helper.succeed();
+    }
+
+    private static void checkRestore(GameTestHelper helper, Fixture f, String name) {
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        List<String> preview = runCommand(helper, "market admin restore " + name + " all");
+        helper.assertTrue(preview.stream().anyMatch(line -> line.contains("1 stock level(s), 1 price(s), 1 item edit(s)")),
+                "the preview counts what would change: " + preview);
+        helper.assertTrue(preview.stream().anyMatch(line -> line.contains("admin action(s) have been logged since then")),
+                "and warns about changes made since the backup: " + preview);
+        helper.assertValueEqual(f.stock(Items.IRON_INGOT), 99L, "without confirm nothing changes");
+
+        List<String> restored = runCommand(helper, "market admin restore " + name + " all confirm");
+        helper.assertValueEqual(f.stock(Items.IRON_INGOT), 11L, "stock restored");
+        helper.assertValueEqual(f.factor(Items.IRON_INGOT), 0.5, "price restored as it was, not recovered since");
+        helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow().markup(), 0.5, "the edit is undone");
+        try {
+            helper.assertTrue(MarketBackup.list(server).stream().anyMatch(n -> n.contains("_auto-restore")),
+                    "the state before the restore was saved first: " + restored);
+        } catch (java.io.IOException e) {
+            throw new GameTestAssertException("couldn't list backups: " + e);
+        }
+    }
+
+    @GameTest(template = EMPTY)
+    public static void damagedBackupsAreRefusedWithoutChangingAnything(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        f.setStock(Items.IRON_INGOT, 21);
+        try {
+            Files.createDirectories(MarketBackup.folder(server));
+            Files.writeString(MarketBackup.folder(server).resolve("broken.json"), "{ not json");
+            Files.writeString(MarketBackup.folder(server).resolve("negative.json"),
+                    "{ \"format\": 1, \"stock\": { \"minecraft:iron_ingot\": -5, \"minecraft:diamond\": 3 } }");
+        } catch (java.io.IOException e) {
+            throw new GameTestAssertException("couldn't write test backups: " + e);
+        }
+        for (String name : List.of("broken", "negative")) {
+            List<String> output = runCommand(helper, "market admin restore " + name + " stock confirm");
+            helper.assertTrue(output.get(0).contains("can't be restored"), name + " is refused: " + output);
+        }
+        helper.assertTrue(runCommand(helper, "market admin restore negative stock confirm").stream()
+                .anyMatch(line -> line.contains("must be a whole number of at least 0")), "and the reason is given");
+        helper.assertValueEqual(f.stock(Items.IRON_INGOT), 21L, "nothing changed, not even the valid diamond line");
+        helper.assertTrue(f.stock(Items.DIAMOND) != 3L, "the diamond stock in the damaged backup wasn't applied");
+        boolean refused = false;
+        try {
+            MarketBackup.file(server, "../../level");
+        } catch (IllegalArgumentException e) {
+            refused = true;
+        }
+        helper.assertTrue(refused, "a backup name can't be a path");
         helper.succeed();
     }
 
