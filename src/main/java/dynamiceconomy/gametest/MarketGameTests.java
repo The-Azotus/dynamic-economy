@@ -1915,6 +1915,17 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = EMPTY)
+    public static void exampleCatalogTurnsOffAndOnWithTheDatapackCommand(GameTestHelper helper) {
+        List<String> off = runCommand(helper, "datapack disable \"" + DynamicEconomy.EXAMPLE_PACK_ID + "\"");
+        boolean goneAfterDisable = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).isEmpty();
+        List<String> on = runCommand(helper, "datapack enable \"" + DynamicEconomy.EXAMPLE_PACK_ID + "\"");
+        boolean backAfterEnable = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).isPresent();
+        helper.assertTrue(goneAfterDisable, "disabling the pack takes the example items off: " + off);
+        helper.assertTrue(backAfterEnable, "enabling it lists them again: " + on);
+        helper.succeed();
+    }
+
     /** Runs a command at permission 4, the way an operator or the console would, and returns what it printed. */
     private static List<String> runCommand(GameTestHelper helper, String command) {
         List<String> output = new ArrayList<>();
