@@ -39,4 +39,8 @@ The [admin guide](docs/admin-guide.md) covers every command, catalog field and s
 
 Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests.
 
-Released versions are tagged in git (for example `v0.1.0`).
+Released versions are tagged in git (for example `v0.2.0`).
+
+## Licence
+
+MIT; see [LICENSE](LICENSE).

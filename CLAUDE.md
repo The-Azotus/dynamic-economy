@@ -22,10 +22,10 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 3.5 — Unlimited stock | Done |
 | 4 — Supply-and-demand pricing | Done |
 | 5 — Pack integration and polish | Done |
-| 6 — Terminal, access, admin editing, tooltips | Built on `explore`; GameTests pass, manual playtest pending |
-| **7 — Integrity, usability, admin tooling** | **Built on `phase7`; 80 GameTests pass, manual playtest pending** |
+| 6 — Terminal, access, admin editing, tooltips | Done, released as v0.2.0 |
+| 7 — Integrity, usability, admin tooling | Done, released as v0.2.0 |
 
-Branches: `main` holds the stable `v0.1.0`; `explore` holds Phase 6; `phase7` branches from `explore`. Each has its own worktree folder next to this one (`git worktree list`).
+Branches: `main` holds the latest release (`v0.2.0`) and is pushed to https://github.com/The-Azotus/dynamic-economy. `explore` (Phase 6) and `phase7` are merged, local-only history with their own worktree folders (`git worktree list`). Start new work on a fresh branch from `main`. Licence: MIT.
 
 **First task in a new session:** read the existing code on the current branch, compare it with the in-progress phase below, and report any gaps or differences before continuing. Don't fix gaps silently.
 
@@ -185,7 +185,7 @@ Done when:
 
 Done when: the export command runs in the full pack and its counts match the item registry; a priced CSV imports, reloads and shows correct prices in the GUI; the round-trip test passes; the pack's real catalog loads with no warnings, and a playtest server runs a session without errors in the log.
 
-## Phase 6 — Terminal, access, admin editing, tooltips (built, `explore` branch)
+## Phase 6 — Terminal, access, admin editing, tooltips (done, v0.2.0)
 
 Asked for after v0.1.0. Work happens on the `explore` branch (worktree `..\Economy Mod (explore)`); `main` holds v0.1.0 and only gets fixes.
 
@@ -200,7 +200,7 @@ Done when: terminal opens the market and closes at range; block-only mode stops 
 
 Still optional, only if asked: physical coin payment via `CoinItem.extract`; accepting held Numismatics bank cards; tag entries inside catalog JSON files.
 
-## Phase 7 — Integrity, usability, admin tooling (built, `phase7` branch)
+## Phase 7 — Integrity, usability, admin tooling (done, v0.2.0)
 
 Priorities, in order: economic correctness, then player usability, then admin observability and recovery. Work in the stages below; each stage is one commit, ends with tests and a report, and waits for approval.
 
