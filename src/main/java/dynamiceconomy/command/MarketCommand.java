@@ -1,34 +1,44 @@
 package dynamiceconomy.command;
 
+import com.google.gson.JsonPrimitive;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.MarketAccess;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.catalog.CatalogOverlay;
 import dynamiceconomy.catalog.MarketCatalog;
+import dynamiceconomy.data.AuditLog;
+import dynamiceconomy.data.MarketBackup;
+import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.io.CatalogExport;
+import dynamiceconomy.io.CatalogImport;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.PriceModel;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
-
-import com.mojang.brigadier.arguments.StringArgumentType;
-import dynamiceconomy.io.CatalogExport;
-import dynamiceconomy.io.CatalogImport;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.server.commands.ReloadCommand;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.repository.PackRepository;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.fml.loading.FMLPaths;
 
@@ -41,9 +51,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.stream.Collectors;
 
 /**
  * {@code /market} opens the market screen. The sell, buy, stock and price subcommands are the Phase 1 test commands,
@@ -55,24 +70,30 @@ public final class MarketCommand {
     }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context) {
+        // In block-only mode, players without operator permission have to use a Market Terminal: the subcommands are
+        // hidden from them, and plain /market says where to go instead of "unknown command".
         dispatcher.register(Commands.literal("market")
                 .executes(MarketCommand::open)
                 .then(Commands.literal("sell")
+                        .requires(MarketAccess::commandsAllowed)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .then(Commands.argument("qty", IntegerArgumentType.integer(1))
                                         .executes(ctx -> trade(ctx, true)))))
                 .then(Commands.literal("buy")
+                        .requires(MarketAccess::commandsAllowed)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .then(Commands.argument("qty", IntegerArgumentType.integer(1))
                                         .executes(ctx -> trade(ctx, false)))))
                 .then(Commands.literal("stock")
+                        .requires(MarketAccess::commandsAllowed)
                         .executes(MarketCommand::listStock)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .executes(MarketCommand::showStock)))
                 .then(Commands.literal("price")
+                        .requires(MarketAccess::commandsAllowed)
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .executes(MarketCommand::showPrice)))
-                .then(Commands.literal("admin")
+                .then(withAdminEdits(Commands.literal("admin"), context)
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("setstock")
                                 .then(Commands.argument("item", ItemArgument.item(context))
@@ -80,11 +101,28 @@ public final class MarketCommand {
                                                 .executes(MarketCommand::setStock))))
                         .then(Commands.literal("resetprice")
                                 .then(Commands.literal("all")
-                                        .executes(MarketCommand::resetAllPrices))
+                                        .executes(MarketCommand::resetAllPrices)
+                                        .then(Commands.literal("preview")
+                                                .executes(ctx -> previewReset(ctx, "every item", id -> true))))
+                                .then(Commands.literal("tag")
+                                        .then(Commands.argument("tag", ResourceLocationArgument.id())
+                                                .suggests((ctx, builder) -> SharedSuggestionProvider.suggestResource(
+                                                        BuiltInRegistries.ITEM.getTagNames().map(TagKey::location), builder))
+                                                .executes(ctx -> resetTagPrices(ctx, false))
+                                                .then(Commands.literal("preview")
+                                                        .executes(ctx -> resetTagPrices(ctx, true)))))
                                 .then(Commands.argument("item", ItemArgument.item(context))
                                         .executes(MarketCommand::resetPrice)))
+                        .then(Commands.literal("prune")
+                                .executes(ctx -> prune(ctx, false))
+                                .then(Commands.literal("confirm")
+                                        .executes(ctx -> prune(ctx, true))))
                         .then(Commands.literal("reload")
                                 .executes(MarketCommand::reload))
+                        .then(Commands.literal("stats")
+                                .executes(MarketCommand::stats)
+                                .then(Commands.argument("item", ItemArgument.item(context))
+                                        .executes(MarketCommand::itemStats)))
                         // Writing files on the server's disk is for the owner and console only.
                         .then(Commands.literal("export")
                                 .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
@@ -101,6 +139,14 @@ public final class MarketCommand {
                                                 .executes(ctx -> importCsv(ctx, true)))))));
     }
 
+    /** The in-game catalog editing commands live in their own class; they hang off {@code /market admin}. */
+    private static LiteralArgumentBuilder<CommandSourceStack> withAdminEdits(LiteralArgumentBuilder<CommandSourceStack> admin,
+                                                                             CommandBuildContext context) {
+        AdminCatalogCommands.addTo(admin, context);
+        AdminRecoveryCommands.addTo(admin);
+        return admin;
+    }
+
     private static Item item(CommandContext<CommandSourceStack> ctx) {
         return ItemArgument.getItem(ctx, "item").getItem();
     }
@@ -110,6 +156,10 @@ public final class MarketCommand {
     }
 
     private static int open(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        if (!MarketAccess.commandsAllowed(ctx.getSource())) {
+            ctx.getSource().sendFailure(Component.translatable("message.dynamic_economy.block_only"));
+            return 0;
+        }
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         MarketMenu.open(player);
         MarketSync.sendFullState(player);
@@ -183,8 +233,10 @@ public final class MarketCommand {
                     + "Set \"unlimited_stock\": false in the catalog and reload first.").formatted(id(item))));
             return 0;
         }
+        long before = MarketStockData.get(ctx.getSource().getServer()).getStock(id(item));
         MarketStockData.get(ctx.getSource().getServer()).setStock(id(item), qty);
         MarketSync.broadcastRow(ctx.getSource().getServer(), item);
+        AuditLog.record(ctx.getSource(), "setstock", id(item).toString(), "ok", new JsonPrimitive(before), new JsonPrimitive(qty));
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (warning: not listed in the catalog)";
         ctx.getSource().sendSuccess(() -> Component.literal("Set %s stock to %d%s".formatted(id(item), qty, listed)), true);
         return 1;
@@ -193,9 +245,12 @@ public final class MarketCommand {
     private static int resetPrice(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
         var server = ctx.getSource().getServer();
+        MarketStockData.Factor before = MarketStockData.get(server).factorsView().get(id(item));
         boolean moved = MarketStockData.get(server).resetFactor(id(item));
         MarketService.sampleHistory(server);
         MarketSync.broadcastRow(server, item);
+        AuditLog.record(ctx.getSource(), "resetprice", id(item).toString(), moved ? "ok" : "already at base",
+                before == null ? null : new JsonPrimitive(before.value()), new JsonPrimitive(1.0));
         ctx.getSource().sendSuccess(() -> Component.literal(moved
                 ? "Reset %s to its base price".formatted(id(item))
                 : "%s was already at its base price".formatted(id(item))), true);
@@ -207,8 +262,145 @@ public final class MarketCommand {
         int count = MarketStockData.get(server).resetAllFactors();
         MarketService.sampleHistory(server);
         MarketSync.broadcastSnapshot(server);
+        AuditLog.record(ctx.getSource(), "resetprice", "all", "ok: %d item(s) reset".formatted(count), null, null);
         ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) to their base price".formatted(count)), true);
         return count;
+    }
+
+    /** Puts every item in a tag back to its base price, or with {@code preview} says what that would do. */
+    private static int resetTagPrices(CommandContext<CommandSourceStack> ctx, boolean preview) {
+        ResourceLocation tag = ResourceLocationArgument.getId(ctx, "tag");
+        Set<ResourceLocation> members = CatalogOverlay.registryTag(tag).stream().map(MarketCommand::id).collect(Collectors.toSet());
+        if (members.isEmpty()) {
+            ctx.getSource().sendFailure(Component.literal("No items are in the tag #%s (check the spelling)".formatted(tag)));
+            return 0;
+        }
+        if (preview) {
+            return previewReset(ctx, "#" + tag, members::contains);
+        }
+        var server = ctx.getSource().getServer();
+        MarketStockData market = MarketStockData.get(server);
+        int count = 0;
+        for (ResourceLocation id : members) {
+            if (market.resetFactor(id)) {
+                count++;
+            }
+        }
+        MarketService.sampleHistory(server);
+        MarketSync.broadcastSnapshot(server);
+        int reset = count;
+        AuditLog.record(ctx.getSource(), "resetprice", "#" + tag, "ok: %d item(s) reset".formatted(reset), null, null);
+        ctx.getSource().sendSuccess(() -> Component.literal("Reset %d item(s) in #%s to their base price".formatted(reset, tag)), true);
+        return count;
+    }
+
+    /** Lists the items a price reset would move back to base, furthest first. Changes nothing. */
+    private static int previewReset(CommandContext<CommandSourceStack> ctx, String what, java.util.function.Predicate<ResourceLocation> include) {
+        var server = ctx.getSource().getServer();
+        MarketStockData market = MarketStockData.get(server);
+        long now = MarketStockData.now(server);
+        Map<ResourceLocation, Double> moved = new java.util.HashMap<>();
+        for (ResourceLocation id : market.factorsView().keySet()) {
+            if (include.test(id)) {
+                double factor = BuiltInRegistries.ITEM.getOptional(id).flatMap(MarketCatalog.INSTANCE::get)
+                        .map(entry -> MarketService.currentFactor(entry, PriceModel.inputs(entry), market, now))
+                        .orElse(market.factorsView().get(id).value());
+                if (factor != 1.0) {
+                    moved.put(id, factor);
+                }
+            }
+        }
+        List<String> lines = new ArrayList<>();
+        lines.add("Preview of resetting %s (nothing has been changed): %d item(s) would go back to base price"
+                .formatted(what, moved.size()));
+        moved.entrySet().stream()
+                .sorted(Comparator.comparingDouble((Map.Entry<ResourceLocation, Double> e) -> Math.abs(e.getValue() - 1)).reversed())
+                .limit(TOP_ITEMS_SHOWN)
+                .forEach(e -> lines.add("  %s: now %d%% of base".formatted(e.getKey(), Math.round(e.getValue() * 100))));
+        lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), false));
+        return moved.size();
+    }
+
+    private static final int PRUNE_SHOWN = 10;
+
+    /**
+     * Deletes saved data (stock, prices, history, item money counts, admin edits) for items that no longer exist in
+     * the game, typically because their mod was removed. Without {@code confirm} it only lists them.
+     */
+    private static int prune(CommandContext<CommandSourceStack> ctx, boolean confirm) {
+        var server = ctx.getSource().getServer();
+        MarketStockData market = MarketStockData.get(server);
+        MarketOverrides overrides = MarketOverrides.get(server);
+        SortedSet<ResourceLocation> gone = MarketDiagnostics.unregisteredItems(market, overrides.snapshot());
+        if (gone.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("Nothing to prune: every item with saved market data exists"), false);
+            return 0;
+        }
+        if (!confirm) {
+            List<String> lines = new ArrayList<>();
+            lines.add("%d item(s) with saved market data no longer exist in the game:".formatted(gone.size()));
+            gone.stream().limit(PRUNE_SHOWN).forEach(id -> lines.add("  " + id));
+            if (gone.size() > PRUNE_SHOWN) {
+                lines.add("  ...and %d more".formatted(gone.size() - PRUNE_SHOWN));
+            }
+            lines.add("/market admin prune confirm deletes their stock, prices, price history, money counts and admin "
+                    + "edits. The overall money counts are kept. A backup of stock, prices and edits is taken first");
+            lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), false));
+            return gone.size();
+        }
+        String backup;
+        try {
+            backup = MarketBackup.create(server, "prune");
+        } catch (IOException e) {
+            ctx.getSource().sendFailure(Component.literal("Couldn't back up first, so nothing was deleted: " + e.getMessage()));
+            return 0;
+        }
+        for (ResourceLocation id : gone) {
+            market.forget(id);
+            overrides.revertItem(id);
+        }
+        com.google.gson.JsonArray removed = new com.google.gson.JsonArray();
+        gone.forEach(id -> removed.add(id.toString()));
+        AuditLog.record(ctx.getSource(), "prune", "%d item(s)".formatted(gone.size()), "ok, backed up first as " + backup, removed, null);
+        ctx.getSource().sendSuccess(() -> Component.literal("Deleted saved market data for %d item(s) that no longer exist, e.g. %s. "
+                .formatted(gone.size(), gone.first()) + "The state before is saved as \"%s\"".formatted(backup)), true);
+        return gone.size();
+    }
+
+    private static final int TOP_ITEMS_SHOWN = 5;
+
+    /**
+     * Lifetime money flow. The market has no balance: payouts to sellers are new money and payments from buyers leave
+     * the economy, so the figures are "created" and "removed", never revenue.
+     */
+    private static int stats(CommandContext<CommandSourceStack> ctx) {
+        MarketStockData market = MarketStockData.get(ctx.getSource().getServer());
+        describeTotals(ctx.getSource(), "Market since counting began", market.totals());
+        List<Map.Entry<ResourceLocation, MarketStockData.Totals>> busiest = market.itemTotalsView().entrySet().stream()
+                .sorted(Comparator.comparingLong((Map.Entry<ResourceLocation, MarketStockData.Totals> e) ->
+                        e.getValue().paidOut() + e.getValue().collected()).reversed())
+                .limit(TOP_ITEMS_SHOWN).toList();
+        if (!busiest.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("Busiest items (by money moved):"), false);
+            busiest.forEach(e -> ctx.getSource().sendSuccess(() -> Component.literal("  %s: created %,d, removed %,d"
+                    .formatted(e.getKey(), e.getValue().paidOut(), e.getValue().collected())), false));
+        }
+        return 1;
+    }
+
+    private static int itemStats(CommandContext<CommandSourceStack> ctx) {
+        Item item = item(ctx);
+        describeTotals(ctx.getSource(), id(item).toString(), MarketStockData.get(ctx.getSource().getServer()).totals(id(item)));
+        return 1;
+    }
+
+    private static void describeTotals(CommandSourceStack source, String title, MarketStockData.Totals totals) {
+        long net = totals.netCreated();
+        List.of(title + ":",
+                "  Paid to sellers: %,d spurs for %,d items (new money)".formatted(totals.paidOut(), totals.unitsSold()),
+                "  Paid by buyers: %,d spurs for %,d items (removed from the economy)".formatted(totals.collected(), totals.unitsBought()),
+                "  Net: %s%,d spurs %s".formatted(net >= 0 ? "+" : "", net, net >= 0 ? "added to the economy" : "removed from the economy"))
+                .forEach(line -> source.sendSuccess(() -> Component.literal(line), false));
     }
 
     /** {@code config/dynamic_economy/}: the only folder export writes to and import reads from. */
@@ -224,6 +416,7 @@ public final class MarketCommand {
         try {
             CatalogExport.Result result = CatalogExport.export(configRoot().resolve("exports"), modId, MarketCatalog.INSTANCE.entries());
             String folder = "config/" + DynamicEconomy.MOD_ID + "/exports/" + result.folder().getFileName();
+            AuditLog.record(ctx.getSource(), "export", modId.orElse("all mods"), "ok: %d items to %s".formatted(result.total(), folder), null, null);
             ctx.getSource().sendSuccess(() -> Component.literal(
                     "Exported %d items to %s: %d already priced, %d new (templates for %d mod(s))"
                             .formatted(result.total(), folder, result.priced(), result.unpriced(), result.modsWithTemplates())), true);
@@ -287,13 +480,27 @@ public final class MarketCommand {
             written = CatalogImport.write(report, server.getWorldPath(LevelResource.DATAPACK_DIR));
         } catch (IOException e) {
             DynamicEconomy.LOGGER.error("Market import failed while writing", e);
+            AuditLog.record(source, "import", typed, "failed: " + e.getMessage(), null, null);
             source.sendFailure(Component.literal("Writing the catalog files failed: " + e.getMessage()));
             return 0;
         }
+        com.google.gson.JsonArray files = new com.google.gson.JsonArray();
+        written.files().forEach(file -> files.add(file.getFileName().toString()));
+        AuditLog.record(source, "import", typed, "ok: %d entries, %d rejected rows, %d file(s) backed up as .json.bak"
+                .formatted(report.toWrite(), report.rejected().size(), written.backups().size()), null, files);
         String backups = written.backups().isEmpty() ? ""
                 : " (backed up %d replaced file(s) as .json.bak)".formatted(written.backups().size());
         source.sendSuccess(() -> Component.literal("Wrote %d catalog file(s) to <world>/datapacks/%s%s"
                 .formatted(written.files().size(), CatalogImport.PACK_FOLDER, backups)), true);
+
+        // Admin edits sit above catalog files, so they still win for these items.
+        MarketOverrides overrides = MarketOverrides.get(server);
+        List<String> edited = report.decoded().stream().map(CatalogEntry::itemId)
+                .filter(id -> overrides.itemPatch(id) != null).map(ResourceLocation::toString).toList();
+        if (!edited.isEmpty()) {
+            source.sendFailure(Component.literal("%d imported item(s) also have in-game admin edits, which still take precedence: %s%s. Use /market admin revert <item> to drop them"
+                    .formatted(edited.size(), String.join(", ", edited.subList(0, Math.min(5, edited.size()))), edited.size() > 5 ? ", ..." : "")));
+        }
 
         PackRepository packs = server.getPackRepository();
         if (packs.getSelectedIds().contains(CatalogImport.PACK_ID)) {
@@ -344,6 +551,7 @@ public final class MarketCommand {
         var server = ctx.getSource().getServer();
         int count = MarketCatalog.INSTANCE.reloadNow(server.getResourceManager());
         DynamicEconomy.catalogReloaded(server);
+        AuditLog.record(ctx.getSource(), "reload", "catalog", "ok: %d entries".formatted(count), null, null);
         ctx.getSource().sendSuccess(() -> Component.literal("Reloaded market catalog: %d entries".formatted(count)), true);
         return count;
     }

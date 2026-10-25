@@ -5,12 +5,16 @@ import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.data.TradeHistory;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
 
@@ -137,6 +141,9 @@ public final class MarketService {
             market.setStock(entry.itemId(), stock + qty);
         }
         updateFactor(entry, market, factor, order, now);
+        market.recordTrade(entry.itemId(), false, qty, order.total());
+        TradeHistory.get(player.server).record(player.getUUID(),
+                new TradeHistory.Trade(System.currentTimeMillis(), entry.itemId(), false, qty, order.total()));
         account.get().deposit((int) order.total());
         return new TradeResult(Result.OK, qty, unitPrice, order.total());
     }
@@ -197,6 +204,9 @@ public final class MarketService {
             market.setStock(entry.itemId(), stock.getAsLong() - qty);
         }
         updateFactor(entry, market, factor, order, now);
+        market.recordTrade(entry.itemId(), true, qty, order.total());
+        TradeHistory.get(player.server).record(player.getUUID(),
+                new TradeHistory.Trade(System.currentTimeMillis(), entry.itemId(), true, qty, order.total()));
         insert(items, entry, qty);
         player.getInventory().setChanged();
         return new TradeResult(Result.OK, qty, unitPrice, order.total());
@@ -223,6 +233,23 @@ public final class MarketService {
             if (entry.dynamic()) {
                 market.recordHistory(entry.itemId(), currentFactor(entry, PriceModel.inputs(entry), market, now), now, interval);
             }
+        }
+    }
+
+    /**
+     * Forgets stored factors of listed items that have fully recovered to 1.0, which is how an untouched item is
+     * stored anyway. Prices don't change; recovery steps just stop resending those items. Called after each step.
+     */
+    public static void pruneRecovered(MinecraftServer server) {
+        MarketStockData market = MarketStockData.get(server);
+        long now = MarketStockData.now(server);
+        int interval = MarketConfig.intervalTicks();
+        for (ResourceLocation id : List.copyOf(market.factorsView().keySet())) {
+            BuiltInRegistries.ITEM.getOptional(id).flatMap(MarketCatalog.INSTANCE::get).ifPresent(entry -> {
+                if (market.factor(id, now, PriceModel.inputs(entry).recovery(), interval) == 1.0) {
+                    market.setFactor(id, 1.0, now);
+                }
+            });
         }
     }
 
@@ -288,7 +315,7 @@ public final class MarketService {
      * How many default copies of the item fit in the main inventory. Counted here rather than with
      * {@code Inventory.add}, which in creative mode reports success after deleting what did not fit.
      */
-    static long spaceFor(NonNullList<ItemStack> items, CatalogEntry entry) {
+    public static long spaceFor(NonNullList<ItemStack> items, CatalogEntry entry) {
         int maxStack = new ItemStack(entry.item()).getMaxStackSize();
         long space = 0;
         for (ItemStack stack : items) {

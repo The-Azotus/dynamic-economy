@@ -3,12 +3,14 @@ package dynamiceconomy;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
- * Server config (per world). The pricing values are server-wide defaults; catalog entries and file defaults can
+ * Server config ({@code config/dynamic_economy-server.toml}, loaded when a server starts). The pricing values are
+ * server-wide defaults; catalog entries and file defaults can
  * override all of them except the recovery interval.
  */
 public final class MarketConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.IntValue MAX_QUANTITY_PER_REQUEST;
+    public static final ModConfigSpec.EnumValue<AccessMode> ACCESS_MODE;
     public static final ModConfigSpec.DoubleValue SELL_IMPACT;
     public static final ModConfigSpec.DoubleValue BUY_IMPACT;
     public static final ModConfigSpec.DoubleValue RECOVERY;
@@ -21,6 +23,12 @@ public final class MarketConfig {
         MAX_QUANTITY_PER_REQUEST = builder
                 .comment("Largest quantity a single buy or sell request may move. Larger orders are rejected with TOO_LARGE.")
                 .defineInRange("max_quantity_per_request", 640, 1, 1_000_000);
+        ACCESS_MODE = builder
+                .comment("How players reach the market.",
+                        "COMMAND_AND_BLOCK: the /market command or a Market Terminal block.",
+                        "BLOCK_ONLY: only a Market Terminal. Players without operator permission (level 2) can't use",
+                        "any /market command; operators and the console always can.")
+                .defineEnum("access_mode", AccessMode.COMMAND_AND_BLOCK);
 
         builder.comment("Supply and demand. Each item has a price factor s, starting at 1.0. These are defaults;",
                 "catalog entries may override them (except interval_ticks).").push("pricing");
@@ -29,7 +37,9 @@ public final class MarketConfig {
                 .defineInRange("sell_impact", 0.0005, 0.0, 0.5);
         BUY_IMPACT = builder
                 .comment("Each unit bought multiplies s by (1 + buy_impact). Keep it no higher than the smallest markup,",
-                        "and no higher than sell_impact / (1 - sell_impact), or buying and reselling can make a profit.")
+                        "and no higher than sell_impact / (1 - sell_impact), or buying and reselling can make a profit.",
+                        "Don't set it far below sell_impact either, or selling and buying back can. Equal values are safe;",
+                        "the server log warns at startup about any item whose settings allow a profitable round trip.")
                 .defineInRange("buy_impact", 0.0005, 0.0, 0.5);
         RECOVERY = builder
                 .comment("Fraction of the distance back to 1.0 that s recovers at each interval step.")
@@ -51,7 +61,13 @@ public final class MarketConfig {
     private MarketConfig() {
     }
 
-    // The config is per-world, so each getter falls back to the default before it has loaded.
+    public enum AccessMode { COMMAND_AND_BLOCK, BLOCK_ONLY }
+
+    public static AccessMode accessMode() {
+        return SPEC.isLoaded() ? ACCESS_MODE.get() : ACCESS_MODE.getDefault();
+    }
+
+    // A server config only loads when a server starts, so each getter falls back to the default before then.
 
     public static int maxQuantityPerRequest() {
         return SPEC.isLoaded() ? MAX_QUANTITY_PER_REQUEST.get() : MAX_QUANTITY_PER_REQUEST.getDefault();

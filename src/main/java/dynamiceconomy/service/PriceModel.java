@@ -63,8 +63,15 @@ public final class PriceModel {
         BigDecimal sum = BigDecimal.ZERO;
         double s = factor;
         for (int i = 0; i < qty; i++) {
-            sum = sum.add(perUnit.multiply(BigDecimal.valueOf(s)));
-            s = afterSale(in, s);
+            BigDecimal unit = perUnit.multiply(BigDecimal.valueOf(s));
+            double next = afterSale(in, s);
+            if (next == s) {
+                // s has stopped moving (floor, or a fixed price): the remaining units all trade at this value.
+                sum = sum.add(unit.multiply(BigDecimal.valueOf(qty - i)));
+                break;
+            }
+            sum = sum.add(unit);
+            s = next;
         }
         return order(sum.setScale(0, RoundingMode.FLOOR), s);
     }
@@ -83,10 +90,33 @@ public final class PriceModel {
         BigDecimal sum = BigDecimal.ZERO;
         double s = factor;
         for (int i = 0; i < qty; i++) {
-            sum = sum.add(perUnit.multiply(BigDecimal.valueOf(s)));
-            s = afterPurchase(in, s);
+            BigDecimal unit = perUnit.multiply(BigDecimal.valueOf(s));
+            double next = afterPurchase(in, s);
+            if (next == s) {
+                // s has stopped moving (ceiling, or a fixed price): the remaining units all trade at this value.
+                sum = sum.add(unit.multiply(BigDecimal.valueOf(qty - i)));
+                break;
+            }
+            sum = sum.add(unit);
+            s = next;
         }
         return order(sum.setScale(0, RoundingMode.CEILING), s);
+    }
+
+    /** What the market pays for the next unit, before rounding. For display: orders are priced by {@link #sell}. */
+    public static BigDecimal exactUnitSellPrice(Inputs in, double factor) {
+        return BigDecimal.valueOf(in.basePrice()).multiply(BigDecimal.ONE.subtract(BigDecimal.valueOf(in.sellFee())))
+                .multiply(BigDecimal.valueOf(factor));
+    }
+
+    /** What the market charges for the next unit, before rounding. For display: orders are priced by {@link #buy}. */
+    public static BigDecimal exactUnitBuyPrice(Inputs in, double factor) {
+        BigDecimal base = BigDecimal.valueOf(in.basePrice());
+        BigDecimal markup = BigDecimal.ONE.add(BigDecimal.valueOf(in.markup()));
+        if (in.unlimited()) {
+            return base.multiply(BigDecimal.valueOf(factor).multiply(markup).max(BigDecimal.ONE.add(BigDecimal.valueOf(in.minBuyMarkup()))));
+        }
+        return base.multiply(markup).multiply(BigDecimal.valueOf(factor));
     }
 
     /** What the market pays for one unit right now. */
@@ -100,7 +130,7 @@ public final class PriceModel {
     }
 
     /** A sale never raises s, even if the floor was raised above the current value by a config change. */
-    static double afterSale(Inputs in, double s) {
+    public static double afterSale(Inputs in, double s) {
         if (!in.dynamic()) {
             return s;
         }
@@ -108,7 +138,7 @@ public final class PriceModel {
     }
 
     /** A purchase never lowers s; purchases of unlimited items don't move it at all. */
-    static double afterPurchase(Inputs in, double s) {
+    public static double afterPurchase(Inputs in, double s) {
         if (!in.dynamic() || in.unlimited()) {
             return s;
         }
@@ -130,10 +160,15 @@ public final class PriceModel {
     }
 
     /**
-     * Why buying and immediately reselling this item could make a profit, or empty if it can't. Pairing the k-th
-     * unit sold back with the matching unit bought, the sale pays at most
-     * {@code (1 + b) × ((1 + b)(1 − a))^k × (1 − fee) / (1 + markup)} of the purchase, so both factors must stay
-     * at or below 1. Unlimited and non-dynamic items always pay out at or below base and charge at or above it.
+     * Why a round trip on this item could make a profit, or empty if it can't. Unlimited and non-dynamic items always
+     * pay out at or below base and charge at or above it, so only finite dynamic items are checked, in both orders.
+     * <ul>
+     *   <li>Buying then reselling: pairing the k-th unit sold back with the matching unit bought, the sale pays at
+     *       most {@code (1 + b) × ((1 + b)(1 − a))^k × (1 − fee) / (1 + markup)} of the purchase, so both factors must
+     *       stay at or below 1.</li>
+     *   <li>Selling then buying back: see {@link #worstBuyBackRatio}. Buying back must cost at least what the sale
+     *       paid, so that ratio times {@code (1 + markup)} must be at least {@code 1 − fee}.</li>
+     * </ul>
      */
     public static Optional<String> arbitrageRisk(Inputs in) {
         if (!in.dynamic() || in.unlimited()) {
@@ -146,7 +181,32 @@ public final class PriceModel {
         if ((1 + b) * (1 - in.sellFee()) > 1 + in.markup()) {
             return Optional.of("buy_impact " + b + " exceeds markup " + in.markup() + " plus sell_fee");
         }
+        if (worstBuyBackRatio(in) * (1 + in.markup()) < 1 - in.sellFee()) {
+            return Optional.of("selling then buying back can profit: buy_impact " + b + " is too far below sell_impact "
+                    + in.sellImpact() + " for markup " + in.markup());
+        }
         return Optional.empty();
+    }
+
+    /**
+     * A lower bound on what one unit bought back costs, before markup, relative to a unit sold just before it.
+     * Pair the k-th unit sold with the (q−1−k)-th unit bought back, d = q − k units apart. With r = 1 − sell_impact
+     * and g = 1 + buy_impact, the purchase is worth at least {@code max(r^d, floor/ceiling) × g^(d−1)} of the sale
+     * (clamping only ever raises the buy-back price, and a pair where either side is clamped is worth at least 1).
+     * Over all d that is smallest at d = n or n + 1, where n is the most sales that can stay above the floor.
+     */
+    static double worstBuyBackRatio(Inputs in) {
+        double r = 1 - in.sellImpact();
+        double g = 1 + in.buyImpact();
+        double span = in.floor() / in.ceiling();
+        if (r >= 1 || span >= 1) {
+            return 1.0; // Sales never move s, or s has nowhere to move.
+        }
+        long n = (long) Math.floor(Math.log(span) / Math.log(r));
+        if (n < 1) {
+            return span;
+        }
+        return Math.min(r * Math.pow(r * g, n - 1), span * Math.pow(g, n));
     }
 
     private static Order order(BigDecimal total, double factorAfter) {
