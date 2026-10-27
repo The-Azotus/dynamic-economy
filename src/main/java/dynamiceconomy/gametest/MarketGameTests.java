@@ -1506,6 +1506,31 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = EMPTY)
+    public static void machineRecipeAmountsAreCounted(GameTestHelper helper) {
+        // A packer and unpacker read with their real amounts settle; read as one in, one out they loop towards zero.
+        Map<Item, CatalogEntry> catalog = seeds(seed(Items.IRON_INGOT, 90, null));
+        ResourceLocation id = ResourceLocation.parse("test:machine");
+        java.util.function.BiFunction<Item, Double, List<PriceSuggestion.Slot>> slot = (item, amount) ->
+                List.of(new PriceSuggestion.Slot(List.of(item), amount));
+        List<PriceSuggestion.Path> real = List.of(
+                new PriceSuggestion.Path(id, "test:packer", Items.IRON_BLOCK, 1, slot.apply(Items.IRON_INGOT, 9.0), false, true),
+                new PriceSuggestion.Path(id, "test:unpacker", Items.IRON_NUGGET, 9, slot.apply(Items.IRON_INGOT, 1.0), false, true),
+                new PriceSuggestion.Path(id, "test:unpacker", Items.IRON_INGOT, 9, slot.apply(Items.IRON_BLOCK, 1.0), false, true));
+        PriceSuggestion.Result result = PriceSuggestion.suggest(real, catalog, new java.util.HashMap<>());
+        helper.assertTrue(result.settled(), "settles");
+        helper.assertValueEqual(result.suggestions().get(Items.IRON_BLOCK).basePrice(), Optional.of(891), "9 × 90 × 1.1");
+        // A catalyst used up only a quarter of the time costs a quarter of its price.
+        PriceSuggestion.Result partly = PriceSuggestion.suggest(List.of(new PriceSuggestion.Path(id, "test:machine", Items.IRON_NUGGET, 1,
+                slot.apply(Items.IRON_INGOT, 0.25), false, true)), catalog, new java.util.HashMap<>());
+        helper.assertValueEqual(partly.suggestions().get(Items.IRON_NUGGET).basePrice(), Optional.of(24), "90 × 0.25 × 1.1 = 24.75");
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        helper.assertTrue(server.getRecipeManager().getRecipes().stream()
+                        .allMatch(holder -> dynamiceconomy.compat.ModernIndustrializationRecipes.read(holder.value()).isEmpty()),
+                "other mods' recipes are left to the generic reading");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
     public static void decorativeVariantModsAreLeftOut(GameTestHelper helper) {
         helper.assertTrue(PriceSuggestion.leftOut(ResourceLocation.parse("chipped:acacia_planks_1")), "Chipped");
         helper.assertTrue(PriceSuggestion.leftOut(ResourceLocation.parse("rechiseled:stone_bricks_1")), "Rechiseled");

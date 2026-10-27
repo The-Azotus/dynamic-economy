@@ -3,6 +3,7 @@ package dynamiceconomy.service;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.compat.CreateRecipes;
+import dynamiceconomy.compat.ModernIndustrializationRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -81,7 +82,8 @@ public final class PriceSuggestion {
         }
     }
 
-    public record Slot(List<Item> options, int amount) {
+    /** {@code amount} is how many a run uses on average; it is fractional when a mod uses an input up only sometimes. */
+    public record Slot(List<Item> options, double amount) {
     }
 
     /**
@@ -344,6 +346,10 @@ public final class PriceSuggestion {
                 unusable.merge("special recipes (map cloning, dyeing, ...)", 1, Integer::sum);
                 return Optional.empty();
             }
+            Optional<ModernIndustrializationRecipes.Read> machine = ModernIndustrializationRecipes.read(recipe);
+            if (machine.isPresent()) {
+                return machinePath(holder, type, machine.get(), unusable);
+            }
             ItemStack out = recipe.getResultItem(registries);
             Optional<CreateRecipes.Output> create = CreateRecipes.read(recipe);
             if (create.isPresent() && create.get().expected() <= 0) {
@@ -396,6 +402,24 @@ public final class PriceSuggestion {
             unusable.merge(type + ": couldn't be read", 1, Integer::sum);
             return Optional.empty();
         }
+    }
+
+    /**
+     * A Modern Industrialization machine recipe, with the amounts its generic data leaves out. Its machines run on
+     * energy, which isn't priced, so a recipe counts as complete unless it uses up fluids.
+     */
+    private static Optional<Path> machinePath(RecipeHolder<?> holder, String type, ModernIndustrializationRecipes.Read read,
+                                              Map<String, Integer> unusable) {
+        if (read.item() == null || read.expected() <= 0) {
+            unusable.merge(type + ": no item output listed", 1, Integer::sum);
+            return Optional.empty();
+        }
+        if (read.inputs().isEmpty()) {
+            unusable.merge(type + ": no item inputs listed", 1, Integer::sum);
+            return Optional.empty();
+        }
+        List<Slot> slots = read.inputs().stream().map(input -> new Slot(input.options(), input.amount())).toList();
+        return Optional.of(new Path(holder.id(), type, read.item(), read.expected(), slots, false, !read.fluids()));
     }
 
     /** Every item a smithing slot accepts. Scanning the registry is fine for the few dozen smithing recipes a pack has. */
