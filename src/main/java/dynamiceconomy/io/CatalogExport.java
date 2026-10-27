@@ -130,22 +130,28 @@ public final class CatalogExport {
 
     /** Where the suggestions went and how many of each kind there were. */
     public record SuggestionResult(Path folder, int listed, int suggested, int underOneSpur, int toReview, int noRecipe,
-                                   int unpricedInputs) {
+                                   int unpricedInputs, int leftOut) {
     }
 
     /**
      * Writes {@code suggested.csv}: {@code items.csv} with suggested prices and classes filled in for unlisted items
-     * that recipes can price, so it imports directly, plus reference columns explaining each suggestion.
+     * that recipes can price, so it imports directly, plus reference columns explaining each suggestion. Unlisted items
+     * from mods left out of the market ({@link PriceSuggestion#LEFT_OUT_MODS}) get no row.
      */
     public static SuggestionResult exportSuggestions(Path exportsRoot, Optional<String> modId, Collection<CatalogEntry> catalog,
                                                      Function<Item, Map<String, List<FieldSource>>> sources,
                                                      PriceSuggestion.Result suggestions) throws IOException {
         Map<Item, CatalogEntry> listed = catalog.stream().collect(Collectors.toMap(CatalogEntry::item, Function.identity()));
         List<Item> items = new ArrayList<>();
+        int leftOut = 0;
         for (Item item : BuiltInRegistries.ITEM) {
             ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
             if (item != Items.AIR && (modId.isEmpty() || id.getNamespace().equals(modId.get()))) {
-                items.add(item);
+                if (!listed.containsKey(item) && PriceSuggestion.leftOut(item)) {
+                    leftOut++;
+                } else {
+                    items.add(item);
+                }
             }
         }
         items.sort(Comparator.comparing(item -> BuiltInRegistries.ITEM.getKey(item).toString()));
@@ -204,7 +210,7 @@ public final class CatalogExport {
             csv.append(Csv.line(row));
         }
         Files.writeString(folder.resolve("suggested.csv"), csv, StandardCharsets.UTF_8);
-        return new SuggestionResult(folder, listedCount, suggestedCount, under, review, noRecipe, unpricedInputs);
+        return new SuggestionResult(folder, listedCount, suggestedCount, under, review, noRecipe, unpricedInputs, leftOut);
     }
 
     /** A new timestamped folder; adds a suffix rather than reuse one, so an earlier export is never overwritten. */

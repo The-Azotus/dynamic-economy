@@ -472,6 +472,14 @@ public final class MarketCommand {
                     .formatted(written.listed(), written.suggested(), written.underOneSpur(), written.toReview()));
             lines.add("  %d made only from unpriced items, %d with no usable recipe (these need hand-set prices)"
                     .formatted(written.unpricedInputs(), written.noRecipe()));
+            if (written.leftOut() > 0) {
+                lines.add("  %d decorative variants (%s) left out of the market".formatted(written.leftOut(),
+                        String.join(", ", new java.util.TreeSet<>(PriceSuggestion.LEFT_OUT_MODS))));
+            }
+            if (result.premium() < PriceSuggestion.PREMIUM) {
+                lines.add("  Processing premium lowered to %s to stay at or below the smallest markup in the catalog"
+                        .formatted(java.math.BigDecimal.valueOf(result.premium()).stripTrailingZeros().toPlainString()));
+            }
             if (!result.unusable().isEmpty()) {
                 lines.add("  Recipes skipped: " + result.unusable().entrySet().stream()
                         .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(5)

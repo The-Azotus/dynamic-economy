@@ -18,7 +18,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block) and 9 (item classes) done on branch `phase8`. **Phase 10 (built-in price packs) in progress on `phase8`, status unverified.** Then 11 GUI rework → 12 ProgressiveStages → 13 Leaderboard → 14 Contracts → 15 Difficulty preset → 16 Player exchange (optional).
+Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block) and 9 (item classes) done on branch `phase8`. **Phase 10 (built-in price packs) in progress on `phase8`: Stage A done** (code, tests, Chipped/Rechiseled filter, premium tied to the smallest markup). Seeds for vanilla + 24 mods already exist (1,365 entries, scale: cobblestone 1, log 8, iron ingot 32, diamond 512, nether star 16,384; awaiting the user's confirmation as Stage B). Open for Stage C/D: ~21 craft-profit recipes in the full pack (`pricing-work/craft_profits.txt`) and 628 recipe-loop items in `pricing-work/suggested.csv` (26 Oct run). Then 11 GUI rework → 12 ProgressiveStages → 13 Leaderboard → 14 Contracts → 15 Difficulty preset → 16 Player exchange (optional).
 
 Phases 8+ target v0.3.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 

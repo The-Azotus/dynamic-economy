@@ -37,15 +37,21 @@ import java.util.TreeMap;
  * the output count and raised by a processing premium. Costs only ever fall; a recipe loop that makes something out of
  * less than itself would fall forever, so passes are capped and such items reported.
  * <p>
- * The premium is kept below every markup, and suggested prices are rounded down, so buying a recipe's ingredients at
- * normal prices, crafting and selling the result never profits. Anything the recipes can't tell (fluids, chance
+ * The premium is kept at or below every markup in the catalog, and suggested prices are rounded down, so buying a
+ * recipe's ingredients at normal prices, crafting and selling the result never profits. Items from decorative-variant
+ * mods ({@link #LEFT_OUT_MODS}) are left out of the market, so they are never priced. Anything the recipes can't tell (fluids, chance
  * ingredient counts some mods keep outside {@link Ingredient}) is missing from the cost; such recipes are marked for
  * review. Create's machine recipes are read more closely: their output counts are what a run makes on average, and
  * recipes taking fluids are marked. Pure apart from reading the item registry: recipes and seeds are passed in.
  */
 public final class PriceSuggestion {
-    /** Fraction added for each processing step. Below the smallest built-in markup (0.4), with room for rounding. */
+    /**
+     * Fraction added for each processing step, at most: {@link #premium} lowers it to the catalog's smallest markup when
+     * an admin sets one below it. Below the smallest built-in markup (0.4), with room for rounding.
+     */
     public static final double PREMIUM = 0.1;
+    /** Decorative variants of blocks (thousands each), left out of the market entirely: never suggested or exported. */
+    public static final Set<String> LEFT_OUT_MODS = Set.of("chipped", "rechiseled");
     /** Recipes are applied at most this many times over; enough for any real chain, and a stop for loops. */
     private static final int MAX_PASSES = 64;
     /** One coal smelts 8 items. */
@@ -98,9 +104,10 @@ public final class PriceSuggestion {
      * @param unusable        recipes skipped, by reason
      * @param looping         items whose price was still falling when the passes ran out: a recipe loop makes them out
      *                        of less than themselves, so their suggestion is too low and needs a hand-set price
+     * @param premium         the processing premium used (see {@link #premium})
      */
     public record Result(Map<Item, Suggestion> suggestions, Set<Item> noRecipe, Set<Item> unpricedInputs,
-                         Map<String, Integer> unusable, Set<Item> looping) {
+                         Map<String, Integer> unusable, Set<Item> looping, double premium) {
         public boolean settled() {
             return looping.isEmpty();
         }
@@ -117,14 +124,16 @@ public final class PriceSuggestion {
     }
 
     /** As {@link #suggest(Collection, HolderLookup.Provider, Map)}, from recipes already read. */
-    public static Result suggest(List<Path> paths, Map<Item, CatalogEntry> catalog, Map<String, Integer> unusable) {
+    public static Result suggest(List<Path> allPaths, Map<Item, CatalogEntry> catalog, Map<String, Integer> unusable) {
+        List<Path> paths = allPaths.stream().filter(path -> !leftOut(path.output())).toList();
         Map<Item, BigDecimal> price = new HashMap<>();
         Map<Item, String> itemClass = new HashMap<>();
         catalog.forEach((item, entry) -> {
             price.put(item, BigDecimal.valueOf(entry.basePrice()));
             itemClass.put(item, entry.itemClass().map(ResourceLocation::getPath).orElse(""));
         });
-        BigDecimal premium = BigDecimal.ONE.add(BigDecimal.valueOf(PREMIUM));
+        double premiumUsed = premium(catalog.values());
+        BigDecimal premium = BigDecimal.ONE.add(BigDecimal.valueOf(premiumUsed));
         Map<Item, Path> chosen = new HashMap<>();
         Map<Item, Integer> depth = new HashMap<>();
 
@@ -216,12 +225,33 @@ public final class PriceSuggestion {
         Set<Item> noRecipe = new HashSet<>();
         Set<Item> unpricedInputs = new HashSet<>();
         for (Item item : BuiltInRegistries.ITEM) {
-            if (item == Items.AIR || catalog.containsKey(item) || suggestions.containsKey(item)) {
+            if (item == Items.AIR || catalog.containsKey(item) || suggestions.containsKey(item) || leftOut(item)) {
                 continue;
             }
             (made.contains(item) ? unpricedInputs : noRecipe).add(item);
         }
-        return new Result(suggestions, noRecipe, unpricedInputs, unusable, Set.copyOf(changed));
+        return new Result(suggestions, noRecipe, unpricedInputs, unusable, Set.copyOf(changed), premiumUsed);
+    }
+
+    /**
+     * The processing premium for a catalog: {@link #PREMIUM}, or the smallest markup (or lower buy-price limit) any
+     * entry has if that is less, so a suggested item never sells for more than its ingredients cost to buy.
+     */
+    public static double premium(Collection<CatalogEntry> catalog) {
+        double premium = PREMIUM;
+        for (CatalogEntry entry : catalog) {
+            premium = Math.min(premium, Math.min(entry.markup(), entry.minBuyMarkup().orElse(entry.markup())));
+        }
+        return Math.max(0, premium);
+    }
+
+    /** Whether the item comes from a mod left out of the market ({@link #LEFT_OUT_MODS}). */
+    public static boolean leftOut(Item item) {
+        return leftOut(BuiltInRegistries.ITEM.getKey(item));
+    }
+
+    public static boolean leftOut(ResourceLocation itemId) {
+        return LEFT_OUT_MODS.contains(itemId.getNamespace());
     }
 
     /** A recipe whose output sells for more than its ingredients cost to buy, at normal prices (factor 1.0). */

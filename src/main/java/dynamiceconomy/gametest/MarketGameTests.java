@@ -1486,6 +1486,30 @@ public final class MarketGameTests {
                 .mapToDouble(c -> c.values().get("markup").getAsDouble()).min().orElseThrow();
         helper.assertTrue(PriceSuggestion.PREMIUM < smallestMarkup, "premium below every class markup");
         helper.assertTrue(PriceSuggestion.PREMIUM < CatalogEntry.DEFAULT_MARKUP, "and the default markup");
+
+        // An admin markup below the premium lowers the premium to match, so the suggestion still can't be crafted for profit.
+        JsonObject cheap = new JsonObject();
+        cheap.addProperty("item", key(Items.IRON_INGOT).toString());
+        cheap.addProperty("base_price", 100);
+        cheap.addProperty("markup", 0.05);
+        Map<Item, CatalogEntry> catalog = seeds(MarketCatalog.decode(cheap).result().orElseThrow());
+        helper.assertValueEqual(PriceSuggestion.premium(catalog.values()), 0.05, "premium follows the smallest markup");
+        PriceSuggestion.Result result = PriceSuggestion.suggest(List.of(path(Items.IRON_BLOCK, 1, false, Items.IRON_INGOT)), catalog,
+                new java.util.HashMap<>());
+        helper.assertValueEqual(result.suggestions().get(Items.IRON_BLOCK).basePrice(), Optional.of(105), "100 × 1.05, not 1.1");
+        Map<Item, CatalogEntry> withBlock = seeds(catalog.get(Items.IRON_INGOT), seed(Items.IRON_BLOCK, 105, null));
+        helper.assertValueEqual(PriceSuggestion.craftProfits(List.of(path(Items.IRON_BLOCK, 1, false, Items.IRON_INGOT)), withBlock),
+                List.of(), "buying the ingredient, crafting and selling doesn't profit");
+        helper.assertValueEqual(PriceSuggestion.premium(seeds(seed(Items.IRON_INGOT, 10, "common_processed")).values()),PriceSuggestion.PREMIUM,
+                "built-in classes keep the full premium");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void decorativeVariantModsAreLeftOut(GameTestHelper helper) {
+        helper.assertTrue(PriceSuggestion.leftOut(ResourceLocation.parse("chipped:acacia_planks_1")), "Chipped");
+        helper.assertTrue(PriceSuggestion.leftOut(ResourceLocation.parse("rechiseled:stone_bricks_1")), "Rechiseled");
+        helper.assertTrue(!PriceSuggestion.leftOut(Items.STONE_BRICKS), "anything else is priced as usual");
         helper.succeed();
     }
 
@@ -1537,6 +1561,10 @@ public final class MarketGameTests {
 
     /** The built-in price files, read straight from the mod (the GameTest server leaves the pack itself off). */
     private static MarketCatalog.Loaded defaultPrices() {
+        return MarketCatalog.load(defaultPriceFiles());
+    }
+
+    private static List<MarketCatalog.SourceFile> defaultPriceFiles() {
         try {
             Path folder = net.neoforged.fml.ModList.get().getModFileById(DynamicEconomy.MOD_ID).getFile()
                     .findResource("default_prices", "data", DynamicEconomy.MOD_ID, "market");
@@ -1548,10 +1576,60 @@ public final class MarketGameTests {
                             "default_prices", JsonParser.parseString(Files.readString(file))));
                 }
             }
-            return MarketCatalog.load(files);
+            return files;
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Every built-in price file, including those for mods the test server doesn't have: their items aren't registered
+     * here, so each entry is checked under the loader's rules with a stand-in item.
+     */
+    @GameTest(template = EMPTY)
+    public static void everyDefaultPriceFileFollowsTheRules(GameTestHelper helper) {
+        List<String> problems = new ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        int entries = 0;
+        for (MarketCatalog.SourceFile file : defaultPriceFiles()) {
+            JsonObject obj = file.json().getAsJsonObject();
+            java.util.Set<String> mods = new java.util.HashSet<>(List.of("minecraft"));
+            if (obj.has("required_mods")) {
+                obj.getAsJsonArray("required_mods").forEach(mod -> mods.add(mod.getAsString()));
+            } else if (!file.id().getPath().equals("minecraft")) {
+                problems.add(file.id() + ": no required_mods");
+            }
+            JsonObject defaults = obj.has("defaults") ? obj.getAsJsonObject("defaults") : new JsonObject();
+            for (JsonElement element : obj.getAsJsonArray("entries")) {
+                entries++;
+                JsonObject entry = element.getAsJsonObject();
+                ResourceLocation id = ResourceLocation.parse(entry.get("item").getAsString());
+                if (!seen.add(id.toString())) {
+                    problems.add(id + ": listed twice");
+                }
+                if (!mods.contains(id.getNamespace())) {
+                    problems.add(id + ": its mod isn't in " + file.id() + "'s required_mods");
+                }
+                if (PriceSuggestion.leftOut(id)) {
+                    problems.add(id + ": decorative variants are left out of the market");
+                }
+                JsonObject standIn = dynamiceconomy.catalog.CatalogJson.merge(defaults, entry);
+                standIn.addProperty("item", key(Items.STONE).toString());
+                var decoded = MarketCatalog.decode(standIn);
+                if (decoded.error().isPresent()) {
+                    problems.add(id + ": " + decoded.error().get().message());
+                    continue;
+                }
+                CatalogEntry value = decoded.result().orElseThrow();
+                if (!value.itemClass().map(c -> c.getNamespace().equals(DynamicEconomy.MOD_ID)).orElse(false)) {
+                    problems.add(id + ": no built-in class");
+                }
+                PriceModel.arbitrageRisk(PriceModel.inputs(value)).ifPresent(risk -> problems.add(id + ": " + risk));
+            }
+        }
+        helper.assertValueEqual(problems, List.of(), "every entry in every built-in file is valid");
+        helper.assertTrue(entries > 1000, "all files were read: " + entries);
+        helper.succeed();
     }
 
     @GameTest(template = EMPTY)
@@ -1560,6 +1638,12 @@ public final class MarketGameTests {
         helper.assertValueEqual(loaded.problems().stream().map(MarketCatalog.Problem::message).toList(), List.of(),
                 "loads with no warnings; files for mods that aren't installed are skipped quietly");
         helper.assertTrue(loaded.entries().size() > 200, "vanilla alone prices a few hundred items: " + loaded.entries().size());
+        // The test server has vanilla and Create (and Numismatics, which has no file); every other file is skipped.
+        int expected = defaultPriceFiles().stream().filter(f -> List.of("minecraft", "create").contains(f.id().getPath()))
+                .mapToInt(f -> f.json().getAsJsonObject().getAsJsonArray("entries").size()).sum();
+        helper.assertValueEqual(loaded.entries().size(), expected, "only the vanilla and Create files load");
+        helper.assertTrue(loaded.entries().keySet().stream().allMatch(item -> List.of("minecraft", "create").contains(key(item).getNamespace())),
+                "no item from another mod's file");
         for (CatalogEntry entry : loaded.entries().values()) {
             helper.assertTrue(entry.itemClass().map(c -> c.getNamespace().equals(DynamicEconomy.MOD_ID)).orElse(false),
                     entry.itemId() + " has a built-in class");
