@@ -547,7 +547,7 @@
     },
     {
       "item": "minecraft:leather",
-      "base_price": 8,
+      "base_price": 7,
       "class": "farmable"
     },
     {
@@ -722,7 +722,7 @@
     },
     {
       "item": "minecraft:mycelium",
-      "base_price": 2,
+      "base_price": 1,
       "class": "common_resource"
     },
     {
@@ -832,7 +832,7 @@
     },
     {
       "item": "minecraft:podzol",
-      "base_price": 2,
+      "base_price": 1,
       "class": "common_resource"
     },
     {
@@ -872,7 +872,7 @@
     },
     {
       "item": "minecraft:pumpkin",
-      "base_price": 4,
+      "base_price": 6,
       "class": "farmable"
     },
     {
@@ -1092,7 +1092,7 @@
     },
     {
       "item": "minecraft:string",
-      "base_price": 2,
+      "base_price": 1,
       "class": "farmable"
     },
     {
