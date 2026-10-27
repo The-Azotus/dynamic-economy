@@ -457,11 +457,25 @@ public final class MarketCommand {
             List<PriceSuggestion.CraftProfit> profits = PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(),
                     server.registryAccess(), catalog);
             List<String> profitLines = new ArrayList<>(List.of(
-                    "Listed items whose ingredients can be bought for less than the item sells for (at normal prices).",
-                    "Fix each by raising the ingredients' prices, lowering the item's, or setting can_sell false on it.", ""));
-            profits.forEach(p -> profitLines.add("%s via %s: ingredients cost %s, result sells for %s".formatted(
-                    BuiltInRegistries.ITEM.getKey(p.output()), p.recipe(), p.buyCost().setScale(2, java.math.RoundingMode.HALF_UP),
-                    p.sellValue().setScale(2, java.math.RoundingMode.HALF_UP))));
+                    "Listed items whose ingredients can be bought for less than the item sells for (at normal prices)."));
+            Map<PriceSuggestion.ProfitKind, String> headings = Map.of(
+                    PriceSuggestion.ProfitKind.PRICE_GAP,
+                    "Price gaps: raise the ingredients' prices, lower the item's, or set can_sell false on it.",
+                    PriceSuggestion.ProfitKind.MAY_HIDE_INPUTS,
+                    "Check by hand: these recipe types may take fluids, extra items or ingredient amounts the check can't see.",
+                    PriceSuggestion.ProfitKind.MULTIPLIES_INPUT,
+                    "Recipes that make more of their own ingredient: no price stops these; sell impact limits what they earn.");
+            for (PriceSuggestion.ProfitKind kind : PriceSuggestion.ProfitKind.values()) {
+                List<PriceSuggestion.CraftProfit> ofKind = profits.stream().filter(p -> p.kind() == kind).toList();
+                if (ofKind.isEmpty()) {
+                    continue;
+                }
+                profitLines.add("");
+                profitLines.add(headings.get(kind));
+                ofKind.forEach(p -> profitLines.add("%s via %s: ingredients cost %s, result sells for %s".formatted(
+                        BuiltInRegistries.ITEM.getKey(p.output()), p.recipe(), p.buyCost().setScale(2, java.math.RoundingMode.HALF_UP),
+                        p.sellValue().setScale(2, java.math.RoundingMode.HALF_UP))));
+            }
             java.nio.file.Files.write(written.folder().resolve("craft_profits.txt"), profitLines);
             String file = "config/" + DynamicEconomy.MOD_ID + "/exports/" + written.folder().getFileName() + "/suggested.csv";
             AuditLog.record(ctx.getSource(), "suggest", modId.orElse("all mods"), "ok: %d suggested to %s".formatted(written.suggested(), file),
@@ -488,8 +502,14 @@ public final class MarketCommand {
             if (!result.settled()) {
                 lines.add("  Warning: some prices kept falling through a recipe loop; check the log");
             }
+            Map<PriceSuggestion.ProfitKind, Long> byKind = profits.stream()
+                    .collect(java.util.stream.Collectors.groupingBy(PriceSuggestion.CraftProfit::kind, java.util.stream.Collectors.counting()));
             lines.add(profits.isEmpty() ? "  No listed item can be crafted from bought ingredients at a profit"
-                    : "  %d recipe(s) turn bought ingredients into a profit: see craft_profits.txt in the same folder".formatted(profits.size()));
+                    : ("  %d recipe(s) turn bought ingredients into a profit (%d price gaps, %d to check by hand, %d that multiply"
+                    + " their own ingredient): see craft_profits.txt in the same folder").formatted(profits.size(),
+                    byKind.getOrDefault(PriceSuggestion.ProfitKind.PRICE_GAP, 0L),
+                    byKind.getOrDefault(PriceSuggestion.ProfitKind.MAY_HIDE_INPUTS, 0L),
+                    byKind.getOrDefault(PriceSuggestion.ProfitKind.MULTIPLIES_INPUT, 0L)));
             lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), true));
             return written.suggested();
         } catch (IOException e) {

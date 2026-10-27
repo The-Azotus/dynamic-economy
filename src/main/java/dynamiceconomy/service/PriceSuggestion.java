@@ -255,7 +255,17 @@ public final class PriceSuggestion {
     }
 
     /** A recipe whose output sells for more than its ingredients cost to buy, at normal prices (factor 1.0). */
-    public record CraftProfit(Item output, ResourceLocation recipe, BigDecimal sellValue, BigDecimal buyCost) {
+    public record CraftProfit(Item output, ResourceLocation recipe, BigDecimal sellValue, BigDecimal buyCost, ProfitKind kind) {
+    }
+
+    /** What a {@link CraftProfit} most likely means, which decides how to deal with it. */
+    public enum ProfitKind {
+        /** The prices are wrong: raise the ingredients', lower the output's, or stop the market buying it. */
+        PRICE_GAP,
+        /** The recipe type may take fluids, extra items or ingredient amounts the check can't see: check it by hand. */
+        MAY_HIDE_INPUTS,
+        /** The output is one of its own ingredients (1 cobblestone makes 2): no price stops it; sell impact limits it. */
+        MULTIPLIES_INPUT
     }
 
     /**
@@ -281,7 +291,9 @@ public final class PriceSuggestion {
             }
             BigDecimal cost = BigDecimal.ZERO;
             boolean buyable = true;
+            boolean multiplies = false;
             for (Slot slot : path.slots()) {
+                multiplies |= slot.options().contains(path.output());
                 BigDecimal cheapest = null;
                 Item cheapestItem = null;
                 for (Item option : slot.options()) {
@@ -310,7 +322,8 @@ public final class PriceSuggestion {
             }
             BigDecimal sell = PriceModel.exactUnitSellPrice(PriceModel.inputs(output), 1.0).multiply(BigDecimal.valueOf(path.count()));
             if (sell.compareTo(cost) > 0) {
-                profits.add(new CraftProfit(path.output(), path.recipe(), sell, cost));
+                ProfitKind kind = multiplies ? ProfitKind.MULTIPLIES_INPUT : path.complete() ? ProfitKind.PRICE_GAP : ProfitKind.MAY_HIDE_INPUTS;
+                profits.add(new CraftProfit(path.output(), path.recipe(), sell, cost, kind));
             }
         }
         return profits;

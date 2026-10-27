@@ -360,8 +360,16 @@ final class AdminCatalogCommands {
         MarketCatalog.INSTANCE.entries().forEach(entry -> catalog.put(entry.item(), entry));
         for (PriceSuggestion.CraftProfit profit : PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(),
                 server.registryAccess(), catalog)) {
-            findings.add(new MarketDiagnostics.Finding(MarketDiagnostics.Severity.WARNING, "%s: buying the ingredients for %s costs %s, and the result sells for %s. Raise the ingredients' prices, lower this one, or stop the market buying it"
-                    .formatted(id(profit.output()), profit.recipe(), plain(profit.buyCost().doubleValue()), plain(profit.sellValue().doubleValue()))));
+            String advice = switch (profit.kind()) {
+                case PRICE_GAP -> "Raise the ingredients' prices, lower this one, or stop the market buying it";
+                case MAY_HIDE_INPUTS -> "This recipe type may take fluids or amounts the check can't see; check it by hand";
+                case MULTIPLIES_INPUT -> "The recipe makes more of its own ingredient, so no price stops it; sell impact limits what it earns";
+            };
+            findings.add(new MarketDiagnostics.Finding(profit.kind() == PriceSuggestion.ProfitKind.PRICE_GAP
+                    ? MarketDiagnostics.Severity.WARNING : MarketDiagnostics.Severity.NOTE,
+                    "%s: buying the ingredients for %s costs %s, and the result sells for %s. %s"
+                    .formatted(id(profit.output()), profit.recipe(), plain(profit.buyCost().doubleValue()), plain(profit.sellValue().doubleValue()),
+                            advice)));
         }
         if (findings.isEmpty()) {
             ctx.getSource().sendSuccess(() -> Component.literal("Market check: nothing to report"), false);

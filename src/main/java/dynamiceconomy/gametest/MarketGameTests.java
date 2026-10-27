@@ -1666,6 +1666,14 @@ public final class MarketGameTests {
         helper.assertValueEqual(profits.size(), 1, "found");
         helper.assertValueEqual(profits.get(0).sellValue().compareTo(BigDecimal.valueOf(16)), 0, "four sticks sell for 16");
         helper.assertValueEqual(profits.get(0).buyCost().compareTo(BigDecimal.valueOf(3)), 0, "two planks cost 3");
+        helper.assertValueEqual(profits.get(0).kind(), PriceSuggestion.ProfitKind.PRICE_GAP, "a crafting recipe lists everything");
+        // 1 cobblestone making 2 profits at any price; a recipe type the check doesn't fully read may be a false alarm.
+        Map<Item, CatalogEntry> stone = seeds(seed(Items.COBBLESTONE, 1, null), seed(Items.STONE, 4, null));
+        List<PriceSuggestion.Path> machines = List.of(path(Items.COBBLESTONE, 2, false, Items.COBBLESTONE),
+                new PriceSuggestion.Path(ResourceLocation.parse("test:machine"), "othermod:machine", Items.STONE, 1,
+                        List.of(new PriceSuggestion.Slot(List.of(Items.COBBLESTONE), 1)), false));
+        helper.assertValueEqual(PriceSuggestion.craftProfits(machines, stone).stream().map(PriceSuggestion.CraftProfit::kind).toList(),
+                List.of(PriceSuggestion.ProfitKind.MULTIPLIES_INPUT, PriceSuggestion.ProfitKind.MAY_HIDE_INPUTS), "kinds");
         Map<Item, CatalogEntry> fair = seeds(seed(Items.OAK_PLANKS, 2, null), seed(Items.STICK, 1, null));
         helper.assertValueEqual(PriceSuggestion.craftProfits(List.of(path(Items.STICK, 4, false, Items.OAK_PLANKS, Items.OAK_PLANKS)), fair),
                 List.of(), "fair prices aren't reported");
