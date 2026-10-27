@@ -1,0 +1,917 @@
+{
+  "required_mods": [
+    "regions_unexplored"
+  ],
+  "entries": [
+    {
+      "item": "regions_unexplored:alpha_dandelion",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:alpha_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:alpha_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:alpha_rose",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:alpha_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:apple_oak_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:argillite",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:ashen_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:ashen_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:ashen_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:aster",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:baobab_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:baobab_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:baobab_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:barley",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:barrel_cactus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:black_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:blackwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:blackwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:blackwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:bladed_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:bladed_tall_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:bleeding_heart",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:blue_bioshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:blue_bioshroom_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:blue_lupine",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:blue_magnolia_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:blue_magnolia_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:blue_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:brimsprout",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:brimwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:brimwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:brimwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:brown_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:cattail",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:cave_hyssop",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:chalk",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:clover",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:cobalt_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:cobalt_roots",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:cobalt_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:cyan_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:cypress_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:cypress_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:cypress_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:daisy",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:day_lily",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:dead_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:dead_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:dead_pine_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:dead_pine_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:dead_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:dorcel",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:duckweed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:elephant_ear",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:eucalyptus_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:eucalyptus_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:eucalyptus_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:felicia_daisy",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:fireweed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:flowering_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:flowering_lily_pad",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:flowering_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:frozen_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:glistering_bloom",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:glistering_fern",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:glistering_ivy",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:glistering_sprout",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:golden_larch_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:golden_larch_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:grass_sprouts",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:gray_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:green_bioshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:green_bioshroom_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:green_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:hibiscus",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:hyacinth_bloom",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:hyssop",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:joshua_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:joshua_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:joshua_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:kapok_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:kapok_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:kapok_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:kapok_vines",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:larch_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:larch_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:larch_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:lavender_wisteria_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:lavender_wisteria_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:lavender_wisteria_vines",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:light_blue_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:light_gray_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:lime_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:magenta_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:magnolia_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:magnolia_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:magnolia_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:mallow",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:maple_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:maple_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:maple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:meadow_sage",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:mycotoxic_daisy",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:mycotoxic_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:mycotoxic_mushrooms",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:orange_coneflower",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:orange_maple_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:orange_maple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:orange_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:palm_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:palm_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:palm_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:peat_dirt",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:peat_podzol",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:pine_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:pine_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:pine_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:pink_bioshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:pink_bioshroom_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:pink_lupine",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:pink_magnolia_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:pink_magnolia_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:pink_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:poppy_bush",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:prismoss_sprout",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:purple_coneflower",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:purple_lupine",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:purple_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:red_lupine",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:red_maple_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:red_maple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:red_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:redwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:redwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:redwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:saguaro_cactus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:salmon_poppy",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:salmon_poppy_bush",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:salmon_wisteria_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:salmon_wisteria_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:salmon_wisteria_vines",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:salmonberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:short_dead_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:short_red_sandy_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:short_sandy_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:silt_dirt",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:silt_podzol",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:silver_birch_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:silver_birch_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:silver_birch_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:sky_wisteria_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:sky_wisteria_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:sky_wisteria_vines",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:small_oak_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:small_oak_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:socotra_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:socotra_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:socotra_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:spanish_moss",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:tall_dead_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:tall_hyacinth_stock",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:tall_red_sandy_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:tall_sandy_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:tassel",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:tsubaki",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:volcanic_ash",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:waratah",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:white_magnolia_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:white_magnolia_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:white_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:white_trillium",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:willow_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:willow_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:willow_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:wilting_trillium",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:windswept_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:wisteria_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:yellow_bioshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:yellow_bioshroom_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:yellow_lupine",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:yellow_snowbelle",
+      "base_price": 1,
+      "class": "farmable"
+    }
+  ]
+}

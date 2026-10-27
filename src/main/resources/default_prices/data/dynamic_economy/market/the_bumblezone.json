@@ -1,0 +1,97 @@
+{
+  "required_mods": [
+    "the_bumblezone"
+  ],
+  "entries": [
+    {
+      "item": "the_bumblezone:bee_stinger",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "the_bumblezone:honey_crystal_shards",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "the_bumblezone:music_disc_a_last_first_last",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_bee_laxing_with_the_hom_bees",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_bee_ware_of_the_temple",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_beenna_box",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_drowning_in_despair",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_hive_speed_beepop",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_honey_bee_rat_faced_boy",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_knowing_renren",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_la_bee_da_loca",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_life_renren",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_perzzona_hive",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_radiance_renren",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_rivers_of_honey_moserao",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:music_disc_string_like_a_bee",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:pollen_puff",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "the_bumblezone:royal_jelly_bottle",
+      "base_price": 64,
+      "class": "rare_loot"
+    }
+  ]
+}

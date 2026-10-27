@@ -1,0 +1,147 @@
+{
+  "required_mods": [
+    "ad_astra"
+  ],
+  "entries": [
+    {
+      "item": "ad_astra:aeronos_cap",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:aeronos_mushroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ad_astra:aeronos_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:calorite_ingot",
+      "base_price": 256,
+      "class": "rare_resource"
+    },
+    {
+      "item": "ad_astra:cheese",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "ad_astra:conglomerate",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:desh_ingot",
+      "base_price": 85,
+      "class": "rare_resource"
+    },
+    {
+      "item": "ad_astra:glacian_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ad_astra:glacian_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:glacio_cobblestone",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:ice_shard",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ad_astra:infernal_spire_block",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:mars_cobblestone",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:mars_sand",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:mercury_cobblestone",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:moon_cobblestone",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:moon_deepslate",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:moon_sand",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:ostrum_ingot",
+      "base_price": 149,
+      "class": "rare_resource"
+    },
+    {
+      "item": "ad_astra:permafrost",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:raw_calorite",
+      "base_price": 192,
+      "class": "rare_resource"
+    },
+    {
+      "item": "ad_astra:raw_desh",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "ad_astra:raw_ostrum",
+      "base_price": 112,
+      "class": "rare_resource"
+    },
+    {
+      "item": "ad_astra:strophar_cap",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:strophar_mushroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ad_astra:strophar_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:venus_cobblestone",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:venus_sand",
+      "base_price": 2,
+      "class": "common_resource"
+    }
+  ]
+}

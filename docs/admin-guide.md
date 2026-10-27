@@ -61,7 +61,11 @@ There are three ways to price items, and you can mix them:
 | [Catalog files](#catalog-files) | Keeping prices in a datapack you version or share. |
 | [In-game commands](#editing-prices-in-game) | Quick changes, and whole tags such as "all logs". |
 
-The market starts empty. The mod includes a small **example catalog**: cobblestone and oak log (unlimited stock), iron, diamond and nether star, at placeholder prices. It's a datapack that is **off** until you enable it:
+**Built-in prices.** The mod ships prices for vanilla and a set of popular mods in a datapack that is **on** by default. It has one price file per mod, and each file loads only if its mod is installed, so it works in any modpack. It sits below every other datapack, so your own catalog files, imports and edits always override it. To run your own prices from scratch, turn it off with `/datapack disable "mod/dynamic_economy:default_prices"`.
+
+The built-in prices cover raw materials: ores, logs, crops, mob drops and loot. Run [`/market admin suggest`](#suggesting-prices-from-recipes) to price the crafted items in your pack from them. The scale is roughly: cobblestone 1 spur, a log 8, an iron ingot 32, a diamond 512, a nether star 16,384.
+
+The mod also includes a small **example catalog**: cobblestone and oak log (unlimited stock), iron, diamond and nether star, at placeholder prices. It's a datapack that is **off** until you enable it:
 
 - `/datapack enable "mod/dynamic_economy:example_catalog"` turns it on; `/datapack disable "mod/dynamic_economy:example_catalog"` turns it off.
 - Its file, `data/dynamic_economy/market/example_catalog.json`, is a handy starting point for your own catalog.
@@ -107,6 +111,8 @@ Prices are rounded down and the 10% is less than any markup, so buying the ingre
 | `recipe`, `recipe_type` | The recipe the price came from |
 | `depth` | How many crafting steps from a priced item |
 | `note` | Anything worth checking; see below |
+
+`/market admin diagnose` also reads the recipes, and warns about any listed item whose ingredients can be bought from the market for less than the item sells for. A player could buy the ingredients, craft and sell at a profit forever. The fix is to raise the ingredients' prices, lower the item's, or set `can_sell` false on it.
 
 Notes to look out for:
 
@@ -243,7 +249,7 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 | Level | Means | Examples |
 | --- | --- | --- |
 | **Error** | Something was left out of the market. | A catalog entry skipped (unknown item, bad value); an in-game edit that can't be applied. |
-| **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
+| **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that sells for more than its ingredients cost to buy; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
 | **Note** | Possibly deliberate; worth a look. | Unlimited items that can be sold (farms can sell them forever); items listed but neither buyable nor sellable; tag rules covering more than 64 items; unpriced template entries; saved data for items that no longer exist. |
 
 **Removed mods.** When you remove a mod, the market keeps its items' saved stock, prices, history and edits. `/market admin prune` lists those items, and `/market admin prune confirm` deletes their data. The overall money counts are kept. A backup of stock, prices and edits is taken automatically first (see [Backups](#backups-and-restoring)).

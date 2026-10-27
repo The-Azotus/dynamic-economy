@@ -1,0 +1,1249 @@
+{
+  "entries": [
+    {
+      "item": "minecraft:acacia_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:acacia_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:acacia_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:allium",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:amethyst_shard",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:ancient_debris",
+      "base_price": 2048,
+      "class": "rare_resource"
+    },
+    {
+      "item": "minecraft:andesite",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:apple",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:armadillo_scute",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:azalea",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:azalea_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:azure_bluet",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:bamboo",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:basalt",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:beef",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:beetroot",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:beetroot_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:big_dripleaf",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:birch_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:birch_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:birch_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:blackstone",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:blaze_rod",
+      "base_price": 32,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:blue_orchid",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:bolt_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:bone",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:breeze_rod",
+      "base_price": 64,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:brown_mushroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:cactus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:calcite",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:carrot",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:charcoal",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:cherry_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:cherry_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:cherry_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:chicken",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:chorus_fruit",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:clay_ball",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:coal",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:coast_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:cobbled_deepslate",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:cobblestone",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:cobweb",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:cocoa_beans",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:cod",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:copper_ingot",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:cornflower",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:creeper_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:crimson_fungus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:crimson_roots",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:crimson_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:crying_obsidian",
+      "base_price": 24,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:dandelion",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:dark_oak_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:dark_oak_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:dark_oak_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:dead_bush",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:diamond",
+      "base_price": 512,
+      "class": "rare_resource"
+    },
+    {
+      "item": "minecraft:diamond_horse_armor",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:diorite",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:dirt",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:disc_fragment_5",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:dragon_egg",
+      "base_price": 65536,
+      "class": "unique"
+    },
+    {
+      "item": "minecraft:dragon_head",
+      "base_price": 4096,
+      "class": "unique"
+    },
+    {
+      "item": "minecraft:dripstone_block",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:dune_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:echo_shard",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:egg",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:elytra",
+      "base_price": 8192,
+      "class": "unique"
+    },
+    {
+      "item": "minecraft:emerald",
+      "base_price": 96,
+      "class": "rare_resource"
+    },
+    {
+      "item": "minecraft:enchanted_golden_apple",
+      "base_price": 4096,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:end_stone",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:ender_pearl",
+      "base_price": 32,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:experience_bottle",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:eye_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:feather",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:fern",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:flint",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:flow_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:flowering_azalea",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:flowering_azalea_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:ghast_tear",
+      "base_price": 64,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:glow_berries",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:glow_ink_sac",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:glow_lichen",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:glowstone_dust",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:goat_horn",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:gold_ingot",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:golden_horse_armor",
+      "base_price": 96,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:granite",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:grass_block",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:gravel",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:hanging_roots",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:heart_of_the_sea",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:heavy_core",
+      "base_price": 2048,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:honey_bottle",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:honeycomb",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:host_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:ice",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:ink_sac",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:iron_horse_armor",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:jungle_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:jungle_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:jungle_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:kelp",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:lapis_lazuli",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:large_fern",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:leather",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:lilac",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:lily_of_the_valley",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:lily_pad",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:magma_block",
+      "base_price": 12,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:mangrove_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:mangrove_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:mangrove_propagule",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:mangrove_roots",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:melon_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:melon_slice",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:milk_bucket",
+      "base_price": 112,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:moss_block",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:mud",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:muddy_mangrove_roots",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:music_disc_11",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_13",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_5",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_blocks",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_cat",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_chirp",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_creator",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_creator_music_box",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_far",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_mall",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_mellohi",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_otherside",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_pigstep",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_precipice",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_relic",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_stal",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_strad",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_wait",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:music_disc_ward",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:mutton",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:mycelium",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:name_tag",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:nautilus_shell",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:nether_sprouts",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:nether_star",
+      "base_price": 16384,
+      "class": "unique"
+    },
+    {
+      "item": "minecraft:nether_wart",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:netherite_upgrade_smithing_template",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:netherrack",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:oak_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:oak_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:oak_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:obsidian",
+      "base_price": 16,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:ominous_trial_key",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:orange_tulip",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:oxeye_daisy",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:peony",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:phantom_membrane",
+      "base_price": 32,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:piglin_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:pink_petals",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:pink_tulip",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:pitcher_plant",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:pitcher_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:podzol",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:pointed_dripstone",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:poppy",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:porkchop",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:potato",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:prismarine_crystals",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:prismarine_shard",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:pufferfish",
+      "base_price": 6,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:pumpkin",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:pumpkin_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:quartz",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:rabbit",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:rabbit_foot",
+      "base_price": 32,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:rabbit_hide",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:raiser_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:raw_copper",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:raw_gold",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:raw_iron",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:red_mushroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:red_sand",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:red_tulip",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:redstone",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:rib_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:rooted_dirt",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:rose_bush",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:rotten_flesh",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:saddle",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:salmon",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:sand",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:sculk",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:sea_pickle",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:seagrass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:sentry_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:shaper_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:short_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:shulker_shell",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:silence_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:skeleton_skull",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:slime_ball",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:small_dripleaf",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:sniffer_egg",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:snout_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:snowball",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:soul_sand",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:soul_soil",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:spider_eye",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:spire_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:sponge",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:spore_blossom",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:spruce_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:spruce_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:spruce_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:string",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:sugar_cane",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:sunflower",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:sweet_berries",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:tall_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:tide_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:torchflower",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:torchflower_seeds",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:totem_of_undying",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:trial_key",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:trident",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:tropical_fish",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:tuff",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:turtle_scute",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:twisting_vines",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:vex_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:vine",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:ward_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:warped_fungus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:warped_roots",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:warped_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "minecraft:wayfinder_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:weeping_vines",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:wheat",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:white_tulip",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:white_wool",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:wild_armor_trim_smithing_template",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:wither_rose",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:wither_skeleton_skull",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:zombie_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    }
+  ]
+}

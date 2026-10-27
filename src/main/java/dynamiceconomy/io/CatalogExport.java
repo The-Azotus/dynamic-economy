@@ -183,7 +183,7 @@ public final class CatalogExport {
                     }
                     if (!suggestion.completeType()) {
                         review++;
-                        notes.add("check: this recipe type may leave out fluids or ingredient amounts");
+                        notes.add("check: this recipe may take fluids or ingredient amounts the cost leaves out");
                     }
                     if (!suggestion.reverse().isEmpty()) {
                         notes.add("converts back into " + suggestion.reverse().stream().map(i -> BuiltInRegistries.ITEM.getKey(i).toString())

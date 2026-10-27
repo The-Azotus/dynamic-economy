@@ -1,0 +1,27 @@
+{
+  "required_mods": [
+    "draconicevolution"
+  ],
+  "entries": [
+    {
+      "item": "draconicevolution:chaos_shard",
+      "base_price": 8192,
+      "class": "rare_loot"
+    },
+    {
+      "item": "draconicevolution:draconium_dust",
+      "base_price": 192,
+      "class": "rare_resource"
+    },
+    {
+      "item": "draconicevolution:draconium_ingot",
+      "base_price": 256,
+      "class": "rare_resource"
+    },
+    {
+      "item": "draconicevolution:dragon_heart",
+      "base_price": 4096,
+      "class": "rare_loot"
+    }
+  ]
+}

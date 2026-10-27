@@ -73,6 +73,8 @@ neoForge {
             type = 'gameTestServer'
             gameDirectory = project.file('run-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            // Tests use the small example catalog; the built-in prices are checked by loading their files directly.
+            systemProperty 'dynamiceconomy.skipDefaultPrices', 'true'
         }
 
         // `gradlew runClient -PjoinServer=127.0.0.1:25565` launches straight into that server.

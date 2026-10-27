@@ -46,6 +46,7 @@ public final class DynamicEconomy {
         MarketBlocks.register(modBus);
         modBus.addListener(MarketNetwork::register);
         modBus.addListener(DynamicEconomy::addExampleCatalog);
+        modBus.addListener(DynamicEconomy::addDefaultPrices);
 
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(MarketCatalog.INSTANCE));
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
@@ -111,5 +112,23 @@ public final class DynamicEconomy {
     private static void addExampleCatalog(AddPackFindersEvent event) {
         event.addPackFinders(ResourceLocation.fromNamespaceAndPath(MOD_ID, "example_catalog"), PackType.SERVER_DATA,
                 Component.literal("Dynamic Economy example catalog"), PackSource.FEATURE, false, Pack.Position.TOP);
+    }
+
+    /** The ID admins turn the built-in prices off with: {@code /datapack disable "mod/dynamic_economy:default_prices"}. */
+    public static final String DEFAULT_PRICES_PACK_ID = "mod/" + MOD_ID + ":default_prices";
+    /** Set to {@code true} to leave the built-in prices out entirely. The GameTest server does, so tests see a small catalog. */
+    public static final String SKIP_DEFAULT_PRICES = "dynamiceconomy.skipDefaultPrices";
+
+    /**
+     * Built-in prices for vanilla and popular mods, one file per mod, each loaded only if its mod is installed. The
+     * "built-in" source switches it on by itself, in new and existing worlds, until an admin disables it. It goes to
+     * the bottom of the pack order, so any other catalog file overrides its prices.
+     */
+    private static void addDefaultPrices(AddPackFindersEvent event) {
+        if (Boolean.getBoolean(SKIP_DEFAULT_PRICES)) {
+            return;
+        }
+        event.addPackFinders(ResourceLocation.fromNamespaceAndPath(MOD_ID, "default_prices"), PackType.SERVER_DATA,
+                Component.literal("Dynamic Economy default prices"), PackSource.BUILT_IN, false, Pack.Position.BOTTOM);
     }
 }

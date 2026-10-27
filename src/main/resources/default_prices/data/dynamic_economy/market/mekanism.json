@@ -1,0 +1,57 @@
+{
+  "required_mods": [
+    "mekanism"
+  ],
+  "entries": [
+    {
+      "item": "mekanism:fluorite_gem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_lead",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_osmium",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_tin",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_uranium",
+      "base_price": 64,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:raw_lead",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:raw_osmium",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:raw_tin",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:raw_uranium",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:salt",
+      "base_price": 1,
+      "class": "common_resource"
+    }
+  ]
+}

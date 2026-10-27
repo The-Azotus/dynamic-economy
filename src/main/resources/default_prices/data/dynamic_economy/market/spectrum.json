@@ -1,0 +1,502 @@
+{
+  "required_mods": [
+    "spectrum"
+  ],
+  "entries": [
+    {
+      "item": "spectrum:aloe_leaf",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:amaranth_bushel",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:basal_marble",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:black_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:black_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:black_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:blackslag",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:blood_orchid",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:blue_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:blue_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:blue_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:bristle_sprouts",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:brown_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:brown_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:brown_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:chestnut_noxcap_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:chestnut_noxshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:citrine_shard",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:clover",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:crawfish",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:cyan_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:cyan_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:cyan_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:doombloom_seed",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:ebony_noxcap_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:ebony_noxshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:fissure_plum",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:four_leaf_clover",
+      "base_price": 16,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:glass_peach",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:gray_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:gray_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:gray_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:green_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:green_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:green_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:ivory_noxcap_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:ivory_noxshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:koi",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:light_blue_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:light_blue_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:light_blue_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:light_gray_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:light_gray_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:light_gray_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:lime_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:lime_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:lime_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:lizard_meat",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:magenta_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:magenta_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:magenta_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:moonstone_shard",
+      "base_price": 48,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:morchella",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:nightdew_sprout",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:onyx_shard",
+      "base_price": 24,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:orange_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:orange_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:orange_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:paltaeria_fragments",
+      "base_price": 32,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:pink_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:pink_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:pink_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:prickly_bayleaf",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:pure_azurite",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_bloodstone",
+      "base_price": 85,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:pure_malachite",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:purple_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:purple_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:purple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:quitoxic_reeds",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:raw_azurite",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:raw_bloodstone",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:raw_malachite",
+      "base_price": 48,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:red_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:red_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:red_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:sawblade_grass",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:sawblade_holly_berry",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:shale_clay",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:shimmerstone_gem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxcap_stem",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:slate_noxshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:slush",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:snapping_ivy",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:star_fragment",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:storm_stone",
+      "base_price": 16,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:stratine_fragments",
+      "base_price": 32,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:sweet_pea",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:topaz_shard",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:varia_sprout",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:weeping_gala_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:weeping_gala_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:weeping_gala_sprig",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:white_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:white_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:white_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:yellow_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:yellow_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "spectrum:yellow_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    }
+  ]
+}

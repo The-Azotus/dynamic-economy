@@ -453,6 +453,16 @@ public final class MarketCommand {
         try {
             CatalogExport.SuggestionResult written = CatalogExport.exportSuggestions(configRoot().resolve("exports"), modId,
                     catalog.values(), MarketCatalog.INSTANCE::sources, result);
+            // Listed prices that recipes can beat are written alongside, since the recipes are already loaded.
+            List<PriceSuggestion.CraftProfit> profits = PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(),
+                    server.registryAccess(), catalog);
+            List<String> profitLines = new ArrayList<>(List.of(
+                    "Listed items whose ingredients can be bought for less than the item sells for (at normal prices).",
+                    "Fix each by raising the ingredients' prices, lowering the item's, or setting can_sell false on it.", ""));
+            profits.forEach(p -> profitLines.add("%s via %s: ingredients cost %s, result sells for %s".formatted(
+                    BuiltInRegistries.ITEM.getKey(p.output()), p.recipe(), p.buyCost().setScale(2, java.math.RoundingMode.HALF_UP),
+                    p.sellValue().setScale(2, java.math.RoundingMode.HALF_UP))));
+            java.nio.file.Files.write(written.folder().resolve("craft_profits.txt"), profitLines);
             String file = "config/" + DynamicEconomy.MOD_ID + "/exports/" + written.folder().getFileName() + "/suggested.csv";
             AuditLog.record(ctx.getSource(), "suggest", modId.orElse("all mods"), "ok: %d suggested to %s".formatted(written.suggested(), file),
                     null, null);
@@ -470,6 +480,8 @@ public final class MarketCommand {
             if (!result.settled()) {
                 lines.add("  Warning: some prices kept falling through a recipe loop; check the log");
             }
+            lines.add(profits.isEmpty() ? "  No listed item can be crafted from bought ingredients at a profit"
+                    : "  %d recipe(s) turn bought ingredients into a profit: see craft_profits.txt in the same folder".formatted(profits.size()));
             lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), true));
             return written.suggested();
         } catch (IOException e) {

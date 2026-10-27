@@ -1,0 +1,97 @@
+{
+  "required_mods": [
+    "mythicupgrades"
+  ],
+  "entries": [
+    {
+      "item": "mythicupgrades:ametrine",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:necoium_ingot",
+      "base_price": 320,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:peridot",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:raw_necoium",
+      "base_price": 256,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:ruby",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_shard",
+      "base_price": 4,
+      "class": "common_processed"
+    }
+  ]
+}

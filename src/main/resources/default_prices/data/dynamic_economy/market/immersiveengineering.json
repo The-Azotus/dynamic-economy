@@ -1,0 +1,67 @@
+{
+  "required_mods": [
+    "immersiveengineering"
+  ],
+  "entries": [
+    {
+      "item": "immersiveengineering:hemp_fiber",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "immersiveengineering:ingot_aluminum",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:ingot_lead",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:ingot_nickel",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:ingot_silver",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:ingot_uranium",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "immersiveengineering:raw_aluminum",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:raw_lead",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:raw_nickel",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:raw_silver",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:raw_uranium",
+      "base_price": 48,
+      "class": "rare_resource"
+    },
+    {
+      "item": "immersiveengineering:seed",
+      "base_price": 1,
+      "class": "farmable"
+    }
+  ]
+}

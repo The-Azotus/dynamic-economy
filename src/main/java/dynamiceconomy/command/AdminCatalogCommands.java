@@ -25,6 +25,7 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.PriceModel;
+import dynamiceconomy.service.PriceSuggestion;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -350,10 +351,18 @@ final class AdminCatalogCommands {
 
     private static int diagnose(CommandContext<CommandSourceStack> ctx, int page) {
         MinecraftServer server = ctx.getSource().getServer();
-        List<MarketDiagnostics.Finding> findings = MarketDiagnostics.run(MarketCatalog.INSTANCE.files(),
+        List<MarketDiagnostics.Finding> findings = new ArrayList<>(MarketDiagnostics.run(MarketCatalog.INSTANCE.files(),
                 MarketCatalog.INSTANCE.entries(), MarketCatalog.INSTANCE::sources, MarketCatalog.INSTANCE.problems(),
                 MarketOverrides.get(server).snapshot(), MarketStockData.get(server), MarketStockData.now(server),
-                CatalogOverlay::registryTag);
+                CatalogOverlay::registryTag));
+        // Needs the recipes, which only the running server has, so it's checked here rather than in MarketDiagnostics.
+        Map<Item, CatalogEntry> catalog = new LinkedHashMap<>();
+        MarketCatalog.INSTANCE.entries().forEach(entry -> catalog.put(entry.item(), entry));
+        for (PriceSuggestion.CraftProfit profit : PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(),
+                server.registryAccess(), catalog)) {
+            findings.add(new MarketDiagnostics.Finding(MarketDiagnostics.Severity.WARNING, "%s: buying the ingredients for %s costs %s, and the result sells for %s. Raise the ingredients' prices, lower this one, or stop the market buying it"
+                    .formatted(id(profit.output()), profit.recipe(), plain(profit.buyCost().doubleValue()), plain(profit.sellValue().doubleValue()))));
+        }
         if (findings.isEmpty()) {
             ctx.getSource().sendSuccess(() -> Component.literal("Market check: nothing to report"), false);
             return 0;

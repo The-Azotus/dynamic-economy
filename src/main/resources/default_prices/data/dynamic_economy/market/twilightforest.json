@@ -1,0 +1,532 @@
+{
+  "required_mods": [
+    "twilightforest"
+  ],
+  "entries": [
+    {
+      "item": "twilightforest:alpha_yeti_fur",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:alpha_yeti_trophy",
+      "base_price": 4096,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:arctic_fur",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:armor_shard",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:beanstalk_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:blackberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:blackberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:blightberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:blightberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:blueberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:blueberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:borer_essence",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:canopy_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:canopy_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:canopy_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:charm_of_keeping_1",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:charm_of_life_1",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:cicada",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:clover_patch",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:copper_berry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:cracked_deadrock",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:crown_splinter",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:dark_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:dark_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:darkwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:deadrock",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:duskberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:duskberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:emperors_cloth",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:essence_berry",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:exanimate_essence",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:fallen_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:fiddlehead",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:fiery_blood",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:fiery_tears",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:firefly",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:gold_berry",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:huge_lily_pad",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:huge_water_lily",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:hydra_trophy",
+      "base_price": 4096,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:iron_berry",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:knight_phantom_trophy",
+      "base_price": 4096,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:lich_trophy",
+      "base_price": 2048,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:liveroot",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:magic_beans",
+      "base_price": 32,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:maloberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:maloberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mangrove_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mangrove_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:mangrove_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mayapple",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:maze_slime_ball",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mining_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mining_log",
+      "base_price": 16,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:mining_sapling",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:minoshroom_trophy",
+      "base_price": 2048,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:moonworm",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mushgloom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:music_disc_findings",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_home",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_maker",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_motion",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_radiance",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_steps",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_superstitious",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_thread",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:music_disc_wayfarer",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:naga_scale",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:naga_trophy",
+      "base_price": 1024,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:quest_ram_trophy",
+      "base_price": 1024,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:rainbow_oak_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:rainbow_oak_sapling",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:raspberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:raspberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:raven_feather",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:raw_meef",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:raw_venison",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:root",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:root_strand",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:skyberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:skyberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:snow_queen_trophy",
+      "base_price": 8192,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:sorting_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:sorting_log",
+      "base_price": 16,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:sorting_sapling",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:steeleaf_ingot",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:stingberry",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:stingberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:thorn_rose",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:time_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:time_log",
+      "base_price": 16,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:time_sapling",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:torchberries",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:transformation_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:transformation_log",
+      "base_price": 16,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:transformation_powder",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:transformation_sapling",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:trollber",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:trollsteinn",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:twilight_oak_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:twilight_oak_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:twilight_oak_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:uberous_soil",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:ur_ghast_trophy",
+      "base_price": 4096,
+      "class": "unique"
+    },
+    {
+      "item": "twilightforest:weathered_deadrock",
+      "base_price": 1,
+      "class": "common_resource"
+    }
+  ]
+}

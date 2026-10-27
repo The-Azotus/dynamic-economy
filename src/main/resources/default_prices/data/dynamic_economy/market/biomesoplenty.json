@@ -1,0 +1,517 @@
+{
+  "required_mods": [
+    "biomesoplenty"
+  ],
+  "entries": [
+    {
+      "item": "biomesoplenty:barley",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:black_sand",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:blue_hydrangea",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:bramble",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:brimstone",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:burning_blossom",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:bush",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:cattail",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:clover",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:cypress_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:cypress_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:dead_branch",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:dead_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:dead_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:dead_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:dead_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:desert_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:dried_salt",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:dune_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:empyreal_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:empyreal_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:empyreal_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:endbloom",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:enderphyte",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:eyebulb",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:fir_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:fir_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:fir_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:flowering_oak_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:flowering_oak_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:glowflower",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:glowshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:goldenrod",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:hellbark_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:hellbark_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:hellbark_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:high_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:huge_lily_pad",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:icy_iris",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:jacaranda_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:jacaranda_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:jacaranda_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:lavender",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:magic_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:magic_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:magic_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:mahogany_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:mahogany_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:mahogany_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:maple_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:orange_cosmos",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:orange_maple_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:orange_maple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:orange_sand",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:origin_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:origin_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:palm_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:palm_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:palm_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:pine_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:pine_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:pine_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:pink_daffodil",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:pink_hibiscus",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:rainbow_birch_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:rainbow_birch_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:red_maple_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:red_maple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:redwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:redwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:redwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:reed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:rose",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:rose_quartz_chunk",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:sea_oats",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:snowblossom_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:snowblossom_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:spanish_moss",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:sprout",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:tall_lavender",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:tall_white_lavender",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:thermal_calcite",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:tiny_cactus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:toadstool",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:tundra_shrub",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:umbran_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:umbran_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:umbran_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:violet",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:watergrass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:waterlily",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:white_lavender",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:white_petals",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:white_sand",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:wildflower",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:willow_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:willow_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:willow_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:willow_vine",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:wilted_lily",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:yellow_maple_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:yellow_maple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    }
+  ]
+}

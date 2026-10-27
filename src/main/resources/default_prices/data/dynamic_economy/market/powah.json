@@ -1,0 +1,17 @@
+{
+  "required_mods": [
+    "powah"
+  ],
+  "entries": [
+    {
+      "item": "powah:uraninite",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:uraninite_raw",
+      "base_price": 16,
+      "class": "common_processed"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "required_mods": [
+    "ae2"
+  ],
+  "entries": [
+    {
+      "item": "ae2:certus_quartz_crystal",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ae2:sky_stone_block",
+      "base_price": 4,
+      "class": "common_processed"
+    }
+  ]
+}

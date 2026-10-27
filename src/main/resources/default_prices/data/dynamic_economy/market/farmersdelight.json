@@ -1,0 +1,42 @@
+{
+  "required_mods": [
+    "farmersdelight"
+  ],
+  "entries": [
+    {
+      "item": "farmersdelight:cabbage",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:cabbage_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:onion",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:rice",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:sandy_shrub",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:tomato",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:tomato_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    }
+  ]
+}

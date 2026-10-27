@@ -1535,6 +1535,59 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    /** The built-in price files, read straight from the mod (the GameTest server leaves the pack itself off). */
+    private static MarketCatalog.Loaded defaultPrices() {
+        try {
+            Path folder = net.neoforged.fml.ModList.get().getModFileById(DynamicEconomy.MOD_ID).getFile()
+                    .findResource("default_prices", "data", DynamicEconomy.MOD_ID, "market");
+            List<MarketCatalog.SourceFile> files = new ArrayList<>();
+            try (var paths = Files.list(folder)) {
+                for (Path file : paths.filter(p -> p.toString().endsWith(".json")).sorted().toList()) {
+                    String name = file.getFileName().toString().replace(".json", "");
+                    files.add(new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, name), 0,
+                            "default_prices", JsonParser.parseString(Files.readString(file))));
+                }
+            }
+            return MarketCatalog.load(files);
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GameTest(template = EMPTY)
+    public static void defaultPricesLoadCleanlyAndCantBeCraftedForProfit(GameTestHelper helper) {
+        MarketCatalog.Loaded loaded = defaultPrices();
+        helper.assertValueEqual(loaded.problems().stream().map(MarketCatalog.Problem::message).toList(), List.of(),
+                "loads with no warnings; files for mods that aren't installed are skipped quietly");
+        helper.assertTrue(loaded.entries().size() > 200, "vanilla alone prices a few hundred items: " + loaded.entries().size());
+        for (CatalogEntry entry : loaded.entries().values()) {
+            helper.assertTrue(entry.itemClass().map(c -> c.getNamespace().equals(DynamicEconomy.MOD_ID)).orElse(false),
+                    entry.itemId() + " has a built-in class");
+            helper.assertValueEqual(PriceModel.arbitrageRisk(PriceModel.inputs(entry)), Optional.empty(), entry.itemId() + " round trip");
+        }
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        List<String> profits = PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(), server.registryAccess(),
+                loaded.entries()).stream().map(p -> "%s via %s: costs %s, sells for %s".formatted(key(p.output()), p.recipe(),
+                p.buyCost().setScale(2, RoundingMode.HALF_UP), p.sellValue().setScale(2, RoundingMode.HALF_UP))).toList();
+        helper.assertValueEqual(profits, List.of(), "no listed item can be crafted from bought ingredients and sold at a profit");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void craftProfitsAreFound(GameTestHelper helper) {
+        // Sticks at 4 spurs, planks at 1: two planks cost 3 to buy and make four sticks worth 16.
+        Map<Item, CatalogEntry> catalog = seeds(seed(Items.OAK_PLANKS, 1, null), seed(Items.STICK, 4, null));
+        List<PriceSuggestion.CraftProfit> profits = PriceSuggestion.craftProfits(
+                List.of(path(Items.STICK, 4, false, Items.OAK_PLANKS, Items.OAK_PLANKS)), catalog);
+        helper.assertValueEqual(profits.size(), 1, "found");
+        helper.assertValueEqual(profits.get(0).sellValue().compareTo(BigDecimal.valueOf(16)), 0, "four sticks sell for 16");
+        helper.assertValueEqual(profits.get(0).buyCost().compareTo(BigDecimal.valueOf(3)), 0, "two planks cost 3");
+        Map<Item, CatalogEntry> fair = seeds(seed(Items.OAK_PLANKS, 2, null), seed(Items.STICK, 1, null));
+        helper.assertValueEqual(PriceSuggestion.craftProfits(List.of(path(Items.STICK, 4, false, Items.OAK_PLANKS, Items.OAK_PLANKS)), fair),
+                List.of(), "fair prices aren't reported");
+        helper.succeed();
+    }
+
     // ---- Economic integrity (Phase 7) -------------------------------------------------------------------------
 
     /** Selling priced unit by unit, as {@link PriceModel#sell} did before it stopped looping once s stops moving. */

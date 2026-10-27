@@ -2,6 +2,7 @@ package dynamiceconomy.service;
 
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.compat.CreateRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -33,12 +34,14 @@ import java.util.TreeMap;
  * Suggests prices for unlisted items from the recipes that make them, starting from the items the catalog already
  * prices ("seeds"). An item's cost is its cheapest recipe: for each ingredient slot the cheapest priced item that fits,
  * minus any priced item the slot gives back (a bucket from a milk bucket), plus fuel for furnace recipes, divided by
- * the output count and raised by a processing premium. Costs only ever fall, so loops between recipes settle.
+ * the output count and raised by a processing premium. Costs only ever fall; a recipe loop that makes something out of
+ * less than itself would fall forever, so passes are capped and such items reported.
  * <p>
  * The premium is kept below every markup, and suggested prices are rounded down, so buying a recipe's ingredients at
  * normal prices, crafting and selling the result never profits. Anything the recipes can't tell (fluids, chance
- * outputs, ingredient counts some mods keep outside {@link Ingredient}) is missing from the cost; such recipe types
- * are marked for review. Pure apart from reading the item registry: recipes and seeds are passed in.
+ * ingredient counts some mods keep outside {@link Ingredient}) is missing from the cost; such recipes are marked for
+ * review. Create's machine recipes are read more closely: their output counts are what a run makes on average, and
+ * recipes taking fluids are marked. Pure apart from reading the item registry: recipes and seeds are passed in.
  */
 public final class PriceSuggestion {
     /** Fraction added for each processing step. Below the smallest built-in markup (0.4), with room for rounding. */
@@ -54,13 +57,22 @@ public final class PriceSuggestion {
     private static final Set<String> COMPLETE_TYPES = Set.of("minecraft:crafting", "minecraft:smelting", "minecraft:blasting",
             "minecraft:smoking", "minecraft:campfire_cooking", "minecraft:stonecutting", "minecraft:smithing",
             "create:pressing", "create:cutting", "create:milling", "create:crushing", "create:mechanical_crafting",
-            "create:deploying", "create:item_application", "create:splashing", "create:haunting", "create:sandpaper_polishing");
+            "create:deploying", "create:item_application", "create:splashing", "create:haunting", "create:sandpaper_polishing",
+            "create:mixing", "create:compacting", "create:filling", "create:emptying");
 
     private PriceSuggestion() {
     }
 
-    /** One recipe as the suggester sees it: each slot is the items that fit it, with how many it takes. */
-    public record Path(ResourceLocation recipe, String type, Item output, int count, List<Slot> slots, boolean burnsFuel) {
+    /**
+     * One recipe as the suggester sees it: each slot is the items that fit it, with how many it takes. {@code count}
+     * is how many outputs a run makes on average; {@code complete} is false when the recipe has inputs the suggester
+     * can't price (fluids) or comes from a recipe type it doesn't fully understand.
+     */
+    public record Path(ResourceLocation recipe, String type, Item output, double count, List<Slot> slots, boolean burnsFuel,
+                       boolean complete) {
+        public Path(ResourceLocation recipe, String type, Item output, double count, List<Slot> slots, boolean burnsFuel) {
+            this(recipe, type, output, count, slots, burnsFuel, COMPLETE_TYPES.contains(type));
+        }
     }
 
     public record Slot(List<Item> options, int amount) {
@@ -196,7 +208,7 @@ public final class PriceSuggestion {
                 }
             }
             suggestions.put(item, new Suggestion(item, cost, base, itemClass.get(item), path.recipe(), path.type(), depth.get(item),
-                    COMPLETE_TYPES.contains(path.type()), reverse));
+                    path.complete(), reverse));
         }
 
         Set<Item> made = new HashSet<>();
@@ -210,6 +222,68 @@ public final class PriceSuggestion {
             (made.contains(item) ? unpricedInputs : noRecipe).add(item);
         }
         return new Result(suggestions, noRecipe, unpricedInputs, unusable, Set.copyOf(changed));
+    }
+
+    /** A recipe whose output sells for more than its ingredients cost to buy, at normal prices (factor 1.0). */
+    public record CraftProfit(Item output, ResourceLocation recipe, BigDecimal sellValue, BigDecimal buyCost) {
+    }
+
+    /**
+     * Recipes that turn market purchases into a profit: every ingredient can be bought, the output can be sold, and
+     * one craft's output sells for more than its ingredients cost (less anything the recipe gives back, valued at what
+     * the market pays for it). Fuel is ignored, so the check errs towards reporting. Pure apart from the registry.
+     */
+    public static List<CraftProfit> craftProfits(Collection<RecipeHolder<?>> recipes, HolderLookup.Provider registries,
+                                                 Map<Item, CatalogEntry> catalog) {
+        List<Path> paths = new ArrayList<>();
+        for (RecipeHolder<?> holder : recipes) {
+            toPath(holder, registries, new HashMap<>()).ifPresent(paths::add);
+        }
+        return craftProfits(paths, catalog);
+    }
+
+    public static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog) {
+        List<CraftProfit> profits = new ArrayList<>();
+        for (Path path : paths) {
+            CatalogEntry output = catalog.get(path.output());
+            if (output == null || !output.canSell()) {
+                continue;
+            }
+            BigDecimal cost = BigDecimal.ZERO;
+            boolean buyable = true;
+            for (Slot slot : path.slots()) {
+                BigDecimal cheapest = null;
+                Item cheapestItem = null;
+                for (Item option : slot.options()) {
+                    CatalogEntry entry = catalog.get(option);
+                    if (entry != null && entry.canBuy()) {
+                        BigDecimal buy = PriceModel.exactUnitBuyPrice(PriceModel.inputs(entry), 1.0);
+                        if (cheapest == null || buy.compareTo(cheapest) < 0) {
+                            cheapest = buy;
+                            cheapestItem = option;
+                        }
+                    }
+                }
+                if (cheapest == null) {
+                    buyable = false;
+                    break;
+                }
+                Item remainder = remainder(cheapestItem);
+                CatalogEntry back = remainder == null ? null : catalog.get(remainder);
+                if (back != null && back.canSell()) {
+                    cheapest = cheapest.subtract(PriceModel.exactUnitSellPrice(PriceModel.inputs(back), 1.0));
+                }
+                cost = cost.add(cheapest.multiply(BigDecimal.valueOf(slot.amount())));
+            }
+            if (!buyable) {
+                continue;
+            }
+            BigDecimal sell = PriceModel.exactUnitSellPrice(PriceModel.inputs(output), 1.0).multiply(BigDecimal.valueOf(path.count()));
+            if (sell.compareTo(cost) > 0) {
+                profits.add(new CraftProfit(path.output(), path.recipe(), sell, cost));
+            }
+        }
+        return profits;
     }
 
     private static Item remainder(Item item) {
@@ -228,7 +302,12 @@ public final class PriceSuggestion {
                 return Optional.empty();
             }
             ItemStack out = recipe.getResultItem(registries);
-            if (out.isEmpty()) {
+            Optional<CreateRecipes.Output> create = CreateRecipes.read(recipe);
+            if (create.isPresent() && create.get().expected() <= 0) {
+                unusable.merge(type + ": no item output listed", 1, Integer::sum);
+                return Optional.empty();
+            }
+            if (out.isEmpty() && create.isEmpty()) {
                 unusable.merge(type + ": no item output listed", 1, Integer::sum);
                 return Optional.empty();
             }
@@ -264,6 +343,11 @@ public final class PriceSuggestion {
             }
             // Furnaces burn fuel; campfires don't.
             boolean fuel = recipe instanceof AbstractCookingRecipe && !type.equals("minecraft:campfire_cooking");
+            if (create.isPresent()) {
+                CreateRecipes.Output o = create.get();
+                return Optional.of(new Path(holder.id(), type, o.item(), o.expected(), slots, fuel,
+                        COMPLETE_TYPES.contains(type) && !o.fluids()));
+            }
             return Optional.of(new Path(holder.id(), type, out.getItem(), out.getCount(), slots, fuel));
         } catch (RuntimeException e) {
             unusable.merge(type + ": couldn't be read", 1, Integer::sum);

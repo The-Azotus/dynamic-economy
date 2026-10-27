@@ -1,0 +1,912 @@
+{
+  "required_mods": [
+    "croptopia"
+  ],
+  "entries": [
+    {
+      "item": "croptopia:almond",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:almond_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:anchovy",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:apple_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:apricot",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:apricot_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:artichoke",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:artichoke_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:asparagus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:asparagus_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:avocado",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:avocado_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:banana",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:banana_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:barley",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:barley_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:basil",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:basil_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:bellpepper",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:bellpepper_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:blackbean",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:blackbean_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:blackberry",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:blackberry_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:blueberry",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:blueberry_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:broccoli",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:broccoli_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cabbage",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cabbage_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:calamari",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cantaloupe",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cantaloupe_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cashew",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cashew_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cauliflower",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cauliflower_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:celery",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:celery_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cherry",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cherry_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:chile_pepper",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:chile_pepper_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cinnamon",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cinnamon_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "croptopia:cinnamon_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:clam",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:coconut",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:coconut_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:coffee_beans",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:coffee_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:corn",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:corn_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:crab",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cranberry",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cranberry_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cucumber",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:cucumber_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:currant",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:currant_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:date",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:date_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:dragonfruit",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:dragonfruit_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:eggplant",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:eggplant_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:elderberry",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:elderberry_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:fig",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:fig_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:garlic",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:garlic_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:ginger",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:ginger_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:glowing_calamari",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:grape",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:grape_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:grapefruit",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:grapefruit_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:greenbean",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:greenbean_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:greenonion",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:greenonion_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:honeydew",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:honeydew_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:hops",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:hops_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:kale",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:kale_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:kiwi",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:kiwi_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:kumquat",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:kumquat_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:leek",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:leek_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:lemon",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:lemon_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:lettuce",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:lettuce_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:lime",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:lime_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:mango",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:mango_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:mustard",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:mustard_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:nectarine",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:nectarine_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:nutmeg",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:nutmeg_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:oat",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:oat_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:olive",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:olive_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:onion",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:onion_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:orange",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:orange_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:oyster",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:peach",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:peach_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:peanut",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:peanut_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pear",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pear_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pecan",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pecan_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pepper",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pepper_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:persimmon",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:persimmon_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pineapple",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:pineapple_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:plum",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:plum_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:radish",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:radish_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:raspberry",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:raspberry_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:raw_ravager_meat",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:rhubarb",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:rhubarb_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:rice",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:rice_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:roe",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:rutabaga",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:rutabaga_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:saguaro",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:saguaro_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:sea_lettuce",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:shrimp",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:soybean",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:soybean_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:spinach",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:spinach_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:squash",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:squash_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:starfruit",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:starfruit_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:strawberry",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:strawberry_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:sweetpotato",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:sweetpotato_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:tea_leaves",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:tea_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:tomatillo",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:tomatillo_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:tomato",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:tomato_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:tuna",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:turmeric",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:turmeric_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:turnip",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:turnip_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:vanilla",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:vanilla_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:walnut",
+      "base_price": 3,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:walnut_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:yam",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:yam_seed",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:zucchini",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "croptopia:zucchini_seed",
+      "base_price": 1,
+      "class": "farmable"
+    }
+  ]
+}

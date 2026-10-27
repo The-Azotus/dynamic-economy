@@ -1,0 +1,117 @@
+{
+  "required_mods": [
+    "ars_nouveau"
+  ],
+  "entries": [
+    {
+      "item": "ars_nouveau:bastion_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:blue_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:blue_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:blue_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:bombegranate_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:frostaya_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:green_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:green_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:green_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:magebloom",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:mendosteen_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:purple_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:purple_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:purple_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:red_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:red_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:red_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:sourceberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:wilden_horn",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:wilden_spike",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:wilden_tribute",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "ars_nouveau:wilden_wing",
+      "base_price": 16,
+      "class": "farmable"
+    }
+  ]
+}

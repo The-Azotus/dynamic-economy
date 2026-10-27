@@ -1,0 +1,12 @@
+{
+  "required_mods": [
+    "apothic_enchanting"
+  ],
+  "entries": [
+    {
+      "item": "apothic_enchanting:warden_tendril",
+      "base_price": 256,
+      "class": "rare_loot"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "required_mods": [
+    "modern_industrialization"
+  ],
+  "entries": [
+    {
+      "item": "modern_industrialization:antimony_ingot",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bauxite_dust",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iridium_ingot",
+      "base_price": 256,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:lead_ingot",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lignite_coal",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:monazite_dust",
+      "base_price": 24,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:nickel_ingot",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:platinum_ingot",
+      "base_price": 128,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:raw_antimony",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:raw_iridium",
+      "base_price": 192,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:raw_lead",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:raw_nickel",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:raw_platinum",
+      "base_price": 96,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:raw_silver",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:raw_tin",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:raw_titanium",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:raw_tungsten",
+      "base_price": 72,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:raw_uranium",
+      "base_price": 48,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:salt_dust",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silver_ingot",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_ingot",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_ingot",
+      "base_price": 88,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:tungsten_ingot",
+      "base_price": 96,
+      "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:uranium_ingot",
+      "base_price": 64,
+      "class": "rare_resource"
+    }
+  ]
+}
