@@ -40,3 +40,6 @@ repo/
 !**/src/**/repo/
 run-gametest/
 run-client2/
+
+### Phase 10 pricing inputs (large exports) ###
+pricing-work/
