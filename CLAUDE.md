@@ -25,7 +25,7 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 6 — Terminal, access, admin editing, tooltips | Done, released as v0.2.0 |
 | 7 — Integrity, usability, admin tooling | Done, released as v0.2.0 |
 | 8 — Recipe and table block | Done (on `phase8`) |
-| 9 — Item classes | Not started |
+| 9 — Item classes | Done (on `phase8`) |
 | 10 — Built-in price packs | Not started (needs the pack's `items.csv`) |
 | 11 — GUI rework | Not started |
 | 12 — ProgressiveStages hooks | Not started |
@@ -83,6 +83,7 @@ Files live in `data/<namespace>/market/*.json`, loaded by a reload listener. Pri
 | Field | Default | Meaning |
 | --- | --- | --- |
 | `item` | required | Exact item ID |
+| `class` | none | Item class (Phase 9) whose values fill the fields no layer sets; `rare_resource` means `dynamic_economy:rare_resource` |
 | `base_price` | required | Spurs, integer > 0 |
 | `markup` | 0.5 | Added on top when the market sells |
 | `sell_fee` | 0.0 | Fraction kept back from payouts (money sink). Phase 4 |

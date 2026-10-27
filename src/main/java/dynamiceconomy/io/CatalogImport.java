@@ -205,6 +205,7 @@ public final class CatalogImport {
                     return name + " \"" + text + "\" is too large";
                 }
             }
+            case TEXT -> json.addProperty(name, text);
             case DECIMAL -> {
                 // Spreadsheets in some locales write a decimal comma: accept "0,5" as 0.5.
                 String normalized = text.indexOf('.') < 0 && text.chars().filter(c -> c == ',').count() == 1

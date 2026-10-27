@@ -13,6 +13,8 @@ import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
+import dynamiceconomy.catalog.FieldSource;
+import dynamiceconomy.catalog.ItemClasses;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.io.CatalogExport;
@@ -61,6 +63,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.UUID;
@@ -683,7 +686,7 @@ public final class MarketGameTests {
         // With a lower min_buy_markup the buy price may fall with supply, but never to base.
         CatalogEntry cobble = MarketCatalog.INSTANCE.get(Items.COBBLESTONE).orElseThrow();
         CatalogEntry flexible = new CatalogEntry(cobble.item(), cobble.itemId(), 100, 0.5, 0, true, true, true, 0.0, true,
-                Optional.of(0.1), CatalogEntry.Overrides.NONE);
+                Optional.of(0.1), CatalogEntry.Overrides.NONE, Optional.empty());
         withEntry(flexible, () -> {
             long now = MarketStockData.now(helper.getLevel().getServer());
             f.market.setFactor(cobble.itemId(), 0.8, now);
@@ -698,7 +701,7 @@ public final class MarketGameTests {
     public static void buyingThenSellingUnlimitedItemNeverProfits(GameTestHelper helper) {
         CatalogEntry cobble = MarketCatalog.INSTANCE.get(Items.COBBLESTONE).orElseThrow();
         CatalogEntry flexible = new CatalogEntry(cobble.item(), cobble.itemId(), 100, 0.5, 0, true, true, true, 0.0, true,
-                Optional.of(0.1), CatalogEntry.Overrides.NONE);
+                Optional.of(0.1), CatalogEntry.Overrides.NONE, Optional.empty());
         for (CatalogEntry entry : List.of(cobble, flexible)) {
             withEntry(entry, () -> {
                 for (double start : List.of(1.0, 0.6, MarketConfig.floor())) {
@@ -868,7 +871,8 @@ public final class MarketGameTests {
             List<CatalogEntry> catalog = new ArrayList<>(MarketCatalog.INSTANCE.entries());
             catalog.replaceAll(e -> e.item() == Items.IRON_INGOT ? tuned : e.item() == Items.COBBLESTONE ? cobble : e);
 
-            CatalogExport.Result result = CatalogExport.export(root, Optional.empty(), catalog);
+            // No recorded sources: every value is written, as if every field were set.
+            CatalogExport.Result result = CatalogExport.export(root, Optional.empty(), catalog, item -> FieldSource.NONE);
             long registered = BuiltInRegistries.ITEM.stream().filter(item -> item != Items.AIR).count();
             helper.assertValueEqual((long) result.total(), registered, "every item but air exported");
             helper.assertValueEqual(result.priced(), catalog.size(), "already priced");
@@ -887,7 +891,7 @@ public final class MarketGameTests {
                     JsonParser.parseString(Files.readString(minecraft))));
             helper.assertTrue(loaded.isEmpty(), "unpriced template entries are skipped");
 
-            CatalogExport.Result onlyMinecraft = CatalogExport.export(root, Optional.of("minecraft"), catalog);
+            CatalogExport.Result onlyMinecraft = CatalogExport.export(root, Optional.of("minecraft"), catalog, item -> FieldSource.NONE);
             long minecraftItems = BuiltInRegistries.ITEM.keySet().stream()
                     .filter(id -> id.getNamespace().equals("minecraft") && !id.getPath().equals("air")).count();
             helper.assertValueEqual((long) onlyMinecraft.total(), minecraftItems, "modid filter");
@@ -1048,7 +1052,7 @@ public final class MarketGameTests {
         helper.assertValueEqual(iron.basePrice(), 20, "iron price edited");
         helper.assertValueEqual(new CatalogEntry(iron.item(), iron.itemId(), ironFile.basePrice(), iron.markup(), iron.startStock(),
                 iron.canSell(), iron.canBuy(), iron.unlimitedStock(), iron.sellFee(), iron.dynamic(), iron.minBuyMarkup(),
-                iron.overrides()), ironFile, "iron keeps every other field");
+                iron.overrides(), iron.itemClass()), ironFile, "iron keeps every other field");
         helper.assertValueEqual(result.entries().get(Items.STONE).basePrice(), 5, "setprice lists an unlisted item");
         helper.assertTrue(!result.entries().containsKey(Items.DIRT), "an unlisted item needs a price to be listed");
         helper.assertTrue(result.problems().containsKey(key(Items.DIRT)), "and that is reported");
@@ -1205,6 +1209,193 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    // ---- Item classes (Phase 9) -------------------------------------------------------------------------------
+
+    private static final List<String> BUILT_IN_CLASSES = List.of("common_resource", "common_processed", "farmable",
+            "rare_resource", "rare_processed", "rare_loot", "unique");
+
+    private static MarketCatalog.Loaded loadOne(String json) {
+        return MarketCatalog.load(List.of(new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("test", "classes"), 0,
+                "test", JsonParser.parseString(json))));
+    }
+
+    @GameTest(template = EMPTY)
+    public static void builtInClassesLoadAndNeverAllowARoundTripProfit(GameTestHelper helper) {
+        for (String name : BUILT_IN_CLASSES) {
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, name);
+            helper.assertTrue(ItemClasses.get(id).isPresent(), "built-in class " + name + " loaded");
+            for (int base : List.of(1, 16, 8192)) {
+                CatalogEntry entry = loadOne("""
+                        { "entries": [ { "item": "minecraft:iron_ingot", "base_price": %d, "class": "%s" } ] }"""
+                        .formatted(base, name)).entries().get(Items.IRON_INGOT);
+                helper.assertTrue(entry != null, name + " decodes");
+                PriceModel.Inputs in = PriceModel.inputs(entry);
+                helper.assertValueEqual(PriceModel.arbitrageRisk(in), Optional.empty(), name + " passes the round-trip check");
+                long profit = bestRoundTripProfit(in);
+                helper.assertTrue(profit <= 0, "%s at base %d: a round trip made %d".formatted(name, base, profit));
+            }
+        }
+        List<String> classProblems = MarketCatalog.INSTANCE.files().problems().stream().map(MarketCatalog.Problem::message)
+                .filter(message -> message.contains("Market class")).toList();
+        helper.assertValueEqual(classProblems, List.of(), "the built-in classes load without warnings");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void aClassFillsOnlyTheFieldsNothingElseSets(GameTestHelper helper) {
+        MarketCatalog.Loaded loaded = loadOne("""
+                { "defaults": { "markup": 0.8 },
+                  "entries": [
+                    { "item": "minecraft:iron_ingot", "base_price": 16, "class": "rare_resource" },
+                    { "item": "minecraft:gold_ingot", "base_price": 32, "class": "rare_resource", "sell_impact": 0.01, "buy_impact": 0.01 },
+                    { "item": "minecraft:diamond", "base_price": 256 },
+                    { "item": "minecraft:emerald", "base_price": 64, "class": "nope" } ] }""");
+        ItemClasses.ItemClass rare = ItemClasses.get(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "rare_resource")).orElseThrow();
+        double classImpact = rare.values().get("sell_impact").getAsDouble();
+        double classFloor = rare.values().get("floor").getAsDouble();
+
+        CatalogEntry iron = loaded.entries().get(Items.IRON_INGOT);
+        helper.assertValueEqual(iron.itemClass(), Optional.of(rare.id()), "iron knows its class");
+        helper.assertValueEqual(iron.markup(), 0.8, "file defaults beat the class");
+        helper.assertValueEqual(iron.overrides().sellImpact(), Optional.of(classImpact), "the class sets what nothing else does");
+        helper.assertValueEqual(iron.overrides().floor(), Optional.of(classFloor), "including the floor");
+        helper.assertTrue(!loaded.sources().get(Items.IRON_INGOT).containsKey("sell_impact"),
+                "class values aren't recorded as set by a catalog layer");
+
+        CatalogEntry gold = loaded.entries().get(Items.GOLD_INGOT);
+        helper.assertValueEqual(gold.overrides().sellImpact(), Optional.of(0.01), "the entry beats the class");
+        helper.assertValueEqual(gold.overrides().floor(), Optional.of(classFloor), "and keeps the class's other fields");
+
+        CatalogEntry diamond = loaded.entries().get(Items.DIAMOND);
+        helper.assertValueEqual(diamond.itemClass(), Optional.empty(), "no class");
+        helper.assertValueEqual(diamond.overrides().sellImpact(), Optional.empty(), "server config applies");
+
+        helper.assertTrue(!loaded.entries().containsKey(Items.EMERALD), "an unknown class skips the entry");
+        helper.assertTrue(loaded.problems().stream().anyMatch(p -> p.skipped() && p.message().contains("unknown class dynamic_economy:nope")),
+                "and says why: " + loaded.problems());
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void badClassFilesAreSkippedOrWarned(GameTestHelper helper) {
+        ResourceLocation bad = ResourceLocation.fromNamespaceAndPath("test", "bad");
+        ResourceLocation typo = ResourceLocation.fromNamespaceAndPath("test", "typo");
+        ResourceLocation ok = ResourceLocation.fromNamespaceAndPath("test", "ok");
+        ItemClasses.Loaded classes = ItemClasses.parse(Map.of(
+                bad, JsonParser.parseString("{ \"sell_impact\": 0.9 }"),
+                typo, JsonParser.parseString("{ \"markup\": 0.6, \"recovry\": 0.1, \"base_price\": 5 }"),
+                ok, JsonParser.parseString("{ \"description\": \"fine\", \"markup\": 0.6 }")));
+        helper.assertTrue(!classes.classes().containsKey(bad), "an out-of-range value skips the class");
+        helper.assertTrue(classes.classes().containsKey(typo), "unknown fields only warn");
+        helper.assertValueEqual(classes.classes().get(typo).values().keySet(), Set.of("markup"), "and are dropped");
+        helper.assertValueEqual(classes.classes().get(ok).description(), "fine", "description kept");
+        helper.assertTrue(classes.problems().stream().anyMatch(p -> p.skipped() && p.message().contains("test:bad")), "bad reported");
+        helper.assertTrue(classes.problems().stream().anyMatch(p -> !p.skipped() && p.message().contains("\"recovry\"")), "typo reported");
+        helper.assertTrue(classes.problems().stream().anyMatch(p -> p.message().contains("\"base_price\"") && p.message().contains("per item")),
+                "base_price explained");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void tagRulesAndEditsCanChangeTheClass(GameTestHelper helper) {
+        MarketCatalog.Loaded loaded = loadOne("""
+                { "entries": [ { "item": "minecraft:oak_log", "base_price": 2 } ] }""");
+        ResourceLocation logs = ResourceLocation.withDefaultNamespace("logs");
+        MarketOverrides edits = new MarketOverrides();
+        edits.setTagField(logs, "class", new com.google.gson.JsonPrimitive("rare_resource"));
+        CatalogOverlay.Result result = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), CatalogOverlay::registryTag);
+        CatalogEntry oak = result.entries().get(Items.OAK_LOG);
+        helper.assertValueEqual(oak.overrides().sellImpact(), Optional.of(0.005), "a tag rule's class fills the fields");
+        helper.assertValueEqual(oak.markup(), 0.5, "rare_resource markup");
+        helper.assertTrue(!result.entries().containsKey(Items.BIRCH_LOG), "a class alone doesn't list unpriced items");
+
+        edits.setItemField(key(Items.OAK_LOG), "class", new com.google.gson.JsonPrimitive("common_processed"));
+        oak = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), CatalogOverlay::registryTag).entries().get(Items.OAK_LOG);
+        helper.assertValueEqual(oak.markup(), 0.4, "a later class replaces the earlier one's values, not just its name");
+        helper.assertValueEqual(oak.overrides().sellImpact(), Optional.of(0.0005), "common_processed impact");
+
+        edits.setItemField(key(Items.OAK_LOG), "markup", number(0.9));
+        oak = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), CatalogOverlay::registryTag).entries().get(Items.OAK_LOG);
+        helper.assertValueEqual(oak.markup(), 0.9, "an edit beats the class");
+
+        edits.setItemField(key(Items.OAK_LOG), "class", new com.google.gson.JsonPrimitive("missing"));
+        result = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), CatalogOverlay::registryTag);
+        helper.assertTrue(result.problems().get(key(Items.OAK_LOG)).contains("unknown class"), "an unknown class is refused");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void classCommandsShowAndEditClasses(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        ResourceLocation iron = key(Items.IRON_INGOT);
+        f.market.setStock(iron, 37);
+        double factorBefore = f.factor(Items.IRON_INGOT);
+        try {
+            List<String> classes = runCommand(helper, "market admin classes");
+            for (String name : BUILT_IN_CLASSES) {
+                helper.assertTrue(classes.stream().anyMatch(line -> line.startsWith("  " + name + " (")), "classes lists " + name + ": " + classes);
+            }
+            runCommand(helper, "market admin set minecraft:iron_ingot class rare_resource");
+            CatalogEntry entry = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+            helper.assertValueEqual(entry.itemClass(), Optional.of(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "rare_resource")),
+                    "set class with a short name");
+            List<String> info = runCommand(helper, "market admin info minecraft:iron_ingot");
+            helper.assertTrue(info.contains("  class = rare_resource [item edit]"), "info shows the class edit: " + info);
+            helper.assertTrue(info.contains("  sell_impact = 0.005 [class rare_resource]"), "and fields from the class: " + info);
+            helper.assertTrue(runCommand(helper, "market admin classes").stream().anyMatch(line -> line.startsWith("  rare_resource (1 listed)")),
+                    "member count");
+
+            List<String> refused = runCommand(helper, "market admin set minecraft:iron_ingot class no_such_class");
+            helper.assertTrue(refused.stream().anyMatch(line -> line.contains("unknown class")), "unknown class refused: " + refused);
+            helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow().itemClass(), entry.itemClass(), "refusal changed nothing");
+
+            runCommand(helper, "market admin reload");
+            helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow().itemClass(), entry.itemClass(), "edit survives reload");
+            helper.assertValueEqual(f.market.getStock(iron), 37L, "classes never touch stock");
+            helper.assertValueEqual(f.factor(Items.IRON_INGOT), factorBefore, "or the price factor");
+        } finally {
+            runCommand(helper, "market admin revert minecraft:iron_ingot");
+        }
+        helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow().itemClass(), Optional.empty(), "reverted");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void exportLeavesClassValuesBlankSoImportKeepsThemLive(GameTestHelper helper) {
+        try {
+            MarketCatalog.Loaded loaded = loadOne("""
+                    { "entries": [
+                        { "item": "minecraft:iron_ingot", "base_price": 16, "class": "rare_resource", "sell_fee": 0.1 },
+                        { "item": "minecraft:diamond", "base_price": 256 } ] }""");
+            Path root = Files.createTempDirectory("market-class-export");
+            CatalogExport.Result result = CatalogExport.export(root, Optional.of("minecraft"), loaded.entries().values(),
+                    item -> loaded.sources().getOrDefault(item, FieldSource.NONE));
+            String csv = Files.readString(result.folder().resolve("items.csv"));
+            Csv.Row ironRow = Csv.parse(csv).rows().stream().filter(row -> row.get("item_id").equals("minecraft:iron_ingot"))
+                    .findFirst().orElseThrow();
+            java.util.function.Function<String, String> cell = ironRow::get;
+            helper.assertValueEqual(cell.apply("class"), "rare_resource", "class column");
+            helper.assertValueEqual(cell.apply("sell_fee"), "0.1", "a value the entry sets is written");
+            helper.assertValueEqual(cell.apply("markup"), "", "a value from the class is left blank");
+            helper.assertValueEqual(cell.apply("sell_impact"), "", "so is sell_impact");
+            String diamondRow = csv.lines().filter(line -> line.startsWith("minecraft:diamond,")).findFirst().orElseThrow();
+            helper.assertTrue(!diamondRow.contains("0.5"), "a built-in default is left blank too: " + diamondRow);
+
+            CatalogImport.Report same = CatalogImport.analyze(csv);
+            helper.assertValueEqual(same.rejected(), List.of(), "imports cleanly");
+            helper.assertValueEqual(new java.util.HashSet<>(same.decoded()), new java.util.HashSet<>(loaded.entries().values()),
+                    "export then import gives identical entries");
+
+            CatalogImport.Report changed = CatalogImport.analyze(csv.replace(",rare_resource,", ",unique,"));
+            CatalogEntry iron = changed.decoded().stream().filter(e -> e.item() == Items.IRON_INGOT).findFirst().orElseThrow();
+            helper.assertValueEqual(iron.markup(), 1.0, "changing only the class in the sheet changes the class's fields");
+            helper.assertValueEqual(iron.sellFee(), 0.1, "and keeps the entry's own");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        helper.succeed();
+    }
+
     // ---- Economic integrity (Phase 7) -------------------------------------------------------------------------
 
     /** Selling priced unit by unit, as {@link PriceModel#sell} did before it stopped looping once s stops moving. */
@@ -1300,7 +1491,7 @@ public final class MarketGameTests {
         // The largest base price: one unit sold just fits the bank's int, two don't, and buying one doesn't either.
         CatalogEntry listed = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
         withEntry(new CatalogEntry(listed.item(), listed.itemId(), Integer.MAX_VALUE, 0.5, 0, true, true, false, 0.0, false,
-                Optional.empty(), CatalogEntry.Overrides.NONE), () -> {
+                Optional.empty(), CatalogEntry.Overrides.NONE, Optional.empty()), () -> {
             Fixture f = new Fixture(helper);
             f.setStock(Items.IRON_INGOT, 5);
             f.give(new ItemStack(Items.IRON_INGOT, 2));

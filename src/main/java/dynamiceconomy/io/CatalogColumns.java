@@ -18,12 +18,16 @@ final class CatalogColumns {
     static final String IN_CATALOG = "in_catalog";
     static final String BASE_PRICE = "base_price";
 
-    enum Kind { BOOLEAN, WHOLE_NUMBER, DECIMAL }
+    enum Kind { BOOLEAN, WHOLE_NUMBER, DECIMAL, TEXT }
 
-    /** Optional catalog fields, in column order. A blank cell means "not set": the catalog default applies. */
+    /**
+     * Optional catalog fields, in column order. A blank cell means "not set": the item's class, or else the catalog
+     * default, decides it.
+     */
     static final Map<String, Kind> OPTIONAL_FIELDS = new LinkedHashMap<>();
 
     static {
+        OPTIONAL_FIELDS.put("class", Kind.TEXT);
         OPTIONAL_FIELDS.put("unlimited_stock", Kind.BOOLEAN);
         OPTIONAL_FIELDS.put("markup", Kind.DECIMAL);
         OPTIONAL_FIELDS.put("min_buy_markup", Kind.DECIMAL);

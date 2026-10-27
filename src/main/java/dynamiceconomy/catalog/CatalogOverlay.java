@@ -28,7 +28,8 @@ import java.util.function.Function;
  * item registry: tag membership is passed in.
  * <p>
  * Alongside each entry it keeps where every field came from (see {@link FieldSource}), extending the file's sources
- * with each tag rule and edit exactly where their values are merged in.
+ * with each tag rule and edit exactly where their values are merged in. Edits are laid over the fields the file set,
+ * not over every value in effect, so a tag rule or edit that changes {@code class} refills the fields nothing sets.
  */
 public final class CatalogOverlay {
     private CatalogOverlay() {
@@ -68,8 +69,10 @@ public final class CatalogOverlay {
         for (Item item : candidates) {
             ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
             CatalogEntry fileEntry = files.get(item);
-            JsonObject fileJson = fileEntry == null ? null : CatalogJson.toJson(fileEntry);
             Map<String, List<FieldSource>> fileChain = fileSources.getOrDefault(item, FieldSource.NONE);
+            // Without recorded sources (tests), every value counts as set by the file.
+            JsonObject fileJson = fileEntry == null ? null
+                    : fileChain.isEmpty() ? CatalogJson.toJson(fileEntry) : CatalogJson.explicit(id, fileChain);
             JsonObject json = fileJson;
             Map<String, List<FieldSource>> chain = fileChain;
             boolean removed = false;

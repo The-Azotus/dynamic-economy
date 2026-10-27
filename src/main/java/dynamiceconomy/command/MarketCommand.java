@@ -414,7 +414,8 @@ public final class MarketCommand {
             return 0;
         }
         try {
-            CatalogExport.Result result = CatalogExport.export(configRoot().resolve("exports"), modId, MarketCatalog.INSTANCE.entries());
+            CatalogExport.Result result = CatalogExport.export(configRoot().resolve("exports"), modId, MarketCatalog.INSTANCE.entries(),
+                    MarketCatalog.INSTANCE::sources);
             String folder = "config/" + DynamicEconomy.MOD_ID + "/exports/" + result.folder().getFileName();
             AuditLog.record(ctx.getSource(), "export", modId.orElse("all mods"), "ok: %d items to %s".formatted(result.total(), folder), null, null);
             ctx.getSource().sendSuccess(() -> Component.literal(

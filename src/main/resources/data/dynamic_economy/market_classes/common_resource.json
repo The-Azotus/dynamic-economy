@@ -1,0 +1,10 @@
+{
+  "description": "Raw materials players gather in bulk (stone, logs, sand). Always in stock; prices barely move and recover quickly.",
+  "unlimited_stock": true,
+  "markup": 0.5,
+  "sell_impact": 0.0002,
+  "buy_impact": 0.0002,
+  "recovery": 0.1,
+  "floor": 0.3,
+  "ceiling": 2.0
+}

@@ -5,6 +5,7 @@ A server-wide market for [Create: Numismatics](https://modrinth.com/mod/numismat
 - **One market for the whole server.** Everything players sell goes into a shared stock that everyone buys from, at the same prices for every player.
 - **Bank payments.** All money moves through each player's Numismatics bank account, so there are no coins to carry.
 - **Prices that move.** Selling an item lowers its price and buying raises it. Prices drift back toward normal over time.
+- **Item classes.** Groups of items share pricing behaviour: common resources stay stable, while rare items swing hard and recover slowly, so dumping a pile of something valuable doesn't pay.
 - **Market Terminal block.** Players open the market from a craftable terminal, or with `/market` if the server allows it.
 - **Prices in tooltips.** Any item the market buys shows what it pays, wherever the item appears.
 - **Easy to price a whole modpack.** Export every item to a spreadsheet, fill in prices, and import it back. Admins can also edit prices in game, one item at a time or for a whole tag such as "all logs".

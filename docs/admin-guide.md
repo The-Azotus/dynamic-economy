@@ -4,6 +4,7 @@ This guide is for server admins running the Numismatics: Dynamic Economy market.
 
 - how players reach the market
 - how to price items, from a spreadsheet, catalog files or in-game commands
+- item classes, which give groups of items shared pricing behaviour
 - how prices move, every catalog field and config option, and every command
 
 For what players see, read the [player guide](player-guide.md).
@@ -70,7 +71,7 @@ The market starts empty. The mod includes a small **example catalog**: cobblesto
 ### Pricing from a spreadsheet
 
 1. Run `/market admin export` from the server console or as a level-4 operator. It writes a folder like `config/dynamic_economy/exports/2026-10-23_09-30-00/` containing:
-   - `items.csv`: every item in the game, one row each. Listed items have their current values filled in, in-game edits included.
+   - `items.csv`: every item in the game, one row each. Listed items have the values their catalog files, tag rules and in-game edits set. A value that comes from the item's [class](#item-classes) or a built-in default is left blank, so importing the sheet later doesn't pin it: change the `class` column and the class's values follow.
    - `templates/<modid>.json`: one catalog file per mod, listing only unlisted items, each at `base_price: 0`.
 2. Open `items.csv` in a spreadsheet. Fill in `base_price` for anything you want on the market, and change any other column you like. Leave `base_price` blank for items you don't want.
 3. Save it somewhere inside `config/dynamic_economy/`. Either CSV encoding works, UTF-8 or Excel's default.
@@ -109,6 +110,63 @@ Catalog files live in any datapack at `data/<namespace>/market/<name>.json`:
 
 You can also start from a file in `templates/` from an export.
 
+### Item classes
+
+A class is a named set of catalog settings shared by a group of items, so similar items behave alike without repeating the same numbers on every entry. Give an entry a class with `"class"`:
+
+```json
+{
+  "entries": [
+    { "item": "minecraft:cobblestone", "base_price": 1,    "class": "common_resource" },
+    { "item": "minecraft:diamond",     "base_price": 256,  "class": "rare_resource" },
+    { "item": "minecraft:nether_star", "base_price": 8192, "class": "unique", "can_sell": false }
+  ]
+}
+```
+
+A class fills in only the fields that nothing else sets. From weakest to strongest: server config, class, the file's `defaults`, the entry itself, tag rules, in-game edits. In the example, the nether star keeps its own `can_sell: false` and takes everything else from `unique`. `class` itself can be set at any of those levels, for example once in a file's `defaults`, or for a whole tag with `/market admin tag <tag> set class rare_resource`.
+
+Classes are the main protection against someone finding a way to get a lot of a valuable item. Rare classes move their price a lot per unit sold and recover slowly, so dumping a big pile pays far less than its base price. There are no per-player limits: the price does the limiting.
+
+The mod ships these classes. The values are starting points, not balanced numbers:
+
+| Class | For | Stock | Markup | Impact per unit | Recovery per step | Floor – ceiling |
+| --- | --- | --- | --- | --- | --- | --- |
+| `common_resource` | Raw materials gathered in bulk: stone, logs, sand | unlimited | 0.5 | 0.0002 | 0.1 | 0.3 – 2 |
+| `common_processed` | Common items made from those: planks, glass, ingots | normal | 0.4 | 0.0005 | 0.08 | 0.25 – 3 |
+| `farmable` | Crops and mob drops that farms produce endlessly | unlimited | 0.5 | 0.001 | 0.05 | 0.1 – 2 |
+| `rare_resource` | Scarce raw materials: diamonds, ancient debris | normal | 0.5 | 0.005 | 0.02 | 0.15 – 5 |
+| `rare_processed` | Valuable made items: netherite, precision mechanisms | normal | 0.5 | 0.003 | 0.03 | 0.15 – 5 |
+| `rare_loot` | Found, not made: music discs, enchanted books, totems | normal | 0.75 | 0.02 | 0.01 | 0.1 – 8 |
+| `unique` | One-of-a-kind: nether stars, dragon eggs | normal | 1.0 | 0.08 | 0.005 | 0.1 – 6 |
+
+"Impact per unit" is both `sell_impact` and `buy_impact`. For a sense of scale, at the default 1-minute recovery step:
+
+- Selling 1,000 cobblestone lowers its sell price to about 82%, and it's back to normal within about half an hour.
+- Selling 100 diamonds lowers theirs to about 61%, and it takes about 35 minutes to recover even half the drop.
+- Selling 10 nether stars lowers theirs to about 43%, and half the drop takes over 2 hours to come back.
+
+See [Supply and demand](#supply-and-demand) for the formulas.
+
+**Making your own.** A class is a file in any datapack at `data/<namespace>/market_classes/<name>.json`. It may set any catalog field except `item`, `base_price` and `class`, plus an optional `description`:
+
+```json
+{
+  "description": "Create machine parts",
+  "markup": 0.6,
+  "sell_impact": 0.002,
+  "buy_impact": 0.002,
+  "recovery": 0.04
+}
+```
+
+Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file at the same path, such as `data/dynamic_economy/market_classes/rare_resource.json`, in your own datapack. It replaces the whole class.
+
+- **Checks:** class values must pass the same rules as catalog entries. A class with a bad value is skipped, and so is every entry naming it. Unknown fields in a class file are ignored with a warning. All of these show in `/market admin diagnose`.
+- **Reloading:** `/market admin reload` re-reads classes along with the catalog files, and every member is repriced. Stock and price factors are never touched.
+- **Keeping it fair:** keep `sell_impact` and `buy_impact` equal, and below `markup`. Even equal impacts, if large, can let a player sell a batch and buy it back for less; `/market admin diagnose` warns about any item where that's possible. All the built-in classes pass.
+- `/market admin classes` lists every class, its values and how many listed items use it.
+
 ### Editing prices in game
 
 These commands need operator level 2. Items can be typed with tab completion, such as `minecraft:iron_ingot`.
@@ -116,12 +174,12 @@ These commands need operator level 2. Items can be typed with tab completion, su
 | Command | What it does |
 | --- | --- |
 | `/market admin setprice <item> <price>` | Sets the base price. Also lists an item that isn't on the market yet. |
-| `/market admin set <item> <field> <value>` | Sets any [catalog field](#catalog-fields), such as `set minecraft:diamond markup 0.25` or `set minecraft:dirt can_buy false`. |
+| `/market admin set <item> <field> <value>` | Sets any [catalog field](#catalog-fields), such as `set minecraft:diamond markup 0.25`, `set minecraft:dirt can_buy false` or `set minecraft:diamond class rare_loot`. |
 | `/market admin unset <item> <field>` | Drops one of your edits, so the catalog files decide that field again. |
 | `/market admin remove <item>` | Takes the item off the market. Its stock is kept for if you list it again. |
 | `/market admin revert <item>` | Drops all your edits for the item, back to what the catalog files and tag rules say. |
 | `/market admin clearstock <item>` | Empties the item's stock; it stays listed. |
-| `/market admin info <item>` | For a listed item, every field's value and where it comes from: a catalog file (and whether from the entry itself or the file's `defaults`), a tag rule, your edit, the server config, or the built-in default. It also shows any lower-layer values a field overrides. For an unlisted item, it shows what each layer says. |
+| `/market admin info <item>` | For a listed item, every field's value and where it comes from: a catalog file (and whether from the entry itself or the file's `defaults`), a tag rule, your edit, the item's class, the server config, or the built-in default. It also shows any lower-layer values a field overrides. For an unlisted item, it shows what each layer says. |
 
 For example, `info minecraft:oak_log` might show `base_price = 9 [item edit; overrides 4 from tag rule #minecraft:logs, then 2 from file dynamic_economy:example_catalog]` and `markup = 0.5 [file dynamic_economy:example_catalog defaults]`.
 
@@ -194,6 +252,7 @@ Prices are whole numbers of **spurs**, the smallest Numismatics coin (1 bevel = 
 | Field | Default | What it does |
 | --- | --- | --- |
 | `item` | *required* | The exact item ID, such as `minecraft:iron_ingot`. Enchanted, damaged or renamed copies are never accepted. |
+| `class` | none | An [item class](#item-classes) that fills in the fields nothing else sets, such as `rare_resource`. |
 | `base_price` | *required* | What the market pays for one unit at normal supply, in spurs. At least 1; 0 or below means "not priced yet". |
 | `markup` | `0.5` | Added on top when the market sells. `0.5` means buyers pay 150% of base. 0 to 1000. |
 | `sell_fee` | `0.0` | Fraction kept back from what the market pays, such as `0.1` for 10%. Nobody receives it; it's a money sink. 0 to 0.99. |
@@ -280,6 +339,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin restore <name> <stock\|prices\|edits\|all> [confirm]` | 2 | Shows what restoring would change, then restores with `confirm`. |
 | `/market admin audit [page]` | 2 | The latest admin actions from the [audit log](#audit-log). |
 | `/market admin tag <tag> ...`, `/market admin tags` | 2 | Tag rules; see [Tag rules](#tag-rules-pricing-many-items-at-once). |
+| `/market admin classes` | 2 | Lists the [item classes](#item-classes), their values and how many listed items use each. |
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
@@ -296,8 +356,9 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `item_id` | Yes, required | The item to list. |
 | `mod_id`, `display_name`, `max_stack_size`, `in_catalog` | No | For your reference while pricing. |
 | `base_price` | Yes, required | Whole number, 1 or more. Blank means "don't import this row". |
-| `unlimited_stock`, `markup`, `min_buy_markup`, `sell_fee`, `can_sell`, `can_buy`, `start_stock`, `dynamic` | Yes | Blank means "use the default". |
-| `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling` | Yes | Per-item overrides; blank means "use the server config". |
+| `class` | Yes | An [item class](#item-classes), such as `rare_resource`. Blank means none. |
+| `unlimited_stock`, `markup`, `min_buy_markup`, `sell_fee`, `can_sell`, `can_buy`, `start_stock`, `dynamic` | Yes | Blank means "use the class's value, or else the default". |
+| `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling` | Yes | Per-item overrides; blank means "use the class's value, or else the server config". |
 
 The importer is forgiving about how the file was saved:
 
