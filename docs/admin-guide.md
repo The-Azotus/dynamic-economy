@@ -86,6 +86,36 @@ Items that also have an in-game edit keep that edit, because edits beat catalog 
 
 The [spreadsheet format](#spreadsheet-format) section has the details on columns and what the importer accepts.
 
+### Suggesting prices from recipes
+
+In a big modpack, you only need to price the raw materials (ores, logs, crops, mob drops, loot) yourself. The market can work out the rest from the game's recipes:
+
+1. Price the raw materials, by any of the ways above.
+2. Run `/market admin suggest` (or `/market admin suggest <modid>` for one mod) from the console or as a level-4 operator. It writes `suggested.csv` to a new folder in `config/dynamic_economy/exports/`. Nothing on the market changes.
+3. Review the file in a spreadsheet, then import it like any other CSV.
+
+For each unlisted item, `suggest` finds its cheapest recipe and adds up its ingredients. For each ingredient slot it takes the cheapest priced item that fits, subtracts anything the recipe gives back (the empty bucket from a milk bucket), adds fuel for furnace recipes, divides by how many the recipe makes, and adds 10% for the processing step. It repeats until nothing gets cheaper, so long crafting chains are priced from the bottom up. It reads every recipe type that lists its items, including modded machines such as Create's presses and mills. The item's suggested class is `rare_processed` if any ingredient comes from a rare class, otherwise `common_processed`.
+
+Prices are rounded down and the 10% is less than any markup, so buying the ingredients from the market, crafting and selling the result never pays.
+
+`suggested.csv` has the same columns as `items.csv`, with the suggested `base_price` and `class` filled in, plus these columns for reference (the importer ignores them):
+
+| Column | Meaning |
+| --- | --- |
+| `price_source` | `catalog` (already listed), `suggested`, or blank (no price could be worked out) |
+| `exact_cost` | The worked-out cost before rounding down |
+| `recipe`, `recipe_type` | The recipe the price came from |
+| `depth` | How many crafting steps from a priced item |
+| `note` | Anything worth checking; see below |
+
+Notes to look out for:
+
+- **Worth under 1 spur:** prices are whole spurs, so these are left blank. Most such items (sticks, buttons) don't need to be on the market.
+- **This recipe type may leave out fluids or ingredient amounts:** some machines take fluids, or keep amounts where the market can't see them, so the cost may be too low.
+- **Converts back into …:** the item and its ingredient turn into each other, like iron blocks and ingots. If both are listed, a player whose ingots have dropped in price can craft blocks and sell those at full price instead. List only one form, or set `can_sell` false on the other.
+- **Price kept falling through a recipe loop:** a set of recipes makes the item out of less than itself, so the suggestion is too low. Price it by hand.
+- **No recipe makes it** and **every recipe for it needs an unpriced item:** price these by hand if they should be listed, then run `suggest` again.
+
 ### Catalog files
 
 Catalog files live in any datapack at `data/<namespace>/market/<name>.json`:
@@ -104,6 +134,7 @@ Catalog files live in any datapack at `data/<namespace>/market/<name>.json`:
 
 - `entries` is required: the items to list.
 - `defaults` is optional. Its fields apply to every entry in that file unless the entry sets the field itself. It can't contain `item`.
+- `required_mods` is optional: a list of mod IDs, such as `["create"]`. If any of them isn't installed, the whole file is skipped without a warning. Use it for a price file that belongs to one mod.
 - **Duplicates:** if two files list the same item, the higher-priority datapack wins. Within one datapack, the file whose name sorts last wins, and the log warns about it.
 - **Reloading:** after editing files, run `/market admin reload` to reload just the market, or `/reload` to reload all datapacks (use `/reload` after adding a new datapack).
 - **Bad entries are skipped, not fatal.** An unknown item, an out-of-range value or a missing field skips only that entry, with a log warning naming the file and entry. Entries with `base_price` 0 or below are skipped with one summary warning, so a half-filled template is safe to load.
@@ -344,6 +375,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
 | `/market admin import "<path>" [preview]` | 4 | Imports a priced CSV. The path is relative to `config/dynamic_economy/`. |
+| `/market admin suggest [modid]` | 4 | Works out prices for unlisted items from their recipes and writes `suggested.csv`; see [Suggesting prices from recipes](#suggesting-prices-from-recipes). |
 
 \* Operators only when `access_mode` is `BLOCK_ONLY`. Permission 4 means the server console or a level-4 operator, since those commands read and write files on the server.
 

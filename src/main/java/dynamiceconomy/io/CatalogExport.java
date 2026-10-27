@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.FieldSource;
 import dynamiceconomy.catalog.ItemClasses;
+import dynamiceconomy.service.PriceSuggestion;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -122,6 +123,88 @@ public final class CatalogExport {
             row.add(set.isEmpty() || set.containsKey(field) ? values.get(field) : "");
         }
         return row;
+    }
+
+    /** Reference columns after the catalog ones in {@code suggested.csv}; the importer ignores them. */
+    static final List<String> SUGGESTION_COLUMNS = List.of("price_source", "exact_cost", "recipe", "recipe_type", "depth", "note");
+
+    /** Where the suggestions went and how many of each kind there were. */
+    public record SuggestionResult(Path folder, int listed, int suggested, int underOneSpur, int toReview, int noRecipe,
+                                   int unpricedInputs) {
+    }
+
+    /**
+     * Writes {@code suggested.csv}: {@code items.csv} with suggested prices and classes filled in for unlisted items
+     * that recipes can price, so it imports directly, plus reference columns explaining each suggestion.
+     */
+    public static SuggestionResult exportSuggestions(Path exportsRoot, Optional<String> modId, Collection<CatalogEntry> catalog,
+                                                     Function<Item, Map<String, List<FieldSource>>> sources,
+                                                     PriceSuggestion.Result suggestions) throws IOException {
+        Map<Item, CatalogEntry> listed = catalog.stream().collect(Collectors.toMap(CatalogEntry::item, Function.identity()));
+        List<Item> items = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+            if (item != Items.AIR && (modId.isEmpty() || id.getNamespace().equals(modId.get()))) {
+                items.add(item);
+            }
+        }
+        items.sort(Comparator.comparing(item -> BuiltInRegistries.ITEM.getKey(item).toString()));
+
+        Path folder = newFolder(exportsRoot);
+        List<String> header = new ArrayList<>(CatalogColumns.HEADER);
+        header.addAll(SUGGESTION_COLUMNS);
+        StringBuilder csv = new StringBuilder("﻿");
+        csv.append(Csv.line(header));
+        int listedCount = 0, suggestedCount = 0, under = 0, review = 0, noRecipe = 0, unpricedInputs = 0;
+        for (Item item : items) {
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+            CatalogEntry entry = listed.get(item);
+            PriceSuggestion.Suggestion suggestion = suggestions.suggestions().get(item);
+            List<String> row;
+            List<String> extra;
+            if (entry != null) {
+                listedCount++;
+                row = row(item, id, entry, sources.apply(item));
+                extra = List.of("catalog", "", "", "", "", "");
+            } else {
+                row = row(item, id, null, FieldSource.NONE);
+                if (suggestion != null) {
+                    suggestedCount++;
+                    List<String> notes = new ArrayList<>();
+                    if (suggestion.basePrice().isPresent()) {
+                        row.set(CatalogColumns.HEADER.indexOf(CatalogColumns.BASE_PRICE), String.valueOf(suggestion.basePrice().get()));
+                        row.set(CatalogColumns.HEADER.indexOf("class"), suggestion.itemClass());
+                    } else {
+                        under++;
+                        notes.add("worth under 1 spur, so left unpriced");
+                    }
+                    if (suggestions.looping().contains(item)) {
+                        notes.add("price kept falling through a recipe loop, so this is too low: set it by hand");
+                    }
+                    if (!suggestion.completeType()) {
+                        review++;
+                        notes.add("check: this recipe type may leave out fluids or ingredient amounts");
+                    }
+                    if (!suggestion.reverse().isEmpty()) {
+                        notes.add("converts back into " + suggestion.reverse().stream().map(i -> BuiltInRegistries.ITEM.getKey(i).toString())
+                                .sorted().collect(Collectors.joining(" ")) + ": list one form only, or selling the other dodges its price drop");
+                    }
+                    extra = List.of("suggested", suggestion.cost().setScale(2, java.math.RoundingMode.HALF_UP).toPlainString(),
+                            suggestion.recipe().toString(), suggestion.recipeType(), String.valueOf(suggestion.depth()), String.join("; ", notes));
+                } else if (suggestions.unpricedInputs().contains(item)) {
+                    unpricedInputs++;
+                    extra = List.of("", "", "", "", "", "every recipe for it needs an unpriced item");
+                } else {
+                    noRecipe++;
+                    extra = List.of("", "", "", "", "", "no recipe makes it: needs a hand-set (seed) price if it should be listed");
+                }
+            }
+            row = new ArrayList<>(row);
+            row.addAll(extra);
+            csv.append(Csv.line(row));
+        }
+        Files.writeString(folder.resolve("suggested.csv"), csv, StandardCharsets.UTF_8);
+        return new SuggestionResult(folder, listedCount, suggestedCount, under, review, noRecipe, unpricedInputs);
     }
 
     /** A new timestamped folder; adds a suffix rather than reuse one, so an earlier export is never overwritten. */

@@ -29,7 +29,9 @@ import dynamiceconomy.service.OrderMath;
 import dynamiceconomy.service.MarketService.Result;
 import dynamiceconomy.service.MarketService.TradeResult;
 import dynamiceconomy.service.PriceModel;
+import dynamiceconomy.service.PriceSuggestion;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.NonNullList;
@@ -1390,6 +1392,143 @@ public final class MarketGameTests {
             CatalogEntry iron = changed.decoded().stream().filter(e -> e.item() == Items.IRON_INGOT).findFirst().orElseThrow();
             helper.assertValueEqual(iron.markup(), 1.0, "changing only the class in the sheet changes the class's fields");
             helper.assertValueEqual(iron.sellFee(), 0.1, "and keeps the entry's own");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        helper.succeed();
+    }
+
+    // ---- Price packs and suggestions (Phase 10) ---------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void filesForMissingModsAreSkippedQuietly(GameTestHelper helper) {
+        String entries = "\"entries\": [ { \"item\": \"minecraft:iron_ingot\", \"base_price\": 16 } ]";
+        MarketCatalog.Loaded present = loadOne("{ \"required_mods\": [\"minecraft\", \"create\"], " + entries + " }");
+        helper.assertTrue(present.entries().containsKey(Items.IRON_INGOT), "loads when every mod is installed");
+        MarketCatalog.Loaded missing = loadOne("{ \"required_mods\": [\"create\", \"not_a_real_mod\"], " + entries + " }");
+        helper.assertTrue(missing.entries().isEmpty(), "skipped when one is missing");
+        helper.assertValueEqual(missing.problems(), List.of(), "with no warning");
+        MarketCatalog.Loaded bad = loadOne("{ \"required_mods\": \"create\", " + entries + " }");
+        helper.assertTrue(bad.entries().isEmpty() && bad.problems().size() == 1 && bad.problems().get(0).skipped(),
+                "a malformed list skips the file and says so: " + bad.problems());
+        helper.succeed();
+    }
+
+    private static CatalogEntry seed(Item item, int price, String itemClass) {
+        JsonObject json = new JsonObject();
+        json.addProperty("item", key(item).toString());
+        json.addProperty("base_price", price);
+        if (itemClass != null) {
+            json.addProperty("class", itemClass);
+        }
+        return MarketCatalog.decode(json).result().orElseThrow();
+    }
+
+    private static Map<Item, CatalogEntry> seeds(CatalogEntry... entries) {
+        Map<Item, CatalogEntry> map = new java.util.LinkedHashMap<>();
+        for (CatalogEntry entry : entries) {
+            map.put(entry.item(), entry);
+        }
+        return map;
+    }
+
+    private static PriceSuggestion.Path path(Item output, int count, boolean fuel, Item... inputs) {
+        List<PriceSuggestion.Slot> slots = new ArrayList<>();
+        for (Item input : inputs) {
+            slots.add(new PriceSuggestion.Slot(List.of(input), 1));
+        }
+        return new PriceSuggestion.Path(ResourceLocation.fromNamespaceAndPath("test", key(output).getPath()), "minecraft:crafting",
+                output, count, slots, fuel);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void suggestionsFollowTheCheapestRecipe(GameTestHelper helper) {
+        // Stand-in items: what they are doesn't matter, only the recipes given here.
+        Item a = Items.IRON_INGOT, r = Items.DIAMOND, b = Items.IRON_BLOCK, c = Items.DIAMOND_BLOCK, d = Items.IRON_NUGGET,
+                e = Items.STICK, x = Items.CAKE, f = Items.FURNACE;
+        Map<Item, CatalogEntry> catalog = seeds(seed(a, 10, null), seed(r, 100, "rare_resource"), seed(Items.MILK_BUCKET, 20, null),
+                seed(Items.BUCKET, 12, null), seed(Items.COAL, 8, null));
+        PriceSuggestion.Result result = PriceSuggestion.suggest(List.of(
+                path(b, 1, false, a, a),            // 2 × 10 × 1.1 = 22
+                path(b, 1, false, a),               // cheaper: 11, and chosen
+                path(c, 1, false, b, r),            // (11 + 100) × 1.1 = 122.1, rare input
+                path(d, 4, false, a),               // 11 / 4 = 2.75
+                path(e, 20, false, a),              // 0.55: under 1 spur
+                path(x, 1, false, Items.MILK_BUCKET), // the bucket comes back: (20 − 12) × 1.1 = 8.8
+                path(f, 1, true, a)                 // plus an eighth of a coal: (10 + 1) × 1.1 = 12.1
+        ), catalog, new java.util.HashMap<>());
+        Map<Item, PriceSuggestion.Suggestion> s = result.suggestions();
+        helper.assertValueEqual(s.get(b).basePrice(), Optional.of(11), "cheapest recipe wins");
+        helper.assertValueEqual(s.get(c).basePrice(), Optional.of(122), "rounded down");
+        helper.assertValueEqual(s.get(c).itemClass(), "rare_processed", "a rare input makes it rare");
+        helper.assertValueEqual(s.get(b).itemClass(), "common_processed", "otherwise common");
+        helper.assertValueEqual(s.get(c).depth(), 2, "two steps from the seeds");
+        helper.assertValueEqual(s.get(d).basePrice(), Optional.of(2), "divided by the output count");
+        helper.assertValueEqual(s.get(e).basePrice(), Optional.empty(), "worth under 1 spur: left unpriced");
+        helper.assertValueEqual(s.get(x).basePrice(), Optional.of(8), "crafting remainders are subtracted");
+        helper.assertValueEqual(s.get(f).basePrice(), Optional.of(12), "furnace recipes add fuel");
+        helper.assertTrue(!s.containsKey(a), "listed items keep their catalog price");
+        helper.assertTrue(result.settled(), "settles");
+
+        // A loop that makes something out of less than itself never settles; its items are reported.
+        Item g = Items.GOLD_INGOT, h = Items.GOLD_NUGGET;
+        PriceSuggestion.Result loop = PriceSuggestion.suggest(List.of(path(g, 1, false, a), path(h, 2, false, g), path(g, 1, false, h)),
+                catalog, new java.util.HashMap<>());
+        helper.assertTrue(!loop.settled() && loop.looping().contains(g), "the loop is reported: " + loop.looping());
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void suggestionsNeverAllowBuyCraftSellProfit(GameTestHelper helper) {
+        // The premium and rounding down keep a suggested price at or below its inputs' cost × (1 + premium), and
+        // the premium is below every built-in markup, so buying the inputs at base prices and selling the output loses.
+        double smallestMarkup = ItemClasses.all().values().stream().filter(c -> c.sets("markup"))
+                .mapToDouble(c -> c.values().get("markup").getAsDouble()).min().orElseThrow();
+        helper.assertTrue(PriceSuggestion.PREMIUM < smallestMarkup, "premium below every class markup");
+        helper.assertTrue(PriceSuggestion.PREMIUM < CatalogEntry.DEFAULT_MARKUP, "and the default markup");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void suggestUsesTheGamesRecipes(GameTestHelper helper) {
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        Map<Item, CatalogEntry> catalog = seeds(seed(Items.IRON_INGOT, 32, "common_processed"), seed(Items.DIAMOND, 512, "rare_resource"),
+                seed(Items.NETHERITE_INGOT, 4000, "rare_processed"), seed(Items.OAK_LOG, 8, "common_resource"),
+                seed(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE, 200, "rare_loot"), seed(Items.COAL, 8, null));
+        PriceSuggestion.Result result = PriceSuggestion.suggest(server.getRecipeManager().getRecipes(), server.registryAccess(), catalog);
+        Map<Item, PriceSuggestion.Suggestion> s = result.suggestions();
+        helper.assertValueEqual(s.get(Items.IRON_BLOCK).basePrice(), Optional.of(316), "9 ingots × 32 × 1.1");
+        helper.assertTrue(s.get(Items.IRON_NUGGET).reverse().contains(Items.IRON_INGOT), "nuggets turn back into ingots, and that's noted");
+
+        Item sheet = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:iron_sheet"));
+        helper.assertValueEqual(s.get(sheet).basePrice(), Optional.of(35), "Create pressing: 32 × 1.1");
+        helper.assertValueEqual(s.get(sheet).recipeType(), "create:pressing", "from the pressing recipe");
+        helper.assertTrue(s.get(sheet).completeType(), "a recipe type that lists everything");
+
+        PriceSuggestion.Suggestion sword = s.get(Items.NETHERITE_SWORD);
+        helper.assertTrue(sword != null && sword.recipeType().equals("minecraft:smithing"), "smithing recipes are read: " + sword);
+        BigDecimal diamondSword = s.get(Items.DIAMOND_SWORD).cost();
+        helper.assertValueEqual(sword.cost().setScale(6, RoundingMode.HALF_UP),
+                diamondSword.add(BigDecimal.valueOf(4200)).multiply(BigDecimal.valueOf(1.1)).setScale(6, RoundingMode.HALF_UP),
+                "template + diamond sword + netherite ingot, plus the premium");
+        helper.assertValueEqual(sword.itemClass(), "rare_processed", "rare inputs");
+        helper.assertTrue(result.unusable().keySet().stream().anyMatch(reason -> reason.startsWith("special")), "special recipes skipped");
+        helper.assertTrue(result.noRecipe().contains(Items.DIRT), "dirt isn't made by any recipe from these seeds");
+        helper.assertTrue(result.settled(), "vanilla and Create recipes settle: " + result.looping());
+
+        try {
+            Path root = Files.createTempDirectory("market-suggest");
+            CatalogExport.SuggestionResult written = CatalogExport.exportSuggestions(root, Optional.of("minecraft"), catalog.values(),
+                    item -> FieldSource.NONE, result);
+            String csv = Files.readString(written.folder().resolve("suggested.csv"));
+            Csv.Row block = Csv.parse(csv).rows().stream().filter(row -> row.get("item_id").equals("minecraft:iron_block")).findFirst().orElseThrow();
+            helper.assertValueEqual(block.get("base_price"), "316", "suggested price written");
+            helper.assertValueEqual(block.get("class"), "common_processed", "and class");
+            helper.assertValueEqual(block.get("price_source"), "suggested", "marked as a suggestion");
+            CatalogImport.Report report = CatalogImport.analyze(csv);
+            helper.assertValueEqual(report.rejected(), List.of(), "the suggestion file imports cleanly");
+            helper.assertTrue(report.decoded().stream().anyMatch(entry -> entry.item() == Items.IRON_BLOCK && entry.basePrice() == 316),
+                    "with the suggested prices");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

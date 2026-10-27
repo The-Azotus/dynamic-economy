@@ -18,6 +18,7 @@ import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.neoforged.fml.ModList;
 
 import java.io.Reader;
 import java.util.ArrayList;
@@ -278,6 +279,26 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         if (!(file.json() instanceof JsonObject obj) || !obj.has("entries") || !obj.get("entries").isJsonArray()) {
             skipped(problems, "Market file %s must be an object with an \"entries\" array; skipped".formatted(fileId));
             return 0;
+        }
+        if (obj.has("required_mods")) {
+            List<String> required = new ArrayList<>();
+            if (obj.get("required_mods") instanceof com.google.gson.JsonArray array) {
+                for (JsonElement mod : array) {
+                    if (mod.isJsonPrimitive() && mod.getAsJsonPrimitive().isString()) {
+                        required.add(mod.getAsString());
+                    }
+                }
+            }
+            if (!(obj.get("required_mods") instanceof com.google.gson.JsonArray array) || required.size() != array.size()) {
+                skipped(problems, "Market file %s: \"required_mods\" must be a list of mod IDs; file skipped".formatted(fileId));
+                return 0;
+            }
+            // A price file for a mod that isn't installed is expected, not a mistake: skip it quietly.
+            Optional<String> missing = required.stream().filter(mod -> !ModList.get().isLoaded(mod)).findFirst();
+            if (missing.isPresent()) {
+                DynamicEconomy.LOGGER.debug("Market file {} skipped: mod {} isn't installed", fileId, missing.get());
+                return 0;
+            }
         }
         JsonObject defaults = new JsonObject();
         if (obj.has("defaults")) {

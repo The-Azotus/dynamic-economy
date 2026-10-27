@@ -11,6 +11,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketAccess;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.service.PriceSuggestion;
 import dynamiceconomy.catalog.CatalogOverlay;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.data.AuditLog;
@@ -131,6 +132,13 @@ public final class MarketCommand {
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 BuiltInRegistries.ITEM.keySet().stream().map(ResourceLocation::getNamespace).distinct(), builder))
                                         .executes(ctx -> export(ctx, Optional.of(StringArgumentType.getString(ctx, "modid"))))))
+                        .then(Commands.literal("suggest")
+                                .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                .executes(ctx -> suggest(ctx, Optional.empty()))
+                                .then(Commands.argument("modid", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                BuiltInRegistries.ITEM.keySet().stream().map(ResourceLocation::getNamespace).distinct(), builder))
+                                        .executes(ctx -> suggest(ctx, Optional.of(StringArgumentType.getString(ctx, "modid"))))))
                         .then(Commands.literal("import")
                                 .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
                                 .then(Commands.argument("path", StringArgumentType.string())
@@ -425,6 +433,48 @@ public final class MarketCommand {
         } catch (IOException e) {
             DynamicEconomy.LOGGER.error("Market export failed", e);
             ctx.getSource().sendFailure(Component.literal("Export failed: " + e.getMessage()));
+            return 0;
+        }
+    }
+
+    /**
+     * Prices unlisted items from their recipes, using the live catalog as the known prices, and writes the result as
+     * a CSV that can be reviewed and imported. Changes nothing in the market.
+     */
+    private static int suggest(CommandContext<CommandSourceStack> ctx, Optional<String> modId) {
+        if (modId.isPresent() && BuiltInRegistries.ITEM.keySet().stream().noneMatch(id -> id.getNamespace().equals(modId.get()))) {
+            ctx.getSource().sendFailure(Component.literal("No items are registered by a mod called \"%s\"".formatted(modId.get())));
+            return 0;
+        }
+        MinecraftServer server = ctx.getSource().getServer();
+        Map<Item, CatalogEntry> catalog = new java.util.LinkedHashMap<>();
+        MarketCatalog.INSTANCE.entries().forEach(entry -> catalog.put(entry.item(), entry));
+        PriceSuggestion.Result result = PriceSuggestion.suggest(server.getRecipeManager().getRecipes(), server.registryAccess(), catalog);
+        try {
+            CatalogExport.SuggestionResult written = CatalogExport.exportSuggestions(configRoot().resolve("exports"), modId,
+                    catalog.values(), MarketCatalog.INSTANCE::sources, result);
+            String file = "config/" + DynamicEconomy.MOD_ID + "/exports/" + written.folder().getFileName() + "/suggested.csv";
+            AuditLog.record(ctx.getSource(), "suggest", modId.orElse("all mods"), "ok: %d suggested to %s".formatted(written.suggested(), file),
+                    null, null);
+            List<String> lines = new ArrayList<>();
+            lines.add("Wrote " + file + ". Nothing on the market changed.");
+            lines.add("  %d already listed, %d priced from recipes (%d of them worth under 1 spur, left blank; %d from recipe types worth checking)"
+                    .formatted(written.listed(), written.suggested(), written.underOneSpur(), written.toReview()));
+            lines.add("  %d made only from unpriced items, %d with no usable recipe (these need hand-set prices)"
+                    .formatted(written.unpricedInputs(), written.noRecipe()));
+            if (!result.unusable().isEmpty()) {
+                lines.add("  Recipes skipped: " + result.unusable().entrySet().stream()
+                        .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(5)
+                        .map(e -> e.getValue() + " " + e.getKey()).collect(java.util.stream.Collectors.joining(", ")));
+            }
+            if (!result.settled()) {
+                lines.add("  Warning: some prices kept falling through a recipe loop; check the log");
+            }
+            lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), true));
+            return written.suggested();
+        } catch (IOException e) {
+            DynamicEconomy.LOGGER.error("Market price suggestion failed", e);
+            ctx.getSource().sendFailure(Component.literal("Suggest failed: " + e.getMessage()));
             return 0;
         }
     }

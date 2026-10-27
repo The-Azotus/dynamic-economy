@@ -260,7 +260,13 @@ Done when: an entry with a class gets the class's values unless overridden at a 
 
 - A built-in datapack, **enabled by default**, with one catalog file per mod (`vanilla.json`, `create.json`, …).
 - New file-level field `"required_mods": ["<modid>", …]`: if any is missing, the file is skipped silently (one debug line, no warnings). Admins can still disable the pack with `/datapack` or override entries in their own files.
-- Pricing workflow: the user exports `items.csv` from their modpack; Claude proposes a class and base price per item (raw resources anchor prices; processed items roughly their inputs plus a premium); the user reviews in a spreadsheet; the result becomes the packaged files.
+- **Recipe-derived pricing** (decided): only raw materials are priced by hand ("seeds"); everything else is derived from recipes.
+  - `/market admin suggest [modid]`, permission 4. Treats every live catalog entry as a known price and walks every recipe in the running game (`RecipeManager`, generic `Recipe.getIngredients()` / `getResultItem()`, so modded machine recipes count when they expose items). An item's suggested price is its cheapest recipe: the sum of each ingredient slot's cheapest priced option, minus priced crafting remainders, divided by output count, times a processing premium kept below the smallest markup (buying ingredients, crafting and selling must never profit). Repeats until nothing gets cheaper.
+  - Writes `suggested.csv` to a new export folder, in the `items.csv` format (so it imports directly) with `base_price` and a suggested `class` filled in, plus reference columns: the recipe used, its type, depth, and a note. Notes flag items worth under 1 spur (left blank, since prices are integers), recipe types whose inputs may be incomplete (fluids, sequenced assembly), and items with no priced recipe (candidates for new seeds).
+  - Suggested class: `rare_processed` if any input is from a rare class, else `common_processed`.
+  - Workflow: Claude writes seed files from the pack's `items.csv`; the user runs `suggest` in the pack and sends the CSV; Claude adds seeds for what's missing and repeats; the result is packaged per mod.
+- Chipped and Rechiseled (decorative variants) are left out of the market entirely.
+- Price scale: proposed by Claude, confirmed by the user before seeds are written.
 
 Done when: the full pack loads with no warnings; removing a mod drops its file with no warnings; vanilla-only loads just the vanilla file; round-trip arbitrage tests pass against the packaged catalog.
 
