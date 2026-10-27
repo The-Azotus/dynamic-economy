@@ -45,8 +45,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -1149,10 +1152,56 @@ public final class MarketGameTests {
     public static void terminalHasRecipeAndFacing(GameTestHelper helper) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "market_terminal");
         helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(id).isPresent(),
-                "the recipe loads, so its Create and Numismatics ingredients resolve");
+                "the recipe loads, so its Numismatics ingredient resolves");
         helper.setBlock(net.minecraft.core.BlockPos.ZERO, MarketBlocks.MARKET_TERMINAL.get().defaultBlockState()
                 .setValue(MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST));
         helper.assertBlockProperty(net.minecraft.core.BlockPos.ZERO, MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST);
+        helper.succeed();
+    }
+
+    /** What a 3x3 crafting grid makes, if anything. */
+    private static Optional<ItemStack> craft(GameTestHelper helper, Item... grid) {
+        List<ItemStack> stacks = new ArrayList<>();
+        for (Item item : grid) {
+            stacks.add(new ItemStack(item));
+        }
+        CraftingInput input = CraftingInput.of(3, 3, stacks);
+        return helper.getLevel().getServer().getRecipeManager()
+                .getRecipeFor(RecipeType.CRAFTING, input, helper.getLevel())
+                .map(r -> r.value().assemble(input, helper.getLevel().registryAccess()));
+    }
+
+    @GameTest(template = EMPTY)
+    public static void terminalCraftsFromCraftingTableAndSpurs(GameTestHelper helper) {
+        Item spur = BuiltInRegistries.ITEM.get(ResourceLocation.parse("numismatics:spur"));
+        helper.assertTrue(spur != Items.AIR, "Numismatics spur exists");
+        Item t = Items.CRAFTING_TABLE;
+        Optional<ItemStack> made = craft(helper, spur, spur, spur, spur, t, spur, spur, spur, spur);
+        helper.assertTrue(made.isPresent() && made.get().is(MarketBlocks.MARKET_TERMINAL_ITEM.get()) && made.get().getCount() == 1,
+                "a crafting table surrounded by 8 spurs makes one terminal, got " + made);
+
+        Item g = Items.GOLD_INGOT, r = Items.REDSTONE;
+        Item cog = BuiltInRegistries.ITEM.get(ResourceLocation.parse("numismatics:cog"));
+        Item tube = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:electron_tube"));
+        Item casing = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:brass_casing"));
+        Optional<ItemStack> old = craft(helper, g, cog, g, tube, casing, tube, g, r, g);
+        helper.assertTrue(old.isEmpty() || !old.get().is(MarketBlocks.MARKET_TERMINAL_ITEM.get()),
+                "the old recipe no longer makes a terminal");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void terminalIsATableThatDropsItself(GameTestHelper helper) {
+        BlockState state = MarketBlocks.MARKET_TERMINAL.get().defaultBlockState();
+        net.minecraft.core.BlockPos pos = helper.absolutePos(net.minecraft.core.BlockPos.ZERO);
+        helper.setBlock(net.minecraft.core.BlockPos.ZERO, state);
+        helper.assertTrue(!state.isCollisionShapeFullBlock(helper.getLevel(), pos), "the table is not a full block");
+        helper.assertTrue(!state.canOcclude(), "neighbouring faces still render");
+        helper.assertTrue(!state.requiresCorrectToolForDrops(), "breaks by hand");
+        helper.assertTrue(state.is(net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE), "axes break it faster");
+        List<ItemStack> drops = net.minecraft.world.level.block.Block.getDrops(state, helper.getLevel(), pos, null);
+        helper.assertTrue(drops.size() == 1 && drops.get(0).is(MarketBlocks.MARKET_TERMINAL_ITEM.get()),
+                "broken by hand, it drops itself, got " + drops);
         helper.succeed();
     }
 

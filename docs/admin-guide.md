@@ -43,12 +43,12 @@ The setting takes effect as soon as you save the file, with no restart. A player
 **Terminals** are craftable:
 
 ```
-Gold ingot     Numismatics cog   Gold ingot
-Electron tube  Brass casing      Electron tube
-Gold ingot     Redstone          Gold ingot
+Spur  Spur            Spur
+Spur  Crafting table  Spur
+Spur  Spur            Spur
 ```
 
-To change or remove the recipe, override `data/dynamic_economy/recipe/market_terminal.json` in a datapack. To hand them out yourself, use `/give @p dynamic_economy:market_terminal`. A pickaxe picks them up again.
+To change or remove the recipe, override `data/dynamic_economy/recipe/market_terminal.json` in a datapack. To hand them out yourself, use `/give @p dynamic_economy:market_terminal`. Terminals are wooden tables: they break by hand, faster with an axe, and always drop themselves.
 
 ## Pricing items
 

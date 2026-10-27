@@ -4,7 +4,7 @@ The market is run by the server. You can sell it items for money and buy items f
 
 ## Opening the market
 
-- **Market Terminal.** Right-click one. Terminals look like a brass box with a screen, and anyone can craft one (see [Crafting a terminal](#crafting-a-terminal)). If you walk more than about 8 blocks away, the market closes.
+- **Market Terminal.** Right-click one. Terminals look like a wooden table with piles of coins on it, and anyone can craft one (see [Crafting a terminal](#crafting-a-terminal)). If you walk more than about 8 blocks away, the market closes.
 - **`/market`.** Opens the market from anywhere, if your server allows it. If you see *"The market is only available at a Market Terminal on this server"*, find a terminal instead.
 
 ## The market screen
@@ -81,9 +81,9 @@ Money is counted in **spurs**: 1 bevel = 8 spurs, 1 sprocket = 16, 1 cog = 64, 1
 ## Crafting a terminal
 
 ```
-Gold ingot     Cog (coin)      Gold ingot
-Electron tube  Brass casing    Electron tube
-Gold ingot     Redstone        Gold ingot
+Spur  Spur            Spur
+Spur  Crafting table  Spur
+Spur  Spur            Spur
 ```
 
-The cog is the Numismatics coin; the electron tube and brass casing are from Create. Your server may use a different recipe; check a recipe viewer if this one doesn't work. Break the terminal with a pickaxe to pick it up again.
+The spur is the smallest Numismatics coin. Your server may use a different recipe; check a recipe viewer if this one doesn't work. Break the terminal (by hand or with an axe) to pick it up again.

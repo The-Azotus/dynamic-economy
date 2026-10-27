@@ -24,6 +24,17 @@ Background, verified source findings and the reasoning behind decisions are in `
 | 5 — Pack integration and polish | Done |
 | 6 — Terminal, access, admin editing, tooltips | Done, released as v0.2.0 |
 | 7 — Integrity, usability, admin tooling | Done, released as v0.2.0 |
+| 8 — Recipe and table block | Done (on `phase8`) |
+| 9 — Item classes | Not started |
+| 10 — Built-in price packs | Not started (needs the pack's `items.csv`) |
+| 11 — GUI rework | Not started |
+| 12 — ProgressiveStages hooks | Not started |
+| 13 — Leaderboard | Not started |
+| 14 — Contracts | Not started |
+| 15 — Difficulty preset | Not started |
+| 16 — Player exchange (optional toggle) | Not started |
+
+Phases 8+ target v0.3.0 on a branch from `main`. Poker and a random-walk stock market are **out of scope** for this mod (better as a separate companion mod, if ever).
 
 Branches: `main` holds the latest release (`v0.2.0`) and is pushed to https://github.com/The-Azotus/dynamic-economy. `explore` (Phase 6) and `phase7` are merged, local-only history with their own worktree folders (`git worktree list`). Start new work on a fresh branch from `main`. Licence: MIT.
 
@@ -224,6 +235,89 @@ Priorities, in order: economic correctness, then player usability, then admin ob
 The GameTest world in `run-gametest/world` persists between runs, so tests must undo any lasting change they make (edits, tag rules); stock, prices and money counts are reset or compared relatively.
 
 Done when: every stage's tests pass alongside all earlier GameTests; saves from earlier versions load; docs cover each new command and the money model; manual checks (GUI layout, two clients, example pack on a real server) are listed in the report as manual.
+
+## Phase 8 — Recipe and table block
+
+- Default recipe: shaped, a crafting table in the centre surrounded by 8 `numismatics:spur`. Still datapack-overridable.
+- Market Terminal becomes a table with piles of coins on it: a hand-written JSON block model (editable later in Blockbench), simple original textures, horizontal facing on placement, matching collision and outline shapes, no full-block occlusion. Everything else about the terminal (opening, 8-block range, close on break) is unchanged.
+
+Done when: the new recipe crafts the terminal and the old one no longer does; the block places facing the player and looks right from all sides; existing placed terminals in old worlds still load and work.
+
+## Phase 9 — Item classes
+
+A class is a named set of pricing defaults, so groups of items behave alike (rare items volatile and slow to recover, common ones stable). It is the main anti-exploit tool: **no per-player quotas** (decided); dumping is limited by price impact.
+
+- Classes live in `data/<namespace>/market_classes/*.json`, loaded by the same reload. A class may set any of: `markup`, `sell_fee`, `can_sell`, `can_buy`, `dynamic`, `unlimited_stock`, `min_buy_markup`, `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling`, and later contract settings (Phase 14). Same validation as catalog entries.
+- Catalog entries, file `defaults`, tag rules and in-game edits accept `"class": "<id>"`. Unknown class: warning, entry skipped.
+- Precedence: server config < class < file `defaults` < entry < tag rules < per-item edits.
+- Built-in classes (placeholder values, tuned in Phase 10): `common_resource`, `common_processed`, `rare_resource`, `rare_processed`, `rare_loot`, `unique`, `farmable` (crops and mob drops that automated farms flood: cheap, steep sell impact). No equipment class.
+- Admin tooling knows classes: CSV `class` column in export/import, `info` shows the class as a field source, `diagnose` flags unknown classes, `/market admin classes` lists them with member counts.
+
+Done when: an entry with a class gets the class's values unless overridden at a higher level; changing a class and reloading reprices all members without touching stock or `s`; the CSV round-trip test still passes with the class column; all earlier GameTests pass.
+
+## Phase 10 — Built-in price packs
+
+- A built-in datapack, **enabled by default**, with one catalog file per mod (`vanilla.json`, `create.json`, …).
+- New file-level field `"required_mods": ["<modid>", …]`: if any is missing, the file is skipped silently (one debug line, no warnings). Admins can still disable the pack with `/datapack` or override entries in their own files.
+- Pricing workflow: the user exports `items.csv` from their modpack; Claude proposes a class and base price per item (raw resources anchor prices; processed items roughly their inputs plus a premium); the user reviews in a spreadsheet; the result becomes the packaged files.
+
+Done when: the full pack loads with no warnings; removing a mod drops its file with no warnings; vanilla-only loads just the vanilla file; round-trip arbitrage tests pass against the packaged catalog.
+
+## Phase 11 — GUI rework
+
+- The screen sizes to the window; the list shows as many rows as fit (not a fixed 7). Compact rows with columns: item, stock, buy, sell, trend.
+- The selected-item panel moves beside the list on wide windows, below it on narrow ones.
+- Tabs: **Market | Contracts | Leaderboard | History**, plus **Exchange** when enabled. Later phases fill their tabs.
+- All existing functions (search, sort, filters, Max Buy, Sell All, price history, rejection messages) still work.
+
+Done when: usable at GUI scales 1–4 and small windows; no regressions in Phase 3/7 behaviour (manual checks listed).
+
+## Phase 12 — ProgressiveStages hooks
+
+- Soft dependency on ProgressiveStages **3.1.1**. Verify its API against the released jar before use (as in Phase 0). `compat/StagesBridge` is the only class allowed to import it; without the mod, nothing changes.
+- An item locked for a player is **hidden** from that player: snapshot, deltas, tooltips, contracts and exchange. Catalog sync becomes per-player.
+- The server enforces it too: buying or selling a locked item is rejected as `NOT_LISTED` (doesn't reveal locked items).
+- Prices stay the same for everyone; only visibility differs. Stage changes re-sync the player's market.
+
+Done when: a locked item is invisible and untradeable for one player while another trades it; unlocking a stage shows it without reopening the game; works with the mod absent.
+
+## Phase 13 — Leaderboard
+
+- Top N **player** bank balances with exact amounts, read via `NumismaticsBridge`. Team and shared accounts are excluded; only accounts belonging to a known player profile count (verify how Numismatics distinguishes them).
+- Offline players shown by name from the profile cache.
+- Config: `leaderboard_enabled`, `leaderboard_size`, `leaderboard_exclude_operators`.
+- Read on the main thread; refreshed when the tab opens, not every tick.
+
+Done when: balances match `/market` bank values; non-player accounts never appear.
+
+## Phase 14 — Contracts
+
+- A global board, regenerated every **5 in-game days by day count** (sleeping counts). Generated from the catalog using class settings: large orders for common classes, small ones for rare, single items for `unique`. Number of contracts configurable.
+- Flow: a player **claims** a contract, which locks it to them. Claiming takes a **deposit** (fraction of the reward, configurable). They deliver in batches from the **main inventory only**. Delivered items **disappear** (not added to stock).
+- Completion pays the reward and returns the deposit. At expiry, an incomplete contract pays for units delivered and the deposit is lost. A player may abandon, with the same outcome. Max active contracts per player configurable (default 1).
+- Integrity: per-unit reward stays below the lowest buy price the market can reach for that item, so buying from the market to fill a contract never profits. Transaction rules apply (checks before changes, `long` totals, `TOO_LARGE`).
+- New Result values for contract actions (e.g. `CONTRACT_TAKEN`, `CONTRACT_EXPIRED`); list them in the report.
+
+Done when: two players can't both claim one contract; partial and full delivery pay exactly as specified; expiry and refresh happen on the right day, including after sleeping and a restart; buy-from-market-and-deliver never profits (GameTest).
+
+## Phase 15 — Difficulty preset
+
+- Server config `difficulty = EASY | NORMAL | HARD | CUSTOM`. Presets apply **multipliers on top of** catalog and class values: payout, added `sell_fee`, impact, recovery, contract reward. `CUSTOM` exposes each multiplier. `NORMAL` changes nothing.
+- After multipliers, the anti-arbitrage invariant must still hold; invalid combinations are clamped with a warning.
+
+Done when: each preset changes prices as documented; round-trip arbitrage tests pass under every preset.
+
+## Phase 16 — Player exchange (optional, config toggle)
+
+The feature wanted most after the required ones. Players post buy and sell orders at their own prices.
+
+- Sell orders move items into escrow; buy orders move money into escrow (`deduct`). Orders match automatically, price-time priority, partial fills.
+- Proceeds and items go to a **collection box** in the Exchange tab (works for offline players; never drop items).
+- Config: `exchange_enabled` (default false), `exchange_tax` (fraction taken from the seller, destroyed: a money sink), max open orders per player, order expiry.
+- v1 trades default-component items only (same rule as the market). Items with components (enchanted gear) are a later step.
+- All transaction rules apply. Cancelling returns escrow exactly.
+
+Done when: matched trades move exactly the right items and money with tax applied; cancelling and expiry return escrow; nothing is lost or duplicated across a restart mid-order; spam-clicking reconciles.
 
 ## Report format (after every phase)
 

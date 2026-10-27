@@ -18,10 +18,10 @@ public final class MarketBlocks {
 
     public static final DeferredBlock<MarketTerminalBlock> MARKET_TERMINAL = BLOCKS.register("market_terminal",
             () -> new MarketTerminalBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.5f, 6.0f)
-                    .requiresCorrectToolForDrops()
-                    .sound(SoundType.METAL)));
+                    .mapColor(MapColor.WOOD)
+                    .strength(2.5f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()));
     public static final DeferredItem<BlockItem> MARKET_TERMINAL_ITEM = ITEMS.registerSimpleBlockItem(MARKET_TERMINAL);
 
     private MarketBlocks() {
