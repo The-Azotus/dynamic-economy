@@ -1,47 +1,6 @@
 {
   "entries": [
     {
-      "item": "minecraft:acacia_boat",
-      "base_price": 7,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_chest_boat",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:acacia_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -52,59 +11,14 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:acacia_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:acacia_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:acacia_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "minecraft:acacia_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:acacia_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:activator_rail",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:allium",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:amethyst_block",
-      "base_price": 35,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:amethyst_shard",
@@ -122,25 +36,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:andesite_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:andesite_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:angler_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:anvil",
-      "base_price": 227,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:apple",
@@ -156,11 +54,6 @@
       "item": "minecraft:armadillo_scute",
       "base_price": 16,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:armor_stand",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:arms_up_pottery_sherd",
@@ -183,120 +76,14 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:baked_potato",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:bamboo",
       "base_price": 1,
       "class": "farmable"
     },
     {
-      "item": "minecraft:bamboo_block",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_button",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_chest_raft",
-      "base_price": 13,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_door",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_fence",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_fence_gate",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_hanging_sign",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bamboo_mosaic",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bamboo_mosaic_slab",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bamboo_mosaic_stairs",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bamboo_planks",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bamboo_pressure_plate",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_raft",
-      "base_price": 11,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_sign",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_slab",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bamboo_stairs",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:bamboo_trapdoor",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:basalt",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:beacon",
-      "base_price": 18086,
-      "class": "rare_processed"
     },
     {
       "item": "minecraft:bee_nest",
@@ -309,11 +96,6 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:beehive",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:beetroot",
       "base_price": 2,
       "class": "farmable"
@@ -324,60 +106,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:beetroot_soup",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bell",
-      "base_price": 264,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:big_dripleaf",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:birch_boat",
-      "base_price": 7,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_chest_boat",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:birch_leaves",
@@ -390,97 +121,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:birch_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:birch_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:birch_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:birch_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:birch_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:black_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:black_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:black_candle",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:black_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:black_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:black_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:black_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:black_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:black_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:black_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:blackstone",
@@ -488,30 +131,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:blackstone_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blackstone_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:blade_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:blast_furnace",
-      "base_price": 46,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blaze_powder",
-      "base_price": 8,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:blaze_rod",
@@ -519,68 +141,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:blue_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blue_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blue_candle",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blue_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:blue_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blue_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blue_ice",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:blue_orchid",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:blue_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:blue_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:blue_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:blue_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:bolt_armor_trim_smithing_template",
@@ -591,26 +154,6 @@
       "item": "minecraft:bone",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:bone_block",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:book",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bookshelf",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bow",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:brain_coral",
@@ -628,11 +171,6 @@
       "class": "common_processed"
     },
     {
-      "item": "minecraft:bread",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:breeze_rod",
       "base_price": 64,
       "class": "farmable"
@@ -643,69 +181,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:brewing_stand",
-      "base_price": 38,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brick",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brick_slab",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brick_stairs",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brick_wall",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bricks",
-      "base_price": 6,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:brown_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brown_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brown_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:brown_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:brown_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brown_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:brown_mushroom",
       "base_price": 2,
       "class": "farmable"
@@ -713,34 +188,6 @@
     {
       "item": "minecraft:brown_mushroom_block",
       "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brown_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:brown_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:brown_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:brown_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:brush",
-      "base_price": 11,
       "class": "common_processed"
     },
     {
@@ -759,21 +206,6 @@
       "class": "common_processed"
     },
     {
-      "item": "minecraft:bucket",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:budding_amethyst",
-      "base_price": 111,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:bundle",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:burn_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
@@ -784,29 +216,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:cake",
-      "base_price": 21,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:calcite",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:calibrated_sculk_sensor",
-      "base_price": 61,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:campfire",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:candle",
-      "base_price": 4,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:carrot",
@@ -814,94 +226,13 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:carrot_on_a_stick",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cartography_table",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:carved_pumpkin",
       "base_price": 6,
       "class": "farmable"
     },
     {
-      "item": "minecraft:cauldron",
-      "base_price": 246,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chain",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chainmail_boots",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chainmail_chestplate",
-      "base_price": 140,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chainmail_helmet",
-      "base_price": 88,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chainmail_leggings",
-      "base_price": 123,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:charcoal",
       "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cherry_boat",
-      "base_price": 7,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_chest_boat",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_hanging_sign",
-      "base_price": 10,
       "class": "common_processed"
     },
     {
@@ -915,116 +246,14 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:cherry_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cherry_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:cherry_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "minecraft:cherry_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cherry_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chest",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chest_minecart",
-      "base_price": 68,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:chicken",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:chiseled_bookshelf",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_copper",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_deepslate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_nether_bricks",
-      "base_price": 6,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:chiseled_polished_blackstone",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_quartz_block",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_red_sandstone",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_sandstone",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_stone_bricks",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:chiseled_tuff",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:chiseled_tuff_bricks",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:chorus_fruit",
@@ -1037,42 +266,14 @@
       "class": "common_processed"
     },
     {
-      "item": "minecraft:clay",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:clay_ball",
       "base_price": 1,
       "class": "common_resource"
     },
     {
-      "item": "minecraft:clock",
-      "base_price": 220,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:coal",
       "base_price": 8,
       "class": "common_processed"
-    },
-    {
-      "item": "minecraft:coal_block",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:coal_ore",
-      "base_price": 36,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:coarse_dirt",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:coast_armor_trim_smithing_template",
@@ -1085,29 +286,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:cobbled_deepslate_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cobbled_deepslate_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:cobblestone",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:cobblestone_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cobblestone_wall",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:cobweb",
@@ -1125,90 +306,8 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:comparator",
-      "base_price": 33,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:compass",
-      "base_price": 149,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:conduit",
-      "base_price": 1689,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:cooked_beef",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cooked_chicken",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cooked_cod",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cooked_mutton",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cooked_porkchop",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cooked_rabbit",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cooked_salmon",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:copper_block",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:copper_bulb",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:copper_door",
-      "base_price": 17,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:copper_grate",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:copper_ingot",
       "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:copper_ore",
-      "base_price": 133,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:copper_trapdoor",
-      "base_price": 26,
       "class": "common_processed"
     },
     {
@@ -1217,78 +316,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:cracked_deepslate_bricks",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cracked_deepslate_tiles",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cracked_nether_bricks",
-      "base_price": 6,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cracked_polished_blackstone_bricks",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cracked_stone_bricks",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:crafter",
-      "base_price": 211,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:crafting_table",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:creeper_banner_pattern",
-      "base_price": 140,
-      "class": "rare_processed"
-    },
-    {
       "item": "minecraft:creeper_head",
       "base_price": 128,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:crimson_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:crimson_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:crimson_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:crimson_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:crimson_fungus",
@@ -1296,30 +326,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:crimson_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:crimson_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:crimson_nylium",
       "base_price": 2,
       "class": "common_processed"
-    },
-    {
-      "item": "minecraft:crimson_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:crimson_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:crimson_roots",
@@ -1327,126 +336,14 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:crimson_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:crimson_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:crimson_stem",
       "base_price": 8,
       "class": "common_resource"
     },
     {
-      "item": "minecraft:crimson_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:crossbow",
-      "base_price": 55,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:crying_obsidian",
       "base_price": 24,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:cut_copper",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cut_copper_slab",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cut_copper_stairs",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cut_red_sandstone",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cut_red_sandstone_slab",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cut_sandstone",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cut_sandstone_slab",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cyan_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cyan_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cyan_candle",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cyan_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cyan_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cyan_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cyan_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cyan_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:cyan_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:cyan_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:dandelion",
@@ -1459,47 +356,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:dark_oak_boat",
-      "base_price": 7,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_chest_boat",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:dark_oak_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1510,99 +366,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:dark_oak_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:dark_oak_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:dark_oak_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:dark_oak_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dark_oak_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:dark_prismarine",
-      "base_price": 35,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:dark_prismarine_slab",
-      "base_price": 17,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:dark_prismarine_stairs",
-      "base_price": 35,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:daylight_detector",
-      "base_price": 16,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:dead_brain_coral",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_brain_coral_block",
-      "base_price": 8,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_brain_coral_fan",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_bubble_coral",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_bubble_coral_block",
-      "base_price": 8,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_bubble_coral_fan",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:dead_bush",
@@ -1610,194 +376,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:dead_fire_coral",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_fire_coral_block",
-      "base_price": 8,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_fire_coral_fan",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_horn_coral",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_horn_coral_block",
-      "base_price": 8,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_horn_coral_fan",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_tube_coral",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_tube_coral_block",
-      "base_price": 8,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:dead_tube_coral_fan",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:decorated_pot",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:deepslate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_brick_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_brick_wall",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_bricks",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_coal_ore",
-      "base_price": 36,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_copper_ore",
-      "base_price": 133,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_diamond_ore",
-      "base_price": 2817,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:deepslate_emerald_ore",
-      "base_price": 529,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:deepslate_gold_ore",
-      "base_price": 353,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_iron_ore",
-      "base_price": 212,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_lapis_ore",
-      "base_price": 238,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:deepslate_redstone_ore",
-      "base_price": 141,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_tile_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:deepslate_tile_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:deepslate_tiles",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:detector_rail",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:diamond",
       "base_price": 512,
       "class": "rare_resource"
-    },
-    {
-      "item": "minecraft:diamond_axe",
-      "base_price": 1689,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_block",
-      "base_price": 5068,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_boots",
-      "base_price": 2252,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_chestplate",
-      "base_price": 4505,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_helmet",
-      "base_price": 2816,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_hoe",
-      "base_price": 1126,
-      "class": "rare_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:diamond_horse_armor",
@@ -1805,48 +386,9 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:diamond_leggings",
-      "base_price": 3942,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_ore",
-      "base_price": 2817,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:diamond_pickaxe",
-      "base_price": 1689,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_shovel",
-      "base_price": 563,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:diamond_sword",
-      "base_price": 1126,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:diorite",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:diorite_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:diorite_wall",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:dirt",
@@ -1854,19 +396,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:dirt_path",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:disc_fragment_5",
       "base_price": 32,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:dispenser",
-      "base_price": 19,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:dragon_breath",
@@ -1884,25 +416,9 @@
       "class": "unique"
     },
     {
-      "item": "minecraft:dried_kelp",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:dried_kelp_block",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:dripstone_block",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:dropper",
-      "base_price": 16,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:dune_armor_trim_smithing_template",
@@ -1930,75 +446,14 @@
       "class": "rare_resource"
     },
     {
-      "item": "minecraft:emerald_block",
-      "base_price": 950,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:emerald_ore",
-      "base_price": 529,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:enchanted_book",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:enchanted_golden_apple",
       "base_price": 8192,
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:enchanting_table",
-      "base_price": 1200,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:end_crystal",
-      "base_price": 129,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:end_rod",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:end_stone",
       "base_price": 2,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:end_stone_brick_slab",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:end_stone_brick_stairs",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:end_stone_brick_wall",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:end_stone_bricks",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:ender_chest",
-      "base_price": 184,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:ender_eye",
-      "base_price": 44,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:ender_pearl",
@@ -2016,67 +471,9 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:exposed_chiseled_copper",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_copper",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_copper_bulb",
-      "base_price": 70,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_copper_door",
-      "base_price": 17,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_copper_grate",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_copper_trapdoor",
-      "base_price": 26,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_cut_copper",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_cut_copper_slab",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:exposed_cut_copper_stairs",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:eye_armor_trim_smithing_template",
       "base_price": 256,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:farmland",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:feather",
@@ -2084,19 +481,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:fermented_spider_eye",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:fern",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:fire_charge",
-      "base_price": 4,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:fire_coral",
@@ -2114,23 +501,8 @@
       "class": "common_processed"
     },
     {
-      "item": "minecraft:fishing_rod",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:fletching_table",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:flint",
       "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:flint_and_steel",
-      "base_price": 36,
       "class": "common_processed"
     },
     {
@@ -2149,16 +521,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:flower_banner_pattern",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:flower_pot",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:flowering_azalea",
       "base_price": 2,
       "class": "farmable"
@@ -2174,41 +536,9 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:furnace",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:furnace_minecart",
-      "base_price": 75,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:ghast_tear",
       "base_price": 64,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:gilded_blackstone",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:glass",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:glass_bottle",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:glistering_melon_slice",
-      "base_price": 12,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:globe_banner_pattern",
@@ -2226,20 +556,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:glow_item_frame",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:glow_lichen",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:glowstone",
-      "base_price": 35,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:glowstone_dust",
@@ -2252,60 +571,8 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:gold_block",
-      "base_price": 475,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:gold_ingot",
       "base_price": 48,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:gold_nugget",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:gold_ore",
-      "base_price": 353,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:golden_apple",
-      "base_price": 426,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_axe",
-      "base_price": 158,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_boots",
-      "base_price": 211,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_carrot",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_chestplate",
-      "base_price": 422,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_helmet",
-      "base_price": 264,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_hoe",
-      "base_price": 105,
       "class": "common_processed"
     },
     {
@@ -2314,39 +581,9 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:golden_leggings",
-      "base_price": 369,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_pickaxe",
-      "base_price": 158,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_shovel",
-      "base_price": 52,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:golden_sword",
-      "base_price": 105,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:granite",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:granite_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:granite_wall",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:grass_block",
@@ -2357,123 +594,6 @@
       "item": "minecraft:gravel",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:gray_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:gray_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:gray_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:gray_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:gray_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:gray_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:gray_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:gray_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:gray_terracotta",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:gray_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:green_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:green_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:green_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:green_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:green_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:green_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:green_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:green_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:green_terracotta",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:green_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:grindstone",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:gunpowder",
@@ -2496,12 +616,6 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:hay_block",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:heart_of_the_sea",
       "base_price": 1024,
       "class": "rare_loot"
@@ -2522,11 +636,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:heavy_weighted_pressure_plate",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:honey_bottle",
       "base_price": 4,
       "class": "farmable"
@@ -2535,23 +644,6 @@
       "item": "minecraft:honeycomb",
       "base_price": 3,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:honeycomb_block",
-      "base_price": 13,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:hopper",
-      "base_price": 37,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:hopper_minecart",
-      "base_price": 104,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:horn_coral",
@@ -2584,80 +676,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:infested_chiseled_stone_bricks",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:infested_cracked_stone_bricks",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:infested_deepslate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:infested_mossy_stone_bricks",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:infested_stone",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:infested_stone_bricks",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:ink_sac",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:iron_axe",
-      "base_price": 105,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_bars",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_block",
-      "base_price": 316,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:iron_boots",
-      "base_price": 140,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_chestplate",
-      "base_price": 281,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_door",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_helmet",
-      "base_price": 176,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_hoe",
-      "base_price": 70,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:iron_horse_armor",
@@ -2667,99 +688,6 @@
     {
       "item": "minecraft:iron_ingot",
       "base_price": 32,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_leggings",
-      "base_price": 246,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_nugget",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:iron_ore",
-      "base_price": 212,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:iron_pickaxe",
-      "base_price": 105,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_shovel",
-      "base_price": 35,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_sword",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:iron_trapdoor",
-      "base_price": 140,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:item_frame",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:jack_o_lantern",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:jukebox",
-      "base_price": 565,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:jungle_boat",
-      "base_price": 7,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_chest_boat",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_hanging_sign",
-      "base_price": 10,
       "class": "common_processed"
     },
     {
@@ -2773,43 +701,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:jungle_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:jungle_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:jungle_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:jungle_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:jungle_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:kelp",
@@ -2817,24 +711,8 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:lantern",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lapis_block",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:lapis_lazuli",
       "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lapis_ore",
-      "base_price": 238,
       "class": "common_processed"
     },
     {
@@ -2843,175 +721,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:lead",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:leather",
       "base_price": 7,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:leather_boots",
-      "base_price": 30,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:leather_chestplate",
-      "base_price": 61,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:leather_helmet",
-      "base_price": 38,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:leather_horse_armor",
-      "base_price": 53,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:leather_leggings",
-      "base_price": 53,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:lectern",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lever",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_blue_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_blue_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_blue_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_blue_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_blue_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_blue_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_blue_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_blue_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_blue_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_blue_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_gray_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_gray_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_gray_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_gray_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_gray_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_gray_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:light_gray_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_gray_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_gray_terracotta",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_gray_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:light_weighted_pressure_plate",
-      "base_price": 105,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lightning_rod",
-      "base_price": 26,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:lilac",
@@ -3029,179 +741,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:lime_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lime_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lime_candle",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lime_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:lime_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lime_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:lime_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:lime_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:lime_terracotta",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:lime_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:lodestone",
-      "base_price": 658,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:loom",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mace",
-      "base_price": 2323,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:magenta_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:magenta_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:magenta_candle",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:magenta_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:magenta_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:magenta_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:magenta_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:magenta_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:magenta_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:magenta_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:magma_block",
       "base_price": 12,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:magma_cream",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mangrove_boat",
-      "base_price": 7,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_chest_boat",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:mangrove_leaves",
@@ -3214,17 +756,6 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:mangrove_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mangrove_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:mangrove_propagule",
       "base_price": 2,
       "class": "farmable"
@@ -3233,40 +764,6 @@
       "item": "minecraft:mangrove_roots",
       "base_price": 2,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:mangrove_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mangrove_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:map",
-      "base_price": 149,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:melon",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:melon_seeds",
@@ -3284,73 +781,14 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:minecart",
-      "base_price": 66,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:miner_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:mojang_banner_pattern",
-      "base_price": 9011,
-      "class": "rare_processed"
-    },
-    {
       "item": "minecraft:moss_block",
       "base_price": 2,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:moss_carpet",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mossy_cobblestone",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mossy_cobblestone_slab",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mossy_cobblestone_stairs",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mossy_cobblestone_wall",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:mossy_stone_brick_slab",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mossy_stone_brick_stairs",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mossy_stone_brick_wall",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mossy_stone_bricks",
-      "base_price": 3,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:mourner_pottery_sherd",
@@ -3363,22 +801,6 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:mud_brick_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mud_brick_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mud_bricks",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:muddy_mangrove_roots",
       "base_price": 2,
       "class": "common_resource"
@@ -3386,11 +808,6 @@
     {
       "item": "minecraft:mushroom_stem",
       "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:mushroom_stew",
-      "base_price": 4,
       "class": "common_processed"
     },
     {
@@ -3509,48 +926,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:nether_brick",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:nether_brick_fence",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:nether_brick_slab",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:nether_brick_stairs",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:nether_brick_wall",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:nether_bricks",
-      "base_price": 6,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:nether_gold_ore",
-      "base_price": 353,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:nether_quartz_ore",
-      "base_price": 47,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:nether_sprouts",
       "base_price": 1,
       "class": "farmable"
@@ -3566,73 +941,6 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:nether_wart_block",
-      "base_price": 39,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:netherite_axe",
-      "base_price": 3457,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_block",
-      "base_price": 5771,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:netherite_boots",
-      "base_price": 4020,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_chestplate",
-      "base_price": 6273,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_helmet",
-      "base_price": 4583,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_hoe",
-      "base_price": 2894,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_ingot",
-      "base_price": 641,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_leggings",
-      "base_price": 5710,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_pickaxe",
-      "base_price": 3457,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_scrap",
-      "base_price": 588,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_shovel",
-      "base_price": 2330,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:netherite_sword",
-      "base_price": 2894,
-      "class": "rare_processed"
-    },
-    {
       "item": "minecraft:netherite_upgrade_smithing_template",
       "base_price": 1024,
       "class": "rare_loot"
@@ -3641,27 +949,6 @@
       "item": "minecraft:netherrack",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:note_block",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:oak_boat",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:oak_chest_boat",
-      "base_price": 3,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:oak_hanging_sign",
-      "base_price": 2,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:oak_leaves",
@@ -3679,16 +966,6 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:oak_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:observer",
-      "base_price": 27,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:obsidian",
       "base_price": 16,
       "class": "common_resource"
@@ -3704,134 +981,14 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:orange_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:orange_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:orange_candle",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:orange_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:orange_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:orange_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:orange_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:orange_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:orange_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:orange_tulip",
       "base_price": 1,
       "class": "farmable"
     },
     {
-      "item": "minecraft:orange_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:oxeye_daisy",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:oxidized_chiseled_copper",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:oxidized_copper",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:oxidized_copper_bulb",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:oxidized_copper_door",
-      "base_price": 17,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:oxidized_copper_grate",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:oxidized_copper_trapdoor",
-      "base_price": 26,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:oxidized_cut_copper",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:oxidized_cut_copper_slab",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:oxidized_cut_copper_stairs",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:packed_ice",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:packed_mud",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:painting",
-      "base_price": 4,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:pearlescent_froglight",
@@ -3859,74 +1016,14 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:pink_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:pink_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:pink_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:pink_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:pink_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:pink_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:pink_petals",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "minecraft:pink_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:pink_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:pink_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:pink_tulip",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:pink_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:piston",
-      "base_price": 49,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:pitcher_plant",
@@ -3949,129 +1046,6 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:poisonous_potato",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_andesite",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_andesite_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_basalt",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_blackstone",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_blackstone_brick_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_blackstone_brick_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_blackstone_bricks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_blackstone_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_blackstone_pressure_plate",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_blackstone_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_blackstone_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_deepslate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_deepslate_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_deepslate_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_diorite",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_diorite_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_granite",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_granite_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_tuff",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:polished_tuff_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:polished_tuff_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:popped_chorus_fruit",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:poppy",
       "base_price": 1,
       "class": "farmable"
@@ -4087,38 +1061,6 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:powder_snow_bucket",
-      "base_price": 44,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:powered_rail",
-      "base_price": 54,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:prismarine",
-      "base_price": 35,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:prismarine_brick_slab",
-      "base_price": 39,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:prismarine_brick_stairs",
-      "base_price": 79,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:prismarine_bricks",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:prismarine_crystals",
       "base_price": 4,
       "class": "farmable"
@@ -4127,21 +1069,6 @@
       "item": "minecraft:prismarine_shard",
       "base_price": 8,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:prismarine_slab",
-      "base_price": 17,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:prismarine_stairs",
-      "base_price": 35,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:prismarine_wall",
-      "base_price": 35,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:prize_pottery_sherd",
@@ -4159,122 +1086,13 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:pumpkin_pie",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:pumpkin_seeds",
       "base_price": 1,
       "class": "farmable"
     },
     {
-      "item": "minecraft:purple_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:purple_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:purple_candle",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:purple_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:purple_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:purple_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:purple_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:purple_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:purple_terracotta",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:purple_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:purpur_block",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:purpur_pillar",
-      "base_price": 5,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:purpur_slab",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:purpur_stairs",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:quartz",
       "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:quartz_block",
-      "base_price": 13,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:quartz_bricks",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:quartz_pillar",
-      "base_price": 13,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:quartz_slab",
-      "base_price": 6,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:quartz_stairs",
-      "base_price": 13,
       "class": "common_processed"
     },
     {
@@ -4291,16 +1109,6 @@
       "item": "minecraft:rabbit_hide",
       "base_price": 4,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:rabbit_stew",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:rail",
-      "base_price": 7,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:raiser_armor_trim_smithing_template",
@@ -4326,43 +1134,6 @@
       "can_buy": false
     },
     {
-      "item": "minecraft:recovery_compass",
-      "base_price": 1276,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:red_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:red_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:red_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:red_mushroom",
       "base_price": 2,
       "class": "farmable"
@@ -4373,68 +1144,9 @@
       "class": "common_processed"
     },
     {
-      "item": "minecraft:red_nether_brick_slab",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_nether_brick_stairs",
-      "base_price": 12,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_nether_brick_wall",
-      "base_price": 12,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_nether_bricks",
-      "base_price": 12,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:red_sand",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:red_sandstone",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:red_sandstone_slab",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:red_sandstone_stairs",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_sandstone_wall",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:red_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:red_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:red_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:red_tulip",
@@ -4442,53 +1154,8 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:red_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:redstone",
       "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:redstone_block",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:redstone_lamp",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:redstone_ore",
-      "base_price": 141,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:redstone_torch",
-      "base_price": 8,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:reinforced_deepslate",
-      "base_price": 1565,
-      "class": "rare_processed"
-    },
-    {
-      "item": "minecraft:repeater",
-      "base_price": 29,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:respawn_anchor",
-      "base_price": 264,
       "class": "common_processed"
     },
     {
@@ -4527,33 +1194,6 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:sandstone",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:sandstone_slab",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:sandstone_stairs",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:sandstone_wall",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:scaffolding",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:scrape_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
@@ -4584,12 +1224,6 @@
       "class": "common_processed"
     },
     {
-      "item": "minecraft:sea_lantern",
-      "base_price": 28,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:sea_pickle",
       "base_price": 2,
       "class": "farmable"
@@ -4615,19 +1249,9 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:shears",
-      "base_price": 70,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:shelter_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:shield",
-      "base_price": 36,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:short_grass",
@@ -4638,11 +1262,6 @@
       "item": "minecraft:shroomlight",
       "base_price": 12,
       "class": "common_processed"
-    },
-    {
-      "item": "minecraft:shulker_box",
-      "base_price": 565,
-      "class": "rare_processed"
     },
     {
       "item": "minecraft:shulker_shell",
@@ -4660,11 +1279,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:skull_banner_pattern",
-      "base_price": 2252,
-      "class": "rare_processed"
-    },
-    {
       "item": "minecraft:skull_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
@@ -4675,89 +1289,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:slime_block",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:small_dripleaf",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:smithing_table",
-      "base_price": 71,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smoker",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_basalt",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:smooth_quartz",
-      "base_price": 13,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:smooth_quartz_slab",
-      "base_price": 6,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:smooth_quartz_stairs",
-      "base_price": 13,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:smooth_red_sandstone",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_red_sandstone_slab",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_red_sandstone_stairs",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_sandstone",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_sandstone_slab",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_sandstone_stairs",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_stone",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:smooth_stone_slab",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:sniffer_egg",
@@ -4775,30 +1309,9 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:snow",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:snow_block",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:snowball",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:soul_campfire",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:soul_lantern",
-      "base_price": 19,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:soul_sand",
@@ -4809,11 +1322,6 @@
       "item": "minecraft:soul_soil",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "minecraft:spectral_arrow",
-      "base_price": 17,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:spider_eye",
@@ -4836,47 +1344,6 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:spruce_boat",
-      "base_price": 7,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_chest_boat",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:spruce_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -4887,238 +1354,14 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:spruce_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:spruce_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:spruce_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "minecraft:spruce_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:spruce_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:spyglass",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:sticky_piston",
-      "base_price": 58,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_axe",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_brick_slab",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_brick_stairs",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_brick_wall",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_bricks",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_button",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_hoe",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_pickaxe",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_pressure_plate",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_shovel",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_slab",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_stairs",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stone_sword",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stonecutter",
-      "base_price": 41,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:string",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:stripped_acacia_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_acacia_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_bamboo_block",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_birch_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_birch_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_cherry_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_cherry_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_crimson_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_crimson_stem",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_dark_oak_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_dark_oak_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_jungle_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_jungle_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_mangrove_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_mangrove_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_oak_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_oak_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_spruce_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_spruce_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_warped_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:stripped_warped_stem",
-      "base_price": 8,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:sugar_cane",
@@ -5141,38 +1384,9 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:target",
-      "base_price": 55,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:terracotta",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:tide_armor_trim_smithing_template",
       "base_price": 256,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:tinted_glass",
-      "base_price": 18,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:tnt",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:tnt_minecart",
-      "base_price": 71,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:torchflower",
@@ -5190,11 +1404,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:trapped_chest",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:trial_key",
       "base_price": 32,
       "class": "rare_loot"
@@ -5203,11 +1412,6 @@
       "item": "minecraft:trident",
       "base_price": 1024,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:tripwire_hook",
-      "base_price": 17,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:tropical_fish",
@@ -5235,41 +1439,9 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:tuff_brick_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:tuff_brick_wall",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:tuff_bricks",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:tuff_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:tuff_wall",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:turtle_egg",
       "base_price": 32,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:turtle_helmet",
-      "base_price": 88,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:turtle_scute",
@@ -5302,48 +1474,9 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:warped_button",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:warped_door",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:warped_fence",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:warped_fence_gate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:warped_fungus",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:warped_fungus_on_a_stick",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:warped_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:warped_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "minecraft:warped_nylium",
@@ -5351,32 +1484,9 @@
       "class": "common_processed"
     },
     {
-      "item": "minecraft:warped_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:warped_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:warped_roots",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "minecraft:warped_sign",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:warped_stairs",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:warped_stem",
@@ -5384,262 +1494,14 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:warped_trapdoor",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "minecraft:warped_wart_block",
       "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_chiseled_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_copper_block",
-      "base_price": 82,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_copper_bulb",
-      "base_price": 72,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_copper_door",
-      "base_price": 20,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_copper_grate",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_copper_trapdoor",
-      "base_price": 29,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_cut_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_cut_copper_slab",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_cut_copper_stairs",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_chiseled_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_copper",
-      "base_price": 82,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_exposed_copper_bulb",
-      "base_price": 72,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_copper_door",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_copper_grate",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_copper_trapdoor",
-      "base_price": 29,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_cut_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_cut_copper_slab",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_exposed_cut_copper_stairs",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_oxidized_chiseled_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_oxidized_copper",
-      "base_price": 82,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_oxidized_copper_bulb",
-      "base_price": 72,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_oxidized_copper_door",
-      "base_price": 20,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_oxidized_copper_grate",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_oxidized_copper_trapdoor",
-      "base_price": 29,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_oxidized_cut_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_oxidized_cut_copper_slab",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_oxidized_cut_copper_stairs",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_weathered_chiseled_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_weathered_copper",
-      "base_price": 82,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_weathered_copper_bulb",
-      "base_price": 72,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_weathered_copper_door",
-      "base_price": 20,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_weathered_copper_grate",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_weathered_copper_trapdoor",
-      "base_price": 29,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:waxed_weathered_cut_copper",
-      "base_price": 20,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_weathered_cut_copper_slab",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:waxed_weathered_cut_copper_stairs",
-      "base_price": 20,
       "class": "common_processed"
     },
     {
       "item": "minecraft:wayfinder_armor_trim_smithing_template",
       "base_price": 256,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:weathered_chiseled_copper",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:weathered_copper",
-      "base_price": 79,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:weathered_copper_bulb",
-      "base_price": 70,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:weathered_copper_door",
-      "base_price": 17,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:weathered_copper_grate",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:weathered_copper_trapdoor",
-      "base_price": 26,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:weathered_cut_copper",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:weathered_cut_copper_slab",
-      "base_price": 9,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:weathered_cut_copper_stairs",
-      "base_price": 19,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:weeping_vines",
@@ -5662,55 +1524,6 @@
       "class": "farmable"
     },
     {
-      "item": "minecraft:white_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:white_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:white_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:white_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:white_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:white_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:white_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:white_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:white_terracotta",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:white_tulip",
       "base_price": 1,
       "class": "farmable"
@@ -5726,11 +1539,6 @@
       "class": "rare_loot"
     },
     {
-      "item": "minecraft:wind_charge",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:wither_rose",
       "base_price": 64,
       "class": "rare_loot"
@@ -5739,72 +1547,6 @@
       "item": "minecraft:wither_skeleton_skull",
       "base_price": 2048,
       "class": "rare_loot"
-    },
-    {
-      "item": "minecraft:wolf_armor",
-      "base_price": 105,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:writable_book",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:yellow_banner",
-      "base_price": 26,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:yellow_bed",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:yellow_candle",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:yellow_concrete",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:yellow_concrete_powder",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:yellow_glazed_terracotta",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "minecraft:yellow_shulker_box",
-      "base_price": 565,
-      "class": "rare_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:yellow_stained_glass",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:yellow_terracotta",
-      "base_price": 2,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "minecraft:yellow_wool",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "minecraft:zombie_head",

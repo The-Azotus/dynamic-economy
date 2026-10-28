@@ -4,17 +4,6 @@
   ],
   "entries": [
     {
-      "item": "regions_unexplored:acacia_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:acacia_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:alpha_dandelion",
       "base_price": 1,
       "class": "farmable"
@@ -30,11 +19,6 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:alpha_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:alpha_rose",
       "base_price": 1,
       "class": "farmable"
@@ -45,11 +29,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:alpha_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:apple_oak_sapling",
       "base_price": 2,
       "class": "farmable"
@@ -58,16 +37,6 @@
       "item": "regions_unexplored:argillite",
       "base_price": 1,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:ash",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:ashen_dirt",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:ashen_leaves",
@@ -85,17 +54,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:ashen_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:ashen_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:aster",
       "base_price": 1,
       "class": "farmable"
@@ -103,46 +61,6 @@
     {
       "item": "regions_unexplored:bamboo_log",
       "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_hanging_sign",
-      "base_price": 10,
       "class": "common_processed"
     },
     {
@@ -156,45 +74,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:baobab_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:baobab_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:baobab_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:baobab_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:baobab_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:barley",
@@ -207,60 +89,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:birch_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:birch_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:black_snowbelle",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:blackwood_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:blackwood_leaves",
@@ -273,45 +104,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:blackwood_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:blackwood_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:blackwood_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:blackwood_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blackwood_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:bladed_grass",
@@ -334,69 +129,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:blue_bioshroom_block",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:blue_bioshroom_stem",
       "base_price": 8,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:blue_bioshroom_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:blue_lupine",
@@ -414,12 +149,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:blue_magnolia_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:blue_snowbelle",
       "base_price": 1,
       "class": "farmable"
@@ -428,31 +157,6 @@
       "item": "regions_unexplored:brimsprout",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:brimwood_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:brimwood_leaves",
@@ -465,45 +169,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:brimwood_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:brimwood_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:brimwood_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:brimwood_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:brimwood_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:brown_snowbelle",
@@ -526,71 +194,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:chalk_brick_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:chalk_bricks",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:chalk_grass_block",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:chalk_pillar",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:chalk_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cherry_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cherry_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:clover",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:cobalt_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:cobalt_log",
@@ -600,16 +206,6 @@
     {
       "item": "regions_unexplored:cobalt_obsidian",
       "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_pressure_plate",
-      "base_price": 1,
       "class": "common_processed"
     },
     {
@@ -623,69 +219,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:cobalt_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cobalt_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:cyan_snowbelle",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:cypress_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:cypress_leaves",
@@ -698,45 +234,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:cypress_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:cypress_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:cypress_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:cypress_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:cypress_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:daisy",
@@ -744,60 +244,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:dark_oak_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dark_oak_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:day_lily",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:dead_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:dead_leaves",
@@ -820,66 +269,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:dead_pine_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:dead_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:dead_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:dead_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:dead_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:dead_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:deepslate_grass_block",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:deepslate_prismoss",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:deepslate_viridescent_nylium",
-      "base_price": 2,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:dorcel",
@@ -902,46 +294,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:eucalyptus_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:eucalyptus_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -952,45 +304,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:eucalyptus_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:eucalyptus_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:eucalyptus_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:felicia_daisy",
@@ -1016,12 +332,6 @@
       "item": "regions_unexplored:flowering_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:flowering_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "regions_unexplored:frozen_grass",
@@ -1054,26 +364,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:glowing_blue_bioshroom_block",
-      "base_price": 17,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:glowing_green_bioshroom_block",
-      "base_price": 17,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:glowing_pink_bioshroom_block",
-      "base_price": 17,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:glowing_yellow_bioshroom_block",
-      "base_price": 17,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:golden_larch_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1082,12 +372,6 @@
       "item": "regions_unexplored:golden_larch_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:golden_larch_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "regions_unexplored:grass_sprouts",
@@ -1105,69 +389,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:green_bioshroom_block",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:green_bioshroom_stem",
       "base_price": 8,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:green_bioshroom_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:green_snowbelle",
@@ -1190,11 +414,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:hyacinth_lamp",
-      "base_price": 18,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:hyssop",
       "base_price": 1,
       "class": "farmable"
@@ -1202,46 +421,6 @@
     {
       "item": "regions_unexplored:icicle",
       "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_beard",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_hanging_sign",
-      "base_price": 10,
       "class": "common_processed"
     },
     {
@@ -1255,96 +434,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:joshua_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:joshua_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:joshua_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:joshua_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:joshua_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:jungle_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:jungle_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:kapok_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:kapok_leaves",
@@ -1357,90 +449,14 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:kapok_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:kapok_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:kapok_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:kapok_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:kapok_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:kapok_vines",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:kapok_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:larch_leaves",
@@ -1453,45 +469,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:larch_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:larch_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:larch_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:larch_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:larch_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:lavender_wisteria_leaves",
@@ -1502,12 +482,6 @@
       "item": "regions_unexplored:lavender_wisteria_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:lavender_wisteria_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "regions_unexplored:lavender_wisteria_vines",
@@ -1535,46 +509,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:magnolia_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:magnolia_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1585,101 +519,14 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:magnolia_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:magnolia_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:magnolia_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:magnolia_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:magnolia_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:mallow",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:mangrove_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:mangrove_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:maple_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:maple_leaf_litter",
@@ -1697,55 +544,14 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:maple_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:maple_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:maple_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:maple_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:maple_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:meadow_sage",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:mossy_stone",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:mycotoxic_daisy",
@@ -1761,17 +567,6 @@
       "item": "regions_unexplored:mycotoxic_mushrooms",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:oak_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:oak_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "regions_unexplored:orange_coneflower",
@@ -1794,55 +589,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:orange_maple_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:orange_snowbelle",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:palm_beard",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:palm_leaves",
@@ -1855,50 +604,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:palm_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:palm_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:palm_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:palm_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:palm_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:peat_coarse_dirt",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:peat_dirt",
@@ -1906,64 +614,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:peat_dirt_path",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:peat_grass_block",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:peat_mud",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:peat_podzol",
       "base_price": 2,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:pine_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:pine_leaves",
@@ -1976,45 +629,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:pine_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:pine_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:pine_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:pine_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pine_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:pink_bioshroom",
@@ -2022,69 +639,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:pink_bioshroom_block",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:pink_bioshroom_stem",
       "base_price": 8,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:pink_bioshroom_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:pink_lupine",
@@ -2102,35 +659,14 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:pink_magnolia_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:pink_snowbelle",
       "base_price": 1,
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:polished_chalk",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:polished_chalk_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:poppy_bush",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:prismoss",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:prismoss_sprout",
@@ -2153,12 +689,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:raw_redstone_block",
-      "base_price": 35,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:red_lupine",
       "base_price": 1,
       "class": "farmable"
@@ -2179,60 +709,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:red_maple_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:red_snowbelle",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:redstone_bud",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:redwood_leaves",
@@ -2245,45 +724,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:redwood_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:redwood_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:redwood_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:redwood_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:redwood_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:saguaro_cactus",
@@ -2316,12 +759,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:salmon_wisteria_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:salmon_wisteria_vines",
       "base_price": 1,
       "class": "farmable"
@@ -2347,39 +784,14 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:silt_coarse_dirt",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:silt_dirt",
       "base_price": 1,
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:silt_dirt_path",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:silt_grass_block",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:silt_mud",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:silt_podzol",
       "base_price": 2,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:silver_birch_branch",
-      "base_price": 4,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:silver_birch_leaf_litter",
@@ -2402,17 +814,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:silver_birch_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:silver_birch_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:sky_wisteria_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -2421,12 +822,6 @@
       "item": "regions_unexplored:sky_wisteria_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:sky_wisteria_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "regions_unexplored:sky_wisteria_vines",
@@ -2444,46 +839,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:socotra_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:socotra_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -2494,45 +849,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:socotra_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:socotra_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:socotra_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:socotra_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:socotra_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:spanish_moss",
@@ -2540,278 +859,14 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:spruce_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:spruce_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:stone_grass_block",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_bamboo_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_baobab_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_baobab_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_blackwood_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_blackwood_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_blue_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_blue_bioshroom_stem",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_brimwood_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_brimwood_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_cobalt_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_cobalt_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_cypress_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_cypress_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_dead_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_dead_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_eucalyptus_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_eucalyptus_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_green_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_green_bioshroom_stem",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_joshua_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_joshua_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_kapok_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_kapok_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_larch_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_larch_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_magnolia_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_magnolia_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_maple_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_maple_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_palm_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_palm_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_pine_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_pine_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_pink_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_pink_bioshroom_stem",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_redwood_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_redwood_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_small_oak_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_socotra_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_socotra_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_willow_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_willow_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_wisteria_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_wisteria_wood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_yellow_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:stripped_yellow_bioshroom_stem",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:tall_blue_bioshroom",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:tall_dead_grass",
       "base_price": 1,
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:tall_green_bioshroom",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:tall_hyacinth_stock",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:tall_pink_bioshroom",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
     },
     {
       "item": "regions_unexplored:tall_red_sandy_grass",
@@ -2824,12 +879,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:tall_yellow_bioshroom",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:tassel",
       "base_price": 1,
       "class": "farmable"
@@ -2838,11 +887,6 @@
       "item": "regions_unexplored:tsubaki",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:viridescent_nylium",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:volcanic_ash",
@@ -2865,12 +909,6 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:white_magnolia_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
       "item": "regions_unexplored:white_snowbelle",
       "base_price": 1,
       "class": "farmable"
@@ -2879,46 +917,6 @@
       "item": "regions_unexplored:white_trillium",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:willow_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:willow_leaves",
@@ -2931,45 +929,9 @@
       "class": "common_resource"
     },
     {
-      "item": "regions_unexplored:willow_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:willow_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "regions_unexplored:willow_shrub",
-      "base_price": 4,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "regions_unexplored:willow_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:willow_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:wilting_trillium",
@@ -2982,79 +944,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:wisteria_boat",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_branch",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_chest_boat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:wisteria_log",
       "base_price": 8,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:wisteria_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:wisteria_wood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:yellow_bioshroom",
@@ -3062,69 +954,9 @@
       "class": "farmable"
     },
     {
-      "item": "regions_unexplored:yellow_bioshroom_block",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_button",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_door",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_fence",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_fence_gate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_hanging_sign",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_hyphae",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_planks",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_pressure_plate",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_sign",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_stairs",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "regions_unexplored:yellow_bioshroom_stem",
       "base_price": 8,
       "class": "common_resource"
-    },
-    {
-      "item": "regions_unexplored:yellow_bioshroom_trapdoor",
-      "base_price": 1,
-      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:yellow_lupine",

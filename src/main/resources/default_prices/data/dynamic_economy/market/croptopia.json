@@ -19,21 +19,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:anchovy_pizza",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:apple_juice",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:apple_pie",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:apple_sapling",
       "base_price": 2,
       "class": "farmable"
@@ -44,11 +29,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:apricot_jam",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:apricot_sapling",
       "base_price": 2,
       "class": "farmable"
@@ -57,11 +37,6 @@
       "item": "croptopia:artichoke",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:artichoke_dip",
-      "base_price": 5,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:artichoke_seed",
@@ -89,59 +64,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:avocado_toast",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:bacon",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:baked_beans",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:baked_crepes",
-      "base_price": 14,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:baked_sweet_potato",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:baked_yam",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:banana",
       "base_price": 3,
       "class": "farmable"
     },
     {
-      "item": "croptopia:banana_cream_pie",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:banana_nut_bread",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:banana_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:banana_smoothie",
-      "base_price": 7,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:barley",
@@ -162,26 +92,6 @@
       "item": "croptopia:basil_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:beef_stew",
-      "base_price": 15,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:beef_wellington",
-      "base_price": 18,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:beer",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:beetroot_salad",
-      "base_price": 14,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:bellpepper",
@@ -209,19 +119,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:blackberry_jam",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:blackberry_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:blt",
-      "base_price": 6,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:blueberry",
@@ -229,19 +129,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:blueberry_jam",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:blueberry_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:borscht",
-      "base_price": 6,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:broccoli",
@@ -264,29 +154,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:caesar_salad",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:calamari",
       "base_price": 3,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:candied_kumquats",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:candied_nuts",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:candy_corn",
-      "base_price": 2,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:cantaloupe",
@@ -329,54 +199,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:cheese",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cheese_pizza",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cheeseburger",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cheesy_asparagus",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:cherry",
       "base_price": 3,
       "class": "farmable"
     },
     {
-      "item": "croptopia:cherry_jam",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cherry_pie",
-      "base_price": 12,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:cherry_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:chicken_and_dumplings",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:chicken_and_rice",
-      "base_price": 8,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:chile_pepper",
@@ -387,11 +217,6 @@
       "item": "croptopia:chile_pepper_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:churros",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:cinnamon",
@@ -409,11 +234,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:cinnamon_wood",
-      "base_price": 35,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:clam",
       "base_price": 3,
       "class": "farmable"
@@ -429,11 +249,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:coffee",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:coffee_beans",
       "base_price": 2,
       "class": "farmable"
@@ -444,49 +259,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:cooked_anchovy",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cooked_bacon",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cooked_ravager_meat",
-      "base_price": 9,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cooked_tuna",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:cooking_pot",
-      "base_price": 176,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:corn",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "croptopia:corn_bread",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:corn_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:cornish_pasty",
-      "base_price": 17,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:crab",
@@ -499,11 +279,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:cranberry_juice",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:cranberry_seed",
       "base_price": 1,
       "class": "farmable"
@@ -512,11 +287,6 @@
       "item": "croptopia:cucumber",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:cucumber_salad",
-      "base_price": 6,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:cucumber_seed",
@@ -544,16 +314,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:deep_fried_shrimp",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:doughnut",
-      "base_price": 10,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:dragonfruit",
       "base_price": 3,
       "class": "farmable"
@@ -569,11 +329,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:eggplant_parmesan",
-      "base_price": 15,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:eggplant_seed",
       "base_price": 1,
       "class": "farmable"
@@ -584,24 +339,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:elderberry_jam",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:elderberry_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:eton_mess",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:fajitas",
-      "base_price": 5,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:fig",
@@ -614,44 +354,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:flour",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:food_press",
-      "base_price": 136,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:fried_calamari",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:fried_chicken",
-      "base_price": 12,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:frog_legs",
       "base_price": 4,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:fruit_salad",
-      "base_price": 12,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:fruit_smoothie",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:frying_pan",
-      "base_price": 176,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:garlic",
@@ -679,24 +384,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:goulash",
-      "base_price": 19,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:grape",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:grape_jam",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:grape_juice",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:grape_seed",
@@ -734,36 +424,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:grilled_cheese",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:ground_pork",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:guide",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:ham_sandwich",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:hamburger",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:hashed_brown",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:honeydew",
       "base_price": 2,
       "class": "farmable"
@@ -794,11 +454,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:kale_smoothie",
-      "base_price": 15,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:kiwi",
       "base_price": 2,
       "class": "farmable"
@@ -807,16 +462,6 @@
       "item": "croptopia:kiwi_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:kiwi_sorbet",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:knife",
-      "base_price": 35,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:kumquat",
@@ -829,11 +474,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:leafy_salad",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:leek",
       "base_price": 2,
       "class": "farmable"
@@ -844,29 +484,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:leek_soup",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:lemon",
       "base_price": 3,
       "class": "farmable"
     },
     {
-      "item": "croptopia:lemon_chicken",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:lemon_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:lemonade",
-      "base_price": 4,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:lettuce",
@@ -889,44 +514,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:limeade",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:macaron",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:mango",
       "base_price": 3,
       "class": "farmable"
     },
     {
-      "item": "croptopia:mango_ice_cream",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:mango_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:melon_juice",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:milk_bottle",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:molasses",
-      "base_price": 2,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:mustard",
@@ -949,16 +544,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:nether_wart_stew",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:nougat",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:nutmeg",
       "base_price": 3,
       "class": "farmable"
@@ -967,11 +552,6 @@
       "item": "croptopia:nutmeg_sapling",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:nutty_cookie",
-      "base_price": 2,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:oat",
@@ -984,19 +564,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:oatmeal",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:olive",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:olive_oil",
-      "base_price": 4,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:olive_seed",
@@ -1019,11 +589,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:orange_juice",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:orange_sapling",
       "base_price": 2,
       "class": "farmable"
@@ -1034,19 +599,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:paprika",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:peach",
       "base_price": 3,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:peach_jam",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:peach_sapling",
@@ -1057,21 +612,6 @@
       "item": "croptopia:peanut",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:peanut_butter",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:peanut_butter_and_jam",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:peanut_butter_with_celery",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:peanut_seed",
@@ -1094,16 +634,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:pecan_ice_cream",
-      "base_price": 7,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:pecan_pie",
-      "base_price": 12,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:pecan_sapling",
       "base_price": 2,
       "class": "farmable"
@@ -1117,11 +647,6 @@
       "item": "croptopia:pepper_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:pepperoni",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:persimmon",
@@ -1139,24 +664,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:pineapple_juice",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:pineapple_pepperoni_pizza",
-      "base_price": 15,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:pineapple_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:pizza",
-      "base_price": 8,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:plum",
@@ -1169,21 +679,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:pork_and_beans",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:pumpkin_spice_latte",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:quiche",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:radish",
       "base_price": 2,
       "class": "farmable"
@@ -1194,24 +689,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:raisin_oatmeal_cookie",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:raisins",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:raspberry",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:raspberry_jam",
-      "base_price": 2,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:raspberry_seed",
@@ -1219,29 +699,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:ratatouille",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:raw_ravager_meat",
       "base_price": 8,
       "class": "farmable"
     },
     {
-      "item": "croptopia:refried_beans",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:rhubarb",
       "base_price": 2,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:rhubarb_pie",
-      "base_price": 10,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:rhubarb_seed",
@@ -1257,11 +722,6 @@
       "item": "croptopia:rice_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:roasted_nuts",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:roe",
@@ -1284,19 +744,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:saguaro_juice",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:saguaro_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:scrambled_eggs",
-      "base_price": 5,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:sea_lettuce",
@@ -1309,16 +759,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:snicker_doodle",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:soy_milk",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:soybean",
       "base_price": 2,
       "class": "farmable"
@@ -1327,11 +767,6 @@
       "item": "croptopia:soybean_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:spaghetti_squash",
-      "base_price": 8,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:spinach",
@@ -1364,69 +799,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:stir_fry",
-      "base_price": 15,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:strawberry",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "croptopia:strawberry_ice_cream",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:strawberry_jam",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:strawberry_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:strawberry_smoothie",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:stripped_cinnamon_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:stripped_cinnamon_wood",
-      "base_price": 35,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:stuffed_poblanos",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:sunny_side_eggs",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:supreme_pizza",
-      "base_price": 13,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:sushi",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:sweet_crepes",
-      "base_price": 9,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:sweetpotato",
@@ -1449,16 +829,6 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:toast",
-      "base_price": 1,
-      "class": "common_processed"
-    },
-    {
-      "item": "croptopia:toast_with_jam",
-      "base_price": 2,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:tomatillo",
       "base_price": 2,
       "class": "farmable"
@@ -1474,29 +844,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:tomato_juice",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:tomato_seed",
       "base_price": 1,
       "class": "farmable"
     },
     {
-      "item": "croptopia:treacle_tart",
-      "base_price": 3,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:tuna",
       "base_price": 4,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:tuna_roll",
-      "base_price": 4,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:turmeric",
@@ -1524,19 +879,9 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:vanilla_ice_cream",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:vanilla_seeds",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:veggie_salad",
-      "base_price": 8,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:walnut",
@@ -1549,29 +894,14 @@
       "class": "farmable"
     },
     {
-      "item": "croptopia:wine",
-      "base_price": 5,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:yam",
       "base_price": 2,
       "class": "farmable"
     },
     {
-      "item": "croptopia:yam_jam",
-      "base_price": 6,
-      "class": "common_processed"
-    },
-    {
       "item": "croptopia:yam_seed",
       "base_price": 1,
       "class": "farmable"
-    },
-    {
-      "item": "croptopia:yoghurt",
-      "base_price": 3,
-      "class": "common_processed"
     },
     {
       "item": "croptopia:zucchini",

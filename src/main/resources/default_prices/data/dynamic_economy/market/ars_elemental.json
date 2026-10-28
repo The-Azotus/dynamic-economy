@@ -4,81 +4,6 @@
   ],
   "entries": [
     {
-      "item": "ars_elemental:advanced_prism",
-      "base_price": 278,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:air_bangle",
-      "base_price": 1279,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:air_relay",
-      "base_price": 1699,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:air_upstream",
-      "base_price": 1172,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:anima_bangle",
-      "base_price": 6660,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:base_bangle",
-      "base_price": 1142,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:caster_bag",
-      "base_price": 1458,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:chaining_prism_lens",
-      "base_price": 287,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:curio_bag",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:earth_bangle",
-      "base_price": 1290,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:earth_relay",
-      "base_price": 1721,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:fire_bangle",
-      "base_price": 1287,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:fire_relay",
-      "base_price": 1580,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:firenando_charm",
-      "base_price": 698,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:flashjack_charm",
-      "base_price": 181,
-      "class": "common_processed"
-    },
-    {
       "item": "ars_elemental:flashjack_shards",
       "base_price": 16,
       "class": "common_processed"
@@ -89,66 +14,6 @@
       "class": "farmable"
     },
     {
-      "item": "ars_elemental:lesser_air_focus",
-      "base_price": 254,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:lesser_earth_focus",
-      "base_price": 305,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:lesser_fire_focus",
-      "base_price": 307,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:magma_upstream",
-      "base_price": 129,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:manipulation_turret",
-      "base_price": 2134,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:necrotic_focus",
-      "base_price": 5786,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:ritual_attraction",
-      "base_price": 125,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:ritual_detection",
-      "base_price": 61,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:ritual_pollination",
-      "base_price": 62,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:ritual_repulsion",
-      "base_price": 116,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:ritual_tesla_coil",
-      "base_price": 1226,
-      "class": "rare_processed"
-    },
-    {
-      "item": "ars_elemental:siren_charm",
-      "base_price": 59,
-      "class": "common_processed"
-    },
-    {
       "item": "ars_elemental:siren_shards",
       "base_price": 16,
       "class": "common_processed"
@@ -157,47 +22,6 @@
       "item": "ars_elemental:sparkflower",
       "base_price": 6,
       "class": "farmable"
-    },
-    {
-      "item": "ars_elemental:spell_horn",
-      "base_price": 240,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:spell_mirror",
-      "base_price": 82,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:spore_blossom_up",
-      "base_price": 1,
-      "class": "common_processed",
-      "can_sell": false
-    },
-    {
-      "item": "ars_elemental:stripped_yellow_archwood",
-      "base_price": 11,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:stripped_yellow_archwood_log",
-      "base_price": 8,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:thread_shock",
-      "base_price": 104,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:thread_spore",
-      "base_price": 113,
-      "class": "common_processed"
-    },
-    {
-      "item": "ars_elemental:yellow_archwood",
-      "base_price": 11,
-      "class": "common_processed"
     },
     {
       "item": "ars_elemental:yellow_archwood_leaves",
