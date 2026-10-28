@@ -1,0 +1,517 @@
+{
+  "required_mods": [
+    "productivemetalworks"
+  ],
+  "entries": [
+    {
+      "item": "productivemetalworks:black_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:black_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:black_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:black_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:black_foundry_window",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:blue_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:blue_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:blue_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:blue_foundry_tank",
+      "base_price": 31,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:blue_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:brown_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:brown_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:brown_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:brown_foundry_tank",
+      "base_price": 31,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:brown_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:casting_basin",
+      "base_price": 25,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:casting_table",
+      "base_price": 25,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:cyan_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:cyan_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:cyan_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:cyan_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:cyan_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:fire_brick",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:fire_clay",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:foundry_tap",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:gray_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:gray_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:gray_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:gray_foundry_tank",
+      "base_price": 31,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:gray_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:green_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:green_foundry_controller",
+      "base_price": 75,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:green_foundry_drain",
+      "base_price": 29,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:green_foundry_tank",
+      "base_price": 31,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:green_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_blue_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_blue_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_blue_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_blue_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_blue_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_gray_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_gray_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_gray_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_gray_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:light_gray_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:lime_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:lime_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:lime_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:lime_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:lime_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:liquid_heating_coil",
+      "base_price": 65,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:magenta_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:magenta_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:magenta_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:magenta_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:magenta_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:orange_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:orange_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:orange_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:orange_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:orange_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:pink_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:pink_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:pink_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:pink_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:pink_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:powered_heating_coil",
+      "base_price": 89,
+      "class": "common_processed"
+    },
+    {
+      "item": "productivemetalworks:purple_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:purple_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:purple_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:purple_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:purple_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:red_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:red_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:red_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:red_foundry_tank",
+      "base_price": 31,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:red_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:white_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:white_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:white_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:white_foundry_tank",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:white_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:yellow_fire_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:yellow_foundry_controller",
+      "base_price": 74,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:yellow_foundry_drain",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:yellow_foundry_tank",
+      "base_price": 31,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivemetalworks:yellow_foundry_window",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    }
+  ]
+}
