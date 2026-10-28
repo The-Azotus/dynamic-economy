@@ -4,6 +4,16 @@
   ],
   "entries": [
     {
+      "item": "twilightforest:acacia_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:alpha_yeti_banner_pattern",
+      "base_price": 4505,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:alpha_yeti_fur",
       "base_price": 64,
       "class": "rare_loot"
@@ -14,9 +24,35 @@
       "class": "unique"
     },
     {
+      "item": "twilightforest:arctic_boots",
+      "base_price": 70,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:arctic_chestplate",
+      "base_price": 140,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:arctic_fur",
       "base_price": 16,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:arctic_fur_block",
+      "base_price": 158,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:arctic_helmet",
+      "base_price": 88,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:arctic_leggings",
+      "base_price": 123,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:armor_shard",
@@ -24,14 +60,54 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:armor_shard_cluster",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:aurora_block",
       "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:aurora_pillar",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:aurora_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:bamboo_banister",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:bamboo_drying_rack",
+      "base_price": 3,
       "class": "common_processed"
     },
     {
       "item": "twilightforest:beanstalk_leaves",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:beef_jerky",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:berry_medley",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:birch_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:blackberry",
@@ -54,6 +130,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:block_and_chain",
+      "base_price": 651,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:blueberry",
       "base_price": 1,
       "class": "farmable"
@@ -64,9 +145,64 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:bold_stone_pillar",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:borer_essence",
       "base_price": 16,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:canopy_boat",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_bookshelf",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_chest",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_chest_boat",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_door",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:canopy_leaves",
@@ -79,9 +215,75 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:canopy_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:canopy_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:canopy_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_trapdoor",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_trapped_chest",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_window",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:canopy_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:carminite",
+      "base_price": 176,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:carminite_block",
+      "base_price": 1584,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:carminite_builder",
+      "base_price": 759,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:carminite_reactor",
+      "base_price": 774,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:charm_of_keeping_1",
@@ -89,9 +291,34 @@
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:charm_of_keeping_2",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:charm_of_keeping_3",
+      "base_price": 2252,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:charm_of_life_1",
       "base_price": 256,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:charm_of_life_2",
+      "base_price": 1126,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:cherry_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:chicken_jerky",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:cicada",
@@ -99,9 +326,29 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:cicada_jar",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:clover_patch",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:cod_jerky",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cooked_meef",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cooked_venison",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:copper_berry",
@@ -119,6 +366,46 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:cracked_etched_nagastone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cracked_mazestone",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cracked_nagastone_pillar",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cracked_nagastone_stairs_left",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cracked_nagastone_stairs_right",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cracked_towerwood",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:cracked_underbrick",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:crimson_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:crown_splinter",
       "base_price": 32,
       "class": "rare_loot"
@@ -134,6 +421,57 @@
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:cut_mazestone",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:dark_boat",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_chest",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_chest_boat",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_door",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:dark_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -144,6 +482,46 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:dark_oak_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_trapdoor",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_trapped_chest",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:dark_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:darkwood_sapling",
       "base_price": 2,
       "class": "farmable"
@@ -152,6 +530,12 @@
       "item": "twilightforest:deadrock",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:decorative_mazestone",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "twilightforest:diamond_minotaur_axe",
@@ -172,6 +556,11 @@
       "item": "twilightforest:emperors_cloth",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:encased_towerwood",
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:ender_bow",
@@ -204,9 +593,50 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:fiery_block",
+      "base_price": 1584,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
       "item": "twilightforest:fiery_blood",
       "base_price": 128,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:fiery_boots",
+      "base_price": 704,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:fiery_chestplate",
+      "base_price": 1408,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:fiery_helmet",
+      "base_price": 880,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:fiery_ingot",
+      "base_price": 176,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:fiery_leggings",
+      "base_price": 1232,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:fiery_pickaxe",
+      "base_price": 598,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:fiery_sword",
+      "base_price": 387,
+      "class": "rare_processed"
     },
     {
       "item": "twilightforest:fiery_tears",
@@ -219,6 +649,16 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:firefly_jar",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:firefly_particle_spawner",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:fluffy_cloud",
       "base_price": 4,
       "class": "common_processed"
@@ -227,6 +667,21 @@
       "item": "twilightforest:four_leaf_clover",
       "base_price": 16,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:fugu_jerky",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:gelatinous_maze_slime_drop",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:gelatinous_slime_drop",
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:glass_sword",
@@ -242,6 +697,96 @@
       "item": "twilightforest:gold_minotaur_axe",
       "base_price": 256,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:hollow_acacia_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_birch_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_canopy_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_cherry_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_crimson_stem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_dark_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_dark_oak_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_jungle_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_mangrove_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_mining_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_oak_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_sorting_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_spruce_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_time_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_transformation_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_twilight_oak_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_vangrove_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:hollow_warped_stem",
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:huge_lily_pad",
@@ -269,6 +814,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:hydra_banner_pattern",
+      "base_price": 4505,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:hydra_chop",
       "base_price": 64,
       "class": "rare_loot"
@@ -289,14 +839,146 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:iron_ladder",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_axe",
+      "base_price": 60,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_block",
+      "base_price": 181,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:ironwood_boots",
+      "base_price": 80,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_chestplate",
+      "base_price": 161,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_helmet",
+      "base_price": 100,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_hoe",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_ingot",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_leggings",
+      "base_price": 141,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_pickaxe",
+      "base_price": 60,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_shovel",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:ironwood_sword",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:jungle_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knight_phantom_banner_pattern",
+      "base_price": 4505,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:knight_phantom_trophy",
       "base_price": 4096,
       "class": "unique"
     },
     {
+      "item": "twilightforest:knightmetal_axe",
+      "base_price": 122,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_block",
+      "base_price": 366,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:knightmetal_boots",
+      "base_price": 162,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_chestplate",
+      "base_price": 325,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_helmet",
+      "base_price": 203,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_ingot",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_leggings",
+      "base_price": 284,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_pickaxe",
+      "base_price": 122,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_ring",
+      "base_price": 162,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_shield",
+      "base_price": 302,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:knightmetal_sword",
+      "base_price": 81,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:lamp_of_cinders",
       "base_price": 1024,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:lich_banner_pattern",
+      "base_price": 2252,
+      "class": "rare_processed"
     },
     {
       "item": "twilightforest:lich_trophy",
@@ -319,6 +1001,16 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:magic_map",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:magic_map_focus",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:maloberry",
       "base_price": 1,
       "class": "farmable"
@@ -327,6 +1019,51 @@
       "item": "twilightforest:maloberry_bush",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mangrove_boat",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_chest",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_chest_boat",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_door",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:mangrove_leaves",
@@ -339,9 +1076,49 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:mangrove_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:mangrove_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mangrove_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_trapdoor",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_trapped_chest",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mangrove_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mason_jar",
+      "base_price": 6,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:mayapple",
@@ -354,6 +1131,12 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:maze_slime_block",
+      "base_price": 79,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "twilightforest:mazebreaker_pickaxe",
       "base_price": 1024,
       "class": "rare_loot"
@@ -361,6 +1144,76 @@
     {
       "item": "twilightforest:mazestone",
       "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mazestone_border",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mazestone_brick",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mazestone_mosaic",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:meef_jerky",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_banister",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_boat",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_chest",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_chest_boat",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_door",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_drying_rack",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_fence_gate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_hanging_sign",
+      "base_price": 18,
       "class": "common_processed"
     },
     {
@@ -374,14 +1227,65 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:mining_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_pressure_plate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:mining_sapling",
       "base_price": 256,
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:mining_sign",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_trapdoor",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_trapped_chest",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mining_wood",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:minoshroom_banner_pattern",
+      "base_price": 2252,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:minoshroom_trophy",
       "base_price": 2048,
       "class": "unique"
+    },
+    {
+      "item": "twilightforest:monster_jerky",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "twilightforest:moonworm",
@@ -397,6 +1301,41 @@
       "item": "twilightforest:moss_patch",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:mossy_etched_nagastone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mossy_mazestone",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mossy_nagastone_pillar",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mossy_nagastone_stairs_left",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mossy_nagastone_stairs_right",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mossy_towerwood",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mossy_underbrick",
+      "base_price": 3,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:mushgloom",
@@ -449,6 +1388,31 @@
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:mutton_jerky",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:mystic_crown",
+      "base_price": 281,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:naga_banner_pattern",
+      "base_price": 1126,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:naga_chestplate",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:naga_leggings",
+      "base_price": 492,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:naga_scale",
       "base_price": 64,
       "class": "rare_loot"
@@ -474,6 +1438,17 @@
       "class": "common_processed"
     },
     {
+      "item": "twilightforest:nagastone_stairs_left",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:nagastone_stairs_right",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:peacock_feather_fan",
       "base_price": 512,
       "class": "rare_loot"
@@ -489,6 +1464,11 @@
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:pork_jerky",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:quest_ram_banner_pattern",
       "base_price": 128,
       "class": "rare_loot"
@@ -497,6 +1477,11 @@
       "item": "twilightforest:quest_ram_trophy",
       "base_price": 1024,
       "class": "unique"
+    },
+    {
+      "item": "twilightforest:rabbit_jerky",
+      "base_price": 3,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:rainbow_oak_leaves",
@@ -524,6 +1509,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:raw_ironwood",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:raw_meef",
       "base_price": 4,
       "class": "farmable"
@@ -534,6 +1524,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:reappearing_block",
+      "base_price": 123,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:root",
       "base_price": 1,
       "class": "common_resource"
@@ -542,6 +1537,11 @@
       "item": "twilightforest:root_strand",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:salmon_jerky",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:seeker_bow",
@@ -559,9 +1559,69 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:snow_queen_banner_pattern",
+      "base_price": 9011,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:snow_queen_trophy",
       "base_price": 8192,
       "class": "unique"
+    },
+    {
+      "item": "twilightforest:snowy_cloud",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_banister",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_boat",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_chest",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_chest_boat",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_door",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_drying_rack",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_fence_gate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_hanging_sign",
+      "base_price": 18,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:sorting_leaves",
@@ -574,14 +1634,120 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:sorting_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_pressure_plate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:sorting_sapling",
       "base_price": 256,
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:sorting_sign",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_trapdoor",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_trapped_chest",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:sorting_wood",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:spiral_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:spruce_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stale_bread",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_axe",
+      "base_price": 105,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_block",
+      "base_price": 316,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:steeleaf_boots",
+      "base_price": 140,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_chestplate",
+      "base_price": 281,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_helmet",
+      "base_price": 176,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_hoe",
+      "base_price": 70,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:steeleaf_ingot",
       "base_price": 32,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:steeleaf_leggings",
+      "base_price": 246,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_pickaxe",
+      "base_price": 105,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_shovel",
+      "base_price": 35,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:steeleaf_sword",
+      "base_price": 70,
+      "class": "rare_processed"
     },
     {
       "item": "twilightforest:stingberry",
@@ -594,6 +1760,103 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:stripped_canopy_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_canopy_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_dark_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_dark_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_mangrove_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_mangrove_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_mining_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_mining_wood",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_sorting_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_sorting_wood",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_time_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_time_wood",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_transformation_log",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_transformation_wood",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_twilight_oak_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:stripped_twilight_oak_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:terrorcotta_arcs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "twilightforest:terrorcotta_curves",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:terrorcotta_lines",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "twilightforest:thorn_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -602,6 +1865,56 @@
       "item": "twilightforest:thorn_rose",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:time_banister",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_boat",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_chest",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_chest_boat",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_door",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_drying_rack",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_fence_gate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_hanging_sign",
+      "base_price": 18,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:time_leaves",
@@ -614,9 +1927,49 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:time_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_pressure_plate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:time_sapling",
       "base_price": 256,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:time_sign",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_trapdoor",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_trapped_chest",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:time_wood",
+      "base_price": 23,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:torchberries",
@@ -629,6 +1982,61 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:towerwood",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_banister",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_boat",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_chest",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_chest_boat",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_door",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_drying_rack",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_fence_gate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_hanging_sign",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:transformation_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -639,14 +2047,54 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:transformation_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:transformation_powder",
       "base_price": 32,
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:transformation_pressure_plate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:transformation_sapling",
       "base_price": 256,
       "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:transformation_sign",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_trapdoor",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_trapped_chest",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:transformation_wood",
+      "base_price": 23,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:triple_bow",
@@ -669,6 +2117,56 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:tropical_fish_jerky",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_boat",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_chest",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_chest_boat",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_door",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:twilight_oak_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -679,9 +2177,54 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:twilight_oak_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:twilight_oak_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:twilight_oak_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_trapdoor",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_trapped_chest",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twilight_oak_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twisted_stone",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:twisted_stone_pillar",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:uberous_soil",
@@ -694,14 +2237,44 @@
       "class": "common_processed"
     },
     {
+      "item": "twilightforest:underbrick_floor",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:unripe_trollber",
       "base_price": 4,
       "class": "farmable"
     },
     {
+      "item": "twilightforest:ur_ghast_banner_pattern",
+      "base_price": 4505,
+      "class": "rare_processed"
+    },
+    {
       "item": "twilightforest:ur_ghast_trophy",
       "base_price": 4096,
       "class": "unique"
+    },
+    {
+      "item": "twilightforest:vangrove_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:vanishing_block",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:venison_jerky",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:warped_drying_rack",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:weathered_deadrock",
@@ -712,6 +2285,26 @@
       "item": "twilightforest:wispy_cloud",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:yeti_boots",
+      "base_price": 281,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:yeti_chestplate",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:yeti_helmet",
+      "base_price": 352,
+      "class": "rare_processed"
+    },
+    {
+      "item": "twilightforest:yeti_leggings",
+      "base_price": 492,
+      "class": "rare_processed"
     }
   ]
 }
