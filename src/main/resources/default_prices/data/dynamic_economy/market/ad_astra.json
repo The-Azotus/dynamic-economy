@@ -39,6 +39,11 @@
       "class": "rare_resource"
     },
     {
+      "item": "ad_astra:glacian_fur",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
       "item": "ad_astra:glacian_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -62,6 +67,11 @@
       "item": "ad_astra:infernal_spire_block",
       "base_price": 2,
       "class": "common_resource"
+    },
+    {
+      "item": "ad_astra:iron_plate",
+      "base_price": 35,
+      "class": "common_processed"
     },
     {
       "item": "ad_astra:mars_cobblestone",
