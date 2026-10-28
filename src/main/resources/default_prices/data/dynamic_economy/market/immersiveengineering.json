@@ -4,6 +4,21 @@
   ],
   "entries": [
     {
+      "item": "immersiveengineering:dust_saltpeter",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:dust_sulfur",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:dust_wood",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
       "item": "immersiveengineering:hemp_fiber",
       "base_price": 2,
       "class": "farmable"
@@ -11,6 +26,11 @@
     {
       "item": "immersiveengineering:ingot_aluminum",
       "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:ingot_hop_graphite",
+      "base_price": 32,
       "class": "common_processed"
     },
     {
@@ -32,6 +52,11 @@
       "item": "immersiveengineering:ingot_uranium",
       "base_price": 64,
       "class": "rare_resource"
+    },
+    {
+      "item": "immersiveengineering:logic_circuit",
+      "base_price": 64,
+      "class": "common_processed"
     },
     {
       "item": "immersiveengineering:raw_aluminum",
@@ -62,6 +87,11 @@
       "item": "immersiveengineering:seed",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "immersiveengineering:slag",
+      "base_price": 1,
+      "class": "common_processed"
     }
   ]
 }
