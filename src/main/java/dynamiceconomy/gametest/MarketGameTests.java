@@ -1557,7 +1557,7 @@ public final class MarketGameTests {
         helper.assertValueEqual(partly.suggestions().get(Items.IRON_NUGGET).basePrice(), Optional.of(24), "90 × 0.25 × 1.1 = 24.75");
         net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
         helper.assertTrue(server.getRecipeManager().getRecipes().stream()
-                        .allMatch(holder -> dynamiceconomy.compat.ModernIndustrializationRecipes.read(holder.value()).isEmpty()),
+                        .allMatch(holder -> dynamiceconomy.compat.MachineRecipes.read(holder.value()).isEmpty()),
                 "other mods' recipes are left to the generic reading");
         helper.succeed();
     }

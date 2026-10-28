@@ -477,6 +477,10 @@ public final class MarketCommand {
                         p.sellValue().setScale(2, java.math.RoundingMode.HALF_UP))));
             }
             java.nio.file.Files.write(written.folder().resolve("craft_profits.txt"), profitLines);
+            List<String> skippedLines = new ArrayList<>(List.of("Recipes suggest couldn't use, by recipe type and reason."));
+            result.unusable().entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .forEach(e -> skippedLines.add(e.getValue() + " " + e.getKey()));
+            java.nio.file.Files.write(written.folder().resolve("skipped_recipes.txt"), skippedLines);
             String file = "config/" + DynamicEconomy.MOD_ID + "/exports/" + written.folder().getFileName() + "/suggested.csv";
             AuditLog.record(ctx.getSource(), "suggest", modId.orElse("all mods"), "ok: %d suggested to %s".formatted(written.suggested(), file),
                     null, null);
@@ -497,7 +501,8 @@ public final class MarketCommand {
             if (!result.unusable().isEmpty()) {
                 lines.add("  Recipes skipped: " + result.unusable().entrySet().stream()
                         .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(5)
-                        .map(e -> e.getValue() + " " + e.getKey()).collect(java.util.stream.Collectors.joining(", ")));
+                        .map(e -> e.getValue() + " " + e.getKey()).collect(java.util.stream.Collectors.joining(", "))
+                        + (result.unusable().size() > 5 ? ", ... (all in skipped_recipes.txt)" : ""));
             }
             if (!result.settled()) {
                 lines.add("  Warning: some prices kept falling through a recipe loop; check the log");

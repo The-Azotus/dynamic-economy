@@ -3,7 +3,7 @@ package dynamiceconomy.service;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.compat.CreateRecipes;
-import dynamiceconomy.compat.ModernIndustrializationRecipes;
+import dynamiceconomy.compat.MachineRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -396,7 +396,7 @@ public final class PriceSuggestion {
                 unusable.merge("special recipes (map cloning, dyeing, ...)", 1, Integer::sum);
                 return Optional.empty();
             }
-            Optional<ModernIndustrializationRecipes.Read> machine = ModernIndustrializationRecipes.read(recipe);
+            Optional<MachineRecipes.Read> machine = MachineRecipes.read(recipe);
             if (machine.isPresent()) {
                 return machinePath(holder, type, machine.get(), unusable);
             }
@@ -455,10 +455,10 @@ public final class PriceSuggestion {
     }
 
     /**
-     * A Modern Industrialization machine recipe, with the amounts its generic data leaves out. Its machines run on
-     * energy, which isn't priced, so a recipe counts as complete unless it uses up fluids.
+     * A machine recipe read by {@link MachineRecipes}, with the inputs and amounts its generic data leaves out. Machines
+     * run on energy, which isn't priced, so a recipe counts as complete unless it uses up fluids or chemicals.
      */
-    private static Optional<Path> machinePath(RecipeHolder<?> holder, String type, ModernIndustrializationRecipes.Read read,
+    private static Optional<Path> machinePath(RecipeHolder<?> holder, String type, MachineRecipes.Read read,
                                               Map<String, Integer> unusable) {
         if (read.item() == null || read.expected() <= 0) {
             unusable.merge(type + ": no item output listed", 1, Integer::sum);
