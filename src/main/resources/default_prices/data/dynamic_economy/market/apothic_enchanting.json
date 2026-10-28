@@ -4,6 +4,78 @@
   ],
   "entries": [
     {
+      "item": "apothic_enchanting:apothic_enchanting_table",
+      "base_price": 1205,
+      "class": "rare_processed"
+    },
+    {
+      "item": "apothic_enchanting:basic_bookshelf",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:beeshelf",
+      "base_price": 49,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "apothic_enchanting:boots_tome",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:bow_tome",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:chestplate_tome",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:dormant_deepshelf",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:fishing_tome",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:flimsy_ender_lead",
+      "base_price": 94,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:geode_shelf",
+      "base_price": 132,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:helmet_tome",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:inert_trident",
+      "base_price": 1372,
+      "class": "rare_processed"
+    },
+    {
+      "item": "apothic_enchanting:leggings_tome",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:melonshelf",
+      "base_price": 98,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "apothic_enchanting:music_disc_arcana",
       "base_price": 256,
       "class": "rare_loot"
@@ -19,9 +91,39 @@
       "class": "rare_loot"
     },
     {
+      "item": "apothic_enchanting:other_tome",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:pickaxe_tome",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:prismatic_web",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:scrap_tome",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "apothic_enchanting:stoneshelf",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
       "item": "apothic_enchanting:warden_tendril",
       "base_price": 256,
       "class": "rare_loot"
+    },
+    {
+      "item": "apothic_enchanting:weapon_tome",
+      "base_price": 8,
+      "class": "common_processed"
     }
   ]
 }
