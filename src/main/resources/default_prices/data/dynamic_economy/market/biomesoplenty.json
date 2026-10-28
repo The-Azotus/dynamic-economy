@@ -4,6 +4,11 @@
   ],
   "entries": [
     {
+      "item": "biomesoplenty:algal_end_stone",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:barley",
       "base_price": 1,
       "class": "farmable"
@@ -17,6 +22,32 @@
       "item": "biomesoplenty:black_sand",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:black_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:black_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:black_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:black_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:blackstone_bulb",
+      "base_price": 13,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:blue_hydrangea",
@@ -39,6 +70,26 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:brimstone_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:brimstone_brick_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:brimstone_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:brimstone_fumarole",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:burning_blossom",
       "base_price": 1,
       "class": "farmable"
@@ -54,9 +105,60 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:chiseled_black_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:chiseled_brimstone_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:chiseled_orange_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:chiseled_white_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:clover",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:cut_black_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:cut_black_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:cut_orange_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:cut_orange_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:cut_white_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:cut_white_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:cypress_leaves",
@@ -69,14 +171,53 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:dead_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:dead_branch",
       "base_price": 1,
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:dead_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:dead_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:dead_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:dead_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:dead_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:dead_grass",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:dead_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:dead_leaves",
@@ -89,9 +230,42 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:dead_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:dead_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:dead_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:dead_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:dead_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:dead_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:dead_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:desert_grass",
@@ -109,6 +283,45 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:empyreal_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:empyreal_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:empyreal_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:empyreal_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:empyreal_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:empyreal_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:empyreal_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:empyreal_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -119,9 +332,42 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:empyreal_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:empyreal_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:empyreal_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:empyreal_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:empyreal_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:empyreal_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:empyreal_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:endbloom",
@@ -139,6 +385,45 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:fir_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:fir_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:fir_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:fir_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:fir_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:fir_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:fir_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:fir_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -149,9 +434,42 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:fir_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:fir_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:fir_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:fir_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:fir_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:fir_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:fir_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:flowering_oak_leaves",
@@ -199,6 +517,45 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:hellbark_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:hellbark_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:hellbark_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:hellbark_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:hellbark_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:hellbark_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:hellbark_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:hellbark_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -209,9 +566,42 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:hellbark_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:hellbark_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:hellbark_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:hellbark_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:hellbark_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:hellbark_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:hellbark_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:high_grass",
@@ -234,6 +624,45 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:jacaranda_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:jacaranda_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:jacaranda_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:jacaranda_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:jacaranda_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:jacaranda_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:jacaranda_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:jacaranda_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -244,14 +673,86 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:jacaranda_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:jacaranda_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:jacaranda_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:jacaranda_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:jacaranda_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:jacaranda_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:jacaranda_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:lavender",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:magic_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:magic_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:magic_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:magic_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:magic_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:magic_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:magic_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:magic_leaves",
@@ -264,9 +765,81 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:magic_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:magic_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:magic_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:magic_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:magic_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:magic_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:magic_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:mahogany_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:mahogany_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:mahogany_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:mahogany_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:mahogany_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:mahogany_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:mahogany_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:mahogany_leaves",
@@ -279,14 +852,124 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:mahogany_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:mahogany_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:mahogany_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:mahogany_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:mahogany_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:mahogany_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:mahogany_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:maple_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:maple_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:maple_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:maple_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:maple_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:maple_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:maple_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:maple_log",
       "base_price": 8,
       "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:maple_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:maple_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:maple_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:maple_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:maple_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:maple_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:mossy_black_sand",
+      "base_price": 3,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:music_disc_wanderer",
@@ -297,6 +980,11 @@
       "item": "biomesoplenty:orange_cosmos",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:orange_maple_leaf_pile",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:orange_maple_leaves",
@@ -314,6 +1002,27 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:orange_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:orange_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:orange_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:orange_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:origin_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -322,6 +1031,45 @@
       "item": "biomesoplenty:origin_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:palm_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:palm_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:palm_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:palm_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:palm_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:palm_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:palm_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:palm_leaves",
@@ -334,9 +1082,81 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:palm_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:palm_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:palm_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:palm_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:palm_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:palm_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:palm_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:pine_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:pine_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:pine_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:pine_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:pine_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:pine_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:pine_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:pine_leaves",
@@ -349,9 +1169,42 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:pine_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:pine_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:pine_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:pine_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:pine_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:pine_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:pine_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:pink_daffodil",
@@ -379,6 +1232,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:red_maple_leaf_pile",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:red_maple_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -387,6 +1245,45 @@
       "item": "biomesoplenty:red_maple_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:redwood_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:redwood_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:redwood_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:redwood_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:redwood_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:redwood_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:redwood_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:redwood_leaves",
@@ -399,9 +1296,42 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:redwood_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:redwood_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:redwood_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:redwood_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:redwood_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:redwood_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:redwood_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:reed",
@@ -414,6 +1344,12 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:rose_quartz_block",
+      "base_price": 35,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:rose_quartz_chunk",
       "base_price": 8,
       "class": "common_processed"
@@ -422,6 +1358,51 @@
       "item": "biomesoplenty:sea_oats",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:smooth_black_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_black_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_black_sandstone_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_orange_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_orange_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_orange_sandstone_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_white_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_white_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:smooth_white_sandstone_stairs",
+      "base_price": 5,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:snowblossom_leaves",
@@ -447,6 +1428,136 @@
       "item": "biomesoplenty:sprout",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:stripped_dead_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_dead_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_empyreal_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_empyreal_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_fir_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_fir_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_hellbark_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_hellbark_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_jacaranda_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_jacaranda_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_magic_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_magic_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_mahogany_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_mahogany_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_maple_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_maple_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_palm_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_palm_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_pine_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_pine_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_redwood_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_redwood_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_umbran_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_umbran_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_willow_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:stripped_willow_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:tall_lavender",
@@ -484,6 +1595,45 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:umbran_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:umbran_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:umbran_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:umbran_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:umbran_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:umbran_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:umbran_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:umbran_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -494,9 +1644,42 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:umbran_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:umbran_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:umbran_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:umbran_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:umbran_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:umbran_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:umbran_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:violet",
@@ -529,9 +1712,70 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:white_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:white_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:white_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:white_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:wildflower",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:willow_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:willow_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:willow_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:willow_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:willow_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:willow_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:willow_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:willow_leaves",
@@ -544,14 +1788,47 @@
       "class": "common_resource"
     },
     {
+      "item": "biomesoplenty:willow_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:willow_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:willow_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:willow_sign",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomesoplenty:willow_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:willow_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomesoplenty:willow_vine",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:willow_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:wilted_lily",
@@ -562,6 +1839,11 @@
       "item": "biomesoplenty:wispjelly",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:yellow_maple_leaf_pile",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:yellow_maple_leaves",
