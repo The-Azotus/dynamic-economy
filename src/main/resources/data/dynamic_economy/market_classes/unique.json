@@ -1,6 +1,6 @@
 {
   "description": "One-of-a-kind items (nether stars, dragon eggs). Each unit sold cuts the price sharply, and it takes many hours to come back.",
-  "markup": 1.0,
+  "markup": 2.0,
   "sell_impact": 0.08,
   "buy_impact": 0.08,
   "recovery": 0.005,

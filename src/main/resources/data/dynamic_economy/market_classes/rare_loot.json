@@ -1,6 +1,6 @@
 {
   "description": "Items found rather than made (music discs, enchanted books, totems). Very volatile; recovers over hours.",
-  "markup": 0.75,
+  "markup": 1.5,
   "sell_impact": 0.02,
   "buy_impact": 0.02,
   "recovery": 0.01,

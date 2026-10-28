@@ -98,7 +98,7 @@ In a big modpack, you only need to price the raw materials (ores, logs, crops, m
 2. Run `/market admin suggest` (or `/market admin suggest <modid>` for one mod) from the console or as a level-4 operator. It writes `suggested.csv` to a new folder in `config/dynamic_economy/exports/`. Nothing on the market changes.
 3. Review the file in a spreadsheet, then import it like any other CSV.
 
-For each unlisted item, `suggest` finds its cheapest recipe and adds up its ingredients. For each ingredient slot it takes the cheapest priced item that fits, subtracts anything the recipe gives back (the empty bucket from a milk bucket), adds fuel for furnace recipes, divides by how many the recipe makes, and adds 10% for the processing step. It repeats until nothing gets cheaper, so long crafting chains are priced from the bottom up. It reads every recipe type that lists its items, including modded machines such as Create's presses and mills. Create's and Modern Industrialization's machine recipes are read more closely: their chance outputs count at their average, and Modern Industrialization's ingredient amounts are counted (its recipes don't list them in the usual place), leaving out catalysts the machine never uses up. Energy isn't priced. The item's suggested class is `rare_processed` if any ingredient comes from a rare class, otherwise `common_processed`.
+For each unlisted item, `suggest` finds its cheapest recipe and adds up its ingredients. For each ingredient slot it takes the cheapest priced item that fits, subtracts anything the recipe gives back (the empty bucket from a milk bucket), adds fuel for furnace recipes, divides by how many the recipe makes, and adds 10% for the processing step. It repeats until nothing gets cheaper, so long crafting chains are priced from the bottom up. It reads every recipe type that lists its items, including modded machines such as Create's presses and mills. Create's and Modern Industrialization's machine recipes are read more closely: their chance outputs count at their average, and Modern Industrialization's ingredient amounts are counted (its recipes don't list them in the usual place), leaving out catalysts the machine never uses up. Energy isn't priced. Recipe types that may hide some of their inputs (see the craft-profit groups below) only price items that no fully listed recipe makes, so a ritual that leaves its main ingredient out can't undercut the ordinary recipe. The item's suggested class is `rare_processed` if its rare ingredients are worth at least half its cost, or at least as much as the cheapest rare item in the catalog; otherwise `common_processed`. A trace of rare material deep in a long chain doesn't make a cheap item rare.
 
 Prices are rounded down and the 10% is less than any built-in markup, so buying the ingredients from the market, crafting and selling the result never pays. If your catalog gives any item a markup (or `min_buy_markup`) below 10%, `suggest` uses that smaller figure instead and says so in its reply.
 
@@ -178,10 +178,10 @@ The mod ships these classes. The values are starting points, not balanced number
 | `common_resource` | Raw materials gathered in bulk: stone, logs, sand | unlimited | 0.5 | 0.0002 | 0.1 | 0.3 – 2 |
 | `common_processed` | Common items made from those: planks, glass, ingots | normal | 0.4 | 0.0005 | 0.08 | 0.25 – 3 |
 | `farmable` | Crops and mob drops that farms produce endlessly | unlimited | 0.5 | 0.001 | 0.05 | 0.1 – 2 |
-| `rare_resource` | Scarce raw materials: diamonds, ancient debris | normal | 0.5 | 0.005 | 0.02 | 0.15 – 5 |
-| `rare_processed` | Valuable made items: netherite, precision mechanisms | normal | 0.5 | 0.003 | 0.03 | 0.15 – 5 |
-| `rare_loot` | Found, not made: music discs, enchanted books, totems | normal | 0.75 | 0.02 | 0.01 | 0.1 – 8 |
-| `unique` | One-of-a-kind: nether stars, dragon eggs | normal | 1.0 | 0.08 | 0.005 | 0.1 – 6 |
+| `rare_resource` | Scarce raw materials: diamonds, ancient debris | normal | 1.0 | 0.005 | 0.02 | 0.15 – 5 |
+| `rare_processed` | Valuable made items: netherite, precision mechanisms | normal | 1.0 | 0.003 | 0.03 | 0.15 – 5 |
+| `rare_loot` | Found, not made: music discs, enchanted books, totems | normal | 1.5 | 0.02 | 0.01 | 0.1 – 8 |
+| `unique` | One-of-a-kind: nether stars, dragon eggs | normal | 2.0 | 0.08 | 0.005 | 0.1 – 6 |
 
 "Impact per unit" is both `sell_impact` and `buy_impact`. For a sense of scale, at the default 1-minute recovery step:
 

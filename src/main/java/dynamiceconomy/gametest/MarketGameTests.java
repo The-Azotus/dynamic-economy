@@ -1308,7 +1308,7 @@ public final class MarketGameTests {
         CatalogOverlay.Result result = CatalogOverlay.apply(loaded.entries(), loaded.sources(), edits.snapshot(), CatalogOverlay::registryTag);
         CatalogEntry oak = result.entries().get(Items.OAK_LOG);
         helper.assertValueEqual(oak.overrides().sellImpact(), Optional.of(0.005), "a tag rule's class fills the fields");
-        helper.assertValueEqual(oak.markup(), 0.5, "rare_resource markup");
+        helper.assertValueEqual(oak.markup(), 1.0, "rare_resource markup");
         helper.assertTrue(!result.entries().containsKey(Items.BIRCH_LOG), "a class alone doesn't list unpriced items");
 
         edits.setItemField(key(Items.OAK_LOG), "class", new com.google.gson.JsonPrimitive("common_processed"));
@@ -1390,7 +1390,7 @@ public final class MarketGameTests {
 
             CatalogImport.Report changed = CatalogImport.analyze(csv.replace(",rare_resource,", ",unique,"));
             CatalogEntry iron = changed.decoded().stream().filter(e -> e.item() == Items.IRON_INGOT).findFirst().orElseThrow();
-            helper.assertValueEqual(iron.markup(), 1.0, "changing only the class in the sheet changes the class's fields");
+            helper.assertValueEqual(iron.markup(), 2.0, "changing only the class in the sheet changes the class's fields");
             helper.assertValueEqual(iron.sellFee(), 0.1, "and keeps the entry's own");
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -1475,6 +1475,38 @@ public final class MarketGameTests {
         PriceSuggestion.Result loop = PriceSuggestion.suggest(List.of(path(g, 1, false, a), path(h, 2, false, g), path(g, 1, false, h)),
                 catalog, new java.util.HashMap<>());
         helper.assertTrue(!loop.settled() && loop.looping().contains(g), "the loop is reported: " + loop.looping());
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void suggestionsPreferCompleteRecipesAndWeighRareInputs(GameTestHelper helper) {
+        Item a = Items.IRON_INGOT, r = Items.DIAMOND;
+        Map<Item, CatalogEntry> catalog = seeds(seed(a, 10, null), seed(r, 100, "rare_resource"));
+        ResourceLocation id = ResourceLocation.parse("test:altar");
+        java.util.function.BiFunction<Item, Double, PriceSuggestion.Slot> slot = (item, amount) ->
+                new PriceSuggestion.Slot(List.of(item), amount);
+        PriceSuggestion.Result result = PriceSuggestion.suggest(List.of(
+                // A recipe that may hide inputs can't undercut a complete one, but prices what nothing else makes.
+                new PriceSuggestion.Path(id, "test:altar", Items.GOLD_INGOT, 1, List.of(slot.apply(a, 1.0)), false, false),
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.GOLD_INGOT, 1, List.of(slot.apply(a, 10.0)), false, true),
+                new PriceSuggestion.Path(id, "test:altar", Items.GOLD_BLOCK, 1, List.of(slot.apply(a, 1.0)), false, false),
+                // One whole diamond among much cheaper material: rare.
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.EMERALD, 1, List.of(slot.apply(r, 1.0), slot.apply(a, 100.0)), false, true),
+                // Mostly diamond by value: rare.
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.REDSTONE, 1, List.of(slot.apply(r, 0.5), slot.apply(a, 1.0)), false, true),
+                // A trace of diamond: common, and so is what it's made into.
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.LAPIS_LAZULI, 1, List.of(slot.apply(r, 0.01), slot.apply(a, 10.0)), false, true),
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.LAPIS_BLOCK, 1, List.of(slot.apply(Items.LAPIS_LAZULI, 9.0)), false, true)
+        ), catalog, new java.util.HashMap<>());
+        Map<Item, PriceSuggestion.Suggestion> s = result.suggestions();
+        helper.assertValueEqual(s.get(Items.GOLD_INGOT).basePrice(), Optional.of(110), "the complete recipe wins though it costs more");
+        helper.assertValueEqual(s.get(Items.GOLD_BLOCK).basePrice(), Optional.of(11), "an incomplete recipe still prices what nothing else makes");
+        helper.assertTrue(!s.get(Items.GOLD_BLOCK).completeType(), "and is marked for review");
+        helper.assertValueEqual(s.get(Items.EMERALD).itemClass(), "rare_processed", "a whole rare item makes it rare");
+        helper.assertValueEqual(s.get(Items.REDSTONE).itemClass(), "rare_processed", "half its cost or more is rare");
+        helper.assertValueEqual(s.get(Items.LAPIS_LAZULI).itemClass(), "common_processed", "a trace of rare material doesn't count");
+        helper.assertValueEqual(s.get(Items.LAPIS_BLOCK).itemClass(), "common_processed", "nor does it add up through a chain");
+        helper.assertTrue(result.settled(), "settles");
         helper.succeed();
     }
 

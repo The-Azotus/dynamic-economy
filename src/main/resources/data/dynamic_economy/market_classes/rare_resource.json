@@ -1,6 +1,6 @@
 {
   "description": "Scarce raw materials (diamonds, ancient debris). Each sale moves the price noticeably and it recovers slowly.",
-  "markup": 0.5,
+  "markup": 1.0,
   "sell_impact": 0.005,
   "buy_impact": 0.005,
   "recovery": 0.02,

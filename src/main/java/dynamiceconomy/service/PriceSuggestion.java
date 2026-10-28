@@ -36,7 +36,9 @@ import java.util.TreeMap;
  * prices ("seeds"). An item's cost is its cheapest recipe: for each ingredient slot the cheapest priced item that fits,
  * minus any priced item the slot gives back (a bucket from a milk bucket), plus fuel for furnace recipes, divided by
  * the output count and raised by a processing premium. Costs only ever fall; a recipe loop that makes something out of
- * less than itself would fall forever, so passes are capped and such items reported.
+ * less than itself would fall forever, so passes are capped and such items reported. Recipes whose type may hide inputs
+ * (see {@link Path#complete}) only price items no complete recipe can, so a recipe that leaves its main ingredient out
+ * can't undercut one that lists it.
  * <p>
  * The premium is kept at or below every markup in the catalog, and suggested prices are rounded down, so buying a
  * recipe's ingredients at normal prices, crafting and selling the result never profits. Items from decorative-variant
@@ -60,6 +62,8 @@ public final class PriceSuggestion {
     private static final MathContext MATH = MathContext.DECIMAL64;
 
     private static final Set<String> RARE_CLASSES = Set.of("rare_resource", "rare_processed", "rare_loot", "unique");
+    /** A made item is rare if at least this share of its cost is rare material (or a whole unit of the cheapest rare item). */
+    private static final BigDecimal RARE_SHARE = new BigDecimal("0.5");
     /** Recipe types whose ingredients and outputs are fully described by the generic recipe methods. */
     private static final Set<String> COMPLETE_TYPES = Set.of("minecraft:crafting", "minecraft:smelting", "minecraft:blasting",
             "minecraft:smoking", "minecraft:campfire_cooking", "minecraft:stonecutting", "minecraft:smithing",
@@ -91,7 +95,8 @@ public final class PriceSuggestion {
      *
      * @param cost        the exact derived value in spurs, before rounding
      * @param basePrice   {@code cost} rounded down; empty if it's under 1 spur
-     * @param itemClass   {@code rare_processed} if any input is rare, else {@code common_processed}
+     * @param itemClass   {@code rare_processed} if its rare inputs are worth at least half its cost or one unit of the
+     *                    cheapest rare item in the catalog, else {@code common_processed}
      * @param depth       recipe steps from the nearest priced item
      * @param reverse     items this one is made from that can also be made back from it (storage blocks, nuggets)
      */
@@ -128,69 +133,14 @@ public final class PriceSuggestion {
     /** As {@link #suggest(Collection, HolderLookup.Provider, Map)}, from recipes already read. */
     public static Result suggest(List<Path> allPaths, Map<Item, CatalogEntry> catalog, Map<String, Integer> unusable) {
         List<Path> paths = allPaths.stream().filter(path -> !leftOut(path.output())).toList();
-        Map<Item, BigDecimal> price = new HashMap<>();
-        Map<Item, String> itemClass = new HashMap<>();
-        catalog.forEach((item, entry) -> {
-            price.put(item, BigDecimal.valueOf(entry.basePrice()));
-            itemClass.put(item, entry.itemClass().map(ResourceLocation::getPath).orElse(""));
-        });
         double premiumUsed = premium(catalog.values());
-        BigDecimal premium = BigDecimal.ONE.add(BigDecimal.valueOf(premiumUsed));
-        Map<Item, Path> chosen = new HashMap<>();
-        Map<Item, Integer> depth = new HashMap<>();
-
-        Set<Item> changed = new HashSet<>();
-        for (int pass = 0; pass < MAX_PASSES && (pass == 0 || !changed.isEmpty()); pass++) {
-            changed.clear();
-            for (Path path : paths) {
-                if (catalog.containsKey(path.output())) {
-                    continue; // Listed items keep their catalog price.
-                }
-                BigDecimal sum = BigDecimal.ZERO;
-                int deepest = 0;
-                boolean rare = false;
-                boolean priced = true;
-                for (Slot slot : path.slots()) {
-                    Item cheapest = null;
-                    for (Item option : slot.options()) {
-                        BigDecimal p = price.get(option);
-                        if (p != null && (cheapest == null || p.compareTo(price.get(cheapest)) < 0)) {
-                            cheapest = option;
-                        }
-                    }
-                    if (cheapest == null) {
-                        priced = false;
-                        break;
-                    }
-                    BigDecimal slotCost = price.get(cheapest);
-                    Item remainder = remainder(cheapest);
-                    if (remainder != null && price.containsKey(remainder)) {
-                        slotCost = slotCost.subtract(price.get(remainder)).max(BigDecimal.ZERO);
-                    }
-                    sum = sum.add(slotCost.multiply(BigDecimal.valueOf(slot.amount())));
-                    deepest = Math.max(deepest, depth.getOrDefault(cheapest, 0));
-                    rare |= RARE_CLASSES.contains(itemClass.getOrDefault(cheapest, ""));
-                }
-                if (!priced) {
-                    continue;
-                }
-                if (path.burnsFuel() && price.containsKey(Items.COAL)) {
-                    sum = sum.add(price.get(Items.COAL).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
-                }
-                BigDecimal cost = sum.multiply(premium).divide(BigDecimal.valueOf(path.count()), MATH);
-                BigDecimal current = price.get(path.output());
-                if (current == null || cost.compareTo(current) < 0) {
-                    price.put(path.output(), cost);
-                    chosen.put(path.output(), path);
-                    depth.put(path.output(), deepest + 1);
-                    itemClass.put(path.output(), rare ? "rare_processed" : "common_processed");
-                    changed.add(path.output());
-                }
-            }
-        }
-        if (!changed.isEmpty()) {
-            DynamicEconomy.LOGGER.warn("Price suggestions still changing after {} passes; a recipe loop makes something out of less", MAX_PASSES);
-        }
+        Propagation state = new Propagation(catalog, BigDecimal.ONE.add(BigDecimal.valueOf(premiumUsed)));
+        // Complete recipes first; then the rest, only for items those couldn't price.
+        Set<Item> looping = new HashSet<>(state.run(paths.stream().filter(Path::complete).toList()));
+        state.frozen.addAll(state.price.keySet());
+        looping.addAll(state.run(paths));
+        Map<Item, BigDecimal> price = state.price;
+        Map<Item, Path> chosen = state.chosen;
 
         // Which items can be turned into each other, so the admin can avoid listing both forms.
         Map<Item, Set<Item>> makes = new HashMap<>();
@@ -218,7 +168,7 @@ public final class PriceSuggestion {
                     }
                 }
             }
-            suggestions.put(item, new Suggestion(item, cost, base, itemClass.get(item), path.recipe(), path.type(), depth.get(item),
+            suggestions.put(item, new Suggestion(item, cost, base, state.itemClass.get(item), path.recipe(), path.type(), state.depth.get(item),
                     path.complete(), reverse));
         }
 
@@ -232,7 +182,107 @@ public final class PriceSuggestion {
             }
             (made.contains(item) ? unpricedInputs : noRecipe).add(item);
         }
-        return new Result(suggestions, noRecipe, unpricedInputs, unusable, Set.copyOf(changed), premiumUsed);
+        return new Result(suggestions, noRecipe, unpricedInputs, unusable, Set.copyOf(looping), premiumUsed);
+    }
+
+    /**
+     * Prices spreading from the seeds through recipes. {@code rare} is how much of an item's cost is rare material:
+     * a rare seed's whole price, and for a made item its inputs' rare parts, so a trace of rare material deep in a long
+     * chain doesn't make a cheap item rare. Items in {@code frozen} keep the price they have.
+     */
+    private static final class Propagation {
+        final Map<Item, BigDecimal> price = new HashMap<>();
+        final Map<Item, BigDecimal> rare = new HashMap<>();
+        final Map<Item, String> itemClass = new HashMap<>();
+        final Map<Item, Path> chosen = new HashMap<>();
+        final Map<Item, Integer> depth = new HashMap<>();
+        final Set<Item> frozen = new HashSet<>();
+        final BigDecimal premium;
+        /** The cheapest rare item in the catalog; a made item holding this much rare material is rare. */
+        final BigDecimal oneRareUnit;
+
+        Propagation(Map<Item, CatalogEntry> catalog, BigDecimal premium) {
+            this.premium = premium;
+            BigDecimal cheapestRare = null;
+            for (Map.Entry<Item, CatalogEntry> entry : catalog.entrySet()) {
+                BigDecimal p = BigDecimal.valueOf(entry.getValue().basePrice());
+                String c = entry.getValue().itemClass().map(ResourceLocation::getPath).orElse("");
+                price.put(entry.getKey(), p);
+                itemClass.put(entry.getKey(), c);
+                boolean isRare = RARE_CLASSES.contains(c);
+                rare.put(entry.getKey(), isRare ? p : BigDecimal.ZERO);
+                if (isRare && (cheapestRare == null || p.compareTo(cheapestRare) < 0)) {
+                    cheapestRare = p;
+                }
+                frozen.add(entry.getKey()); // Listed items keep their catalog price.
+            }
+            oneRareUnit = cheapestRare;
+        }
+
+        /** Applies {@code paths} until nothing gets cheaper; returns the items still changing when the passes ran out. */
+        Set<Item> run(List<Path> paths) {
+            Set<Item> changed = new HashSet<>();
+            for (int pass = 0; pass < MAX_PASSES && (pass == 0 || !changed.isEmpty()); pass++) {
+                changed.clear();
+                for (Path path : paths) {
+                    if (frozen.contains(path.output())) {
+                        continue;
+                    }
+                    BigDecimal sum = BigDecimal.ZERO;
+                    BigDecimal rareSum = BigDecimal.ZERO;
+                    int deepest = 0;
+                    boolean priced = true;
+                    for (Slot slot : path.slots()) {
+                        Item cheapest = null;
+                        for (Item option : slot.options()) {
+                            BigDecimal p = price.get(option);
+                            if (p != null && (cheapest == null || p.compareTo(price.get(cheapest)) < 0)) {
+                                cheapest = option;
+                            }
+                        }
+                        if (cheapest == null) {
+                            priced = false;
+                            break;
+                        }
+                        BigDecimal slotCost = price.get(cheapest);
+                        BigDecimal slotRare = rare.get(cheapest);
+                        Item remainder = remainder(cheapest);
+                        if (remainder != null && price.containsKey(remainder)) {
+                            slotCost = slotCost.subtract(price.get(remainder)).max(BigDecimal.ZERO);
+                            slotRare = slotRare.subtract(rare.get(remainder)).max(BigDecimal.ZERO).min(slotCost);
+                        }
+                        BigDecimal amount = BigDecimal.valueOf(slot.amount());
+                        sum = sum.add(slotCost.multiply(amount));
+                        rareSum = rareSum.add(slotRare.multiply(amount));
+                        deepest = Math.max(deepest, depth.getOrDefault(cheapest, 0));
+                    }
+                    if (!priced) {
+                        continue;
+                    }
+                    if (path.burnsFuel() && price.containsKey(Items.COAL)) {
+                        sum = sum.add(price.get(Items.COAL).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
+                    }
+                    BigDecimal count = BigDecimal.valueOf(path.count());
+                    BigDecimal cost = sum.multiply(premium).divide(count, MATH);
+                    BigDecimal current = price.get(path.output());
+                    if (current == null || cost.compareTo(current) < 0) {
+                        BigDecimal rareCost = rareSum.multiply(premium).divide(count, MATH);
+                        boolean isRare = rareCost.signum() > 0 && (rareCost.compareTo(cost.multiply(RARE_SHARE)) >= 0
+                                || oneRareUnit != null && rareCost.compareTo(oneRareUnit) >= 0);
+                        price.put(path.output(), cost);
+                        rare.put(path.output(), rareCost);
+                        chosen.put(path.output(), path);
+                        depth.put(path.output(), deepest + 1);
+                        itemClass.put(path.output(), isRare ? "rare_processed" : "common_processed");
+                        changed.add(path.output());
+                    }
+                }
+            }
+            if (!changed.isEmpty()) {
+                DynamicEconomy.LOGGER.warn("Price suggestions still changing after {} passes; a recipe loop makes something out of less", MAX_PASSES);
+            }
+            return Set.copyOf(changed);
+        }
     }
 
     /**
