@@ -189,6 +189,10 @@ public final class PriceSuggestion {
      * Prices spreading from the seeds through recipes. {@code rare} is how much of an item's cost is rare material:
      * a rare seed's whole price, and for a made item its inputs' rare parts, so a trace of rare material deep in a long
      * chain doesn't make a cheap item rare. Items in {@code frozen} keep the price they have.
+     * <p>
+     * An item is never repriced from ingredients that were themselves priced from it ({@code madeFrom}), so a pair of
+     * recipes that turns one plank into a door and the door into two planks can't drive both prices towards zero: the
+     * chosen recipes always form a chain back to the seeds.
      */
     private static final class Propagation {
         final Map<Item, BigDecimal> price = new HashMap<>();
@@ -196,6 +200,8 @@ public final class PriceSuggestion {
         final Map<Item, String> itemClass = new HashMap<>();
         final Map<Item, Path> chosen = new HashMap<>();
         final Map<Item, Integer> depth = new HashMap<>();
+        /** The ingredients each item's price came from. */
+        final Map<Item, List<Item>> madeFrom = new HashMap<>();
         final Set<Item> frozen = new HashSet<>();
         final BigDecimal premium;
         /** The cheapest rare item in the catalog; a made item holding this much rare material is rare. */
@@ -232,6 +238,7 @@ public final class PriceSuggestion {
                     BigDecimal rareSum = BigDecimal.ZERO;
                     int deepest = 0;
                     boolean priced = true;
+                    List<Item> used = new ArrayList<>();
                     for (Slot slot : path.slots()) {
                         Item cheapest = null;
                         for (Item option : slot.options()) {
@@ -244,6 +251,7 @@ public final class PriceSuggestion {
                             priced = false;
                             break;
                         }
+                        used.add(cheapest);
                         BigDecimal slotCost = price.get(cheapest);
                         BigDecimal slotRare = rare.get(cheapest);
                         Item remainder = remainder(cheapest);
@@ -265,13 +273,14 @@ public final class PriceSuggestion {
                     BigDecimal count = BigDecimal.valueOf(path.count());
                     BigDecimal cost = sum.multiply(premium).divide(count, MATH);
                     BigDecimal current = price.get(path.output());
-                    if (current == null || cost.compareTo(current) < 0) {
+                    if (current == null || cost.compareTo(current) < 0 && !reaches(used, path.output())) {
                         BigDecimal rareCost = rareSum.multiply(premium).divide(count, MATH);
                         boolean isRare = rareCost.signum() > 0 && (rareCost.compareTo(cost.multiply(RARE_SHARE)) >= 0
                                 || oneRareUnit != null && rareCost.compareTo(oneRareUnit) >= 0);
                         price.put(path.output(), cost);
                         rare.put(path.output(), rareCost);
                         chosen.put(path.output(), path);
+                        madeFrom.put(path.output(), used);
                         depth.put(path.output(), deepest + 1);
                         itemClass.put(path.output(), isRare ? "rare_processed" : "common_processed");
                         changed.add(path.output());
@@ -282,6 +291,22 @@ public final class PriceSuggestion {
                 DynamicEconomy.LOGGER.warn("Price suggestions still changing after {} passes; a recipe loop makes something out of less", MAX_PASSES);
             }
             return Set.copyOf(changed);
+        }
+
+        /** Whether {@code target} is among {@code items} or the ingredients any of them was priced from, however deep. */
+        boolean reaches(List<Item> items, Item target) {
+            Set<Item> seen = new HashSet<>();
+            java.util.ArrayDeque<Item> open = new java.util.ArrayDeque<>(items);
+            while (!open.isEmpty()) {
+                Item item = open.pop();
+                if (item == target) {
+                    return true;
+                }
+                if (seen.add(item)) {
+                    open.addAll(madeFrom.getOrDefault(item, List.of()));
+                }
+            }
+            return false;
         }
     }
 

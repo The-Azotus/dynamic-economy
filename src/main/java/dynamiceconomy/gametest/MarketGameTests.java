@@ -1470,11 +1470,14 @@ public final class MarketGameTests {
         helper.assertTrue(!s.containsKey(a), "listed items keep their catalog price");
         helper.assertTrue(result.settled(), "settles");
 
-        // A loop that makes something out of less than itself never settles; its items are reported.
+        // A loop that makes something out of less than itself (1 plank to a door, a door to 2 planks) can't feed back:
+        // g isn't repriced from h, which was priced from g, so both settle at their prices from the seed.
         Item g = Items.GOLD_INGOT, h = Items.GOLD_NUGGET;
         PriceSuggestion.Result loop = PriceSuggestion.suggest(List.of(path(g, 1, false, a), path(h, 2, false, g), path(g, 1, false, h)),
                 catalog, new java.util.HashMap<>());
-        helper.assertTrue(!loop.settled() && loop.looping().contains(g), "the loop is reported: " + loop.looping());
+        helper.assertTrue(loop.settled(), "the loop settles: " + loop.looping());
+        helper.assertValueEqual(loop.suggestions().get(g).basePrice(), Optional.of(11), "g keeps its price from the seed");
+        helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(6), "h is priced from g: 11 × 1.1 / 2");
         helper.succeed();
     }
 

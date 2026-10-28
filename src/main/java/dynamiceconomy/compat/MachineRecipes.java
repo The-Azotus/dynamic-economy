@@ -160,7 +160,7 @@ public final class MachineRecipes {
      * {@code getMainInput}, {@code getExtraInput}, {@code getItemInput}); its {@code ingredient()} is a
      * {@link SizedIngredient}. Outputs are {@code getOutputDefinition()} or {@code getMainOutputDefinition()}. A getter
      * returning a chemical or fluid ingredient means the recipe uses one up. Recipes whose outputs aren't items (gases,
-     * energy) give null.
+     * energy, which comes as a {@code long[]}) give null.
      */
     private static Read mekanism(Class<?> type, Object recipe) throws ReflectiveOperationException {
         List<Input> inputs = new ArrayList<>();
@@ -176,8 +176,9 @@ public final class MachineRecipes {
                 add(inputs, sized.ingredient(), sized.count());
             } else if (MEKANISM_OTHER_INGREDIENTS.contains(returns)) {
                 fluids = true;
-            } else if (method.getName().equals("getMainOutputDefinition")
-                    || method.getName().equals("getOutputDefinition") && outputs == null) {
+            } else if (List.class.isAssignableFrom(method.getReturnType()) && (method.getName().equals("getMainOutputDefinition")
+                    || method.getName().equals("getOutputDefinition") && outputs == null)) {
+                // Energy recipes return their output as a long[], which can't hold items.
                 outputs = method;
             }
         }
