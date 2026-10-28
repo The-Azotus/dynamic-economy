@@ -4,8 +4,38 @@
   ],
   "entries": [
     {
+      "item": "apotheosis:luminous_crystal_shard",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "apotheosis:music_disc_flash",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "apotheosis:music_disc_glimmer",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "apotheosis:music_disc_shimmer",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "apotheosis:mysterious_scrap_metal",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
       "item": "apotheosis:sigil_of_malice",
       "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "apotheosis:timeworn_fabric",
+      "base_price": 32,
       "class": "rare_loot"
     }
   ]
