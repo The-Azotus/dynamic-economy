@@ -95,7 +95,7 @@
     },
     {
       "item": "modern_industrialization:salt_dust",
-      "base_price": 4,
+      "base_price": 1,
       "class": "common_processed"
     },
     {
