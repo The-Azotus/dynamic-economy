@@ -59,6 +59,11 @@
       "class": "farmable"
     },
     {
+      "item": "regions_unexplored:bamboo_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
       "item": "regions_unexplored:baobab_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -199,6 +204,11 @@
       "class": "common_resource"
     },
     {
+      "item": "regions_unexplored:cobalt_obsidian",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "regions_unexplored:cobalt_roots",
       "base_price": 1,
       "class": "farmable"
@@ -274,6 +284,11 @@
       "class": "farmable"
     },
     {
+      "item": "regions_unexplored:duskmelon_slice",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
       "item": "regions_unexplored:elephant_ear",
       "base_price": 1,
       "class": "farmable"
@@ -321,6 +336,11 @@
     {
       "item": "regions_unexplored:frozen_grass",
       "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:glister_bulb",
+      "base_price": 2,
       "class": "farmable"
     },
     {
@@ -389,9 +409,19 @@
       "class": "farmable"
     },
     {
+      "item": "regions_unexplored:hyacinth_flowers",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
       "item": "regions_unexplored:hyssop",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:icicle",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "regions_unexplored:joshua_leaves",
@@ -499,6 +529,11 @@
       "class": "farmable"
     },
     {
+      "item": "regions_unexplored:maple_leaf_litter",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
       "item": "regions_unexplored:maple_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -535,6 +570,11 @@
     },
     {
       "item": "regions_unexplored:orange_coneflower",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:orange_maple_leaf_litter",
       "base_price": 1,
       "class": "farmable"
     },
@@ -654,6 +694,11 @@
       "class": "farmable"
     },
     {
+      "item": "regions_unexplored:red_maple_leaf_litter",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
       "item": "regions_unexplored:red_maple_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -685,6 +730,11 @@
     },
     {
       "item": "regions_unexplored:saguaro_cactus",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "regions_unexplored:saguaro_cactus_flower",
       "base_price": 2,
       "class": "farmable"
     },
@@ -742,6 +792,11 @@
       "item": "regions_unexplored:silt_podzol",
       "base_price": 2,
       "class": "common_resource"
+    },
+    {
+      "item": "regions_unexplored:silver_birch_leaf_litter",
+      "base_price": 1,
+      "class": "farmable"
     },
     {
       "item": "regions_unexplored:silver_birch_leaves",
