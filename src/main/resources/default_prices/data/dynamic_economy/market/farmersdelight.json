@@ -4,6 +4,83 @@
   ],
   "entries": [
     {
+      "item": "farmersdelight:acacia_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:apple_cider",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:apple_pie",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:apple_pie_slice",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:bacon",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:bacon_and_eggs",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:bacon_sandwich",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:baked_cod_stew",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:bamboo_cabinet",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:barbecue_stick",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:beef_patty",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:beef_stew",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:beetroot_crate",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:birch_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:bone_broth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
       "item": "farmersdelight:brown_mushroom_colony",
       "base_price": 4,
       "class": "farmable"
@@ -14,9 +91,190 @@
       "class": "farmable"
     },
     {
+      "item": "farmersdelight:cabbage_crate",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:cabbage_leaf",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:cabbage_rolls",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
       "item": "farmersdelight:cabbage_seeds",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:cake_slice",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:carrot_crate",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:cherry_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:chicken_cuts",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:chicken_sandwich",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:chicken_soup",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:chocolate_pie",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:chocolate_pie_slice",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:cod_roll",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cod_slice",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cooked_bacon",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cooked_chicken_cuts",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cooked_cod_slice",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cooked_mutton_chops",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cooked_rice",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cooked_salmon_slice",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:crimson_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:cutting_board",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:dark_oak_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:diamond_knife",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "farmersdelight:dog_food",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:dumplings",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:egg_sandwich",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:fish_stew",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:flint_knife",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:fried_egg",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:fried_rice",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:fruit_salad",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:gleaming_salad_block",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:glow_berry_custard",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:golden_knife",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:grilled_salmon",
+      "base_price": 6,
+      "class": "common_processed"
     },
     {
       "item": "farmersdelight:ham",
@@ -24,9 +282,179 @@
       "class": "farmable"
     },
     {
+      "item": "farmersdelight:hamburger",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:honey_cookie",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:honey_glazed_ham_block",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:horse_feed",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:hot_cocoa",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:iron_knife",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:jungle_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:kelp_roll",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:kelp_roll_slice",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:mangrove_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:melon_juice",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:melon_popsicle",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:milk_bottle",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:minced_beef",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:mixed_salad",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:mushroom_rice",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:mutton_chops",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:mutton_wrap",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:nether_salad",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:netherite_knife",
+      "base_price": 2330,
+      "class": "rare_processed"
+    },
+    {
+      "item": "farmersdelight:noodle_soup",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:oak_cabinet",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "farmersdelight:onion",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:onion_crate",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:onion_soup",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:pasta_with_meatballs",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:pasta_with_mutton_chop",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:pie_crust",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:potato_crate",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:pumpkin_pie_slice",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:pumpkin_slice",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:pumpkin_soup",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:ratatouille",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:raw_pasta",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "farmersdelight:red_mushroom_colony",
@@ -39,8 +467,44 @@
       "class": "farmable"
     },
     {
+      "item": "farmersdelight:rice_bag",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:rice_roll_medley_block",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
       "item": "farmersdelight:rich_soil",
       "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:roast_chicken_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:roasted_mutton_chops",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:rotten_tomato",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:salmon_roll",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:salmon_slice",
+      "base_price": 2,
       "class": "common_processed"
     },
     {
@@ -49,9 +513,81 @@
       "class": "farmable"
     },
     {
+      "item": "farmersdelight:shepherds_pie_block",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:skillet",
+      "base_price": 142,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:smoked_ham",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:spruce_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:squid_ink_pasta",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:steak_and_potatoes",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:stove",
+      "base_price": 139,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:stuffed_potato",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:stuffed_pumpkin_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:sweet_berry_cheesecake",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:sweet_berry_cheesecake_slice",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:sweet_berry_cookie",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "farmersdelight:tomato",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:tomato_crate",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "farmersdelight:tomato_sauce",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "farmersdelight:tomato_seeds",
@@ -62,6 +598,26 @@
       "item": "farmersdelight:tree_bark",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "farmersdelight:vegetable_noodles",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:vegetable_soup",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:warped_cabinet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "farmersdelight:wheat_dough",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "farmersdelight:wild_beetroots",
