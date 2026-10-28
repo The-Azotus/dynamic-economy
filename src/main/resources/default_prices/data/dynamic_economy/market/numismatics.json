@@ -1,0 +1,27 @@
+{
+  "required_mods": [
+    "numismatics"
+  ],
+  "entries": [
+    {
+      "item": "numismatics:andesite_depositor",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "numismatics:bank_terminal",
+      "base_price": 256,
+      "class": "common_processed"
+    },
+    {
+      "item": "numismatics:salepoint",
+      "base_price": 502,
+      "class": "common_processed"
+    },
+    {
+      "item": "numismatics:vendor",
+      "base_price": 133,
+      "class": "common_processed"
+    }
+  ]
+}
