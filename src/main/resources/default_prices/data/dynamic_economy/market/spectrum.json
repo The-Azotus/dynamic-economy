@@ -4,6 +4,11 @@
   ],
   "entries": [
     {
+      "item": "spectrum:allay_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:aloe_leaf",
       "base_price": 4,
       "class": "farmable"
@@ -14,9 +19,34 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:armadillo_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:ashen_blackslag",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:astrologer_banner_pattern",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:basal_marble",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "spectrum:bat_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:bee_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:black_leaves",
@@ -39,8 +69,18 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:blaze_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:blood_orchid",
       "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:blood_orchid_petal",
+      "base_price": 2,
       "class": "farmable"
     },
     {
@@ -57,6 +97,16 @@
       "item": "spectrum:blue_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:bogged_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:breeze_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:bristle_sprouts",
@@ -79,6 +129,31 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:camel_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:cat_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:cave_spider_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:chestnut_noxcap_block",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxcap_gills",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:chestnut_noxcap_stem",
       "base_price": 8,
       "class": "common_resource"
@@ -87,6 +162,16 @@
       "item": "spectrum:chestnut_noxshroom",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:chicken_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:citrine_block",
+      "base_price": 32,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:citrine_shard",
@@ -99,9 +184,29 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:cod_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:colorful_shooting_star",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:cow_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:crawfish",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:crawfish_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:cyan_leaves",
@@ -119,9 +224,39 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:deep_light_banner_pattern",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:dolphin_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:donkey_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:doombloom_seed",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:drowned_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:ebony_noxcap_block",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxcap_gills",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:ebony_noxcap_stem",
@@ -134,6 +269,36 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:elder_guardian_head",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:enderman_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:endermite_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:eraser_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:evoker_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:fiery_shooting_star",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:fissure_plum",
       "base_price": 8,
       "class": "farmable"
@@ -144,9 +309,39 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:frog_cold_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:frog_temperate_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:frog_warm_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:gemstone_shooting_star",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:giant_moss_ball",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
       "item": "spectrum:glass_peach",
       "base_price": 8,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:goat_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:gray_leaves",
@@ -179,6 +374,46 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:guardian_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:hibernating_jade_vine_bulb",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:hoglin_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:horse_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:illusioner_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:iron_golem_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:ivory_noxcap_block",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxcap_gills",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:ivory_noxcap_stem",
       "base_price": 8,
       "class": "common_resource"
@@ -189,9 +424,34 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:jadeite_lotus_bulb",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:jadeite_lotus_flower",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:jadeite_lotus_stem",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:kindling_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:koi",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:koi_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:light_blue_leaves",
@@ -239,9 +499,99 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:lizard_black_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_blue_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_brown_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_cyan_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_gray_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_green_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_light_blue_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_light_gray_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_lime_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_magenta_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:lizard_meat",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:lizard_orange_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_pink_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_purple_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_red_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_white_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:lizard_yellow_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:llama_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:logo_banner_pattern",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:magenta_leaves",
@@ -259,6 +609,26 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:marrow_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:milky_resin",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:monstrosity_head",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:moonstone_block",
+      "base_price": 192,
+      "class": "rare_resource"
+    },
+    {
       "item": "spectrum:moonstone_shard",
       "base_price": 48,
       "class": "rare_resource"
@@ -269,9 +639,59 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:moss_ball",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:music_disc_credits",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:music_disc_discovery",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:music_disc_divinity",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:myceylon",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:nephrite_blossom_bulb",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:nephrite_blossom_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:nephrite_blossom_stem",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
       "item": "spectrum:nightdew_sprout",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:ocelot_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:onyx_block",
+      "base_price": 96,
+      "class": "rare_resource"
     },
     {
       "item": "spectrum:onyx_shard",
@@ -294,9 +714,29 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:overgrown_blackslag",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:paltaeria_fragments",
       "base_price": 32,
       "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:panda_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:piglin_brute_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:pillager_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:pink_leaves",
@@ -314,9 +754,29 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:poisonbloom_banner_pattern",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:polar_bear_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:prickly_bayleaf",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:pristine_shooting_star",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:pufferfish_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:pure_azurite",
@@ -329,9 +789,69 @@
       "class": "rare_resource"
     },
     {
+      "item": "spectrum:pure_certus_quartz",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_coal",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_copper",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_diamond",
+      "base_price": 640,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:pure_emerald",
+      "base_price": 120,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:pure_fluix",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_gold",
+      "base_price": 60,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_iron",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:pure_malachite",
       "base_price": 64,
       "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:pure_netherite_scrap",
+      "base_price": 1408,
+      "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:pure_prismarine",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_quartz",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pure_zinc",
+      "base_price": 20,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:purple_leaves",
@@ -352,6 +872,16 @@
       "item": "spectrum:quitoxic_reeds",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:rabbit_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:ravager_head",
+      "base_price": 128,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:raw_azurite",
@@ -384,6 +914,11 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:salmon_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:sawblade_grass",
       "base_price": 2,
       "class": "farmable"
@@ -399,8 +934,33 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:sheep_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:shimmerstone_gem",
       "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:shulker_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:silverfish_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:slate_noxcap_block",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxcap_gills",
+      "base_price": 2,
       "class": "common_processed"
     },
     {
@@ -414,6 +974,11 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:slime_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:slush",
       "base_price": 1,
       "class": "common_resource"
@@ -422,6 +987,51 @@
       "item": "spectrum:snapping_ivy",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:sniffer_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:snow_golem_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:spider_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:spirit_sallow_heart",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:spirit_sallow_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:spirit_sallow_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:spirit_sallow_roots",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "spectrum:splinterspawn_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:squid_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:star_fragment",
@@ -444,14 +1054,64 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:tadpole_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:topaz_block",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:topaz_shard",
       "base_price": 8,
       "class": "common_processed"
     },
     {
+      "item": "spectrum:tropical_fish_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:turtle_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "spectrum:varia_sprout",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:velvet_astrologer_banner_pattern",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:vex_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:villager_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:vindicator_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:wandering_trader_head",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:warden_head",
+      "base_price": 512,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:weeping_gala_leaves",
@@ -482,6 +1142,16 @@
       "item": "spectrum:white_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:wither_head",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:wolf_head",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "spectrum:yellow_leaves",
