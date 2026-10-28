@@ -159,6 +159,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:brown_mushroom_stem",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:brown_oak_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -374,6 +379,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:green_mushroom_block",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:green_tulip",
       "base_price": 1,
       "class": "farmable"
@@ -539,6 +549,16 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:music_disc_better_days",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "biomeswevegone:music_disc_pixie_club",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
       "item": "biomeswevegone:oddion_bulb",
       "base_price": 2,
       "class": "farmable"
@@ -592,6 +612,16 @@
       "item": "biomeswevegone:osiria_rose",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:overgrown_dacite",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:overgrown_stone",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:pale_pumpkin",
@@ -677,6 +707,11 @@
       "item": "biomeswevegone:pink_daffodil",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:podzol_dacite",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:poison_ivy",
@@ -864,6 +899,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:soul_fruit",
+      "base_price": 8,
+      "class": "farmable"
+    },
+    {
       "item": "biomeswevegone:spirit_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -872,6 +912,11 @@
       "item": "biomeswevegone:spirit_log",
       "base_price": 8,
       "class": "common_resource"
+    },
+    {
+      "item": "biomeswevegone:spirit_roots",
+      "base_price": 1,
+      "class": "farmable"
     },
     {
       "item": "biomeswevegone:spirit_sapling",
@@ -924,6 +969,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:weeping_milkcap_mushroom_block",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:white_allium",
       "base_price": 1,
       "class": "farmable"
@@ -957,6 +1007,21 @@
       "item": "biomeswevegone:white_mangrove_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:white_mushroom_stem",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_overgrown_dacite",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_podzol_dacite",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:white_puffball_cap",
@@ -1029,6 +1094,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:witch_hazel_branch",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
       "item": "biomeswevegone:witch_hazel_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1047,6 +1117,11 @@
       "item": "biomeswevegone:wood_blewit",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:wood_blewit_mushroom_block",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:yellow_birch_leaves",
