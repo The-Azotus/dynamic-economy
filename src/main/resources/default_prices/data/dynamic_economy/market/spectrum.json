@@ -19,9 +19,76 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:amethyst_bricks",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:amethyst_chime",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:amethyst_chiseled_basalt",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:amethyst_chiseled_calcite",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:amethyst_glass",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:amethyst_glass_pane",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:amethyst_powder",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:amethyst_pylon",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:amethyst_semi_permeable_glass",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:amethyst_shard_banner_pattern",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:andesite_shimmerstone_light",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:armadillo_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:ash",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ash_pile",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:ashen_blackslag",
@@ -34,9 +101,136 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:azure_dike_belt",
+      "base_price": 111,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:azure_dike_ring",
+      "base_price": 31,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:azurite_cluster",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:banyash",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:basal_marble",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "spectrum:basal_marble_brick_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basal_marble_brick_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basal_marble_brick_wall",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basal_marble_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:basal_marble_pillar",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:basal_marble_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basal_marble_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basal_marble_tile_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:basal_marble_tile_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:basal_marble_tiles",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basal_marble_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basalt_brick_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basalt_brick_stairs",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basalt_brick_wall",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:basalt_bricks",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:basalt_shimmerstone_light",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basalt_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basalt_tile_stairs",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basalt_tile_wall",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:basalt_tiles",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "spectrum:bat_head",
@@ -49,6 +243,41 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:berliner",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_hole_chest",
+      "base_price": 404,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:black_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:black_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -59,9 +288,39 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:black_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:black_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:black_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:black_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:blackslag",
@@ -69,9 +328,77 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:blackslag_brick_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blackslag_brick_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:blackslag_brick_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:blackslag_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:blackslag_shimmerstone_light",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blackslag_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blackslag_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blackslag_tile_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blackslag_tile_wall",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blackslag_tiles",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blackslag_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:blaze_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:block_detector",
+      "base_price": 66,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:block_placer",
+      "base_price": 52,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:blood_orchid",
@@ -84,6 +411,36 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:bloodstone_cluster",
+      "base_price": 70,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:blue_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:blue_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -94,14 +451,64 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:blue_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:blue_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "spectrum:blue_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:blue_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:bodacious_berry_bar",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:bogged_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:bottle_of_fading",
+      "base_price": 64,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:bottle_of_failing",
+      "base_price": 102,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:bottomless_bundle",
+      "base_price": 34,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:breeze_head",
@@ -114,6 +521,31 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:brown_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:brown_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -124,9 +556,98 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:brown_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:brown_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:brown_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:brown_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:calcite_brick_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:calcite_brick_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:calcite_brick_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:calcite_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:calcite_shimmerstone_light",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:calcite_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:calcite_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:calcite_tile_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:calcite_tile_wall",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:calcite_tiles",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:calcite_wall",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:camel_head",
@@ -144,6 +665,16 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:celestial_pocketwatch",
+      "base_price": 884,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:certus_quartz_cluster",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:chestnut_noxcap_block",
       "base_price": 4,
       "class": "common_processed"
@@ -151,6 +682,11 @@
     {
       "item": "spectrum:chestnut_noxcap_gills",
       "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxcap_hyphae",
+      "base_price": 11,
       "class": "common_processed"
     },
     {
@@ -164,14 +700,154 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:chestnut_noxwood_amphora",
+      "base_price": 25,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_door",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_fence_gate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_lamp",
+      "base_price": 33,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_lantern",
+      "base_price": 31,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_pressure_plate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_stairs",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:chestnut_noxwood_trapdoor",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:chicken_head",
       "base_price": 64,
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:chiseled_polished_basalt",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:chiseled_polished_blackslag",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:chiseled_polished_calcite",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:cinderhearth",
+      "base_price": 435,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:circlet_of_arrogance",
+      "base_price": 107,
+      "class": "rare_processed"
+    },
+    {
       "item": "spectrum:citrine_block",
       "base_price": 32,
       "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_bricks",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_chime",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_chiseled_basalt",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_chiseled_calcite",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_glass",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:citrine_glass_pane",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_powder",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_pylon",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:citrine_semi_permeable_glass",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "spectrum:citrine_shard",
@@ -184,9 +860,36 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:coal_cluster",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:cobbled_blackslag",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:cobbled_blackslag_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cobbled_blackslag_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:cod_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:color_picker",
+      "base_price": 16,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:colorful_shooting_star",
@@ -194,9 +897,69 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:compacting_chest",
+      "base_price": 145,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:connection_node",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:constructors_staff",
+      "base_price": 37,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:cooked_lizard_meat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:copper_cluster",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:cow_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:cracked_basalt_bricks",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cracked_basalt_tiles",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cracked_blackslag_bricks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cracked_blackslag_tiles",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cracked_calcite_bricks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cracked_calcite_tiles",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:crafting_tablet",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:crawfish",
@@ -204,9 +967,59 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:crawfish_cocktail",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:crawfish_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:cream_pastry",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:creature_detector",
+      "base_price": 115,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:crescent_clock",
+      "base_price": 96,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:crystal_apothecary",
+      "base_price": 64,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:cyan_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:cyan_leaves",
@@ -219,14 +1032,60 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:cyan_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:cyan_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "spectrum:cyan_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:cyan_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:deep_light_banner_pattern",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:deepslate_shimmerstone_light",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:diamond_cluster",
+      "base_price": 563,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:diorite_shimmerstone_light",
+      "base_price": 12,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:dolphin_head",
@@ -244,6 +1103,11 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:draconic_twinsword",
+      "base_price": 5924,
+      "class": "rare_processed"
+    },
+    {
       "item": "spectrum:drowned_head",
       "base_price": 64,
       "class": "rare_loot"
@@ -259,6 +1123,11 @@
       "class": "common_processed"
     },
     {
+      "item": "spectrum:ebony_noxcap_hyphae",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:ebony_noxcap_stem",
       "base_price": 8,
       "class": "common_resource"
@@ -269,9 +1138,101 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:ebony_noxwood_amphora",
+      "base_price": 78,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_door",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_fence_gate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_lamp",
+      "base_price": 72,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_lantern",
+      "base_price": 58,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_pressure_plate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_stairs",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ebony_noxwood_trapdoor",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:echo_cluster",
+      "base_price": 140,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
       "item": "spectrum:elder_guardian_head",
       "base_price": 256,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:emerald_cluster",
+      "base_price": 105,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:enchanted_golden_carrot",
+      "base_price": 354,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:enchanter",
+      "base_price": 244,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:enchantment_canvas",
+      "base_price": 44,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:enderman_head",
@@ -294,14 +1255,119 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:exchanging_staff",
+      "base_price": 37,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:exposed_polished_shale_clay",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_polished_shale_clay_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_polished_shale_clay_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_shale_clay_brick_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_shale_clay_brick_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_shale_clay_bricks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_shale_clay_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_shale_clay_tile_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:exposed_shale_clay_tiles",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:fabrication_chest",
+      "base_price": 68,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:faded_koi",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:fanciful_belt",
+      "base_price": 83,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:fanciful_circlet",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:fanciful_gloves",
+      "base_price": 25,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:fanciful_pendant",
+      "base_price": 220,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:fanciful_tuff_ring",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ferocious_chestplate",
+      "base_price": 132,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:fetchling_helmet",
+      "base_price": 88,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:fiery_shooting_star",
       "base_price": 128,
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:fishcake",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:fissure_plum",
       "base_price": 8,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:fluix_cluster",
+      "base_price": 13,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:four_leaf_clover",
@@ -324,6 +1390,16 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:frostbite_essence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gather_node",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:gemstone_shooting_star",
       "base_price": 128,
       "class": "rare_loot"
@@ -339,9 +1415,70 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:glistering_melon",
+      "base_price": 115,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:glistering_shooting_star",
+      "base_price": 704,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:glow_phantom_frame",
+      "base_price": 62,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:glow_vision_goggles",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:glowstone_cluster",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:goat_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:gold_cluster",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:granite_shimmerstone_light",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:gray_leaves",
@@ -354,9 +1491,69 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:gray_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:gray_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:gray_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:gray_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:greater_potion_pendant",
+      "base_price": 1068,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:green_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:green_leaves",
@@ -369,14 +1566,59 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:green_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:green_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "spectrum:green_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:green_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:guardian_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:hare_roast",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:heartbound_chest",
+      "base_price": 54,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:heartsingers_reward",
+      "base_price": 23,
+      "class": "rare_processed"
     },
     {
       "item": "spectrum:hibernating_jade_vine_bulb",
@@ -389,6 +1631,11 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:honey_pastry",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:horse_head",
       "base_price": 64,
       "class": "rare_loot"
@@ -399,9 +1646,59 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:incandescent_amalgam",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:incandescent_essence",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ink_assortment",
+      "base_price": 45,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:ink_flask",
+      "base_price": 45,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ink_node",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:iron_cluster",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:iron_golem_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:item_bowl_basalt",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:item_bowl_calcite",
+      "base_price": 37,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:item_detector",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:item_roundel",
+      "base_price": 38,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:ivory_noxcap_block",
@@ -414,6 +1711,11 @@
       "class": "common_processed"
     },
     {
+      "item": "spectrum:ivory_noxcap_hyphae",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:ivory_noxcap_stem",
       "base_price": 8,
       "class": "common_resource"
@@ -422,6 +1724,71 @@
       "item": "spectrum:ivory_noxshroom",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_amphora",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_door",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_fence_gate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_lantern",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_pressure_plate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_stairs",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ivory_noxwood_trapdoor",
+      "base_price": 6,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:jadeite_lotus_bulb",
@@ -439,9 +1806,19 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:jeopardant",
+      "base_price": 401,
+      "class": "rare_processed"
+    },
+    {
       "item": "spectrum:kindling_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:knowledge_gem",
+      "base_price": 114,
+      "class": "rare_processed"
     },
     {
       "item": "spectrum:koi",
@@ -454,6 +1831,42 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:lapis_cluster",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:lesser_potion_pendant",
+      "base_price": 610,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:light_blue_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:light_blue_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -464,9 +1877,64 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:light_blue_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:light_blue_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:light_blue_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_blue_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:light_gray_leaves",
@@ -479,9 +1947,69 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:light_gray_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:light_gray_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:light_gray_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_gray_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:light_level_detector",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:lime_leaves",
@@ -494,9 +2022,39 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:lime_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:lime_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:lime_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lime_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:lizard_black_head",
@@ -594,6 +2152,41 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:lucky_pickaxe",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:lucky_roll",
+      "base_price": 11,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:magenta_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:magenta_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -604,9 +2197,64 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:magenta_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:magenta_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:magenta_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:magenta_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:malachite_bident",
+      "base_price": 1263,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:malachite_cluster",
+      "base_price": 52,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:malachite_crossbow",
+      "base_price": 192,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:malachite_ultra_greatsword",
+      "base_price": 1263,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:malachite_workstaff",
+      "base_price": 4080,
+      "class": "rare_processed"
     },
     {
       "item": "spectrum:marrow_head",
@@ -614,9 +2262,29 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:meatloaf",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:meatloaf_sandwich",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:milky_resin",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:mixed_gemstone_bricks",
+      "base_price": 84,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:molten_rod",
+      "base_price": 110,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:monstrosity_head",
@@ -627,6 +2295,53 @@
       "item": "spectrum:moonstone_block",
       "base_price": 192,
       "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:moonstone_bricks",
+      "base_price": 211,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:moonstone_chime",
+      "base_price": 129,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:moonstone_chiseled_basalt",
+      "base_price": 277,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:moonstone_chiseled_calcite",
+      "base_price": 272,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:moonstone_glass",
+      "base_price": 34,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:moonstone_glass_pane",
+      "base_price": 12,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:moonstone_powder",
+      "base_price": 26,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:moonstone_pylon",
+      "base_price": 220,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:moonstone_semi_permeable_glass",
+      "base_price": 11,
+      "class": "rare_processed",
+      "can_sell": false
     },
     {
       "item": "spectrum:moonstone_shard",
@@ -642,6 +2357,11 @@
       "item": "spectrum:moss_ball",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:multitool",
+      "base_price": 140,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:music_disc_credits",
@@ -664,6 +2384,26 @@
       "class": "common_processed"
     },
     {
+      "item": "spectrum:myceylon_apple_pie",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:myceylon_pumpkin_pie",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:natures_staff",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:nectered_viognier",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:nephrite_blossom_bulb",
       "base_price": 4,
       "class": "farmable"
@@ -679,9 +2419,37 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:netherite_scrap_cluster",
+      "base_price": 588,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:night_salts",
+      "base_price": 5,
+      "class": "rare_processed"
+    },
+    {
       "item": "spectrum:nightdew_sprout",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:notched_polished_basalt",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:notched_polished_calcite",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:oblivion_pickaxe",
+      "base_price": 73,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:ocelot_head",
@@ -694,9 +2462,81 @@
       "class": "rare_resource"
     },
     {
+      "item": "spectrum:onyx_bricks",
+      "base_price": 105,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:onyx_chime",
+      "base_price": 77,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:onyx_chiseled_basalt",
+      "base_price": 145,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:onyx_chiseled_calcite",
+      "base_price": 140,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:onyx_glass",
+      "base_price": 17,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:onyx_glass_pane",
+      "base_price": 6,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:onyx_powder",
+      "base_price": 13,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:onyx_pylon",
+      "base_price": 114,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:onyx_semi_permeable_glass",
+      "base_price": 6,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
       "item": "spectrum:onyx_shard",
       "base_price": 24,
       "class": "rare_resource"
+    },
+    {
+      "item": "spectrum:orange_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:orange_leaves",
@@ -709,9 +2549,44 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:orange_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:orange_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:orange_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:orange_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:oread_boots",
+      "base_price": 70,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:overgrown_blackslag",
@@ -724,9 +2599,40 @@
       "class": "rare_resource"
     },
     {
+      "item": "spectrum:paltaeria_gem",
+      "base_price": 844,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
       "item": "spectrum:panda_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:particle_spawner",
+      "base_price": 92,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:pedestal_all_basic",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pedestal_moonstone",
+      "base_price": 52,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:pedestal_onyx",
+      "base_price": 26,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:phantom_frame",
+      "base_price": 60,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:piglin_brute_head",
@@ -734,9 +2640,39 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:pigment_palette",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:pillager_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:pink_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:pink_leaves",
@@ -749,9 +2685,44 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:pink_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:pink_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:pink_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:pink_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:player_detector",
+      "base_price": 63,
+      "class": "rare_processed"
     },
     {
       "item": "spectrum:poisonbloom_banner_pattern",
@@ -764,9 +2735,193 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:polished_basal_marble",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_basal_marble_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_basal_marble_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_basal_marble_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_basalt",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_basalt_button",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_basalt_crest",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_basalt_pillar",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_basalt_pressure_plate",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_basalt_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_basalt_stairs",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_basalt_wall",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_blackslag",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_blackslag_button",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_blackslag_pillar",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_blackslag_pressure_plate",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_blackslag_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_blackslag_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_blackslag_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_calcite",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_calcite_button",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_calcite_crest",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_calcite_pillar",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_calcite_pressure_plate",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_calcite_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_calcite_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_calcite_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:polished_shale_clay",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_shale_clay_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:polished_shale_clay_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:potion_workshop",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:present",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:prickly_bayleaf",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:prismarine_cluster",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "spectrum:pristine_shooting_star",
@@ -774,9 +2929,25 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:provider_node",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:puff_circlet",
+      "base_price": 953,
+      "class": "rare_processed"
+    },
+    {
       "item": "spectrum:pufferfish_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:pure_alcohol",
+      "base_price": 14,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "spectrum:pure_azurite",
@@ -858,6 +3029,31 @@
       "can_buy": false
     },
     {
+      "item": "spectrum:purple_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:purple_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -868,9 +3064,45 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:purple_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:purple_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:purple_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:purple_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:quartz_cluster",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "spectrum:quitoxic_reeds",
@@ -881,6 +3113,33 @@
       "item": "spectrum:rabbit_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:radiance_pin",
+      "base_price": 82,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:radiance_staff",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:radiant_glass",
+      "base_price": 18,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:radiant_glass_pane",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:radiant_semi_permeable_glass",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "spectrum:ravager_head",
@@ -903,6 +3162,36 @@
       "class": "rare_resource"
     },
     {
+      "item": "spectrum:razor_falchion",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:red_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -913,9 +3202,75 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:red_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:red_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:red_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:red_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:redstone_calculator",
+      "base_price": 33,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:redstone_cluster",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:redstone_sand",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:redstone_timer",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:redstone_transceiver",
+      "base_price": 25,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:reprise",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:ring_of_denser_steps",
+      "base_price": 430,
+      "class": "rare_processed"
     },
     {
       "item": "spectrum:salmon_head",
@@ -933,14 +3288,73 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:scone",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:semi_permeable_glass",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:sender_node",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:seven_league_boots",
+      "base_price": 84,
+      "class": "rare_processed"
+    },
+    {
       "item": "spectrum:shale_clay",
       "base_price": 1,
       "class": "common_resource"
     },
     {
+      "item": "spectrum:shale_clay_brick_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:shale_clay_brick_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:shale_clay_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:shale_clay_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:shale_clay_tile_stairs",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:shale_clay_tiles",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:sheep_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:shieldgrasp_amulet",
+      "base_price": 247,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:shimmerstone_gem",
@@ -968,6 +3382,11 @@
       "class": "common_processed"
     },
     {
+      "item": "spectrum:slate_noxcap_hyphae",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:slate_noxcap_stem",
       "base_price": 8,
       "class": "common_resource"
@@ -978,6 +3397,71 @@
       "class": "farmable"
     },
     {
+      "item": "spectrum:slate_noxwood_amphora",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_button",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_door",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_fence",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_fence_gate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_lamp",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_lantern",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_planks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_pressure_plate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_stairs",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:slate_noxwood_trapdoor",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:slime_head",
       "base_price": 64,
       "class": "rare_loot"
@@ -986,6 +3470,26 @@
       "item": "spectrum:slush",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "spectrum:slushslide",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:smooth_basalt_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:smooth_basalt_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:smooth_basalt_wall",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:snapping_ivy",
@@ -1006,6 +3510,11 @@
       "item": "spectrum:spider_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:spirit_instiller",
+      "base_price": 64,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:spirit_sallow_heart",
@@ -1043,6 +3552,16 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:stone_shimmerstone_light",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:storage_node",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:storm_stone",
       "base_price": 16,
       "class": "rare_loot"
@@ -1053,9 +3572,230 @@
       "class": "rare_resource"
     },
     {
+      "item": "spectrum:stratine_gem",
+      "base_price": 387,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:stripped_black_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_black_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_blue_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_blue_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_brown_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_brown_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_chestnut_noxcap_hyphae",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_chestnut_noxcap_stem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_cyan_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_cyan_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_ebony_noxcap_hyphae",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_ebony_noxcap_stem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_gray_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_gray_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_green_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_green_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_ivory_noxcap_hyphae",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_ivory_noxcap_stem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_light_blue_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_light_blue_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_light_gray_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_light_gray_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_lime_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_lime_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_magenta_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_magenta_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_orange_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_orange_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_pink_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_pink_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_purple_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_purple_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_red_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_red_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_slate_noxcap_hyphae",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_slate_noxcap_stem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_weeping_gala_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_weeping_gala_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_white_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_white_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_yellow_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:stripped_yellow_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:sweet_pea",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:sylph_leggings",
+      "base_price": 123,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:tadpole_head",
@@ -1063,13 +3803,85 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:take_off_belt",
+      "base_price": 137,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:tinted_semi_permeable_glass",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:titration_barrel",
+      "base_price": 80,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:topaz_block",
       "base_price": 32,
       "class": "common_processed"
     },
     {
+      "item": "spectrum:topaz_bricks",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:topaz_chime",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:topaz_chiseled_basalt",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:topaz_chiseled_calcite",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:topaz_glass",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "spectrum:topaz_glass_pane",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:topaz_powder",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:topaz_pylon",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:topaz_semi_permeable_glass",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "spectrum:topaz_shard",
       "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:triple_meat_pot_pie",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:triple_meat_pot_stew",
+      "base_price": 13,
       "class": "common_processed"
     },
     {
@@ -1081,6 +3893,41 @@
       "item": "spectrum:turtle_head",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "spectrum:upgrade_experience",
+      "base_price": 984,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:upgrade_experience2",
+      "base_price": 1037,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:upgrade_speed",
+      "base_price": 118,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:upgrade_speed2",
+      "base_price": 136,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:upgrade_speed3",
+      "base_price": 189,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:upgrade_yield",
+      "base_price": 2476,
+      "class": "rare_processed"
+    },
+    {
+      "item": "spectrum:upgrade_yield2",
+      "base_price": 3180,
+      "class": "rare_processed"
     },
     {
       "item": "spectrum:varia_sprout",
@@ -1118,6 +3965,91 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:weather_detector",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_polished_shale_clay",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_polished_shale_clay_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_polished_shale_clay_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_shale_clay_brick_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_shale_clay_brick_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_shale_clay_bricks",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_shale_clay_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_shale_clay_tile_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weathered_shale_clay_tiles",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_amphora",
+      "base_price": 75,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_barrel",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_door",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_lantern",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:weeping_gala_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1128,9 +4060,69 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:weeping_gala_pillar",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:weeping_gala_sprig",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:weeping_gala_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_trapdoor",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:weeping_gala_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:whispy_circlet",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_lamp",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:white_leaves",
@@ -1143,9 +4135,39 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:white_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:white_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:white_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:white_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "spectrum:wither_head",
@@ -1158,6 +4180,31 @@
       "class": "rare_loot"
     },
     {
+      "item": "spectrum:yellow_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_glowblock",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_lamp",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:yellow_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1168,9 +4215,44 @@
       "class": "common_resource"
     },
     {
+      "item": "spectrum:yellow_pigment",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "spectrum:yellow_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "spectrum:yellow_spore_blossom",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:yellow_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "spectrum:zinc_cluster",
+      "base_price": 13,
+      "class": "common_processed"
     }
   ]
 }
