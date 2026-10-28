@@ -1,0 +1,267 @@
+{
+  "required_mods": [
+    "waystones"
+  ],
+  "entries": [
+    {
+      "item": "waystones:black_portstone",
+      "base_price": 292,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:black_sharestone",
+      "base_price": 342,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:blackstone_waystone",
+      "base_price": 337,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:blank_scroll",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:blue_portstone",
+      "base_price": 292,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:blue_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:brown_portstone",
+      "base_price": 292,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:brown_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:cyan_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:cyan_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:deepslate_shard",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:deepslate_waystone",
+      "base_price": 337,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:dormant_shard",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:end_stone_waystone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:epitaph",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:gray_portstone",
+      "base_price": 292,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:gray_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:green_portstone",
+      "base_price": 292,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:green_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:light_blue_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:light_blue_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:light_gray_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:light_gray_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:lime_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:lime_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:magenta_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:magenta_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:mossy_waystone",
+      "base_price": 344,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:mud_bricks_waystone",
+      "base_price": 337,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:orange_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:orange_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:pink_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:pink_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:portal_scroll",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:prismarine_waystone",
+      "base_price": 440,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:purple_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:purple_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:purpur_waystone",
+      "base_price": 350,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:red_nether_bricks_waystone",
+      "base_price": 370,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:red_portstone",
+      "base_price": 292,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:red_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:return_scroll",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:sandy_waystone",
+      "base_price": 347,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:twinbound_feather",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:warp_dust",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:warp_plate",
+      "base_price": 75,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:warp_scroll",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "waystones:warp_stone",
+      "base_price": 281,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:waystone",
+      "base_price": 341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:white_portstone",
+      "base_price": 291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:yellow_portstone",
+      "base_price": 292,
+      "class": "rare_processed"
+    },
+    {
+      "item": "waystones:yellow_sharestone",
+      "base_price": 341,
+      "class": "rare_processed"
+    }
+  ]
+}
