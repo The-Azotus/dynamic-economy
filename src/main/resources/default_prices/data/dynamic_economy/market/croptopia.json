@@ -354,6 +354,11 @@
       "class": "farmable"
     },
     {
+      "item": "croptopia:frog_legs",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
       "item": "croptopia:garlic",
       "base_price": 2,
       "class": "farmable"
