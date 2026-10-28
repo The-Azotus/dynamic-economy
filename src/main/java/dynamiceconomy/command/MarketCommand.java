@@ -454,8 +454,10 @@ public final class MarketCommand {
             CatalogExport.SuggestionResult written = CatalogExport.exportSuggestions(configRoot().resolve("exports"), modId,
                     catalog.values(), MarketCatalog.INSTANCE::sources, result);
             // Listed prices that recipes can beat are written alongside, since the recipes are already loaded.
-            List<PriceSuggestion.CraftProfit> profits = PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(),
-                    server.registryAccess(), catalog);
+            List<PriceSuggestion.Path> paths = PriceSuggestion.paths(server.getRecipeManager().getRecipes(), server.registryAccess());
+            List<PriceSuggestion.CraftProfit> profits = PriceSuggestion.craftProfits(paths, catalog);
+            List<PriceSuggestion.ChainProfit> chains = PriceSuggestion.chainProfits(paths, withSuggestions(catalog, result));
+            java.nio.file.Files.write(written.folder().resolve("chain_profits.txt"), chainLines(chains, catalog));
             List<String> profitLines = new ArrayList<>(List.of(
                     "Listed items whose ingredients can be bought for less than the item sells for (at normal prices)."));
             Map<PriceSuggestion.ProfitKind, String> headings = Map.of(
@@ -515,6 +517,10 @@ public final class MarketCommand {
                     byKind.getOrDefault(PriceSuggestion.ProfitKind.PRICE_GAP, 0L),
                     byKind.getOrDefault(PriceSuggestion.ProfitKind.MAY_HIDE_INPUTS, 0L),
                     byKind.getOrDefault(PriceSuggestion.ProfitKind.MULTIPLIES_INPUT, 0L)));
+            long listedChains = chains.stream().filter(c -> catalog.containsKey(c.item())).count();
+            lines.add(chains.isEmpty() ? "  No item can be bought and processed through several recipes at a profit"
+                    : "  %d item(s) can be bought and processed into more than they cost (%d listed, %d suggested): see chain_profits.txt"
+                    .formatted(chains.size(), listedChains, chains.size() - listedChains));
             lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), true));
             return written.suggested();
         } catch (IOException e) {
@@ -522,6 +528,44 @@ public final class MarketCommand {
             ctx.getSource().sendFailure(Component.literal("Suggest failed: " + e.getMessage()));
             return 0;
         }
+    }
+
+    /** The catalog plus every priced suggestion, as the market would list them if the suggestions were imported. */
+    private static Map<Item, CatalogEntry> withSuggestions(Map<Item, CatalogEntry> catalog, PriceSuggestion.Result result) {
+        Map<Item, CatalogEntry> market = new java.util.HashMap<>(catalog);
+        result.suggestions().values().forEach(s -> s.basePrice().ifPresent(price -> {
+            com.google.gson.JsonObject json = new com.google.gson.JsonObject();
+            json.addProperty("item", BuiltInRegistries.ITEM.getKey(s.item()).toString());
+            json.addProperty("base_price", price);
+            json.addProperty("class", s.itemClass());
+            MarketCatalog.decode(json).result().ifPresent(entry -> market.put(s.item(), entry));
+        }));
+        return market;
+    }
+
+    private static List<String> chainLines(List<PriceSuggestion.ChainProfit> chains, Map<Item, CatalogEntry> catalog) {
+        List<String> lines = new ArrayList<>(List.of(
+                "Items that can be bought and processed through one or more recipes into more than they cost, with the",
+                "suggested prices imported. Usually the first item is priced too low for what it processes into: raise it,",
+                "or stop the market selling it (can_buy false). A chain marked 'check' uses a recipe type that may hide inputs."));
+        for (boolean listed : new boolean[]{true, false}) {
+            List<PriceSuggestion.ChainProfit> group = chains.stream().filter(c -> catalog.containsKey(c.item()) == listed).toList();
+            if (group.isEmpty()) {
+                continue;
+            }
+            lines.add("");
+            lines.add(listed ? "Listed items (fix these first; suggested items below often follow from them):" : "Suggested items:");
+            for (PriceSuggestion.ChainProfit c : group) {
+                StringBuilder chain = new StringBuilder();
+                for (PriceSuggestion.Path step : c.steps()) {
+                    chain.append(" -> ").append(BuiltInRegistries.ITEM.getKey(step.output())).append(" (").append(step.recipe()).append(')');
+                }
+                lines.add("%s%s costs %s, processes into %s:%s".formatted(c.complete() ? "" : "[check] ",
+                        BuiltInRegistries.ITEM.getKey(c.item()), c.buyCost().setScale(2, java.math.RoundingMode.HALF_UP),
+                        c.value().setScale(2, java.math.RoundingMode.HALF_UP), chain));
+            }
+        }
+        return lines;
     }
 
     private static final int REJECTIONS_SHOWN = 15;

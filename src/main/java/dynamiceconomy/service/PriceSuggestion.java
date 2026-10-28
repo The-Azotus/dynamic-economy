@@ -352,11 +352,127 @@ public final class PriceSuggestion {
      */
     public static List<CraftProfit> craftProfits(Collection<RecipeHolder<?>> recipes, HolderLookup.Provider registries,
                                                  Map<Item, CatalogEntry> catalog) {
+        return craftProfits(paths(recipes, registries), catalog);
+    }
+
+    /** Every recipe the suggester can read, in its terms. */
+    public static List<Path> paths(Collection<RecipeHolder<?>> recipes, HolderLookup.Provider registries) {
         List<Path> paths = new ArrayList<>();
         for (RecipeHolder<?> holder : recipes) {
             toPath(holder, registries, new HashMap<>()).ifPresent(paths::add);
         }
-        return craftProfits(paths, catalog);
+        return paths;
+    }
+
+    /**
+     * An item the market sells for less than it can be turned into: buying it, running {@code steps} and selling the
+     * last step's output (buying any other ingredients on the way) earns {@code value} per unit bought.
+     *
+     * @param complete false if a step is a recipe type that may hide inputs, so the profit may not be real
+     */
+    public record ChainProfit(Item item, BigDecimal buyCost, BigDecimal value, List<Path> steps, boolean complete) {
+    }
+
+    /**
+     * Profits that take several recipes to reach, which {@link #craftProfits} can't see because it checks one recipe
+     * between listed items. For every item it finds the most one unit can be turned into: its own sell price, or for
+     * each recipe it goes into, what the output is worth less the other ingredients' buy prices, per unit used. A seed
+     * priced below what it processes into (a cheap stone that crushes into ore) shows up here, with the chain.
+     * Recipes that make more of their own ingredient are left out (they're generators, reported by {@link #craftProfits}),
+     * as is any step that would lead back to the item, so values settle. Fuel and anything a recipe gives back are
+     * ignored. {@code market} is everything the market would list, with suggested items included.
+     */
+    public static List<ChainProfit> chainProfits(List<Path> allPaths, Map<Item, CatalogEntry> market) {
+        List<Path> paths = allPaths.stream()
+                .filter(path -> path.slots().stream().noneMatch(slot -> slot.options().contains(path.output()))).toList();
+        Map<Item, BigDecimal> buy = new HashMap<>();
+        Map<Item, BigDecimal> value = new HashMap<>();
+        market.forEach((item, entry) -> {
+            PriceModel.Inputs in = PriceModel.inputs(entry);
+            if (entry.canBuy()) {
+                buy.put(item, PriceModel.exactUnitBuyPrice(in, 1.0));
+            }
+            if (entry.canSell()) {
+                value.put(item, PriceModel.exactUnitSellPrice(in, 1.0));
+            }
+        });
+        Map<Item, Path> next = new HashMap<>();
+        boolean changed = true;
+        for (int pass = 0; pass < MAX_PASSES && changed; pass++) {
+            changed = false;
+            for (Path path : paths) {
+                BigDecimal out = value.get(path.output());
+                if (out == null) {
+                    continue;
+                }
+                // The cheapest way to buy each slot, for when another slot is the item being valued.
+                List<Slot> slots = path.slots();
+                BigDecimal[] slotBuy = new BigDecimal[slots.size()];
+                int unbuyable = 0;
+                BigDecimal allOthers = BigDecimal.ZERO;
+                for (int i = 0; i < slots.size(); i++) {
+                    for (Item option : slots.get(i).options()) {
+                        BigDecimal b = buy.get(option);
+                        if (b != null && (slotBuy[i] == null || b.compareTo(slotBuy[i]) < 0)) {
+                            slotBuy[i] = b;
+                        }
+                    }
+                    if (slotBuy[i] == null) {
+                        unbuyable++;
+                    } else {
+                        allOthers = allOthers.add(slotBuy[i].multiply(BigDecimal.valueOf(slots.get(i).amount())));
+                    }
+                }
+                BigDecimal total = out.multiply(BigDecimal.valueOf(path.count()));
+                for (int k = 0; k < slots.size(); k++) {
+                    // Every other slot has to be bought, so at most this one can be unbuyable.
+                    if (unbuyable > 1 || unbuyable == 1 && slotBuy[k] != null) {
+                        continue;
+                    }
+                    BigDecimal others = slotBuy[k] == null ? allOthers
+                            : allOthers.subtract(slotBuy[k].multiply(BigDecimal.valueOf(slots.get(k).amount())));
+                    BigDecimal perUnit = total.subtract(others).divide(BigDecimal.valueOf(slots.get(k).amount()), MATH);
+                    for (Item option : slots.get(k).options()) {
+                        BigDecimal current = value.get(option);
+                        if ((current == null || perUnit.compareTo(current) > 0) && !leadsTo(next, path.output(), option)) {
+                            value.put(option, perUnit);
+                            next.put(option, path);
+                            changed = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        List<ChainProfit> profits = new ArrayList<>();
+        for (Map.Entry<Item, BigDecimal> entry : buy.entrySet()) {
+            Item item = entry.getKey();
+            BigDecimal worth = value.get(item);
+            if (worth == null || !next.containsKey(item) || worth.compareTo(entry.getValue()) <= 0) {
+                continue;
+            }
+            List<Path> steps = new ArrayList<>();
+            boolean complete = true;
+            for (Item at = item; next.containsKey(at) && steps.size() < MAX_PASSES; at = next.get(at).output()) {
+                steps.add(next.get(at));
+                complete &= next.get(at).complete();
+            }
+            profits.add(new ChainProfit(item, entry.getValue(), worth, steps, complete));
+        }
+        profits.sort(java.util.Comparator.comparing((ChainProfit p) -> !p.complete())
+                .thenComparing(p -> p.value().divide(p.buyCost().max(new BigDecimal("0.01")), MATH), java.util.Comparator.reverseOrder()));
+        return profits;
+    }
+
+    /** Whether following {@code next} from {@code from} reaches {@code target}. */
+    private static boolean leadsTo(Map<Item, Path> next, Item from, Item target) {
+        Set<Item> seen = new HashSet<>();
+        for (Item at = from; at != null && seen.add(at); at = next.containsKey(at) ? next.get(at).output() : null) {
+            if (at == target) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog) {

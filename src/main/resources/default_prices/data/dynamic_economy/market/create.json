@@ -5,13 +5,13 @@
   "entries": [
     {
       "item": "create:asurine",
-      "base_price": 1,
-      "class": "common_resource"
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "create:crimsite",
-      "base_price": 1,
-      "class": "common_resource"
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "create:limestone",
@@ -20,8 +20,8 @@
     },
     {
       "item": "create:ochrum",
-      "base_price": 1,
-      "class": "common_resource"
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "create:raw_zinc",
@@ -40,8 +40,8 @@
     },
     {
       "item": "create:veridium",
-      "base_price": 1,
-      "class": "common_resource"
+      "base_price": 5,
+      "class": "common_processed"
     },
     {
       "item": "create:zinc_ingot",

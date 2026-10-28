@@ -120,6 +120,8 @@ Items from Chipped and Rechiseled (decorative block variants, thousands each) ar
 - **Check by hand** (notes): recipe types that may take fluids, extra items or ingredient amounts the check can't see, such as Spectrum's fusion shrine. These are often false alarms.
 - **Recipes that make more of their own ingredient** (notes), such as a machine turning 1 cobblestone into 2: no price can stop these, since any price makes 2 worth more than 1. They're generators, and sell impact limits what they earn.
 
+`suggest` also writes `chain_profits.txt`, a check that follows several recipes in a row, as if every suggestion had been imported. It lists items that can be bought and processed into more than they cost, with the chain of recipes, for example a stone that crushes into ore which smelts into an ingot. The first item in a chain is usually priced too low for what it processes into: raise it, or set `can_buy` false so the market doesn't sell it. Listed items come first; suggested items often follow from them and clear when the listed item is fixed. Chains marked `[check]` include a recipe type that may hide inputs.
+
 Notes to look out for:
 
 - **Worth under 1 spur:** prices are whole spurs, so these are left blank. Most such items (sticks, buttons) don't need to be on the market.

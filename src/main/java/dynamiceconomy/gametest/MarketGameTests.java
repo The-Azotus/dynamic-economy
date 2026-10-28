@@ -1514,6 +1514,29 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = EMPTY)
+    public static void chainProfitsFollowSeveralRecipes(GameTestHelper helper) {
+        // A cheap stone crushes into an unlisted crushed ore, which smelts into a listed ingot: two steps, so the
+        // one-recipe check can't see it.
+        Item stone = Items.COBBLESTONE, crushed = Items.RAW_IRON, ingot = Items.IRON_INGOT, gold = Items.GOLD_INGOT;
+        Map<Item, CatalogEntry> market = seeds(seed(stone, 1, null), seed(ingot, 30, null), seed(gold, 100, null));
+        List<PriceSuggestion.Path> paths = List.of(
+                path(crushed, 1, false, stone),
+                path(ingot, 1, true, crushed),
+                path(ingot, 1, false, gold),         // gold sells for more than an ingot: no profit
+                path(stone, 2, false, stone),        // a generator: left to the one-recipe check
+                path(stone, 4, false, ingot));       // leads back to the stone: ignored, so values settle
+        List<PriceSuggestion.ChainProfit> chains = PriceSuggestion.chainProfits(paths, market);
+        helper.assertValueEqual(chains.stream().map(PriceSuggestion.ChainProfit::item).toList(), List.of(stone), "only the stone");
+        PriceSuggestion.ChainProfit c = chains.get(0);
+        helper.assertValueEqual(c.buyCost().compareTo(new BigDecimal("1.5")), 0, "bought at 1 × 1.5");
+        helper.assertValueEqual(c.value().compareTo(new BigDecimal("30")), 0, "worth an ingot");
+        helper.assertValueEqual(c.steps().stream().map(PriceSuggestion.Path::output).toList(), List.of(crushed, ingot), "through both steps");
+        helper.assertValueEqual(PriceSuggestion.craftProfits(paths, market).stream().filter(p -> p.output() != stone).toList(), List.of(),
+                "which the one-recipe check misses");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
     public static void suggestionsNeverAllowBuyCraftSellProfit(GameTestHelper helper) {
         // The premium and rounding down keep a suggested price at or below its inputs' cost × (1 + premium), and
         // the premium is below every built-in markup, so buying the inputs at base prices and selling the output loses.
