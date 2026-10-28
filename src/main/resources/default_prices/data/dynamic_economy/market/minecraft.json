@@ -36,14 +36,29 @@
       "class": "common_resource"
     },
     {
+      "item": "minecraft:angler_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:apple",
       "base_price": 4,
       "class": "farmable"
     },
     {
+      "item": "minecraft:archer_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:armadillo_scute",
       "base_price": 16,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:arms_up_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:azalea",
@@ -69,6 +84,11 @@
       "item": "minecraft:basalt",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "minecraft:bee_nest",
+      "base_price": 32,
+      "class": "common_processed"
     },
     {
       "item": "minecraft:beef",
@@ -111,6 +131,11 @@
       "class": "common_resource"
     },
     {
+      "item": "minecraft:blade_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:blaze_rod",
       "base_price": 32,
       "class": "farmable"
@@ -131,14 +156,59 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:brain_coral",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:brain_coral_block",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:brain_coral_fan",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:breeze_rod",
       "base_price": 64,
       "class": "farmable"
     },
     {
+      "item": "minecraft:brewer_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:brown_mushroom",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:brown_mushroom_block",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:bubble_coral",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:bubble_coral_block",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:bubble_coral_fan",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:burn_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:cactus",
@@ -153,6 +223,11 @@
     {
       "item": "minecraft:carrot",
       "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "minecraft:carved_pumpkin",
+      "base_price": 6,
       "class": "farmable"
     },
     {
@@ -184,6 +259,11 @@
       "item": "minecraft:chorus_fruit",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:chorus_plant",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "minecraft:clay_ball",
@@ -246,6 +326,11 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:crimson_nylium",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:crimson_roots",
       "base_price": 1,
       "class": "farmable"
@@ -264,6 +349,11 @@
       "item": "minecraft:dandelion",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:danger_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:dark_oak_leaves",
@@ -308,6 +398,11 @@
     {
       "item": "minecraft:disc_fragment_5",
       "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:dragon_breath",
+      "base_price": 64,
       "class": "rare_loot"
     },
     {
@@ -371,6 +466,11 @@
       "class": "rare_loot"
     },
     {
+      "item": "minecraft:explorer_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:eye_armor_trim_smithing_template",
       "base_price": 256,
       "class": "rare_loot"
@@ -386,6 +486,21 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:fire_coral",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:fire_coral_block",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:fire_coral_fan",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:flint",
       "base_price": 1,
       "class": "common_processed"
@@ -393,6 +508,16 @@
     {
       "item": "minecraft:flow_armor_trim_smithing_template",
       "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:flow_banner_pattern",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:flow_pottery_sherd",
+      "base_price": 64,
       "class": "rare_loot"
     },
     {
@@ -406,9 +531,19 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:friend_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:ghast_tear",
       "base_price": 64,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:globe_banner_pattern",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:glow_berries",
@@ -466,6 +601,16 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:guster_banner_pattern",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:guster_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:hanging_roots",
       "base_price": 1,
       "class": "farmable"
@@ -473,6 +618,16 @@
     {
       "item": "minecraft:heart_of_the_sea",
       "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:heart_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:heartbreak_pottery_sherd",
+      "base_price": 64,
       "class": "rare_loot"
     },
     {
@@ -491,8 +646,28 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:horn_coral",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:horn_coral_block",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:horn_coral_fan",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:host_armor_trim_smithing_template",
       "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:howl_pottery_sherd",
+      "base_price": 64,
       "class": "rare_loot"
     },
     {
@@ -606,9 +781,19 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:miner_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:moss_block",
       "base_price": 2,
       "class": "common_resource"
+    },
+    {
+      "item": "minecraft:mourner_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:mud",
@@ -619,6 +804,11 @@
       "item": "minecraft:muddy_mangrove_roots",
       "base_price": 2,
       "class": "common_resource"
+    },
+    {
+      "item": "minecraft:mushroom_stem",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "minecraft:music_disc_11",
@@ -781,6 +971,11 @@
       "class": "common_resource"
     },
     {
+      "item": "minecraft:ochre_froglight",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:ominous_trial_key",
       "base_price": 128,
       "class": "rare_loot"
@@ -796,6 +991,11 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:pearlescent_froglight",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:peony",
       "base_price": 1,
       "class": "farmable"
@@ -804,6 +1004,11 @@
       "item": "minecraft:phantom_membrane",
       "base_price": 32,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:piglin_banner_pattern",
+      "base_price": 128,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:piglin_head",
@@ -829,6 +1034,11 @@
       "item": "minecraft:pitcher_pod",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:plenty_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:podzol",
@@ -864,6 +1074,11 @@
       "item": "minecraft:prismarine_shard",
       "base_price": 8,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:prize_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:pufferfish",
@@ -926,6 +1141,11 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:red_mushroom_block",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:red_sand",
       "base_price": 1,
       "class": "common_resource"
@@ -976,9 +1196,34 @@
       "class": "common_resource"
     },
     {
+      "item": "minecraft:scrape_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:sculk",
       "base_price": 2,
       "class": "common_resource"
+    },
+    {
+      "item": "minecraft:sculk_catalyst",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:sculk_sensor",
+      "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:sculk_shrieker",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:sculk_vein",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "minecraft:sea_pickle",
@@ -1001,9 +1246,24 @@
       "class": "rare_loot"
     },
     {
+      "item": "minecraft:sheaf_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:shelter_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:short_grass",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:shroomlight",
+      "base_price": 12,
+      "class": "common_processed"
     },
     {
       "item": "minecraft:shulker_shell",
@@ -1021,6 +1281,11 @@
       "class": "rare_loot"
     },
     {
+      "item": "minecraft:skull_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "minecraft:slime_ball",
       "base_price": 8,
       "class": "farmable"
@@ -1033,6 +1298,11 @@
     {
       "item": "minecraft:sniffer_egg",
       "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "minecraft:snort_pottery_sherd",
+      "base_price": 64,
       "class": "rare_loot"
     },
     {
@@ -1151,9 +1421,29 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:tube_coral",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:tube_coral_block",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "minecraft:tube_coral_fan",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:tuff",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "minecraft:turtle_egg",
+      "base_price": 32,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:turtle_scute",
@@ -1164,6 +1454,11 @@
       "item": "minecraft:twisting_vines",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:verdant_froglight",
+      "base_price": 24,
+      "class": "common_processed"
     },
     {
       "item": "minecraft:vex_armor_trim_smithing_template",
@@ -1186,6 +1481,11 @@
       "class": "farmable"
     },
     {
+      "item": "minecraft:warped_nylium",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:warped_roots",
       "base_price": 1,
       "class": "farmable"
@@ -1196,6 +1496,11 @@
       "class": "common_resource"
     },
     {
+      "item": "minecraft:warped_wart_block",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
       "item": "minecraft:wayfinder_armor_trim_smithing_template",
       "base_price": 256,
       "class": "rare_loot"
@@ -1204,6 +1509,11 @@
       "item": "minecraft:weeping_vines",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "minecraft:wet_sponge",
+      "base_price": 232,
+      "class": "rare_loot"
     },
     {
       "item": "minecraft:wheat",
