@@ -61,7 +61,8 @@
     {
       "item": "mythicupgrades:raw_necoium",
       "base_price": 256,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "mythicupgrades:ruby",

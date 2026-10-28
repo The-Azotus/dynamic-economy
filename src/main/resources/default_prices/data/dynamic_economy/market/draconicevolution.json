@@ -11,7 +11,8 @@
     {
       "item": "draconicevolution:draconium_dust",
       "base_price": 192,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "draconicevolution:draconium_ingot",

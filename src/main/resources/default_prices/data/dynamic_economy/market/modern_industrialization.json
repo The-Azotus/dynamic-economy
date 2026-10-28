@@ -11,7 +11,8 @@
     {
       "item": "modern_industrialization:bauxite_dust",
       "base_price": 8,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:iridium_ingot",
@@ -31,7 +32,8 @@
     {
       "item": "modern_industrialization:monazite_dust",
       "base_price": 24,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:nickel_ingot",
@@ -46,52 +48,62 @@
     {
       "item": "modern_industrialization:raw_antimony",
       "base_price": 16,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_iridium",
       "base_price": 192,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_lead",
       "base_price": 16,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_nickel",
       "base_price": 16,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_platinum",
       "base_price": 96,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_silver",
       "base_price": 32,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_tin",
       "base_price": 12,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_titanium",
       "base_price": 64,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_tungsten",
       "base_price": 72,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:raw_uranium",
       "base_price": 48,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:salt_dust",

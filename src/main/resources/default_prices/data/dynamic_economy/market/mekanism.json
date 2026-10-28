@@ -6,37 +6,44 @@
     {
       "item": "mekanism:crystal_copper",
       "base_price": 7,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:crystal_gold",
       "base_price": 38,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:crystal_iron",
       "base_price": 26,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:crystal_lead",
       "base_price": 16,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:crystal_osmium",
       "base_price": 22,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:crystal_tin",
       "base_price": 13,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:crystal_uranium",
       "base_price": 52,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:dust_lithium",
@@ -91,22 +98,26 @@
     {
       "item": "mekanism:raw_lead",
       "base_price": 16,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:raw_osmium",
       "base_price": 20,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:raw_tin",
       "base_price": 12,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:raw_uranium",
       "base_price": 48,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "mekanism:salt",

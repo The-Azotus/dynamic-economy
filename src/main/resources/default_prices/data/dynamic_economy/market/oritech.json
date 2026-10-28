@@ -21,17 +21,20 @@
     {
       "item": "oritech:raw_nickel",
       "base_price": 16,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "oritech:raw_platinum",
       "base_price": 96,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "oritech:raw_uranium",
       "base_price": 48,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     }
   ]
 }

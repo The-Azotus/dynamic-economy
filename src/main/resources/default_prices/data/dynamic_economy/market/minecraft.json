@@ -1118,17 +1118,20 @@
     {
       "item": "minecraft:raw_copper",
       "base_price": 6,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "minecraft:raw_gold",
       "base_price": 40,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "minecraft:raw_iron",
       "base_price": 24,
-      "class": "common_processed"
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "minecraft:red_mushroom",

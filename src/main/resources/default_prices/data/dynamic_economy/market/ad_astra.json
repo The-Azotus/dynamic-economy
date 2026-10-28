@@ -116,17 +116,20 @@
     {
       "item": "ad_astra:raw_calorite",
       "base_price": 192,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "ad_astra:raw_desh",
       "base_price": 64,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "ad_astra:raw_ostrum",
       "base_price": 112,
-      "class": "rare_resource"
+      "class": "rare_resource",
+      "can_buy": false
     },
     {
       "item": "ad_astra:strophar_cap",
