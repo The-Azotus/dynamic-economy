@@ -184,6 +184,9 @@ public final class CatalogExport {
                         under++;
                         notes.add("worth under 1 spur, so left unpriced");
                     }
+                    if (suggestion.raised()) {
+                        notes.add("raised above its recipe cost to what it can be processed into, so buying and processing it doesn't profit");
+                    }
                     if (suggestions.looping().contains(item)) {
                         notes.add("price kept falling through a recipe loop, so this is too low: set it by hand");
                     }

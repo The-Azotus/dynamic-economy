@@ -2,6 +2,7 @@ package dynamiceconomy.service;
 
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.compat.CreateRecipes;
 import dynamiceconomy.compat.MachineRecipes;
 import net.minecraft.core.HolderLookup;
@@ -48,6 +49,11 @@ import java.util.TreeMap;
  * ingredient counts some mods keep outside {@link Ingredient}) is missing from the cost; such recipes are marked for
  * review. Create's machine recipes are read more closely: their output counts are what a run makes on average, and
  * recipes taking fluids are marked. Pure apart from reading the item registry: recipes and seeds are passed in.
+ * <p>
+ * Finally, a suggestion is raised to what the item can be processed into ({@link #chainProfits}): a cheap route to
+ * an item (an ore-processing chain that multiplies) mustn't let it be bought for less than what it crafts into, as 9
+ * nuggets for less than an ingot. Raising it can't make anything else profitable, since whatever is processed into it
+ * was already worth that much.
  */
 public final class PriceSuggestion {
     /**
@@ -101,9 +107,10 @@ public final class PriceSuggestion {
      *                    cheapest rare item in the catalog, else {@code common_processed}
      * @param depth       recipe steps from the nearest priced item
      * @param reverse     items this one is made from that can also be made back from it (storage blocks, nuggets)
+     * @param raised      whether {@code basePrice} was raised above {@code cost} to what the item can be processed into
      */
     public record Suggestion(Item item, BigDecimal cost, Optional<Integer> basePrice, String itemClass, ResourceLocation recipe,
-                             String recipeType, int depth, boolean completeType, Set<Item> reverse) {
+                             String recipeType, int depth, boolean completeType, Set<Item> reverse, boolean raised) {
     }
 
     /**
@@ -171,8 +178,9 @@ public final class PriceSuggestion {
                 }
             }
             suggestions.put(item, new Suggestion(item, cost, base, state.itemClass.get(item), path.recipe(), path.type(), state.depth.get(item),
-                    path.complete(), reverse));
+                    path.complete(), reverse, false));
         }
+        raiseToProcessedValue(paths, catalog, suggestions);
 
         Set<Item> made = new HashSet<>();
         paths.forEach(path -> made.add(path.output()));
@@ -345,7 +353,7 @@ public final class PriceSuggestion {
     /**
      * Recipes that turn market purchases into a profit: every ingredient can be bought, the output can be sold, and
      * one craft's output sells for more than its ingredients cost (less anything the recipe gives back, valued at what
-     * the market pays for it). Fuel is ignored, so the check errs towards reporting. Pure apart from the registry.
+     * the market pays for it). Furnace fuel is bought as coal. Pure apart from the registry.
      */
     public static List<CraftProfit> craftProfits(Collection<RecipeHolder<?>> recipes, HolderLookup.Provider registries,
                                                  Map<Item, CatalogEntry> catalog) {
@@ -380,6 +388,30 @@ public final class PriceSuggestion {
      * recipe gives back is ignored. {@code market} is everything the market would list, with suggested items included.
      */
     public static List<ChainProfit> chainProfits(List<Path> allPaths, Map<Item, CatalogEntry> market) {
+        ChainValues values = chainValues(allPaths, market);
+        List<ChainProfit> profits = new ArrayList<>();
+        for (Map.Entry<Item, BigDecimal> entry : values.buy().entrySet()) {
+            Item item = entry.getKey();
+            BigDecimal worth = values.value().get(item);
+            if (worth == null || !values.chain().containsKey(item) || worth.compareTo(entry.getValue()) <= 0) {
+                continue;
+            }
+            List<Path> steps = values.chain().get(item);
+            profits.add(new ChainProfit(item, entry.getValue(), worth, steps, steps.stream().allMatch(Path::complete)));
+        }
+        profits.sort(java.util.Comparator.comparing((ChainProfit p) -> !p.complete())
+                .thenComparing(p -> p.value().divide(p.buyCost().max(new BigDecimal("0.01")), MATH), java.util.Comparator.reverseOrder()));
+        return profits;
+    }
+
+    /**
+     * What one unit of each item is worth at most ({@code value}): its sell price, or what it can be processed into, with
+     * the chain of recipes that gets there; and what each listed item costs to buy.
+     */
+    private record ChainValues(Map<Item, BigDecimal> value, Map<Item, List<Path>> chain, Map<Item, BigDecimal> buy) {
+    }
+
+    private static ChainValues chainValues(List<Path> allPaths, Map<Item, CatalogEntry> market) {
         List<Path> paths = allPaths.stream()
                 .filter(path -> path.slots().stream().noneMatch(slot -> slot.options().contains(path.output()))).toList();
         Map<Item, BigDecimal> buy = new HashMap<>();
@@ -450,19 +482,50 @@ public final class PriceSuggestion {
             }
         }
 
-        List<ChainProfit> profits = new ArrayList<>();
-        for (Map.Entry<Item, BigDecimal> entry : buy.entrySet()) {
-            Item item = entry.getKey();
-            BigDecimal worth = value.get(item);
-            if (worth == null || !chain.containsKey(item) || worth.compareTo(entry.getValue()) <= 0) {
+        return new ChainValues(value, chain, buy);
+    }
+
+    /**
+     * Raises each suggestion to at least what the item can be processed into, through recipes the suggester fully
+     * reads, divided by its class's markup, so buying it and processing it never profits. Suggestions too cheap to
+     * price (under 1 spur) get a price this way if what they make is worth it.
+     */
+    private static void raiseToProcessedValue(List<Path> paths, Map<Item, CatalogEntry> catalog, Map<Item, Suggestion> suggestions) {
+        Map<Item, CatalogEntry> market = new HashMap<>(catalog);
+        Map<Item, CatalogEntry> asListed = new HashMap<>();
+        for (Suggestion s : suggestions.values()) {
+            asEntry(s.item(), s.basePrice().orElse(1), s.itemClass()).ifPresent(entry -> {
+                asListed.put(s.item(), entry);
+                if (s.basePrice().isPresent()) {
+                    market.put(s.item(), entry);
+                }
+            });
+        }
+        Map<Item, BigDecimal> value = chainValues(paths.stream().filter(Path::complete).toList(), market).value();
+        for (Suggestion s : List.copyOf(suggestions.values())) {
+            BigDecimal worth = value.get(s.item());
+            CatalogEntry entry = asListed.get(s.item());
+            if (worth == null || entry == null) {
                 continue;
             }
-            List<Path> steps = chain.get(item);
-            profits.add(new ChainProfit(item, entry.getValue(), worth, steps, steps.stream().allMatch(Path::complete)));
+            BigDecimal floor = worth.divide(BigDecimal.ONE.add(BigDecimal.valueOf(entry.markup())), MATH).setScale(0, RoundingMode.CEILING);
+            if (floor.signum() > 0 && floor.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) <= 0
+                    && (s.basePrice().isEmpty() || floor.intValueExact() > s.basePrice().get())) {
+                suggestions.put(s.item(), new Suggestion(s.item(), s.cost(), Optional.of(floor.intValueExact()), s.itemClass(), s.recipe(),
+                        s.recipeType(), s.depth(), s.completeType(), s.reverse(), true));
+            }
         }
-        profits.sort(java.util.Comparator.comparing((ChainProfit p) -> !p.complete())
-                .thenComparing(p -> p.value().divide(p.buyCost().max(new BigDecimal("0.01")), MATH), java.util.Comparator.reverseOrder()));
-        return profits;
+    }
+
+    /** A catalog entry for an item at a price and built-in class, as importing the suggestion would make it. */
+    public static Optional<CatalogEntry> asEntry(Item item, int price, String itemClass) {
+        com.google.gson.JsonObject json = new com.google.gson.JsonObject();
+        json.addProperty("item", BuiltInRegistries.ITEM.getKey(item).toString());
+        json.addProperty("base_price", price);
+        if (!itemClass.isEmpty()) {
+            json.addProperty("class", itemClass);
+        }
+        return MarketCatalog.decode(json).result();
     }
 
     public static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog) {
@@ -502,6 +565,10 @@ public final class PriceSuggestion {
             }
             if (!buyable) {
                 continue;
+            }
+            CatalogEntry coal = catalog.get(Items.COAL);
+            if (path.burnsFuel() && coal != null && coal.canBuy()) {
+                cost = cost.add(PriceModel.exactUnitBuyPrice(PriceModel.inputs(coal), 1.0).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
             }
             BigDecimal sell = PriceModel.exactUnitSellPrice(PriceModel.inputs(output), 1.0).multiply(BigDecimal.valueOf(path.count()));
             if (sell.compareTo(cost) > 0) {
@@ -562,7 +629,7 @@ public final class PriceSuggestion {
                         }
                     }
                     if (!options.isEmpty()) {
-                        slots.add(new Slot(List.copyOf(options), amount));
+                        addSlot(slots, new Slot(List.copyOf(options), amount));
                     }
                 }
             }
@@ -601,6 +668,21 @@ public final class PriceSuggestion {
         }
         List<Slot> slots = read.inputs().stream().map(input -> new Slot(input.options(), input.amount())).toList();
         return Optional.of(new Path(holder.id(), type, read.item(), read.expected(), slots, false, !read.fluids()));
+    }
+
+    /**
+     * Adds a slot, merged into an earlier one that accepts the same items: a crafting grid lists 9 nuggets as 9 slots,
+     * but they are one ingredient taken 9 times, and valuing one of them as if the other 8 were bought separately
+     * misjudges what a nugget is worth.
+     */
+    private static void addSlot(List<Slot> slots, Slot slot) {
+        for (int i = 0; i < slots.size(); i++) {
+            if (slots.get(i).options().equals(slot.options())) {
+                slots.set(i, new Slot(slot.options(), slots.get(i).amount() + slot.amount()));
+                return;
+            }
+        }
+        slots.add(slot);
     }
 
     /** Every item a smithing slot accepts. Scanning the registry is fine for the few dozen smithing recipes a pack has. */

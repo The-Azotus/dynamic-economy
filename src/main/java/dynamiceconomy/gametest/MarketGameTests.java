@@ -1488,7 +1488,7 @@ public final class MarketGameTests {
                 catalog, new java.util.HashMap<>());
         helper.assertTrue(loop.settled(), "the loop settles: " + loop.looping());
         helper.assertValueEqual(loop.suggestions().get(g).basePrice(), Optional.of(11), "g keeps its price from the seed");
-        helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(5), "h is priced from g: 10 / 2 × 1.1");
+        helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(8), "h costs 10 / 2 × 1.1, but one h crafts back into g, so it is raised to 11 / 1.4");
         helper.succeed();
     }
 
@@ -1521,6 +1521,28 @@ public final class MarketGameTests {
         helper.assertValueEqual(s.get(Items.LAPIS_LAZULI).itemClass(), "common_processed", "a trace of rare material doesn't count");
         helper.assertValueEqual(s.get(Items.LAPIS_BLOCK).itemClass(), "common_processed", "nor does it add up through a chain");
         helper.assertTrue(result.settled(), "settles");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void suggestionsAreRaisedToWhatTheyProcessInto(GameTestHelper helper) {
+        // A cheap route makes nuggets worth 0.12 each, but 9 nuggets craft into a 32-spur ingot: bought at 0.12 they'd
+        // profit, so the nugget is raised until 9 of them cost at least an ingot.
+        Item stone = Items.COBBLESTONE, nugget = Items.IRON_NUGGET, ingot = Items.IRON_INGOT;
+        Map<Item, CatalogEntry> catalog = seeds(seed(stone, 1, null), seed(ingot, 32, null));
+        ResourceLocation id = ResourceLocation.parse("test:craft");
+        PriceSuggestion.Result result = PriceSuggestion.suggest(List.of(
+                path(nugget, 9, false, stone),
+                new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false)),
+                catalog, new java.util.HashMap<>());
+        PriceSuggestion.Suggestion s = result.suggestions().get(nugget);
+        helper.assertValueEqual(s.basePrice(), Optional.of(3), "32 / 9 / 1.4 = 2.54, rounded up");
+        helper.assertTrue(s.raised(), "and marked as raised");
+        Map<Item, CatalogEntry> market = seeds(catalog.get(stone), catalog.get(ingot), PriceSuggestion.asEntry(nugget, 3, s.itemClass()).orElseThrow());
+        List<Item> heads = PriceSuggestion.chainProfits(List.of(
+                new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false),
+                path(nugget, 9, false, stone)), market).stream().map(PriceSuggestion.ChainProfit::item).toList();
+        helper.assertValueEqual(heads, List.of(stone), "nuggets no longer profit; the stone seed is what's left to fix");
         helper.succeed();
     }
 
@@ -1738,12 +1760,15 @@ public final class MarketGameTests {
         helper.assertValueEqual(loaded.problems().stream().map(MarketCatalog.Problem::message).toList(), List.of(),
                 "loads with no warnings; files for mods that aren't installed are skipped quietly");
         helper.assertTrue(loaded.entries().size() > 200, "vanilla alone prices a few hundred items: " + loaded.entries().size());
-        // The test server has vanilla and Create (and Numismatics, which has no file); every other file is skipped.
-        int expected = defaultPriceFiles().stream().filter(f -> List.of("minecraft", "create").contains(f.id().getPath()))
-                .mapToInt(f -> f.json().getAsJsonObject().getAsJsonArray("entries").size()).sum();
-        helper.assertValueEqual(loaded.entries().size(), expected, "only the vanilla and Create files load");
-        helper.assertTrue(loaded.entries().keySet().stream().allMatch(item -> List.of("minecraft", "create").contains(key(item).getNamespace())),
-                "no item from another mod's file");
+        // The test server has vanilla, Create and Numismatics; every file for another mod is skipped.
+        java.util.function.Predicate<String> installed = mod -> net.neoforged.fml.ModList.get().isLoaded(mod);
+        int expected = defaultPriceFiles().stream().filter(f -> {
+                    com.google.gson.JsonArray mods = f.json().getAsJsonObject().getAsJsonArray("required_mods");
+                    return mods == null || mods.asList().stream().allMatch(mod -> installed.test(mod.getAsString()));
+                }).mapToInt(f -> f.json().getAsJsonObject().getAsJsonArray("entries").size()).sum();
+        helper.assertValueEqual(loaded.entries().size(), expected, "only the files for installed mods load");
+        helper.assertTrue(loaded.entries().keySet().stream().allMatch(item -> installed.test(key(item).getNamespace())),
+                "no item from a mod that isn't installed");
         for (CatalogEntry entry : loaded.entries().values()) {
             helper.assertTrue(entry.itemClass().map(c -> c.getNamespace().equals(DynamicEconomy.MOD_ID)).orElse(false),
                     entry.itemId() + " has a built-in class");
@@ -1754,6 +1779,11 @@ public final class MarketGameTests {
                 loaded.entries()).stream().map(p -> "%s via %s: costs %s, sells for %s".formatted(key(p.output()), p.recipe(),
                 p.buyCost().setScale(2, RoundingMode.HALF_UP), p.sellValue().setScale(2, RoundingMode.HALF_UP))).toList();
         helper.assertValueEqual(profits, List.of(), "no listed item can be crafted from bought ingredients and sold at a profit");
+        List<String> chains = PriceSuggestion.chainProfits(PriceSuggestion.paths(server.getRecipeManager().getRecipes(),
+                        server.registryAccess()), loaded.entries()).stream().filter(PriceSuggestion.ChainProfit::complete)
+                .map(c -> "%s costs %s, processes into %s via %s".formatted(key(c.item()), c.buyCost().setScale(2, RoundingMode.HALF_UP),
+                        c.value().setScale(2, RoundingMode.HALF_UP), c.steps().stream().map(PriceSuggestion.Path::recipe).toList())).toList();
+        helper.assertValueEqual(chains, List.of(), "nor bought and processed through several recipes at a profit");
         helper.succeed();
     }
 

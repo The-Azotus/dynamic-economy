@@ -533,13 +533,9 @@ public final class MarketCommand {
     /** The catalog plus every priced suggestion, as the market would list them if the suggestions were imported. */
     private static Map<Item, CatalogEntry> withSuggestions(Map<Item, CatalogEntry> catalog, PriceSuggestion.Result result) {
         Map<Item, CatalogEntry> market = new java.util.HashMap<>(catalog);
-        result.suggestions().values().forEach(s -> s.basePrice().ifPresent(price -> {
-            com.google.gson.JsonObject json = new com.google.gson.JsonObject();
-            json.addProperty("item", BuiltInRegistries.ITEM.getKey(s.item()).toString());
-            json.addProperty("base_price", price);
-            json.addProperty("class", s.itemClass());
-            MarketCatalog.decode(json).result().ifPresent(entry -> market.put(s.item(), entry));
-        }));
+        result.suggestions().values().forEach(s -> s.basePrice()
+                .flatMap(price -> PriceSuggestion.asEntry(s.item(), price, s.itemClass()))
+                .ifPresent(entry -> market.put(s.item(), entry)));
         return market;
     }
 
