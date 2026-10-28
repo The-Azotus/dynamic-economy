@@ -24,6 +24,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:aurora_block",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:beanstalk_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -104,6 +109,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:coronation_carpet",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:cracked_deadrock",
       "base_price": 1,
       "class": "common_resource"
@@ -111,6 +121,16 @@
     {
       "item": "twilightforest:crown_splinter",
       "base_price": 32,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:crumble_horn",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:cube_of_annihilation",
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
@@ -134,6 +154,11 @@
       "class": "common_resource"
     },
     {
+      "item": "twilightforest:diamond_minotaur_axe",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:duskberry",
       "base_price": 1,
       "class": "farmable"
@@ -149,9 +174,19 @@
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:ender_bow",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:essence_berry",
       "base_price": 8,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:etched_nagastone",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "twilightforest:exanimate_essence",
@@ -184,9 +219,29 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:fluffy_cloud",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:four_leaf_clover",
+      "base_price": 16,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:glass_sword",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:gold_berry",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "twilightforest:gold_minotaur_axe",
+      "base_price": 256,
+      "class": "rare_loot"
     },
     {
       "item": "twilightforest:huge_lily_pad",
@@ -194,14 +249,39 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:huge_mushgloom",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:huge_mushgloom_stem",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:huge_stalk",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:huge_water_lily",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "twilightforest:hydra_chop",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:hydra_trophy",
       "base_price": 4096,
       "class": "unique"
+    },
+    {
+      "item": "twilightforest:ice_bow",
+      "base_price": 512,
+      "class": "rare_loot"
     },
     {
       "item": "twilightforest:iron_berry",
@@ -214,6 +294,11 @@
       "class": "unique"
     },
     {
+      "item": "twilightforest:lamp_of_cinders",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:lich_trophy",
       "base_price": 2048,
       "class": "unique"
@@ -221,6 +306,11 @@
     {
       "item": "twilightforest:liveroot",
       "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:liveroot_block",
+      "base_price": 4,
       "class": "common_processed"
     },
     {
@@ -264,6 +354,16 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:mazebreaker_pickaxe",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:mazestone",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "twilightforest:mining_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -286,6 +386,16 @@
     {
       "item": "twilightforest:moonworm",
       "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "twilightforest:moonworm_queen",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:moss_patch",
+      "base_price": 1,
       "class": "farmable"
     },
     {
@@ -349,6 +459,41 @@
       "class": "unique"
     },
     {
+      "item": "twilightforest:nagastone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:nagastone_head",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:nagastone_pillar",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:peacock_feather_fan",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:phantom_chestplate",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:phantom_helmet",
+      "base_price": 1024,
+      "class": "rare_loot"
+    },
+    {
+      "item": "twilightforest:quest_ram_banner_pattern",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:quest_ram_trophy",
       "base_price": 1024,
       "class": "unique"
@@ -399,6 +544,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:seeker_bow",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:skyberry",
       "base_price": 1,
       "class": "farmable"
@@ -444,6 +594,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:thorn_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
       "item": "twilightforest:thorn_rose",
       "base_price": 4,
       "class": "farmable"
@@ -469,6 +624,11 @@
       "class": "farmable"
     },
     {
+      "item": "twilightforest:torchberry_plant",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
       "item": "twilightforest:transformation_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -489,6 +649,11 @@
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:triple_bow",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
       "item": "twilightforest:trollber",
       "base_price": 8,
       "class": "farmable"
@@ -497,6 +662,11 @@
       "item": "twilightforest:trollsteinn",
       "base_price": 2,
       "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:trollvidr",
+      "base_price": 4,
+      "class": "farmable"
     },
     {
       "item": "twilightforest:twilight_oak_leaves",
@@ -519,6 +689,16 @@
       "class": "rare_loot"
     },
     {
+      "item": "twilightforest:underbrick",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "twilightforest:unripe_trollber",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
       "item": "twilightforest:ur_ghast_trophy",
       "base_price": 4096,
       "class": "unique"
@@ -527,6 +707,11 @@
       "item": "twilightforest:weathered_deadrock",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "twilightforest:wispy_cloud",
+      "base_price": 4,
+      "class": "common_processed"
     }
   ]
 }
