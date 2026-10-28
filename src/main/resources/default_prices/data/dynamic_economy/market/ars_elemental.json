@@ -4,9 +4,19 @@
   ],
   "entries": [
     {
+      "item": "ars_elemental:flashjack_shards",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
       "item": "ars_elemental:flashpine_pod",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "ars_elemental:siren_shards",
+      "base_price": 16,
+      "class": "common_processed"
     },
     {
       "item": "ars_elemental:sparkflower",
