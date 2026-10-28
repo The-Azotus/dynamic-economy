@@ -1544,6 +1544,12 @@ public final class MarketGameTests {
         helper.assertValueEqual(c.steps().stream().map(PriceSuggestion.Path::output).toList(), List.of(crushed, ingot), "through both steps");
         helper.assertValueEqual(PriceSuggestion.craftProfits(paths, market).stream().filter(p -> p.output() != stone).toList(), List.of(),
                 "which the one-recipe check misses");
+
+        // Two recipes that each double the other's item: a value never rests on itself, so neither grows without end.
+        Map<Item, CatalogEntry> clayMarket = seeds(seed(Items.CLAY_BALL, 1, null));
+        List<PriceSuggestion.ChainProfit> doubling = PriceSuggestion.chainProfits(List.of(
+                path(Items.BRICK, 2, false, Items.CLAY_BALL), path(Items.CLAY_BALL, 2, false, Items.BRICK)), clayMarket);
+        helper.assertValueEqual(doubling, List.of(), "a loop through another item doesn't count");
         helper.succeed();
     }
 

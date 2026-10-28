@@ -192,9 +192,9 @@ public final class PriceSuggestion {
      * a rare seed's whole price, and for a made item its inputs' rare parts, so a trace of rare material deep in a long
      * chain doesn't make a cheap item rare. Items in {@code frozen} keep the price they have.
      * <p>
-     * An item is never repriced from ingredients that were themselves priced from it ({@code madeFrom}), so a pair of
-     * recipes that turns one plank into a door and the door into two planks can't drive both prices towards zero: the
-     * chosen recipes always form a chain back to the seeds.
+     * An item is never repriced from ingredients whose price came from it ({@code madeFrom}: every item a price was
+     * built from, as it was when the price was set), so a pair of recipes that turns one plank into a door and the door
+     * into two planks can't drive both prices towards zero: every price rests on a chain back to the seeds.
      */
     private static final class Propagation {
         /** Seeds' prices, and made items' costs before the premium (raw materials, fuel and seeds they use up). */
@@ -203,8 +203,8 @@ public final class PriceSuggestion {
         final Map<Item, String> itemClass = new HashMap<>();
         final Map<Item, Path> chosen = new HashMap<>();
         final Map<Item, Integer> depth = new HashMap<>();
-        /** The ingredients each item's price came from. */
-        final Map<Item, List<Item>> madeFrom = new HashMap<>();
+        /** Every item each made item's price was built from, however deep, as it was when the price was set. */
+        final Map<Item, Set<Item>> madeFrom = new HashMap<>();
         final Set<Item> frozen = new HashSet<>();
         final BigDecimal premium;
         /** The cheapest rare item in the catalog; a made item holding this much rare material is rare. */
@@ -276,14 +276,15 @@ public final class PriceSuggestion {
                     BigDecimal count = BigDecimal.valueOf(path.count());
                     BigDecimal cost = sum.divide(count, MATH);
                     BigDecimal current = price.get(path.output());
-                    if (current == null || cost.compareTo(current) < 0 && !reaches(used, path.output())) {
+                    Set<Item> from = current == null || cost.compareTo(current) < 0 ? builtFrom(used) : null;
+                    if (from != null && !from.contains(path.output())) {
                         BigDecimal rareCost = rareSum.divide(count, MATH);
                         boolean isRare = rareCost.signum() > 0 && (rareCost.compareTo(cost.multiply(RARE_SHARE)) >= 0
                                 || oneRareUnit != null && rareCost.compareTo(oneRareUnit) >= 0);
                         price.put(path.output(), cost);
                         rare.put(path.output(), rareCost);
                         chosen.put(path.output(), path);
-                        madeFrom.put(path.output(), used);
+                        madeFrom.put(path.output(), from);
                         depth.put(path.output(), deepest + 1);
                         itemClass.put(path.output(), isRare ? "rare_processed" : "common_processed");
                         changed.add(path.output());
@@ -296,20 +297,13 @@ public final class PriceSuggestion {
             return Set.copyOf(changed);
         }
 
-        /** Whether {@code target} is among {@code items} or the ingredients any of them was priced from, however deep. */
-        boolean reaches(List<Item> items, Item target) {
-            Set<Item> seen = new HashSet<>();
-            java.util.ArrayDeque<Item> open = new java.util.ArrayDeque<>(items);
-            while (!open.isEmpty()) {
-                Item item = open.pop();
-                if (item == target) {
-                    return true;
-                }
-                if (seen.add(item)) {
-                    open.addAll(madeFrom.getOrDefault(item, List.of()));
-                }
+        /** {@code items} and everything their prices were built from. */
+        Set<Item> builtFrom(List<Item> items) {
+            Set<Item> from = new HashSet<>(items);
+            for (Item item : items) {
+                from.addAll(madeFrom.getOrDefault(item, Set.of()));
             }
-            return false;
+            return from;
         }
     }
 
@@ -399,7 +393,8 @@ public final class PriceSuggestion {
                 value.put(item, PriceModel.exactUnitSellPrice(in, 1.0));
             }
         });
-        Map<Item, Path> next = new HashMap<>();
+        // The recipes each value was reached through, as they were when it was set: a value never rests on itself.
+        Map<Item, List<Path>> chain = new HashMap<>();
         boolean changed = true;
         for (int pass = 0; pass < MAX_PASSES && changed; pass++) {
             changed = false;
@@ -438,11 +433,16 @@ public final class PriceSuggestion {
                     BigDecimal others = slotBuy[k] == null ? allOthers
                             : allOthers.subtract(slotBuy[k].multiply(BigDecimal.valueOf(slots.get(k).amount())));
                     BigDecimal perUnit = total.subtract(others).divide(BigDecimal.valueOf(slots.get(k).amount()), MATH);
+                    List<Path> after = chain.getOrDefault(path.output(), List.of());
                     for (Item option : slots.get(k).options()) {
                         BigDecimal current = value.get(option);
-                        if ((current == null || perUnit.compareTo(current) > 0) && !leadsTo(next, path.output(), option)) {
+                        if ((current == null || perUnit.compareTo(current) > 0) && after.size() < MAX_PASSES
+                                && option != path.output() && after.stream().noneMatch(step -> step.output() == option)) {
+                            List<Path> steps = new ArrayList<>(after.size() + 1);
+                            steps.add(path);
+                            steps.addAll(after);
                             value.put(option, perUnit);
-                            next.put(option, path);
+                            chain.put(option, steps);
                             changed = true;
                         }
                     }
@@ -454,31 +454,15 @@ public final class PriceSuggestion {
         for (Map.Entry<Item, BigDecimal> entry : buy.entrySet()) {
             Item item = entry.getKey();
             BigDecimal worth = value.get(item);
-            if (worth == null || !next.containsKey(item) || worth.compareTo(entry.getValue()) <= 0) {
+            if (worth == null || !chain.containsKey(item) || worth.compareTo(entry.getValue()) <= 0) {
                 continue;
             }
-            List<Path> steps = new ArrayList<>();
-            boolean complete = true;
-            for (Item at = item; next.containsKey(at) && steps.size() < MAX_PASSES; at = next.get(at).output()) {
-                steps.add(next.get(at));
-                complete &= next.get(at).complete();
-            }
-            profits.add(new ChainProfit(item, entry.getValue(), worth, steps, complete));
+            List<Path> steps = chain.get(item);
+            profits.add(new ChainProfit(item, entry.getValue(), worth, steps, steps.stream().allMatch(Path::complete)));
         }
         profits.sort(java.util.Comparator.comparing((ChainProfit p) -> !p.complete())
                 .thenComparing(p -> p.value().divide(p.buyCost().max(new BigDecimal("0.01")), MATH), java.util.Comparator.reverseOrder()));
         return profits;
-    }
-
-    /** Whether following {@code next} from {@code from} reaches {@code target}. */
-    private static boolean leadsTo(Map<Item, Path> next, Item from, Item target) {
-        Set<Item> seen = new HashSet<>();
-        for (Item at = from; at != null && seen.add(at); at = next.containsKey(at) ? next.get(at).output() : null) {
-            if (at == target) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog) {
