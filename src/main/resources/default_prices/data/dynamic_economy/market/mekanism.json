@@ -78,7 +78,7 @@
     {
       "item": "mekanism:ingot_uranium",
       "base_price": 64,
-      "class": "common_processed"
+      "class": "rare_resource"
     },
     {
       "item": "mekanism:pellet_antimatter",

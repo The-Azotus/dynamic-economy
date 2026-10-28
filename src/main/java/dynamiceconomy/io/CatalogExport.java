@@ -185,7 +185,10 @@ public final class CatalogExport {
                         notes.add("worth under 1 spur, so left unpriced");
                     }
                     if (suggestion.raised()) {
-                        notes.add("raised above its recipe cost to what it can be processed into, so buying and processing it doesn't profit");
+                        List<PriceSuggestion.Path> via = suggestion.raisedVia();
+                        notes.add("raised above its recipe cost to what it can be processed into (" + via.size() + " step"
+                                + (via.size() == 1 ? "" : "s") + " to " + BuiltInRegistries.ITEM.getKey(via.getLast().output())
+                                + ", first " + via.getFirst().recipe() + "), so buying and processing it doesn't profit");
                     }
                     if (suggestions.looping().contains(item)) {
                         notes.add("price kept falling through a recipe loop, so this is too low: set it by hand");

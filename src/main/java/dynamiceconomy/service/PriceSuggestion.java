@@ -107,10 +107,14 @@ public final class PriceSuggestion {
      *                    cheapest rare item in the catalog, else {@code common_processed}
      * @param depth       recipe steps from the nearest priced item
      * @param reverse     items this one is made from that can also be made back from it (storage blocks, nuggets)
-     * @param raised      whether {@code basePrice} was raised above {@code cost} to what the item can be processed into
+     * @param raisedVia   if {@code basePrice} was raised above {@code cost} to what the item can be processed into, the
+     *                    recipes that process it; else empty
      */
     public record Suggestion(Item item, BigDecimal cost, Optional<Integer> basePrice, String itemClass, ResourceLocation recipe,
-                             String recipeType, int depth, boolean completeType, Set<Item> reverse, boolean raised) {
+                             String recipeType, int depth, boolean completeType, Set<Item> reverse, List<Path> raisedVia) {
+        public boolean raised() {
+            return !raisedVia.isEmpty();
+        }
     }
 
     /**
@@ -178,7 +182,7 @@ public final class PriceSuggestion {
                 }
             }
             suggestions.put(item, new Suggestion(item, cost, base, state.itemClass.get(item), path.recipe(), path.type(), state.depth.get(item),
-                    path.complete(), reverse, false));
+                    path.complete(), reverse, List.of()));
         }
         raiseToProcessedValue(paths, catalog, suggestions);
 
@@ -384,8 +388,9 @@ public final class PriceSuggestion {
      * each recipe it goes into, what the output is worth less the other ingredients' buy prices, per unit used. A seed
      * priced below what it processes into (a cheap stone that crushes into ore) shows up here, with the chain.
      * Recipes that make more of their own ingredient are left out (they're generators, reported by {@link #craftProfits}),
-     * as is any step that would lead back to the item, so values settle. Furnace fuel is bought as coal; anything a
-     * recipe gives back is ignored. {@code market} is everything the market would list, with suggested items included.
+     * as is any step that would lead back to the item, so values settle. An input a recipe uses up only sometimes (a
+     * quarry drill) is credited with one run's output, not the many runs it lasts, or chains of them multiply without
+     * bound. Furnace fuel is bought as coal; anything a recipe gives back is ignored. {@code market} is everything the market would list, with suggested items included.
      */
     public static List<ChainProfit> chainProfits(List<Path> allPaths, Map<Item, CatalogEntry> market) {
         ChainValues values = chainValues(allPaths, market);
@@ -464,7 +469,7 @@ public final class PriceSuggestion {
                     }
                     BigDecimal others = slotBuy[k] == null ? allOthers
                             : allOthers.subtract(slotBuy[k].multiply(BigDecimal.valueOf(slots.get(k).amount())));
-                    BigDecimal perUnit = total.subtract(others).divide(BigDecimal.valueOf(slots.get(k).amount()), MATH);
+                    BigDecimal perUnit = total.subtract(others).divide(BigDecimal.valueOf(Math.max(slots.get(k).amount(), 1)), MATH);
                     List<Path> after = chain.getOrDefault(path.output(), List.of());
                     for (Item option : slots.get(k).options()) {
                         BigDecimal current = value.get(option);
@@ -488,31 +493,30 @@ public final class PriceSuggestion {
     /**
      * Raises each suggestion to at least what the item can be processed into, through recipes the suggester fully
      * reads, divided by its class's markup, so buying it and processing it never profits. Suggestions too cheap to
-     * price (under 1 spur) get a price this way if what they make is worth it.
+     * price (under 1 spur) stay unpriced: rounded up to 1, they'd sell for more than they cost to make (9 tiny dusts
+     * unpacked from a 1-spur dust).
      */
     private static void raiseToProcessedValue(List<Path> paths, Map<Item, CatalogEntry> catalog, Map<Item, Suggestion> suggestions) {
         Map<Item, CatalogEntry> market = new HashMap<>(catalog);
         Map<Item, CatalogEntry> asListed = new HashMap<>();
         for (Suggestion s : suggestions.values()) {
-            asEntry(s.item(), s.basePrice().orElse(1), s.itemClass()).ifPresent(entry -> {
+            s.basePrice().flatMap(price -> asEntry(s.item(), price, s.itemClass())).ifPresent(entry -> {
                 asListed.put(s.item(), entry);
-                if (s.basePrice().isPresent()) {
-                    market.put(s.item(), entry);
-                }
+                market.put(s.item(), entry);
             });
         }
-        Map<Item, BigDecimal> value = chainValues(paths.stream().filter(Path::complete).toList(), market).value();
+        ChainValues values = chainValues(paths.stream().filter(Path::complete).toList(), market);
         for (Suggestion s : List.copyOf(suggestions.values())) {
-            BigDecimal worth = value.get(s.item());
+            BigDecimal worth = values.chain().containsKey(s.item()) ? values.value().get(s.item()) : null;
             CatalogEntry entry = asListed.get(s.item());
             if (worth == null || entry == null) {
                 continue;
             }
             BigDecimal floor = worth.divide(BigDecimal.ONE.add(BigDecimal.valueOf(entry.markup())), MATH).setScale(0, RoundingMode.CEILING);
             if (floor.signum() > 0 && floor.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) <= 0
-                    && (s.basePrice().isEmpty() || floor.intValueExact() > s.basePrice().get())) {
+                    && floor.intValueExact() > s.basePrice().get()) {
                 suggestions.put(s.item(), new Suggestion(s.item(), s.cost(), Optional.of(floor.intValueExact()), s.itemClass(), s.recipe(),
-                        s.recipeType(), s.depth(), s.completeType(), s.reverse(), true));
+                        s.recipeType(), s.depth(), s.completeType(), s.reverse(), values.chain().get(s.item())));
             }
         }
     }

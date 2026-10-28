@@ -535,7 +535,7 @@
     },
     {
       "item": "twilightforest:root",
-      "base_price": 1,
+      "base_price": 3,
       "class": "common_resource"
     },
     {

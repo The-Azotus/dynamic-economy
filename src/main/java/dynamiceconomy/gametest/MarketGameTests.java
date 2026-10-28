@@ -1526,10 +1526,10 @@ public final class MarketGameTests {
 
     @GameTest(template = EMPTY)
     public static void suggestionsAreRaisedToWhatTheyProcessInto(GameTestHelper helper) {
-        // A cheap route makes nuggets worth 0.12 each, but 9 nuggets craft into a 32-spur ingot: bought at 0.12 they'd
+        // A cheap route makes nuggets worth 1.22 each, but 9 nuggets craft into a 32-spur ingot: bought at 1 they'd
         // profit, so the nugget is raised until 9 of them cost at least an ingot.
         Item stone = Items.COBBLESTONE, nugget = Items.IRON_NUGGET, ingot = Items.IRON_INGOT;
-        Map<Item, CatalogEntry> catalog = seeds(seed(stone, 1, null), seed(ingot, 32, null));
+        Map<Item, CatalogEntry> catalog = seeds(seed(stone, 10, null), seed(ingot, 32, null));
         ResourceLocation id = ResourceLocation.parse("test:craft");
         PriceSuggestion.Result result = PriceSuggestion.suggest(List.of(
                 path(nugget, 9, false, stone),
@@ -1543,6 +1543,21 @@ public final class MarketGameTests {
                 new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false),
                 path(nugget, 9, false, stone)), market).stream().map(PriceSuggestion.ChainProfit::item).toList();
         helper.assertValueEqual(heads, List.of(stone), "nuggets no longer profit; the stone seed is what's left to fix");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void partlyUsedInputsAreCreditedOneRun(GameTestHelper helper) {
+        // A quarry uses its drill up one run in ten. Credited with all ten runs, the drill would be raised to 10x what one
+        // run makes, and chains of such inputs multiply without bound; it gets one run's worth.
+        Item stone = Items.COBBLESTONE, drill = Items.IRON_PICKAXE, diamond = Items.DIAMOND;
+        Map<Item, CatalogEntry> catalog = seeds(seed(stone, 1, null), seed(diamond, 512, null));
+        PriceSuggestion.Path quarry = new PriceSuggestion.Path(ResourceLocation.parse("test:quarry"), "test:quarry", diamond, 0.1,
+                List.of(new PriceSuggestion.Slot(List.of(drill), 0.1)), false, true);
+        PriceSuggestion.Suggestion s = PriceSuggestion.suggest(List.of(path(drill, 1, false, stone, stone, stone), quarry),
+                catalog, new java.util.HashMap<>()).suggestions().get(drill);
+        helper.assertValueEqual(s.basePrice(), Optional.of(37), "one run makes 51.2 spurs of diamond; 51.2 / 1.4 = 36.6, rounded up");
+        helper.assertValueEqual(s.raisedVia(), List.of(quarry), "raised through the quarry");
         helper.succeed();
     }
 
