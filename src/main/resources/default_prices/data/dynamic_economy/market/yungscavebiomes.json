@@ -14,9 +14,24 @@
       "class": "common_resource"
     },
     {
+      "item": "yungscavebiomes:clock_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "yungscavebiomes:frost_lily",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "yungscavebiomes:hourglass_pottery_sherd",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "yungscavebiomes:ice_sheet",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "yungscavebiomes:icicle",
@@ -37,6 +52,11 @@
       "item": "yungscavebiomes:prickly_vines",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "yungscavebiomes:rare_ice",
+      "base_price": 4,
+      "class": "common_processed"
     }
   ]
 }
