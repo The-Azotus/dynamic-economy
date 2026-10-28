@@ -1,0 +1,12 @@
+{
+  "required_mods": [
+    "reliquified_artifacts"
+  ],
+  "entries": [
+    {
+      "item": "reliquified_artifacts:mimi_dust",
+      "base_price": 176,
+      "class": "rare_processed"
+    }
+  ]
+}
