@@ -1,0 +1,17 @@
+{
+  "required_mods": [
+    "numismaticsutils"
+  ],
+  "entries": [
+    {
+      "item": "numismaticsutils:bank_meter",
+      "base_price": 476,
+      "class": "common_processed"
+    },
+    {
+      "item": "numismaticsutils:portable_bank_terminal",
+      "base_price": 410,
+      "class": "common_processed"
+    }
+  ]
+}
