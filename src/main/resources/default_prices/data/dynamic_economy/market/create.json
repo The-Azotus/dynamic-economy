@@ -4,8 +4,489 @@
   ],
   "entries": [
     {
+      "item": "create:acacia_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:acacia_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:adjustable_chain_gearshift",
+      "base_price": 122,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:analog_lever",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_alloy",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_alloy_block",
+      "base_price": 18,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:andesite_casing",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_door",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_funnel",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_ladder",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:andesite_scaffolding",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_table_cloth",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:andesite_tunnel",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
       "item": "create:asurine",
       "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:asurine_pillar",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:attribute_filter",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:bamboo_window",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:bamboo_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:basin",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:belt_connector",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:birch_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:birch_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:black_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:black_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:black_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:black_valve_handle",
+      "base_price": 29,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:blaze_burner",
+      "base_price": 56,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create:blaze_cake",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:blaze_cake_base",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:blue_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:blue_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:blue_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:blue_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:bound_cardboard_block",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_bars",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_block",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:brass_casing",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_door",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_funnel",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_hand",
+      "base_price": 54,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_ingot",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_ladder",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_nugget",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:brass_scaffolding",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_sheet",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_table_cloth",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brass_tunnel",
+      "base_price": 68,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brown_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brown_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brown_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brown_toolbox",
+      "base_price": 116,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:brown_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:builders_tea",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:calcite_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cardboard",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cardboard_block",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cardboard_boots",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cardboard_chestplate",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cardboard_helmet",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cardboard_leggings",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cardboard_sword",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cart_assembler",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:chain_conveyor",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cherry_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cherry_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:chocolate_glazed_berries",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:chute",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:clipboard",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:clockwork_bearing",
+      "base_price": 131,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:clutch",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:content_observer",
+      "base_price": 158,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:contraption_controls",
+      "base_price": 120,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:controller_rail",
+      "base_price": 70,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_backtank",
+      "base_price": 110,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_bars",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_casing",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_diving_boots",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_diving_helmet",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_door",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_ladder",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_scaffolding",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_sheet",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_shingle_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_shingle_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_shingles",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_table_cloth",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_tile_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_tile_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_tiles",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copper_valve_handle",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copycat_panel",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:copycat_step",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:crafter_slot_cover",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:crafting_blueprint",
+      "base_price": 5,
       "class": "common_processed"
     },
     {
@@ -14,13 +495,1726 @@
       "class": "common_processed"
     },
     {
+      "item": "create:crimsite_pillar",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:crimson_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:crimson_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:crushed_raw_aluminum",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_copper",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_gold",
+      "base_price": 43,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_iron",
+      "base_price": 26,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_lead",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_nickel",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_osmium",
+      "base_price": 22,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_platinum",
+      "base_price": 105,
+      "class": "rare_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_silver",
+      "base_price": 35,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_tin",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_uranium",
+      "base_price": 52,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushed_raw_zinc",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "create:crushing_wheel",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cuckoo_clock",
+      "base_price": 231,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cut_andesite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_andesite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_andesite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_andesite_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_andesite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_andesite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine_brick_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine_brick_stairs",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine_brick_wall",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine_bricks",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine_stairs",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_asurine_wall",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_calcite",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cut_calcite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_calcite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_calcite_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_calcite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_calcite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite_brick_slab",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite_brick_stairs",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite_brick_wall",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite_bricks",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite_slab",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite_stairs",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_crimsite_wall",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_deepslate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_deepslate_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_deepslate_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_deepslate_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_deepslate_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_deepslate_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_diorite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_diorite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_diorite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_diorite_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_diorite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_diorite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_dripstone",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_dripstone_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_dripstone_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_dripstone_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_dripstone_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_dripstone_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_granite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_granite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_granite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_granite_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cut_granite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_granite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_limestone",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_limestone_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_limestone_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_limestone_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cut_limestone_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_limestone_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum_brick_slab",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum_brick_stairs",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum_brick_wall",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum_bricks",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum_slab",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum_stairs",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_ochrum_wall",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scorchia",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scorchia_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scorchia_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scorchia_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scorchia_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scorchia_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scoria",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scoria_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scoria_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scoria_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scoria_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_scoria_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_tuff",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_tuff_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_tuff_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_tuff_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cut_tuff_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_tuff_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium_brick_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium_brick_stairs",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium_brick_wall",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium_bricks",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium_stairs",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cut_veridium_wall",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:cyan_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cyan_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cyan_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:cyan_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:dark_oak_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:dark_oak_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:deepslate_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:deployer",
+      "base_price": 174,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:depot",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:desk_bell",
+      "base_price": 63,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:diorite_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:display_board",
+      "base_price": 56,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:display_link",
+      "base_price": 83,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:dough",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:dripstone_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:electron_tube",
+      "base_price": 108,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:elevator_pulley",
+      "base_price": 67,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:empty_blaze_burner",
+      "base_price": 141,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:encased_chain_drive",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:encased_fan",
+      "base_price": 154,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:extendo_grip",
+      "base_price": 198,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:factory_gauge",
+      "base_price": 131,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:filter",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:fluid_pipe",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:fluid_tank",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:fluid_valve",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:flywheel",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:framed_glass",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:framed_glass_door",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:framed_glass_trapdoor",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:gantry_carriage",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:gantry_shaft",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:gearbox",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:gearshift",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:goggles",
+      "base_price": 58,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:golden_sheet",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:granite_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:gray_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:gray_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:gray_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:gray_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:green_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:green_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:green_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:green_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:hand_crank",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:haunted_bell",
+      "base_price": 132,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:honeyed_apple",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:horizontal_framed_glass",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:hose_pulley",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:industrial_iron_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:industrial_iron_window",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:industrial_iron_window_pane",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:iron_sheet",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:item_drain",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:item_hatch",
+      "base_price": 142,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:item_vault",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:jungle_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:jungle_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:large_water_wheel",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:layered_andesite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_asurine",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_calcite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_crimsite",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_deepslate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_diorite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_dripstone",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_granite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_limestone",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_ochrum",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_scorchia",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_scoria",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_tuff",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:layered_veridium",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:light_blue_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:light_blue_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:light_blue_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:light_blue_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:light_gray_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:light_gray_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:light_gray_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:light_gray_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:lime_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:lime_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:lime_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:lime_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "create:limestone",
       "base_price": 1,
       "class": "common_resource"
     },
     {
+      "item": "create:limestone_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:linear_chassis",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:linked_controller",
+      "base_price": 37,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:magenta_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:magenta_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:magenta_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:magenta_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:mangrove_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mangrove_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_arm",
+      "base_price": 194,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_bearing",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_crafter",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_drill",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_harvester",
+      "base_price": 89,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_mixer",
+      "base_price": 191,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_piston",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_plough",
+      "base_price": 122,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_press",
+      "base_price": 328,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_pump",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_roller",
+      "base_price": 137,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mechanical_saw",
+      "base_price": 151,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:metal_bracket",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:metal_girder",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:millstone",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:minecart_coupling",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:mysterious_cuckoo_clock",
+      "base_price": 235,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:netherite_backtank",
+      "base_price": 1877,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create:netherite_diving_boots",
+      "base_price": 1807,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create:netherite_diving_helmet",
+      "base_price": 1813,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create:nixie_tube",
+      "base_price": 54,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:nozzle",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:oak_window",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "create:ochrum",
       "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:ochrum_pillar",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:orange_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:orange_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:orange_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:orange_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:ornate_iron_window",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:ornate_iron_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:package_filter",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:package_frogport",
+      "base_price": 82,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:packager",
+      "base_price": 176,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:peculiar_bell",
+      "base_price": 132,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pink_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pink_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pink_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pink_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:placard",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:polished_cut_andesite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_andesite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_andesite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_asurine",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_asurine_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_asurine_stairs",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_asurine_wall",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_calcite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_calcite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_calcite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_crimsite",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_crimsite_slab",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_crimsite_stairs",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_crimsite_wall",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_deepslate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_deepslate_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_deepslate_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_diorite",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:polished_cut_diorite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_diorite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_dripstone",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_dripstone_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_dripstone_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_granite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_granite_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_granite_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_limestone",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:polished_cut_limestone_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_limestone_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_ochrum",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_ochrum_slab",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_ochrum_stairs",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_ochrum_wall",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_scorchia",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_scorchia_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_scorchia_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_scoria",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_scoria_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_scoria_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_tuff",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_tuff_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_tuff_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_veridium",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_veridium_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_veridium_stairs",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_cut_veridium_wall",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:polished_rose_quartz",
+      "base_price": 73,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:portable_fluid_interface",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:portable_storage_interface",
+      "base_price": 37,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:potato_cannon",
+      "base_price": 169,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:powdered_obsidian",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:powered_latch",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:powered_toggle_latch",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:precision_mechanism",
+      "base_price": 130,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:propeller",
+      "base_price": 142,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pulp",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pulse_extender",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pulse_repeater",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:pulse_timer",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:purple_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:purple_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:purple_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:purple_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:radial_chassis",
+      "base_price": 2,
       "class": "common_processed"
     },
     {
@@ -30,9 +2224,119 @@
       "can_buy": false
     },
     {
+      "item": "create:red_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:red_sand_paper",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:red_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:red_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:red_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:redstone_contact",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:redstone_link",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:redstone_requester",
+      "base_price": 176,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:repackager",
+      "base_price": 176,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:rope_pulley",
+      "base_price": 50,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:rose_quartz",
+      "base_price": 73,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:rose_quartz_block",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:rose_quartz_lamp",
+      "base_price": 100,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:rose_quartz_tiles",
+      "base_price": 36,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:rotation_speed_controller",
+      "base_price": 152,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:sail_frame",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:sand_paper",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:schematic_and_quill",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:schematic_table",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:schematicannon",
+      "base_price": 662,
+      "class": "common_processed"
+    },
+    {
       "item": "create:scorchia",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "create:scorchia_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "create:scoria",
@@ -40,9 +2344,572 @@
       "class": "common_resource"
     },
     {
+      "item": "create:scoria_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:secondary_linear_chassis",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:sequenced_gearshift",
+      "base_price": 131,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:small_andesite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_andesite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_andesite_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:small_asurine_brick_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_asurine_brick_stairs",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_asurine_brick_wall",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_asurine_bricks",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_calcite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_calcite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_calcite_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_crimsite_brick_slab",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_crimsite_brick_stairs",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_crimsite_brick_wall",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_crimsite_bricks",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_deepslate_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_deepslate_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_deepslate_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_diorite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_diorite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_diorite_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:small_dripstone_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_dripstone_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_dripstone_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_granite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_granite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_granite_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_limestone_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_limestone_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_limestone_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_ochrum_brick_slab",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_ochrum_brick_stairs",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_ochrum_brick_wall",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_ochrum_bricks",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_rose_quartz_tiles",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:small_scorchia_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_scorchia_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_scorchia_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_scoria_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_scoria_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_scoria_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_tuff_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_tuff_brick_wall",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_tuff_bricks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_veridium_brick_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_veridium_brick_stairs",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_veridium_brick_wall",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:small_veridium_bricks",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:smart_chute",
+      "base_price": 148,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:smart_fluid_pipe",
+      "base_price": 128,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:speedometer",
+      "base_price": 160,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:spout",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:spruce_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:spruce_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:steam_engine",
+      "base_price": 134,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:steam_whistle",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:sticker",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:sticky_mechanical_piston",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:stock_link",
+      "base_price": 132,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:stock_ticker",
+      "base_price": 187,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:stockpile_switch",
+      "base_price": 163,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:stressometer",
+      "base_price": 160,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:super_glue",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:sweet_roll",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:tiled_glass",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:transmitter",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:tree_fertilizer",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:tuff_pillar",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "create:veridium",
       "base_price": 5,
       "class": "common_processed"
+    },
+    {
+      "item": "create:veridium_pillar",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:vertical_framed_glass",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:vertical_gearbox",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:wand_of_symmetry",
+      "base_price": 189,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:warped_window",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:warped_window_pane",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:water_wheel",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:waxed_copper_shingle_slab",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:waxed_copper_shingle_stairs",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:waxed_copper_shingles",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:waxed_copper_tile_slab",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:waxed_copper_tile_stairs",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:waxed_copper_tiles",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:weathered_iron_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:weathered_iron_window",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:weathered_iron_window_pane",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:weighted_ejector",
+      "base_price": 66,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:wheat_flour",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:whisk",
+      "base_price": 180,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:white_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:white_sail",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:white_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:white_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:white_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:windmill_bearing",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:wrench",
+      "base_price": 159,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:yellow_postbox",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:yellow_seat",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:yellow_table_cloth",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create:yellow_valve_handle",
+      "base_price": 28,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create:zinc_block",
+      "base_price": 158,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "create:zinc_ingot",
