@@ -1,0 +1,17 @@
+{
+  "required_mods": [
+    "portable_blueprints"
+  ],
+  "entries": [
+    {
+      "item": "portable_blueprints:scanner",
+      "base_price": 188,
+      "class": "common_processed"
+    },
+    {
+      "item": "portable_blueprints:tablet",
+      "base_price": 221,
+      "class": "common_processed"
+    }
+  ]
+}
