@@ -9,9 +9,125 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:ametrine_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:ametrine_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:ametrine_crystal_shard",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ametrine_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
     },
     {
       "item": "mythicupgrades:aquamarine",
@@ -19,9 +135,125 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:aquamarine_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:aquamarine_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:aquamarine_crystal_shard",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:aquamarine_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
     },
     {
       "item": "mythicupgrades:citrine",
@@ -29,8 +261,164 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:citrine_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:citrine_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:citrine_crystal_shard",
       "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:citrine_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_ametrine_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_aquamarine_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_citrine_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_jade_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_peridot_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_ruby_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_sapphire_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:cut_topaz_crystal_pillar",
+      "base_price": 17,
       "class": "common_processed"
     },
     {
@@ -39,9 +427,141 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:jade_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:jade_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:jade_crystal_shard",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:jade_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:mythic_upgrade_smithing_template",
+      "base_price": 6758,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:necoium_block",
+      "base_price": 3168,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:necoium_carrot",
+      "base_price": 25346,
+      "class": "rare_processed"
     },
     {
       "item": "mythicupgrades:necoium_ingot",
@@ -54,8 +574,444 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:peridot_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:peridot_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:peridot_crystal_shard",
       "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:peridot_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ametrine_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_aquamarine_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_citrine_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_jade_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_peridot_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_ruby_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_sapphire_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_crystal_block_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:polished_topaz_schist_wall",
+      "base_price": 5,
       "class": "common_processed"
     },
     {
@@ -70,9 +1026,125 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:ruby_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:ruby_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:ruby_crystal_shard",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:ruby_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
     },
     {
       "item": "mythicupgrades:sapphire",
@@ -80,9 +1152,125 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:sapphire_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:sapphire_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:sapphire_crystal_shard",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:sapphire_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
     },
     {
       "item": "mythicupgrades:topaz",
@@ -90,9 +1278,125 @@
       "class": "rare_resource"
     },
     {
+      "item": "mythicupgrades:topaz_axe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_block",
+      "base_price": 93772,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mythicupgrades:topaz_boots",
+      "base_price": 21198,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_chestplate",
+      "base_price": 23450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_block",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_block_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_block_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_bricks",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_bricks_slab",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_bricks_stairs",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_bricks_wall",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_crystal_pillar",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
       "item": "mythicupgrades:topaz_crystal_shard",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_helmet",
+      "base_price": 21761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_hoe",
+      "base_price": 20071,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_ingot",
+      "base_price": 10419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_leggings",
+      "base_price": 22887,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_pickaxe",
+      "base_price": 20634,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_schist",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_schist_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_schist_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_schist_wall",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_shovel",
+      "base_price": 19508,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mythicupgrades:topaz_sword",
+      "base_price": 20071,
+      "class": "rare_processed"
     }
   ]
 }
