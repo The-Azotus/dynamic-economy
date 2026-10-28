@@ -1,0 +1,187 @@
+{
+  "required_mods": [
+    "ironfurnaces"
+  ],
+  "entries": [
+    {
+      "item": "ironfurnaces:augment_blasting",
+      "base_price": 68,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:augment_factory",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:augment_fuel",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:augment_generator",
+      "base_price": 51,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:augment_smoking",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:augment_speed",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:copper_furnace",
+      "base_price": 79,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:crystal_furnace",
+      "base_price": 4400,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:diamond_furnace",
+      "base_price": 4340,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:emerald_furnace",
+      "base_price": 5185,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:gold_furnace",
+      "base_price": 957,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:heater",
+      "base_price": 127,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:iron_furnace",
+      "base_price": 290,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:item_copy",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:item_heater",
+      "base_price": 72,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:item_spooky",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:item_xmas",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:million_furnace",
+      "base_price": 34595,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:netherite_furnace",
+      "base_price": 7151,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:obsidian_furnace",
+      "base_price": 4558,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:rainbow_core",
+      "base_price": 14317,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:rainbow_plating",
+      "base_price": 2534,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:silver_furnace",
+      "base_price": 466,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_copper",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_crystal",
+      "base_price": 622,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_diamond",
+      "base_price": 3436,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_emerald",
+      "base_price": 1408,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_gold",
+      "base_price": 880,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_gold2",
+      "base_price": 893,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_iron",
+      "base_price": 282,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_iron2",
+      "base_price": 224,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_netherite",
+      "base_price": 2597,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_obsidian",
+      "base_price": 264,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_obsidian2",
+      "base_price": 160,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_silver",
+      "base_price": 348,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironfurnaces:upgrade_silver2",
+      "base_price": 237,
+      "class": "common_processed"
+    }
+  ]
+}
