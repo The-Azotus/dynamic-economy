@@ -9,9 +9,25 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:allium_oddion_soup",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:allium_petal_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:aloe_vera",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:aloe_vera_juice",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:alpine_bellflower",
@@ -39,6 +55,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:aspen_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:aspen_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:aspen_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:aspen_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:aspen_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:aspen_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:aspen_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:aspen_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:aspen_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:aspen_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -49,14 +114,95 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:aspen_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:aspen_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:aspen_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:aspen_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:aspen_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:aspen_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:aspen_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:baobab_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:baobab_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:baobab_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:baobab_fruit",
       "base_price": 3,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:baobab_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:baobab_leaves",
@@ -69,9 +215,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:baobab_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:baobab_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:baobab_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:baobab_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:baobab_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:barrel_cactus",
@@ -94,9 +272,95 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:black_ice",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:black_rose",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:black_sand",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:black_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:black_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:black_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:black_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blooming_oddion",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:blue_enchanted_leaves",
@@ -109,9 +373,46 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:blue_enchanted_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:blue_enchanted_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:blue_enchanted_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_glow_bottle",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:blue_glowcane_shoot",
@@ -129,6 +430,33 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:blue_sand",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:blue_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:blue_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:blue_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:blue_spruce_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -142,6 +470,11 @@
       "item": "biomeswevegone:blueberries",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:blueberry_pie",
+      "base_price": 3,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:borealis_ice",
@@ -194,6 +527,97 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:cattail_thatch",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cattail_thatch_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:chiseled_black_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:chiseled_blue_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:chiseled_pink_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:chiseled_purple_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:chiseled_white_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:chiseled_windswept_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cika_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cika_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cika_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cika_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cika_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cika_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cika_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cika_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cika_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:cika_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -204,14 +628,61 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:cika_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cika_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:cika_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:cika_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cika_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cika_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cika_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:clover_patch",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:cooked_oddion_bulb",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cooked_white_puffball_cap",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cooked_yucca_fruit",
+      "base_price": 3,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:cracked_red_sand",
@@ -227,6 +698,66 @@
       "item": "biomeswevegone:crocus",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:cut_black_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_black_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_blue_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_blue_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_pink_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_pink_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_purple_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_purple_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_white_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_white_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_windswept_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cut_windswept_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:cyan_amaranth",
@@ -249,6 +780,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:cypress_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cypress_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cypress_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cypress_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cypress_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cypress_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cypress_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cypress_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cypress_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:cypress_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -259,14 +839,58 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:cypress_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cypress_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:cypress_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:cypress_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cypress_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:cypress_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:cypress_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:dacite",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:dacite_cobblestone",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "biomeswevegone:dacite_pillar",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "biomeswevegone:daffodil",
@@ -279,6 +903,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:ebony_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ebony_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ebony_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ebony_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ebony_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ebony_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ebony_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ebony_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ebony_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:ebony_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -289,14 +962,95 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:ebony_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ebony_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:ebony_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:ebony_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ebony_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ebony_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ebony_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:fairy_slipper",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:fir_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:fir_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:fir_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:fir_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:fir_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:fir_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:fir_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:fir_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:fir_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:fir_leaves",
@@ -309,9 +1063,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:fir_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:fir_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:fir_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:fir_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:fir_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:fir_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:fir_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:firecracker_flower_bush",
@@ -324,9 +1110,90 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:florus_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:florus_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:florus_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:florus_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:florus_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:florus_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:florus_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:florus_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:florus_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:florus_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:florus_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:florus_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:florus_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:florus_stem",
       "base_price": 8,
       "class": "common_resource"
+    },
+    {
+      "item": "biomeswevegone:florus_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:florus_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:flower_patch",
@@ -337,6 +1204,11 @@
       "item": "biomeswevegone:flowering_tiny_lily_pads",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:foragers_table",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:foxglove",
@@ -354,6 +1226,60 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:green_apple_pie",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:green_enchanted_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -364,9 +1290,46 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:green_enchanted_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:green_enchanted_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:green_enchanted_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:green_glow_bottle",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:green_glowcane_shoot",
@@ -394,6 +1357,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:holly_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:holly_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:holly_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:holly_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:holly_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:holly_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -404,9 +1416,46 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:holly_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:holly_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:holly_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:holly_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:holly_wreath",
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:horseweed",
@@ -439,6 +1488,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:ironwood_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ironwood_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ironwood_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ironwood_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ironwood_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ironwood_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ironwood_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ironwood_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ironwood_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:ironwood_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -449,9 +1547,90 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:ironwood_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ironwood_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:ironwood_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:ironwood_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ironwood_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:ironwood_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:ironwood_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:jacaranda_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:jacaranda_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:jacaranda_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:jacaranda_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:jacaranda_leaves",
@@ -464,9 +1643,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:jacaranda_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:jacaranda_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:jacaranda_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:jacaranda_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:japanese_orchid",
@@ -499,6 +1710,16 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:lush_dirt_path",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:lush_grass_block",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:magenta_amaranth",
       "base_price": 1,
       "class": "farmable"
@@ -514,6 +1735,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:mahogany_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:mahogany_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mahogany_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mahogany_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:mahogany_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mahogany_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:mahogany_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mahogany_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:mahogany_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:mahogany_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -524,9 +1794,90 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:mahogany_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mahogany_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:mahogany_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:mahogany_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mahogany_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mahogany_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:mahogany_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:maple_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:maple_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:maple_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:maple_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:maple_leaves",
@@ -539,14 +1890,117 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:maple_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:maple_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:maple_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:maple_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:maple_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:mini_cactus",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:mossy_dacite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_dacite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_dacite_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_red_rock_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_red_rock_brick_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_red_rock_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_stone",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:mossy_stone_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_stone_stairs",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_stone_wall",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_white_dacite_brick_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_white_dacite_brick_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mossy_white_dacite_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:mushroom_wreath",
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:music_disc_better_days",
@@ -562,6 +2016,11 @@
       "item": "biomeswevegone:oddion_bulb",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:oddion_wreath",
+      "base_price": 13,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:orange_amaranth",
@@ -624,6 +2083,46 @@
       "class": "common_processed"
     },
     {
+      "item": "biomeswevegone:packed_black_ice",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:packed_borealis_ice",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:packed_pale_mud",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pale_mud",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pale_mud_bricks",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pale_mud_bricks_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pale_mud_bricks_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pale_mud_bricks_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:pale_pumpkin",
       "base_price": 4,
       "class": "farmable"
@@ -632,6 +2131,55 @@
       "item": "biomeswevegone:pale_pumpkin_seeds",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:palm_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:palm_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:palm_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:palm_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:palm_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:palm_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:palm_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:palm_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:palm_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:palm_leaves",
@@ -644,9 +2192,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:palm_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:palm_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:palm_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:palm_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:palm_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:palm_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:palm_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:palo_verde_leaves",
@@ -664,6 +2244,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:palo_verde_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:peach_leather_flower",
       "base_price": 1,
       "class": "farmable"
@@ -672,6 +2257,60 @@
       "item": "biomeswevegone:peat",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "biomeswevegone:petal_wreath",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:pine_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:pine_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:pine_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:pine_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:pine_leaves",
@@ -684,9 +2323,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:pine_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:pine_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:pine_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pine_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:pine_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:pink_allium",
@@ -699,6 +2370,12 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:pink_allium_petal_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:pink_anemone",
       "base_price": 1,
       "class": "farmable"
@@ -707,6 +2384,33 @@
       "item": "biomeswevegone:pink_daffodil",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:pink_sand",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pink_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:pink_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:pink_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:pink_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:podzol_dacite",
@@ -734,6 +2438,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:pumpkin_burrow",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:purple_amaranth",
       "base_price": 1,
       "class": "farmable"
@@ -742,6 +2451,32 @@
       "item": "biomeswevegone:purple_sage",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:purple_sand",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:purple_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:purple_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:purple_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:purple_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:purple_tulip",
@@ -754,6 +2489,55 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:rainbow_eucalyptus_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:rainbow_eucalyptus_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -764,9 +2548,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:rainbow_eucalyptus_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:rainbow_eucalyptus_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:rainbow_eucalyptus_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:red_birch_leaves",
@@ -777,6 +2593,11 @@
       "item": "biomeswevegone:red_birch_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:red_glow_bottle",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:red_glowcane_shoot",
@@ -824,6 +2645,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:redwood_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:redwood_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:redwood_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:redwood_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:redwood_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:redwood_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:redwood_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:redwood_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:redwood_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:redwood_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -834,9 +2704,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:redwood_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:redwood_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:redwood_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:redwood_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:redwood_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:redwood_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:redwood_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:richea",
@@ -844,14 +2746,132 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:rocky_stone",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rocky_stone_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:rocky_stone_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:rose",
       "base_price": 1,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:rose_petal_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:rosy_wreath",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:sakura_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:sakura_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:sakura_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:sakura_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:sakura_log",
       "base_price": 8,
       "class": "common_resource"
+    },
+    {
+      "item": "biomeswevegone:sakura_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:sakura_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sakura_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:sakura_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:sandy_dirt",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:sandy_dirt_path",
+      "base_price": 1,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:shelf_fungi",
@@ -874,6 +2894,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:skyris_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:skyris_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:skyris_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:skyris_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:skyris_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:skyris_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:skyris_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:skyris_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:skyris_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:skyris_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -884,14 +2953,136 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:skyris_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:skyris_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:skyris_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:skyris_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:skyris_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:skyris_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:skyris_vine",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:skyris_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_black_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_black_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_black_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_blue_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_blue_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_blue_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_pink_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_pink_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_pink_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_purple_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_purple_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_purple_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_white_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_white_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_white_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_windswept_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_windswept_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:smooth_windswept_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:snowdrops",
@@ -904,6 +3095,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:spirit_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:spirit_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:spirit_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:spirit_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:spirit_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:spirit_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:spirit_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:spirit_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:spirit_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:spirit_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -914,6 +3154,17 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:spirit_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:spirit_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:spirit_roots",
       "base_price": 1,
       "class": "farmable"
@@ -922,6 +3173,287 @@
       "item": "biomeswevegone:spirit_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:spirit_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:spirit_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:spirit_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:spirit_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_aspen_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_aspen_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_baobab_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_baobab_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_blue_enchanted_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_blue_enchanted_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_cika_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_cika_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_cypress_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_cypress_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_ebony_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_ebony_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_fir_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_fir_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_florus_stem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_florus_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_green_enchanted_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_green_enchanted_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_holly_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_holly_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_ironwood_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_ironwood_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_jacaranda_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_jacaranda_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_mahogany_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_mahogany_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_maple_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_maple_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_palm_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_palm_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_palo_verde_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_palo_verde_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_pine_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_pine_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_rainbow_eucalyptus_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_rainbow_eucalyptus_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_redwood_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_redwood_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_sakura_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_sakura_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_skyris_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_skyris_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_spirit_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_spirit_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_white_mangrove_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_white_mangrove_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_willow_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_willow_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_witch_hazel_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_witch_hazel_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_zelkova_log",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:stripped_zelkova_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:tall_allium",
@@ -984,6 +3516,12 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:white_allium_petal_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:white_anemone",
       "base_price": 1,
       "class": "farmable"
@@ -992,6 +3530,60 @@
       "item": "biomeswevegone:white_dacite_cobblestone",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "biomeswevegone:white_dacite_pillar",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:white_mangrove_leaves",
@@ -1004,9 +3596,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:white_mangrove_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:white_mangrove_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:white_mangrove_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:white_mushroom_stem",
@@ -1029,6 +3653,16 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:white_puffball_spores",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_puffball_stew",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:white_sage",
       "base_price": 1,
       "class": "farmable"
@@ -1049,6 +3683,82 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:white_sand",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:white_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:white_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:white_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:willow_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:willow_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:willow_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:willow_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:willow_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1059,14 +3769,73 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:willow_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:willow_sapling",
       "base_price": 2,
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:willow_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:willow_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:willow_wood",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:windswept_sand",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "biomeswevegone:windswept_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:windswept_sandstone_pillar",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:windswept_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:windswept_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:windswept_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:winter_cyclamen",
@@ -1077,6 +3846,11 @@
       "item": "biomeswevegone:winter_rose",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:winter_rosy_wreath",
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:winter_scilla",
@@ -1094,9 +3868,58 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:witch_hazel_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:witch_hazel_branch",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:witch_hazel_leaves",
@@ -1109,9 +3932,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:witch_hazel_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:witch_hazel_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:witch_hazel_wood",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:wood_blewit",
@@ -1121,6 +3976,11 @@
     {
       "item": "biomeswevegone:wood_blewit_mushroom_block",
       "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:wreath",
+      "base_price": 4,
       "class": "common_processed"
     },
     {
@@ -1137,6 +3997,11 @@
       "item": "biomeswevegone:yellow_daffodil",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:yellow_glow_bottle",
+      "base_price": 4,
+      "class": "common_processed"
     },
     {
       "item": "biomeswevegone:yellow_glowcane_shoot",
@@ -1184,6 +4049,55 @@
       "class": "farmable"
     },
     {
+      "item": "biomeswevegone:zelkova_boat",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:zelkova_bookshelf",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:zelkova_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:zelkova_chest_boat",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:zelkova_crafting_table",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:zelkova_door",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:zelkova_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:zelkova_fence_gate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:zelkova_hanging_sign",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
       "item": "biomeswevegone:zelkova_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -1194,9 +4108,41 @@
       "class": "common_resource"
     },
     {
+      "item": "biomeswevegone:zelkova_planks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:zelkova_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "biomeswevegone:zelkova_sapling",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomeswevegone:zelkova_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:zelkova_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomeswevegone:zelkova_trapdoor",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "biomeswevegone:zelkova_wood",
+      "base_price": 11,
+      "class": "common_processed"
     }
   ]
 }
