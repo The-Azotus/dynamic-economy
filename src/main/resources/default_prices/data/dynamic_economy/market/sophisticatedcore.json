@@ -1,0 +1,12 @@
+{
+  "required_mods": [
+    "sophisticatedcore"
+  ],
+  "entries": [
+    {
+      "item": "sophisticatedcore:ender_linker",
+      "base_price": 228,
+      "class": "common_processed"
+    }
+  ]
+}
