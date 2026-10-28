@@ -543,6 +543,8 @@ public final class MarketCommand {
         return market;
     }
 
+    private static final int CHAIN_STEPS_SHOWN = 3;
+
     private static List<String> chainLines(List<PriceSuggestion.ChainProfit> chains, Map<Item, CatalogEntry> catalog) {
         List<String> lines = new ArrayList<>(List.of(
                 "Items that can be bought and processed through one or more recipes into more than they cost, with the",
@@ -556,9 +558,16 @@ public final class MarketCommand {
             lines.add("");
             lines.add(listed ? "Listed items (fix these first; suggested items below often follow from them):" : "Suggested items:");
             for (PriceSuggestion.ChainProfit c : group) {
+                // Long chains are shortened to their first steps and the item sold at the end.
                 StringBuilder chain = new StringBuilder();
-                for (PriceSuggestion.Path step : c.steps()) {
-                    chain.append(" -> ").append(BuiltInRegistries.ITEM.getKey(step.output())).append(" (").append(step.recipe()).append(')');
+                List<PriceSuggestion.Path> steps = c.steps();
+                for (int i = 0; i < steps.size(); i++) {
+                    if (i == CHAIN_STEPS_SHOWN && steps.size() > CHAIN_STEPS_SHOWN + 1) {
+                        chain.append(" -> ... (").append(steps.size() - CHAIN_STEPS_SHOWN - 1).append(" more)");
+                        i = steps.size() - 1;
+                    }
+                    chain.append(" -> ").append(BuiltInRegistries.ITEM.getKey(steps.get(i).output()))
+                            .append(" (").append(steps.get(i).recipe()).append(')');
                 }
                 lines.add("%s%s costs %s, processes into %s:%s".formatted(c.complete() ? "" : "[check] ",
                         BuiltInRegistries.ITEM.getKey(c.item()), c.buyCost().setScale(2, java.math.RoundingMode.HALF_UP),

@@ -35,7 +35,9 @@ import java.util.TreeMap;
  * Suggests prices for unlisted items from the recipes that make them, starting from the items the catalog already
  * prices ("seeds"). An item's cost is its cheapest recipe: for each ingredient slot the cheapest priced item that fits,
  * minus any priced item the slot gives back (a bucket from a milk bucket), plus fuel for furnace recipes, divided by
- * the output count and raised by a processing premium. Costs only ever fall; a recipe loop that makes something out of
+ * the output count. The processing premium is added once, to the finished cost, not at every step: compounded over a
+ * long chain it would outgrow the markup, and buying an early item, processing it many times and selling the result
+ * would profit. Costs only ever fall; a recipe loop that makes something out of
  * less than itself would fall forever, so passes are capped and such items reported. Recipes whose type may hide inputs
  * (see {@link Path#complete}) only price items no complete recipe can, so a recipe that leaves its main ingredient out
  * can't undercut one that lists it.
@@ -49,7 +51,7 @@ import java.util.TreeMap;
  */
 public final class PriceSuggestion {
     /**
-     * Fraction added for each processing step, at most: {@link #premium} lowers it to the catalog's smallest markup when
+     * Fraction added for processing, once per suggested price however long its chain: {@link #premium} lowers it to the catalog's smallest markup when
      * an admin sets one below it. Below the smallest built-in markup (0.4), with room for rounding.
      */
     public static final double PREMIUM = 0.1;
@@ -156,7 +158,7 @@ public final class PriceSuggestion {
         for (Map.Entry<Item, Path> entry : chosen.entrySet()) {
             Item item = entry.getKey();
             Path path = entry.getValue();
-            BigDecimal cost = price.get(item);
+            BigDecimal cost = price.get(item).multiply(state.premium);
             BigDecimal rounded = cost.setScale(0, RoundingMode.FLOOR);
             Optional<Integer> base = rounded.signum() > 0 && rounded.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) <= 0
                     ? Optional.of(rounded.intValueExact()) : Optional.empty();
@@ -195,6 +197,7 @@ public final class PriceSuggestion {
      * chosen recipes always form a chain back to the seeds.
      */
     private static final class Propagation {
+        /** Seeds' prices, and made items' costs before the premium (raw materials, fuel and seeds they use up). */
         final Map<Item, BigDecimal> price = new HashMap<>();
         final Map<Item, BigDecimal> rare = new HashMap<>();
         final Map<Item, String> itemClass = new HashMap<>();
@@ -271,10 +274,10 @@ public final class PriceSuggestion {
                         sum = sum.add(price.get(Items.COAL).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
                     }
                     BigDecimal count = BigDecimal.valueOf(path.count());
-                    BigDecimal cost = sum.multiply(premium).divide(count, MATH);
+                    BigDecimal cost = sum.divide(count, MATH);
                     BigDecimal current = price.get(path.output());
                     if (current == null || cost.compareTo(current) < 0 && !reaches(used, path.output())) {
-                        BigDecimal rareCost = rareSum.multiply(premium).divide(count, MATH);
+                        BigDecimal rareCost = rareSum.divide(count, MATH);
                         boolean isRare = rareCost.signum() > 0 && (rareCost.compareTo(cost.multiply(RARE_SHARE)) >= 0
                                 || oneRareUnit != null && rareCost.compareTo(oneRareUnit) >= 0);
                         price.put(path.output(), cost);
@@ -379,8 +382,8 @@ public final class PriceSuggestion {
      * each recipe it goes into, what the output is worth less the other ingredients' buy prices, per unit used. A seed
      * priced below what it processes into (a cheap stone that crushes into ore) shows up here, with the chain.
      * Recipes that make more of their own ingredient are left out (they're generators, reported by {@link #craftProfits}),
-     * as is any step that would lead back to the item, so values settle. Fuel and anything a recipe gives back are
-     * ignored. {@code market} is everything the market would list, with suggested items included.
+     * as is any step that would lead back to the item, so values settle. Furnace fuel is bought as coal; anything a
+     * recipe gives back is ignored. {@code market} is everything the market would list, with suggested items included.
      */
     public static List<ChainProfit> chainProfits(List<Path> allPaths, Map<Item, CatalogEntry> market) {
         List<Path> paths = allPaths.stream()
@@ -424,6 +427,9 @@ public final class PriceSuggestion {
                     }
                 }
                 BigDecimal total = out.multiply(BigDecimal.valueOf(path.count()));
+                if (path.burnsFuel() && buy.containsKey(Items.COAL)) {
+                    total = total.subtract(buy.get(Items.COAL).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
+                }
                 for (int k = 0; k < slots.size(); k++) {
                     // Every other slot has to be bought, so at most this one can be unbuyable.
                     if (unbuyable > 1 || unbuyable == 1 && slotBuy[k] != null) {

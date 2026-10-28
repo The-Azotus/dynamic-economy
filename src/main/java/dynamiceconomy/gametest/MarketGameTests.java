@@ -1451,7 +1451,7 @@ public final class MarketGameTests {
         PriceSuggestion.Result result = PriceSuggestion.suggest(List.of(
                 path(b, 1, false, a, a),            // 2 × 10 × 1.1 = 22
                 path(b, 1, false, a),               // cheaper: 11, and chosen
-                path(c, 1, false, b, r),            // (11 + 100) × 1.1 = 122.1, rare input
+                path(c, 1, false, b, r),            // (10 + 100) × 1.1 = 121: the premium once, not on b too; rare input
                 path(d, 4, false, a),               // 11 / 4 = 2.75
                 path(e, 20, false, a),              // 0.55: under 1 spur
                 path(x, 1, false, Items.MILK_BUCKET), // the bucket comes back: (20 − 12) × 1.1 = 8.8
@@ -1459,7 +1459,7 @@ public final class MarketGameTests {
         ), catalog, new java.util.HashMap<>());
         Map<Item, PriceSuggestion.Suggestion> s = result.suggestions();
         helper.assertValueEqual(s.get(b).basePrice(), Optional.of(11), "cheapest recipe wins");
-        helper.assertValueEqual(s.get(c).basePrice(), Optional.of(122), "rounded down");
+        helper.assertValueEqual(s.get(c).basePrice(), Optional.of(121), "the premium is added once, at the end");
         helper.assertValueEqual(s.get(c).itemClass(), "rare_processed", "a rare input makes it rare");
         helper.assertValueEqual(s.get(b).itemClass(), "common_processed", "otherwise common");
         helper.assertValueEqual(s.get(c).depth(), 2, "two steps from the seeds");
@@ -1470,6 +1470,17 @@ public final class MarketGameTests {
         helper.assertTrue(!s.containsKey(a), "listed items keep their catalog price");
         helper.assertTrue(result.settled(), "settles");
 
+        // However long the chain, the premium is added once: buying an early item, processing it many times and
+        // selling the result can't outgrow the markup.
+        Item[] chain = {Items.COPPER_INGOT, Items.COPPER_BLOCK, Items.CUT_COPPER, Items.CUT_COPPER_STAIRS, Items.CUT_COPPER_SLAB};
+        List<PriceSuggestion.Path> steps = new ArrayList<>(List.of(path(chain[0], 1, false, a)));
+        for (int i = 1; i < chain.length; i++) {
+            steps.add(path(chain[i], 1, false, chain[i - 1]));
+        }
+        PriceSuggestion.Result longChain = PriceSuggestion.suggest(steps, catalog, new java.util.HashMap<>());
+        helper.assertValueEqual(longChain.suggestions().get(chain[chain.length - 1]).basePrice(), Optional.of(11),
+                "five steps from a 10-spur seed: 11, not 10 × 1.1^5");
+
         // A loop that makes something out of less than itself (1 plank to a door, a door to 2 planks) can't feed back:
         // g isn't repriced from h, which was priced from g, so both settle at their prices from the seed.
         Item g = Items.GOLD_INGOT, h = Items.GOLD_NUGGET;
@@ -1477,7 +1488,7 @@ public final class MarketGameTests {
                 catalog, new java.util.HashMap<>());
         helper.assertTrue(loop.settled(), "the loop settles: " + loop.looping());
         helper.assertValueEqual(loop.suggestions().get(g).basePrice(), Optional.of(11), "g keeps its price from the seed");
-        helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(6), "h is priced from g: 11 × 1.1 / 2");
+        helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(5), "h is priced from g: 10 / 2 × 1.1");
         helper.succeed();
     }
 
@@ -1616,8 +1627,8 @@ public final class MarketGameTests {
         helper.assertTrue(sword != null && sword.recipeType().equals("minecraft:smithing"), "smithing recipes are read: " + sword);
         BigDecimal diamondSword = s.get(Items.DIAMOND_SWORD).cost();
         helper.assertValueEqual(sword.cost().setScale(6, RoundingMode.HALF_UP),
-                diamondSword.add(BigDecimal.valueOf(4200)).multiply(BigDecimal.valueOf(1.1)).setScale(6, RoundingMode.HALF_UP),
-                "template + diamond sword + netherite ingot, plus the premium");
+                diamondSword.add(BigDecimal.valueOf(4620)).setScale(6, RoundingMode.HALF_UP),
+                "the diamond sword's cost plus the template and netherite ingot with the premium (4200 × 1.1), not a second premium on the sword");
         helper.assertValueEqual(sword.itemClass(), "rare_processed", "rare inputs");
         helper.assertTrue(result.unusable().keySet().stream().anyMatch(reason -> reason.startsWith("special")), "special recipes skipped");
         helper.assertTrue(result.noRecipe().contains(Items.DIRT), "dirt isn't made by any recipe from these seeds");
