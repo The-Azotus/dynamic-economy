@@ -4,9 +4,300 @@
   ],
   "entries": [
     {
+      "item": "modern_industrialization:advanced_fluid_input_hatch",
+      "base_price": 1498,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:advanced_fluid_output_hatch",
+      "base_price": 1498,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:advanced_item_input_hatch",
+      "base_price": 1455,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:advanced_item_output_hatch",
+      "base_price": 1455,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:advanced_large_steam_boiler",
+      "base_price": 8711,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:advanced_machine_casing",
+      "base_price": 571,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:advanced_machine_hull",
+      "base_price": 1417,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:advanced_upgrade",
+      "base_price": 1630,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_barrel",
+      "base_price": 80,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_blade",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_block",
+      "base_price": 89,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:aluminum_bolt",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_cable",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_curved_plate",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_double_ingot",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_drill",
+      "base_price": 377,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_drill_head",
+      "base_price": 113,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_gear",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_ingot",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:aluminum_large_plate",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_nugget",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:aluminum_plate",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_ring",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_rod",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_rotor",
+      "base_price": 29,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_tank",
+      "base_price": 81,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:aluminum_wire",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:analog_circuit",
+      "base_price": 90,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:analog_circuit_board",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:and_gate",
+      "base_price": 100,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_block",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_cable",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_double_ingot",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_dust",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_hot_ingot",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_ingot",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_plate",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:annealed_copper_wire",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:antimony_block",
+      "base_price": 217,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:antimony_dust",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
       "item": "modern_industrialization:antimony_ingot",
       "base_price": 22,
       "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:antimony_nugget",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:antimony_ore",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:arithmetic_logic_unit",
+      "base_price": 1494,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:assembler",
+      "base_price": 2674,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:basic_machine_hull",
+      "base_price": 492,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:basic_upgrade",
+      "base_price": 340,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_block",
+      "base_price": 115,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_curved_plate",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_double_ingot",
+      "base_price": 25,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_dust",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_ingot",
+      "base_price": 12,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_nugget",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_plate",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:battery_alloy_tiny_dust",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:bauxite_block",
+      "base_price": 79,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "modern_industrialization:bauxite_dust",
@@ -15,13 +306,1014 @@
       "can_buy": false
     },
     {
+      "item": "modern_industrialization:beryllium_dust",
+      "base_price": 809,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:beryllium_tiny_dust",
+      "base_price": 89,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:black_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:black_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:black_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:blue_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:blue_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:blue_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_barrel",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_blade",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_block",
+      "base_price": 49,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:bronze_boiler",
+      "base_price": 100,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_bolt",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_compressor",
+      "base_price": 212,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_curved_plate",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_cutting_machine",
+      "base_price": 720,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_double_ingot",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_drill",
+      "base_price": 89,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_drill_head",
+      "base_price": 63,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_dust",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:bronze_fluid_input_hatch",
+      "base_price": 112,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:bronze_fluid_output_hatch",
+      "base_price": 112,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:bronze_furnace",
+      "base_price": 59,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_gear",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_ingot",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:bronze_item_input_hatch",
+      "base_price": 103,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:bronze_item_output_hatch",
+      "base_price": 103,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:bronze_macerator",
+      "base_price": 1314,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_machine_casing",
+      "base_price": 66,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_machine_casing_pipe",
+      "base_price": 49,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_mixer",
+      "base_price": 174,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_plate",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_plated_bricks",
+      "base_price": 51,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_ring",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_rod",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_rotor",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_tank",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:bronze_water_pump",
+      "base_price": 251,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:brown_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:brown_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:brown_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:capacitor",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:carbon_dust",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:carbon_large_plate",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:carbon_plate",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:centrifuge",
+      "base_price": 8076,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:chemical_reactor",
+      "base_price": 4836,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:coal_crushed_dust",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:coal_dust",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:coke",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:coke_block",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:coke_dust",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:coke_oven",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:config_card",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:configurable_chest",
+      "base_price": 182,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:configurable_tank",
+      "base_price": 291,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:conveyor",
+      "base_price": 123,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_blade",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_bolt",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_cable",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_curved_plate",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_double_ingot",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_drill",
+      "base_price": 99,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_drill_head",
+      "base_price": 101,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_dust",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:copper_fine_wire",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_gear",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_plate",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_ring",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_rod",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_rotor",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:copper_wire",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cupronickel_block",
+      "base_price": 82,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:cupronickel_cable",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cupronickel_coil",
+      "base_price": 36,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:cupronickel_double_ingot",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cupronickel_dust",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cupronickel_ingot",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:cupronickel_nugget",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:cupronickel_plate",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cupronickel_wire",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cupronickel_wire_magnetic",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:cyan_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cyan_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:cyan_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:diamond_crushed_dust",
+      "base_price": 939,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:diamond_dust",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:diamond_hammer",
+      "base_price": 11264,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:diamond_large_plate",
+      "base_price": 2252,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:diamond_plate",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:diamond_tiny_dust",
+      "base_price": 62,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:diesel_chainsaw",
+      "base_price": 4973,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:diesel_jetpack",
+      "base_price": 809,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:diesel_mining_drill",
+      "base_price": 5318,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:diode",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:distillery",
+      "base_price": 7798,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_blast_furnace",
+      "base_price": 570,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_compressor",
+      "base_price": 1460,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_cutting_machine",
+      "base_price": 3213,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_furnace",
+      "base_price": 709,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_macerator",
+      "base_price": 3479,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_mixer",
+      "base_price": 846,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_packer",
+      "base_price": 1815,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_quarry",
+      "base_price": 9860,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_unpacker",
+      "base_price": 1052,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_water_pump",
+      "base_price": 1127,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electric_wiremill",
+      "base_price": 920,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electrolyzer",
+      "base_price": 4162,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electronic_circuit",
+      "base_price": 626,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electronic_circuit_board",
+      "base_price": 187,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electrum_block",
+      "base_price": 224,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:electrum_cable",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electrum_double_ingot",
+      "base_price": 49,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electrum_dust",
+      "base_price": 24,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:electrum_fine_wire",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electrum_ingot",
+      "base_price": 24,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:electrum_nugget",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:electrum_plate",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:electrum_wire",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:emerald_crushed_dust",
+      "base_price": 176,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:emerald_dust",
+      "base_price": 105,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:emerald_plate",
+      "base_price": 105,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:emerald_tiny_dust",
+      "base_price": 11,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:fire_clay_brick",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:fire_clay_bricks",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:forge_hammer",
+      "base_price": 51,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:frostproof_machine_casing",
+      "base_price": 118,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_bolt",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_curved_plate",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_double_ingot",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_drill",
+      "base_price": 280,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_drill_head",
+      "base_price": 607,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_gear",
+      "base_price": 211,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_plate",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_ring",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gold_rod",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gray_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gray_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:gray_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:green_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:green_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:green_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:guidebook",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:heatproof_machine_casing",
+      "base_price": 134,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:hv_mv_transformer",
+      "base_price": 1472,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:inductor",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:industrial_tnt",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_block",
+      "base_price": 101,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:invar_bolt",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_double_ingot",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_dust",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:invar_gear",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_ingot",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:invar_large_plate",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_nugget",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:invar_plate",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_ring",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_rod",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:invar_rotary_blade",
+      "base_price": 2297,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:iridium_block",
+      "base_price": 2534,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:iridium_dust",
+      "base_price": 140,
+      "class": "rare_processed",
+      "can_buy": false
+    },
+    {
       "item": "modern_industrialization:iridium_ingot",
       "base_price": 256,
       "class": "rare_resource"
     },
     {
+      "item": "modern_industrialization:iridium_nugget",
+      "base_price": 16,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:iron_barrel",
+      "base_price": 282,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_bolt",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_double_ingot",
+      "base_price": 70,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_dust",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:iron_gear",
+      "base_price": 140,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_hammer",
+      "base_price": 704,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_large_plate",
+      "base_price": 140,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_plate",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_ring",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_rod",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:iron_tank",
+      "base_price": 283,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lapis_crushed_dust",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lapis_dust",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:large_motor",
+      "base_price": 979,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:large_pump",
+      "base_price": 3015,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:large_steam_boiler",
+      "base_price": 499,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:large_tank",
+      "base_price": 1223,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:large_tank_hatch",
+      "base_price": 527,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lead_block",
+      "base_price": 198,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:lead_double_ingot",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lead_dust",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
       "item": "modern_industrialization:lead_ingot",
       "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lead_nugget",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:lead_plate",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:light_blue_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:light_blue_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:light_blue_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:light_gray_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:light_gray_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:light_gray_me_wire",
+      "base_price": 5,
       "class": "common_processed"
     },
     {
@@ -30,9 +1322,185 @@
       "class": "common_processed"
     },
     {
+      "item": "modern_industrialization:lignite_coal_block",
+      "base_price": 59,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:lignite_coal_dust",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:lime_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lime_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lime_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lv_diesel_generator",
+      "base_price": 1213,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lv_energy_input_hatch",
+      "base_price": 500,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:lv_energy_output_hatch",
+      "base_price": 500,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:lv_mv_transformer",
+      "base_price": 539,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lv_steam_turbine",
+      "base_price": 822,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:lv_storage_unit",
+      "base_price": 1113,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:magenta_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:magenta_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:magenta_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:memory_management_unit",
+      "base_price": 214,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:monazite_block",
+      "base_price": 237,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
       "item": "modern_industrialization:monazite_dust",
       "base_price": 24,
       "class": "rare_resource",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:monocrystalline_silicon",
+      "base_price": 50,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:motor",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:mv_diesel_generator",
+      "base_price": 8192,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:mv_energy_input_hatch",
+      "base_price": 1429,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:mv_energy_output_hatch",
+      "base_price": 1429,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:mv_hv_transformer",
+      "base_price": 1472,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:mv_lv_transformer",
+      "base_price": 539,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:mv_steam_turbine",
+      "base_price": 4084,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:mv_storage_unit",
+      "base_price": 1990,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:neodymium_block",
+      "base_price": 712,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:neodymium_dust",
+      "base_price": 79,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:neodymium_tiny_dust",
+      "base_price": 8,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:netherite_hammer",
+      "base_price": 13031,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:nickel_block",
+      "base_price": 217,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:nickel_double_ingot",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:nickel_dust",
+      "base_price": 11,
+      "class": "common_processed",
       "can_buy": false
     },
     {
@@ -41,9 +1509,208 @@
       "class": "common_processed"
     },
     {
+      "item": "modern_industrialization:nickel_nugget",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:nickel_plate",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:not_gate",
+      "base_price": 85,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:oil_drilling_rig",
+      "base_price": 8315,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:op_amp",
+      "base_price": 79,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:or_gate",
+      "base_price": 193,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:orange_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:orange_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:orange_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:overdrive_module",
+      "base_price": 274,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:packer_block_template",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:packer_double_ingot_template",
+      "base_price": 85,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:pink_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:pink_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:pink_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:piston",
+      "base_price": 192,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:platinum_block",
+      "base_price": 1267,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:platinum_cable",
+      "base_price": 70,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:platinum_double_ingot",
+      "base_price": 281,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:platinum_fine_wire",
+      "base_price": 17,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:platinum_hot_ingot",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
       "item": "modern_industrialization:platinum_ingot",
       "base_price": 128,
       "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:platinum_nugget",
+      "base_price": 15,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:platinum_plate",
+      "base_price": 140,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:platinum_wire",
+      "base_price": 70,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:plutonium_block",
+      "base_price": 541,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:plutonium_dust",
+      "base_price": 60,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:plutonium_ingot",
+      "base_price": 60,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:plutonium_nugget",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:plutonium_tiny_dust",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:polarizer",
+      "base_price": 566,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:portable_storage_unit",
+      "base_price": 185,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:pump",
+      "base_price": 231,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:purple_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:purple_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:purple_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:quartz_crushed_dust",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:quartz_dust",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:random_access_memory",
+      "base_price": 11,
+      "class": "common_processed"
     },
     {
       "item": "modern_industrialization:raw_antimony",
@@ -106,13 +1773,428 @@
       "can_buy": false
     },
     {
+      "item": "modern_industrialization:red_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:red_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:red_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:redstone_battery",
+      "base_price": 99,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:redstone_control_module",
+      "base_price": 86,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:redstone_crushed_dust",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:robot_arm",
+      "base_price": 438,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:salt_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "modern_industrialization:salt_dust",
       "base_price": 1,
       "class": "common_processed"
     },
     {
+      "item": "modern_industrialization:silicon_battery",
+      "base_price": 91,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silicon_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:silicon_double_ingot",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silicon_dust",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silicon_ingot",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:silicon_n_doped_plate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silicon_p_doped_plate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silicon_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silicon_wafer",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silver_block",
+      "base_price": 435,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:silver_cable",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silver_double_ingot",
+      "base_price": 96,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silver_dust",
+      "base_price": 23,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
       "item": "modern_industrialization:silver_ingot",
       "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silver_nugget",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:silver_plate",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:silver_wire",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:sodium_battery",
+      "base_price": 78,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:sodium_block",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:sodium_dust",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:soldering_alloy_block",
+      "base_price": 92,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:soldering_alloy_dust",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:soldering_alloy_tiny_dust",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:solid_titanium_machine_casing",
+      "base_price": 992,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:steam_blast_furnace",
+      "base_price": 107,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steam_mining_drill",
+      "base_price": 2101,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:steam_quarry",
+      "base_price": 2835,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_barrel",
+      "base_price": 118,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_block",
+      "base_price": 132,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_boiler",
+      "base_price": 210,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_bolt",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_compressor",
+      "base_price": 342,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_curved_plate",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_cutting_machine",
+      "base_price": 850,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_double_ingot",
+      "base_price": 29,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_drill",
+      "base_price": 170,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_drill_head",
+      "base_price": 168,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_fluid_input_hatch",
+      "base_price": 295,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_fluid_output_hatch",
+      "base_price": 295,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_furnace",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_gear",
+      "base_price": 58,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_hammer",
+      "base_price": 293,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_ingot",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_item_input_hatch",
+      "base_price": 213,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_item_output_hatch",
+      "base_price": 213,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_large_plate",
+      "base_price": 58,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_macerator",
+      "base_price": 1444,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_machine_casing",
+      "base_price": 176,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_machine_casing_pipe",
+      "base_price": 132,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_mixer",
+      "base_price": 304,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_nugget",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_packer",
+      "base_price": 276,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_plate",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_ring",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_rod",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_rod_magnetic",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_tank",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_unpacker",
+      "base_price": 238,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_upgrade",
+      "base_price": 130,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:steel_water_pump",
+      "base_price": 381,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:steel_wiremill",
+      "base_price": 307,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:sulfur_block",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:sulfur_dust",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_blade",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_block",
+      "base_price": 158,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:tin_bolt",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_cable",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_curved_plate",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_double_ingot",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_dust",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:tin_gear",
+      "base_price": 70,
       "class": "common_processed"
     },
     {
@@ -121,9 +2203,160 @@
       "class": "common_processed"
     },
     {
+      "item": "modern_industrialization:tin_nugget",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:tin_plate",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_ring",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_rod",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_rotor",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tin_wire",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_barrel",
+      "base_price": 775,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_blade",
+      "base_price": 60,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_block",
+      "base_price": 871,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:titanium_bolt",
+      "base_price": 24,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_curved_plate",
+      "base_price": 96,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_double_ingot",
+      "base_price": 193,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_drill_head",
+      "base_price": 774,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_gear",
+      "base_price": 217,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_hot_ingot",
+      "base_price": 96,
+      "class": "rare_processed"
+    },
+    {
       "item": "modern_industrialization:titanium_ingot",
       "base_price": 88,
       "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:titanium_large_plate",
+      "base_price": 387,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_machine_casing_pipe",
+      "base_price": 786,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_nugget",
+      "base_price": 10,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:titanium_plate",
+      "base_price": 96,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_ring",
+      "base_price": 48,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_rod",
+      "base_price": 48,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_rotor",
+      "base_price": 290,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_tank",
+      "base_price": 776,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:titanium_tiny_dust",
+      "base_price": 10,
+      "class": "rare_processed",
+      "can_buy": false
+    },
+    {
+      "item": "modern_industrialization:transistor",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:trash_can",
+      "base_price": 117,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:tungsten_block",
+      "base_price": 950,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:tungsten_double_ingot",
+      "base_price": 211,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:tungsten_dust",
+      "base_price": 52,
+      "class": "rare_processed",
+      "can_buy": false
     },
     {
       "item": "modern_industrialization:tungsten_ingot",
@@ -131,9 +2364,116 @@
       "class": "rare_resource"
     },
     {
+      "item": "modern_industrialization:tungsten_large_plate",
+      "base_price": 422,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:tungsten_nugget",
+      "base_price": 5,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:tungsten_plate",
+      "base_price": 105,
+      "class": "rare_processed"
+    },
+    {
+      "item": "modern_industrialization:uncooked_steel_dust",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:uranium_235_block",
+      "base_price": 19245,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:uranium_235_dust",
+      "base_price": 2138,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:uranium_235_ingot",
+      "base_price": 2138,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:uranium_235_nugget",
+      "base_price": 237,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:uranium_235_tiny_dust",
+      "base_price": 237,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:uranium_block",
+      "base_price": 633,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "modern_industrialization:uranium_ingot",
       "base_price": 64,
       "class": "rare_resource"
+    },
+    {
+      "item": "modern_industrialization:uranium_nugget",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "modern_industrialization:uranium_rod",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:vacuum_freezer",
+      "base_price": 12422,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:white_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:white_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:white_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:wrench",
+      "base_price": 33,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:yellow_fluid_pipe",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:yellow_item_pipe",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "modern_industrialization:yellow_me_wire",
+      "base_price": 5,
+      "class": "common_processed"
     }
   ]
 }
