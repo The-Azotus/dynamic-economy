@@ -4,7 +4,132 @@
   ],
   "entries": [
     {
+      "item": "the_bumblezone:ancient_wax_bricks",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_arrows",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_bee",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_eyes",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_honeycombs",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_peace",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_pluses",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_sun",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:banner_pattern_swords",
+      "base_price": 64,
+      "class": "rare_loot"
+    },
+    {
       "item": "the_bumblezone:bee_stinger",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "the_bumblezone:beehive_beeswax",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "the_bumblezone:bumble_bee_chestplate_1",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:buzzing_briefcase",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:carpenter_bee_boots_1",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:carvable_wax_bricks",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "the_bumblezone:empty_honeycomb_brood_block",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "the_bumblezone:essence_calming",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:essence_continuity",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:essence_knowing",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:essence_life",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:essence_of_the_bees",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:essence_radiance",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:essence_raging",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:filled_porous_honeycomb_block",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "the_bumblezone:honey_bee_leggings_1",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:honey_crystal",
       "base_price": 4,
       "class": "farmable"
     },
@@ -89,9 +214,29 @@
       "class": "farmable"
     },
     {
+      "item": "the_bumblezone:porous_honeycomb_block",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "the_bumblezone:royal_jelly_bottle",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:stingless_bee_helmet_1",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "the_bumblezone:sugar_infused_cobblestone",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "the_bumblezone:sugar_infused_stone",
+      "base_price": 1,
+      "class": "common_processed"
     }
   ]
 }
