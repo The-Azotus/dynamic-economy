@@ -435,7 +435,7 @@
     },
     {
       "item": "spectrum:jadeite_lotus_stem",
-      "base_price": 2,
+      "base_price": 4,
       "class": "farmable"
     },
     {
@@ -675,7 +675,7 @@
     },
     {
       "item": "spectrum:nephrite_blossom_stem",
-      "base_price": 2,
+      "base_price": 4,
       "class": "farmable"
     },
     {
@@ -790,17 +790,17 @@
     },
     {
       "item": "spectrum:pure_certus_quartz",
-      "base_price": 10,
+      "base_price": 12,
       "class": "common_processed"
     },
     {
       "item": "spectrum:pure_coal",
-      "base_price": 10,
+      "base_price": 12,
       "class": "common_processed"
     },
     {
       "item": "spectrum:pure_copper",
-      "base_price": 10,
+      "base_price": 12,
       "class": "common_processed"
     },
     {
@@ -810,22 +810,22 @@
     },
     {
       "item": "spectrum:pure_emerald",
-      "base_price": 120,
+      "base_price": 144,
       "class": "rare_resource"
     },
     {
       "item": "spectrum:pure_fluix",
-      "base_price": 15,
+      "base_price": 18,
       "class": "common_processed"
     },
     {
       "item": "spectrum:pure_gold",
-      "base_price": 60,
+      "base_price": 72,
       "class": "common_processed"
     },
     {
       "item": "spectrum:pure_iron",
-      "base_price": 40,
+      "base_price": 48,
       "class": "common_processed"
     },
     {
@@ -840,17 +840,17 @@
     },
     {
       "item": "spectrum:pure_prismarine",
-      "base_price": 10,
+      "base_price": 12,
       "class": "common_processed"
     },
     {
       "item": "spectrum:pure_quartz",
-      "base_price": 4,
+      "base_price": 5,
       "class": "common_processed"
     },
     {
       "item": "spectrum:pure_zinc",
-      "base_price": 20,
+      "base_price": 24,
       "class": "common_processed"
     },
     {

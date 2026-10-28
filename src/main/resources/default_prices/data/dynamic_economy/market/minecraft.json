@@ -292,7 +292,7 @@
     },
     {
       "item": "minecraft:cobweb",
-      "base_price": 2,
+      "base_price": 8,
       "class": "common_resource"
     },
     {
@@ -597,7 +597,7 @@
     },
     {
       "item": "minecraft:gunpowder",
-      "base_price": 8,
+      "base_price": 1,
       "class": "farmable"
     },
     {
@@ -1046,11 +1046,6 @@
       "class": "common_resource"
     },
     {
-      "item": "minecraft:pointed_dripstone",
-      "base_price": 1,
-      "class": "common_resource"
-    },
-    {
       "item": "minecraft:poppy",
       "base_price": 1,
       "class": "farmable"
@@ -1067,7 +1062,7 @@
     },
     {
       "item": "minecraft:prismarine_crystals",
-      "base_price": 8,
+      "base_price": 4,
       "class": "farmable"
     },
     {

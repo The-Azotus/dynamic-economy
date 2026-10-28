@@ -15,8 +15,8 @@
     },
     {
       "item": "oritech:platinum_ingot",
-      "base_price": 64,
-      "class": "common_processed"
+      "base_price": 128,
+      "class": "rare_resource"
     },
     {
       "item": "oritech:raw_nickel",
@@ -25,8 +25,8 @@
     },
     {
       "item": "oritech:raw_platinum",
-      "base_price": 48,
-      "class": "common_processed"
+      "base_price": 96,
+      "class": "rare_resource"
     },
     {
       "item": "oritech:raw_uranium",
