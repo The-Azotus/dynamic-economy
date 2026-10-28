@@ -4,6 +4,21 @@
   ],
   "entries": [
     {
+      "item": "apothic_enchanting:music_disc_arcana",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "apothic_enchanting:music_disc_eterna",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "apothic_enchanting:music_disc_quanta",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
       "item": "apothic_enchanting:warden_tendril",
       "base_price": 256,
       "class": "rare_loot"
