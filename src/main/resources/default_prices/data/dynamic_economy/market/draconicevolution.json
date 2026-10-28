@@ -20,7 +20,7 @@
     },
     {
       "item": "draconicevolution:dragon_heart",
-      "base_price": 4096,
+      "base_price": 8192,
       "class": "rare_loot"
     }
   ]

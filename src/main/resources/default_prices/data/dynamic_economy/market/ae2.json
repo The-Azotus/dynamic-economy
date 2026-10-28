@@ -9,6 +9,16 @@
       "class": "common_processed"
     },
     {
+      "item": "ae2:charged_certus_quartz_crystal",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "ae2:fluix_crystal",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
       "item": "ae2:sky_stone_block",
       "base_price": 4,
       "class": "common_processed"

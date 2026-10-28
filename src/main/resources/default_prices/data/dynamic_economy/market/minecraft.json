@@ -292,7 +292,7 @@
     },
     {
       "item": "minecraft:diamond_horse_armor",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
@@ -352,7 +352,7 @@
     },
     {
       "item": "minecraft:enchanted_golden_apple",
-      "base_price": 4096,
+      "base_price": 8192,
       "class": "rare_loot"
     },
     {
@@ -1007,7 +1007,7 @@
     },
     {
       "item": "minecraft:shulker_shell",
-      "base_price": 512,
+      "base_price": 256,
       "class": "rare_loot"
     },
     {
@@ -1132,7 +1132,7 @@
     },
     {
       "item": "minecraft:totem_of_undying",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
@@ -1237,7 +1237,7 @@
     },
     {
       "item": "minecraft:wither_skeleton_skull",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {

@@ -5,52 +5,52 @@
   "entries": [
     {
       "item": "artifacts:anglers_hat",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:antidote_vessel",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:aqua_dashers",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:bunny_hoppers",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:charm_of_shrinking",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:charm_of_sinking",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:chorus_totem",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:cloud_in_a_bottle",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:cowboy_hat",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:cross_necklace",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
@@ -60,182 +60,182 @@
     },
     {
       "item": "artifacts:digging_claws",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:everlasting_beef",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:feral_claws",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:fire_gauntlet",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:flame_pendant",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:flippers",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:golden_hook",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:helium_flamingo",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:kitty_slippers",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:lucky_scarf",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:night_vision_goggles",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:novelty_drinking_hat",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:obsidian_skull",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:onion_ring",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:panic_necklace",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:pickaxe_heater",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:plastic_drinking_hat",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:pocket_piston",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:power_glove",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:rooted_boots",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:running_shoes",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:scarf_of_invisibility",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:shock_pendant",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:snorkel",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:snowshoes",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:steadfast_spikes",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:strider_shoes",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:superstitious_hat",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:thorn_pendant",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:umbrella",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:universal_attractor",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:vampiric_glove",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:villager_hat",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:warp_drive",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:whoopee_cushion",
-      "base_price": 512,
+      "base_price": 1024,
       "class": "rare_loot"
     },
     {
       "item": "artifacts:withered_bracelet",
-      "base_price": 1024,
+      "base_price": 2048,
       "class": "rare_loot"
     }
   ]

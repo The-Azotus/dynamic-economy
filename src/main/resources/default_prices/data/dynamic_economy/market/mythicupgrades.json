@@ -5,7 +5,7 @@
   "entries": [
     {
       "item": "mythicupgrades:ametrine",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
@@ -15,7 +15,7 @@
     },
     {
       "item": "mythicupgrades:aquamarine",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
@@ -25,7 +25,7 @@
     },
     {
       "item": "mythicupgrades:citrine",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
@@ -35,7 +35,7 @@
     },
     {
       "item": "mythicupgrades:jade",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
@@ -50,7 +50,7 @@
     },
     {
       "item": "mythicupgrades:peridot",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
@@ -65,7 +65,7 @@
     },
     {
       "item": "mythicupgrades:ruby",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
@@ -75,7 +75,7 @@
     },
     {
       "item": "mythicupgrades:sapphire",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
@@ -85,7 +85,7 @@
     },
     {
       "item": "mythicupgrades:topaz",
-      "base_price": 64,
+      "base_price": 2048,
       "class": "rare_resource"
     },
     {
