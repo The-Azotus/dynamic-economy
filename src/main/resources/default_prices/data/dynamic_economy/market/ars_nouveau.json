@@ -29,6 +29,11 @@
       "class": "farmable"
     },
     {
+      "item": "ars_nouveau:drygmy_shard",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
       "item": "ars_nouveau:frostaya_pod",
       "base_price": 4,
       "class": "farmable"
@@ -57,6 +62,21 @@
       "item": "ars_nouveau:mendosteen_pod",
       "base_price": 4,
       "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:music_disc_aria_biblio",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "ars_nouveau:music_disc_firel_the_wild_hunt",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "ars_nouveau:music_disc_thistle_the_sound_of_glass",
+      "base_price": 256,
+      "class": "rare_loot"
     },
     {
       "item": "ars_nouveau:purple_archwood_leaves",
@@ -94,6 +114,16 @@
       "class": "farmable"
     },
     {
+      "item": "ars_nouveau:whirlisprig_flower",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:whirlisprig_shards",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
       "item": "ars_nouveau:wilden_horn",
       "base_price": 16,
       "class": "farmable"
@@ -112,6 +142,11 @@
       "item": "ars_nouveau:wilden_wing",
       "base_price": 16,
       "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:wixie_shards",
+      "base_price": 16,
+      "class": "common_processed"
     }
   ]
 }
