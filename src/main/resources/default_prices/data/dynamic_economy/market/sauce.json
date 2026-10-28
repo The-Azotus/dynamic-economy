@@ -1,0 +1,17 @@
+{
+  "required_mods": [
+    "sauce"
+  ],
+  "entries": [
+    {
+      "item": "sauce:anima_essence",
+      "base_price": 2688,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sauce:arcane_plinth",
+      "base_price": 46,
+      "class": "common_processed"
+    }
+  ]
+}
