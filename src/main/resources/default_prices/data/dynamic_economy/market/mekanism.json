@@ -4,8 +4,53 @@
   ],
   "entries": [
     {
+      "item": "mekanism:crystal_copper",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crystal_gold",
+      "base_price": 38,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crystal_iron",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crystal_lead",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crystal_osmium",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crystal_tin",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crystal_uranium",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:dust_lithium",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
       "item": "mekanism:fluorite_gem",
       "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hdpe_pellet",
+      "base_price": 4,
       "class": "common_processed"
     },
     {
@@ -27,6 +72,21 @@
       "item": "mekanism:ingot_uranium",
       "base_price": 64,
       "class": "common_processed"
+    },
+    {
+      "item": "mekanism:pellet_antimatter",
+      "base_price": 4096,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:pellet_plutonium",
+      "base_price": 256,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:pellet_polonium",
+      "base_price": 256,
+      "class": "rare_processed"
     },
     {
       "item": "mekanism:raw_lead",
@@ -52,6 +112,11 @@
       "item": "mekanism:salt",
       "base_price": 1,
       "class": "common_resource"
+    },
+    {
+      "item": "mekanism:substrate",
+      "base_price": 2,
+      "class": "common_processed"
     }
   ]
 }
