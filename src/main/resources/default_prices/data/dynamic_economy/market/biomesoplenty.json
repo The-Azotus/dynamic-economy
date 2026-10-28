@@ -9,6 +9,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:barnacles",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
       "item": "biomesoplenty:black_sand",
       "base_price": 1,
       "class": "common_resource"
@@ -20,6 +25,11 @@
     },
     {
       "item": "biomesoplenty:bramble",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:bramble_leaves",
       "base_price": 1,
       "class": "farmable"
     },
@@ -159,7 +169,27 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:glowing_moss_block",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:glowing_moss_carpet",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:glowshroom",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:glowshroom_block",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "biomesoplenty:glowworm_silk",
       "base_price": 2,
       "class": "farmable"
     },
@@ -185,6 +215,11 @@
     },
     {
       "item": "biomesoplenty:high_grass",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:huge_clover_petal",
       "base_price": 1,
       "class": "farmable"
     },
@@ -252,6 +287,11 @@
       "item": "biomesoplenty:maple_log",
       "base_price": 8,
       "class": "common_resource"
+    },
+    {
+      "item": "biomesoplenty:music_disc_wanderer",
+      "base_price": 256,
+      "class": "rare_loot"
     },
     {
       "item": "biomesoplenty:orange_cosmos",
@@ -324,6 +364,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:porous_flesh",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
       "item": "biomesoplenty:rainbow_birch_leaves",
       "base_price": 1,
       "class": "farmable"
@@ -394,6 +439,11 @@
       "class": "farmable"
     },
     {
+      "item": "biomesoplenty:spanish_moss_plant",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
       "item": "biomesoplenty:sprout",
       "base_price": 1,
       "class": "farmable"
@@ -422,6 +472,11 @@
       "item": "biomesoplenty:toadstool",
       "base_price": 2,
       "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:toadstool_block",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "biomesoplenty:tundra_shrub",
@@ -501,6 +556,11 @@
     {
       "item": "biomesoplenty:wilted_lily",
       "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "biomesoplenty:wispjelly",
+      "base_price": 4,
       "class": "farmable"
     },
     {
