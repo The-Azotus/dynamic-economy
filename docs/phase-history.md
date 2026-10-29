@@ -1,4 +1,4 @@
-# Phase history (Phases 0–10, done)
+# Phase history (Phases 0–11, done)
 
 Archived from `CLAUDE.md`. These are the original specs for finished phases. The code and the guides in `docs/` are now the source of truth; read this only when you need the reasoning behind how something was built.
 
@@ -191,3 +191,14 @@ As built. Full detail for admins: `docs/admin-guide.md` (built-in prices, `sugge
 **Known limits** (accepted): generator recipes in a pack (prismarine doubling, prismarine → quartz, coal → black dye, MI gravel → 2 flint, MI mixer stone recipes, Spectrum and Mekanism conversions) profit at any price; only recipe changes close them. Whole-spur rounding leaves small gaps on 1–2-spur items. Both are covered by the safety net and listed for the pack author.
 
 Done when: the full pack loads with no warnings; removing a mod drops its file with no warnings; vanilla-only loads just the vanilla file; round-trip arbitrage tests pass against the packaged catalog. Status: the default-prices GameTest (vanilla + Create + Numismatics) checks the loaded files follow the installed mods, round trips, and no price gaps or complete chain profits; the user confirmed the in-pack `suggest`/`diagnose` results and that removing a mod caused no issues.
+
+## Phase 11 — GUI rework (done)
+
+As built (branch `phase11`). Approved by the user on 2026-10-29 after seeing the layout in game; the remaining manual checks (`@`/`#` search, GUI scales 1–4 and small windows, two clients, Max/All/price-changed) were left for the user to do later.
+
+- The screen sizes to the window, up to 600×400 (`MAX_WIDTH`/`MAX_HEIGHT` in `MarketScreen`), and the list shows as many 18 px rows as fit. Columns: item, stock, buy, sell, have, trend (▲/▼ = price vs. base).
+- From 440 px wide the selection panel is a 150 px column right of the list: name, a price chart up to 80 px tall, buy/sell/stock/have/vs. base lines, quantity controls, Buy and Sell. Narrower, it sits under the list as before. Search text and quantity survive a resize.
+- Tabs **Market | Contracts | Leaderboard | History**, drawn by the screen. History is the old Trades view (clicking a trade selects it in Market). Contracts and Leaderboard are greyed out with a "Coming in a later version" tooltip until Phases 13–14; Exchange is added when Phase 16 adds its config switch.
+- The balance sits beside the tabs; when it doesn't fit, it moves to the end of the search row, abbreviated (`123k`).
+- Search: space-separated terms must all match; `@mod` matches a mod's display name or ID, `#tag` a tag's path (`#c:ingots` the full tag ID), `mod:` still filters by namespace.
+- Decided with the user: keep the Have column; trend = vs. base; 18 px rows (the screen grows instead); greyed-out tabs.

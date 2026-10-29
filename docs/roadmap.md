@@ -1,15 +1,6 @@
-# Roadmap (Phases 12–16, not started)
+# Roadmap (Phases 13–16, not started)
 
 Archived from `CLAUDE.md`. When a phase becomes the current one, move its section back into `CLAUDE.md` under "Current phase".
-
-## Phase 12 — ProgressiveStages hooks
-
-- Soft dependency on ProgressiveStages **3.1.1**. Verify its API against the released jar before use (as in Phase 0). `compat/StagesBridge` is the only class allowed to import it; without the mod, nothing changes.
-- An item locked for a player is **hidden** from that player: snapshot, deltas, tooltips, contracts and exchange. Catalog sync becomes per-player.
-- The server enforces it too: buying or selling a locked item is rejected as `NOT_LISTED` (doesn't reveal locked items).
-- Prices stay the same for everyone; only visibility differs. Stage changes re-sync the player's market.
-
-Done when: a locked item is invisible and untradeable for one player while another trades it; unlocking a stage shows it without reopening the game; works with the mod absent.
 
 ## Phase 13 — Leaderboard
 
