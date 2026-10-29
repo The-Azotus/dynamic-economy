@@ -251,8 +251,8 @@ public final class PriceSuggestion {
         for (Map.Entry<Item, Path> entry : chosen.entrySet()) {
             Item item = entry.getKey();
             Path path = entry.getValue();
-            BigDecimal cost = price.get(item).multiply(state.premium);
-            BigDecimal rounded = cost.setScale(0, RoundingMode.FLOOR);
+            BigDecimal cost = state.recipeCost.get(item).multiply(state.premium);
+            BigDecimal rounded = price.get(item).multiply(state.premium).setScale(0, RoundingMode.FLOOR);
             Optional<Integer> base = rounded.signum() > 0 && rounded.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) <= 0
                     ? Optional.of(rounded.intValueExact()) : Optional.empty();
             Set<Item> reverse = new HashSet<>();
@@ -266,7 +266,7 @@ public final class PriceSuggestion {
             suggestions.put(item, new Suggestion(item, cost, base, state.itemClass.get(item), path.recipe(), path.type(), state.depth.get(item),
                     path.complete(), reverse, List.of()));
         }
-        raiseToProcessedValue(paths, catalog, suggestions);
+        raiseToProcessedValue(paths, catalog, suggestions, premium);
         return suggestions;
     }
 
@@ -282,6 +282,8 @@ public final class PriceSuggestion {
     private static final class Propagation {
         /** Seeds' prices, and made items' costs before the premium (raw materials, fuel and seeds they use up). */
         final Map<Item, BigDecimal> price = new HashMap<>();
+        /** Made items' costs from their recipe alone, before any floor lifted {@code price}. */
+        final Map<Item, BigDecimal> recipeCost = new HashMap<>();
         final Map<Item, BigDecimal> rare = new HashMap<>();
         final Map<Item, String> itemClass = new HashMap<>();
         final Map<Item, Path> chosen = new HashMap<>();
@@ -362,7 +364,8 @@ public final class PriceSuggestion {
                         sum = sum.add(price.get(Items.COAL).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
                     }
                     BigDecimal count = BigDecimal.valueOf(path.count());
-                    BigDecimal cost = sum.divide(count, MATH).max(floors.getOrDefault(path.output(), BigDecimal.ZERO));
+                    BigDecimal unfloored = sum.divide(count, MATH);
+                    BigDecimal cost = unfloored.max(floors.getOrDefault(path.output(), BigDecimal.ZERO));
                     BigDecimal current = price.get(path.output());
                     Set<Item> from = current == null || cost.compareTo(current) < 0 ? builtFrom(used) : null;
                     if (from != null && !from.contains(path.output())) {
@@ -370,6 +373,7 @@ public final class PriceSuggestion {
                         boolean isRare = rareCost.signum() > 0 && (rareCost.compareTo(cost.multiply(RARE_SHARE)) >= 0
                                 || oneRareUnit != null && rareCost.compareTo(oneRareUnit) >= 0);
                         price.put(path.output(), cost);
+                        recipeCost.put(path.output(), unfloored);
                         rare.put(path.output(), rareCost);
                         chosen.put(path.output(), path);
                         madeFrom.put(path.output(), from);
@@ -582,8 +586,13 @@ public final class PriceSuggestion {
      * never profits. Suggestions too cheap to
      * price (under 1 spur) stay unpriced: rounded up to 1, they'd sell for more than they cost to make (9 tiny dusts
      * unpacked from a 1-spur dust).
+     * <p>
+     * A raise stops at what the item costs to make from bought ingredients (its cost before the premium, times the
+     * smallest markup), or it would sell for more than that: coarse dirt made for 1.10 raised to 2. An item worth more
+     * than that cap profits whatever its price, both ways, so it keeps its price and {@link #chainProfits} reports it.
      */
-    private static void raiseToProcessedValue(List<Path> paths, Map<Item, CatalogEntry> catalog, Map<Item, Suggestion> suggestions) {
+    private static void raiseToProcessedValue(List<Path> paths, Map<Item, CatalogEntry> catalog, Map<Item, Suggestion> suggestions,
+                                              BigDecimal premium) {
         Map<Item, CatalogEntry> market = new HashMap<>(catalog);
         Map<Item, CatalogEntry> asListed = new HashMap<>();
         for (Suggestion s : suggestions.values()) {
@@ -593,13 +602,15 @@ public final class PriceSuggestion {
             });
         }
         ChainValues values = chainValues(paths.stream().filter(Path::complete).toList(), market, RAISE_STEPS);
+        BigDecimal smallestMarkup = BigDecimal.valueOf(market.values().stream().mapToDouble(CatalogEntry::markup).min().orElse(0));
         for (Suggestion s : List.copyOf(suggestions.values())) {
             BigDecimal worth = values.chain().containsKey(s.item()) ? values.value().get(s.item()) : null;
             CatalogEntry entry = asListed.get(s.item());
             if (worth == null || entry == null) {
                 continue;
             }
-            BigDecimal floor = worth.divide(BigDecimal.ONE.add(BigDecimal.valueOf(entry.markup())), MATH).setScale(0, RoundingMode.CEILING);
+            BigDecimal cap = s.cost().divide(premium, MATH).multiply(BigDecimal.ONE.add(smallestMarkup)).setScale(0, RoundingMode.FLOOR);
+            BigDecimal floor = worth.divide(BigDecimal.ONE.add(BigDecimal.valueOf(entry.markup())), MATH).setScale(0, RoundingMode.CEILING).min(cap);
             if (floor.signum() > 0 && floor.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) <= 0
                     && floor.intValueExact() > s.basePrice().get()) {
                 suggestions.put(s.item(), new Suggestion(s.item(), s.cost(), Optional.of(floor.intValueExact()), s.itemClass(), s.recipe(),

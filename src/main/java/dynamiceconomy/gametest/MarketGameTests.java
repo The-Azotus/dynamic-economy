@@ -1492,9 +1492,9 @@ public final class MarketGameTests {
         PriceSuggestion.Result loop = PriceSuggestion.suggest(List.of(path(g, 1, false, a), path(h, 2, false, g), path(g, 1, false, h)),
                 catalog, new java.util.HashMap<>());
         helper.assertTrue(loop.settled(), "the loop settles: " + loop.looping());
-        helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(8), "h costs 10 / 2 × 1.1, but one h crafts back into g, so it is raised to 11 / 1.4");
-        // Then two raised h sell for 16, so g is raised to 16 / 1.4; it stops there, rather than the two raising each other every round.
-        helper.assertValueEqual(loop.suggestions().get(g).basePrice(), Optional.of(12), "g is raised once to what two h sell for");
+        // One h crafts back into an 11-spur g, but h costs only 5 to make from bought g (10 / 2), so at most 5 x 1.4 = 7.
+        helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(7), "h is raised only as far as it costs to make");
+        helper.assertValueEqual(loop.suggestions().get(g).basePrice(), Optional.of(11), "and g, two h selling for 14, isn't raised");
         helper.succeed();
     }
 
@@ -1542,33 +1542,47 @@ public final class MarketGameTests {
 
     @GameTest(template = EMPTY)
     public static void suggestionsAreRaisedToWhatTheyProcessInto(GameTestHelper helper) {
-        // A cheap route makes nuggets worth 1.22 each, but 9 nuggets craft into a 32-spur ingot: bought at 1 they'd
-        // profit, so the nugget is raised until 9 of them cost at least an ingot.
+        // A route makes nuggets worth 11 each (90 / 9 x 1.1), but 9 nuggets craft into a 160-spur ingot: bought at 11
+        // they'd profit, so the nugget is raised until 9 of them cost at least an ingot.
         Item stone = Items.COBBLESTONE, nugget = Items.IRON_NUGGET, ingot = Items.IRON_INGOT;
-        Map<Item, CatalogEntry> catalog = seeds(seed(stone, 10, null), seed(ingot, 32, null));
+        Map<Item, CatalogEntry> catalog = seeds(seed(stone, 90, null), seed(ingot, 160, null));
         ResourceLocation id = ResourceLocation.parse("test:craft");
         PriceSuggestion.Result result = PriceSuggestion.suggest(List.of(
                 path(nugget, 9, false, stone),
                 new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false)),
                 catalog, new java.util.HashMap<>());
         PriceSuggestion.Suggestion s = result.suggestions().get(nugget);
-        helper.assertValueEqual(s.basePrice(), Optional.of(3), "32 / 9 / 1.4 = 2.54, rounded up");
+        helper.assertValueEqual(s.basePrice(), Optional.of(13), "160 / 9 / 1.4 = 12.7, rounded up");
         helper.assertTrue(s.raised(), "and marked as raised");
-        Map<Item, CatalogEntry> market = seeds(catalog.get(stone), catalog.get(ingot), PriceSuggestion.asEntry(nugget, 3, s.itemClass()).orElseThrow());
+        Map<Item, CatalogEntry> market = seeds(catalog.get(stone), catalog.get(ingot), PriceSuggestion.asEntry(nugget, 13, s.itemClass()).orElseThrow());
         List<Item> heads = PriceSuggestion.chainProfits(List.of(
                 new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false),
                 path(nugget, 9, false, stone)), market).stream().map(PriceSuggestion.ChainProfit::item).toList();
         helper.assertValueEqual(heads, List.of(stone), "nuggets no longer profit; the stone seed is what's left to fix");
 
         // What is made from a raised item is priced from its raised price: a gold nugget made from 9 iron nuggets costs
-        // 9 x 3 = 27 (the premium is in the nuggets' price already), not 9 x 1.22 from their cheap route.
+        // 9 x 13 = 117 (the premium is in the nuggets' price already), not 9 x 11 from their cheaper route.
         PriceSuggestion.Result made = PriceSuggestion.suggest(List.of(
                 path(nugget, 9, false, stone),
                 new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false),
                 new PriceSuggestion.Path(id, "minecraft:crafting", Items.GOLD_NUGGET, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false)),
                 catalog, new java.util.HashMap<>());
-        helper.assertValueEqual(made.suggestions().get(Items.GOLD_NUGGET).basePrice(), Optional.of(27), "priced from the raised nuggets");
+        helper.assertValueEqual(made.suggestions().get(Items.GOLD_NUGGET).basePrice(), Optional.of(117), "priced from the raised nuggets");
         helper.assertTrue(made.suggestions().get(nugget).raised(), "and the nugget is still marked as raised");
+
+        // Made for 1.22 (10 / 9 x 1.1), a nugget can't be raised to what 9 of them craft into (32) without selling for more
+        // than it costs to make: it keeps its price, and buying it is reported as a chain profit instead.
+        Map<Item, CatalogEntry> cheap = seeds(seed(stone, 10, null), seed(ingot, 32, null));
+        PriceSuggestion.Suggestion capped = PriceSuggestion.suggest(List.of(
+                path(nugget, 9, false, stone),
+                new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false)),
+                cheap, new java.util.HashMap<>()).suggestions().get(nugget);
+        helper.assertValueEqual(capped.basePrice(), Optional.of(1), "kept at its cost");
+        helper.assertTrue(!capped.raised(), "not raised");
+        Map<Item, CatalogEntry> cheapMarket = seeds(cheap.get(stone), cheap.get(ingot), PriceSuggestion.asEntry(nugget, 1, capped.itemClass()).orElseThrow());
+        helper.assertTrue(PriceSuggestion.chainProfits(List.of(
+                new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false)),
+                cheapMarket).stream().anyMatch(p -> p.item() == nugget), "so buying it is reported");
         helper.succeed();
     }
 
@@ -1613,7 +1627,10 @@ public final class MarketGameTests {
         Map<Item, CatalogEntry> catalog = seeds(seed(stone, 1, null), seed(diamond, 512, null));
         PriceSuggestion.Path quarry = new PriceSuggestion.Path(ResourceLocation.parse("test:quarry"), "test:quarry", diamond, 0.1,
                 List.of(new PriceSuggestion.Slot(List.of(drill), 0.1)), false, true);
-        PriceSuggestion.Suggestion s = PriceSuggestion.suggest(List.of(path(drill, 1, false, stone, stone, stone), quarry),
+        // The drill costs 30 stone (33 spurs), so it can be raised as far as 42 without selling for more than it costs to make.
+        PriceSuggestion.Path craftDrill = new PriceSuggestion.Path(ResourceLocation.parse("test:drill"), "minecraft:crafting", drill, 1,
+                List.of(new PriceSuggestion.Slot(List.of(stone), 30)), false);
+        PriceSuggestion.Suggestion s = PriceSuggestion.suggest(List.of(craftDrill, quarry),
                 catalog, new java.util.HashMap<>()).suggestions().get(drill);
         helper.assertValueEqual(s.basePrice(), Optional.of(37), "one run makes 51.2 spurs of diamond; 51.2 / 1.4 = 36.6, rounded up");
         helper.assertValueEqual(s.raisedVia(), List.of(quarry), "raised through the quarry");
