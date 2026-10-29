@@ -64,6 +64,11 @@
       "class": "rare_loot"
     },
     {
+      "item": "artifacts:eternal_steak",
+      "base_price": 1126,
+      "class": "rare_processed"
+    },
+    {
       "item": "artifacts:everlasting_beef",
       "base_price": 1024,
       "class": "rare_loot"
