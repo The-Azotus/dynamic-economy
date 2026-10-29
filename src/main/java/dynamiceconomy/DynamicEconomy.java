@@ -3,6 +3,7 @@ package dynamiceconomy;
 import com.mojang.logging.LogUtils;
 import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.coin.Coins;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.command.MarketCommand;
 import dynamiceconomy.compat.StagesBridge;
@@ -45,6 +46,7 @@ public final class DynamicEconomy {
         container.registerConfig(ModConfig.Type.SERVER, MarketConfig.SPEC);
         MarketMenu.MENUS.register(modBus);
         MarketBlocks.register(modBus);
+        Coins.register(modBus);
         modBus.addListener(MarketNetwork::register);
         modBus.addListener(DynamicEconomy::addExampleCatalog);
         modBus.addListener(DynamicEconomy::addDefaultPrices);

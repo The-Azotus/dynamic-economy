@@ -1,0 +1,34 @@
+{
+  "type": "dynamic_economy:coin_exchange",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "dynamic_economy:crown"
+    },
+    {
+      "item": "dynamic_economy:crown"
+    },
+    {
+      "item": "dynamic_economy:crown"
+    },
+    {
+      "item": "dynamic_economy:crown"
+    },
+    {
+      "item": "dynamic_economy:crown"
+    },
+    {
+      "item": "dynamic_economy:crown"
+    },
+    {
+      "item": "dynamic_economy:crown"
+    },
+    {
+      "item": "dynamic_economy:crown"
+    }
+  ],
+  "result": {
+    "id": "dynamic_economy:sun",
+    "count": 1
+  }
+}

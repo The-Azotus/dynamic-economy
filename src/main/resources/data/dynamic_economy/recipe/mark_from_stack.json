@@ -1,0 +1,34 @@
+{
+  "type": "dynamic_economy:coin_exchange",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "dynamic_economy:stack"
+    },
+    {
+      "item": "dynamic_economy:stack"
+    },
+    {
+      "item": "dynamic_economy:stack"
+    },
+    {
+      "item": "dynamic_economy:stack"
+    },
+    {
+      "item": "dynamic_economy:stack"
+    },
+    {
+      "item": "dynamic_economy:stack"
+    },
+    {
+      "item": "dynamic_economy:stack"
+    },
+    {
+      "item": "dynamic_economy:stack"
+    }
+  ],
+  "result": {
+    "id": "dynamic_economy:mark",
+    "count": 1
+  }
+}

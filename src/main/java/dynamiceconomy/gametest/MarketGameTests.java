@@ -10,6 +10,8 @@ import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.block.MarketBlocks;
 import dynamiceconomy.block.MarketTerminalBlock;
 import dynamiceconomy.catalog.CatalogOverlay;
+import dynamiceconomy.coin.Coin;
+import dynamiceconomy.coin.Coins;
 import dynamiceconomy.data.AuditLog;
 import dynamiceconomy.data.MarketBackup;
 import dynamiceconomy.data.MarketOverrides;
@@ -1165,10 +1167,11 @@ public final class MarketGameTests {
     @GameTest(template = EMPTY)
     public static void terminalHasRecipeAndFacing(GameTestHelper helper) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "market_terminal");
-        // Until the mod has its own coins, the terminal recipe needs Numismatics' spurs and loads only with it.
-        helper.assertValueEqual(helper.getLevel().getServer().getRecipeManager().byKey(id).isPresent(),
-                net.neoforged.fml.ModList.get().isLoaded(NumismaticsBridge.MOD_ID),
-                "the recipe loads with Numismatics, so its Numismatics ingredient resolves");
+        // Spurs with Numismatics, our Bits without: exactly one of the two recipes loads.
+        boolean numismatics = net.neoforged.fml.ModList.get().isLoaded(NumismaticsBridge.MOD_ID);
+        var recipes = helper.getLevel().getServer().getRecipeManager();
+        helper.assertValueEqual(recipes.byKey(id).isPresent(), numismatics, "the spur recipe loads with Numismatics");
+        helper.assertValueEqual(recipes.byKey(id.withSuffix("_from_bits")).isPresent(), !numismatics, "the Bit recipe without it");
         helper.setBlock(net.minecraft.core.BlockPos.ZERO, MarketBlocks.MARKET_TERMINAL.get().defaultBlockState()
                 .setValue(MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST));
         helper.assertBlockProperty(net.minecraft.core.BlockPos.ZERO, MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST);
@@ -2913,6 +2916,93 @@ public final class MarketGameTests {
 
     private static ResourceLocation id(Item item) {
         return BuiltInRegistries.ITEM.getKey(item);
+    }
+
+    // ---- Coins --------------------------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void coinsAreWorthEightOfTheOneBelow(GameTestHelper helper) {
+        helper.assertValueEqual(Coin.BIT.value(), 1, "a Bit is one bit, the same as a spur");
+        for (Coin coin : Coin.values()) {
+            coin.next().ifPresent(next -> helper.assertValueEqual(next.value(), coin.value() * 8, next + " is 8 " + coin));
+            helper.assertValueEqual(Coins.item(coin).coin(), coin, "registered as " + coin.id());
+            helper.assertTrue(Coins.isCoin(Coins.item(coin)), coin + " is a coin");
+        }
+        helper.assertValueEqual(Coin.CROWN.value(), 4_096, "Crown");
+        helper.assertValueEqual(Coin.SUN.value(), 32_768, "Sun");
+        helper.assertValueEqual(Coin.OMEGA.value(), 2_097_152, "Omega");
+        helper.assertFalse(Coins.isCoin(Items.GOLD_NUGGET), "other items aren't coins");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void coinsCanNeverBeListed(GameTestHelper helper) {
+        List<String> ids = new ArrayList<>(List.of("dynamic_economy:bit", "dynamic_economy:omega"));
+        if (net.neoforged.fml.ModList.get().isLoaded(NumismaticsBridge.MOD_ID)) {
+            ids.addAll(List.of("numismatics:spur", "numismatics:sun"));
+        }
+        for (String id : ids) {
+            MarketCatalog.Loaded loaded = loadOne("{ \"entries\": [ { \"item\": \"" + id + "\", \"base_price\": 1 } ] }");
+            helper.assertTrue(loaded.entries().isEmpty(), id + " isn't listed from a file");
+            helper.assertTrue(loaded.problems().size() == 1 && loaded.problems().get(0).message().contains("coin"),
+                    "and the file says why: " + loaded.problems());
+        }
+
+        // Nor by an admin edit or a tag rule that prices it.
+        Item bit = Coins.item(Coin.BIT);
+        MarketOverrides edits = new MarketOverrides();
+        edits.setItemField(key(bit), "base_price", number(1));
+        ResourceLocation coinTag = ResourceLocation.fromNamespaceAndPath("test", "coins");
+        edits.setTagField(coinTag, "base_price", number(5));
+        CatalogOverlay.Result result = CatalogOverlay.apply(Map.of(), Map.of(), edits.snapshot(),
+                tag -> tag.equals(coinTag) ? List.of(Coins.item(Coin.CHIP)) : CatalogOverlay.registryTag(tag));
+        helper.assertTrue(result.entries().isEmpty(), "edits list no coin: " + result.entries().keySet());
+        helper.assertTrue(result.problems().containsKey(key(bit)) && result.problems().containsKey(key(Coins.item(Coin.CHIP))),
+                "and each is reported: " + result.problems());
+
+        Fixture f = new Fixture(helper);
+        f.give(new ItemStack(bit, 8));
+        f.assertRejectedUnchanged(Result.NOT_LISTED, () -> MarketService.trySell(f.player, bit, 8, ANY_PRICE));
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void coinsChangeEightForOneOnlyWithTheModsBank(GameTestHelper helper) {
+        boolean own = WorldBank.kind(helper.getLevel().getServer()) == BankKind.OWN;
+        helper.assertValueEqual(Coins.inUse(helper.getLevel()), own, "coins are in use only with our bank");
+        for (Coin coin : Coin.values()) {
+            if (coin.next().isEmpty()) {
+                continue;
+            }
+            Item small = Coins.item(coin);
+            Item big = Coins.item(coin.next().get());
+            Optional<ItemStack> up = craft(helper, small, small, small, small, small, small, small, small, Items.AIR);
+            Optional<ItemStack> down = craft(helper, big, Items.AIR, Items.AIR, Items.AIR, Items.AIR, Items.AIR, Items.AIR, Items.AIR, Items.AIR);
+            if (own) {
+                helper.assertTrue(up.isPresent() && up.get().is(big) && up.get().getCount() == 1, "8 " + coin + " make one " + big + ": " + up);
+                helper.assertTrue(down.isPresent() && down.get().is(small) && down.get().getCount() == 8, "and back into 8: " + down);
+            } else {
+                helper.assertTrue(up.isEmpty() && down.isEmpty(), "uncraftable with Numismatics' bank: " + up + ", " + down);
+            }
+        }
+        // Seven coins of one kind make nothing: the exchange never rounds.
+        Item bit = Coins.item(Coin.BIT);
+        helper.assertTrue(craft(helper, bit, bit, bit, bit, bit, bit, bit, Items.AIR, Items.AIR).isEmpty(), "7 Bits make nothing");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void terminalCraftsFromBitsWithoutNumismatics(GameTestHelper helper) {
+        if (net.neoforged.fml.ModList.get().isLoaded(NumismaticsBridge.MOD_ID)) {
+            DynamicEconomy.LOGGER.info("GameTest skipped: Numismatics is installed, so the terminal takes spurs");
+            helper.succeed();
+            return;
+        }
+        Item b = Coins.item(Coin.BIT);
+        Optional<ItemStack> made = craft(helper, b, b, b, b, Items.CRAFTING_TABLE, b, b, b, b);
+        helper.assertTrue(made.isPresent() && made.get().is(MarketBlocks.MARKET_TERMINAL_ITEM.get()) && made.get().getCount() == 1,
+                "a crafting table surrounded by 8 Bits makes one terminal, got " + made);
+        helper.succeed();
     }
 
     // ---- Banks --------------------------------------------------------------------------------------------------

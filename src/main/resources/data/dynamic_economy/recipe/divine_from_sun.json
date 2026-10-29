@@ -1,0 +1,34 @@
+{
+  "type": "dynamic_economy:coin_exchange",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "dynamic_economy:sun"
+    },
+    {
+      "item": "dynamic_economy:sun"
+    },
+    {
+      "item": "dynamic_economy:sun"
+    },
+    {
+      "item": "dynamic_economy:sun"
+    },
+    {
+      "item": "dynamic_economy:sun"
+    },
+    {
+      "item": "dynamic_economy:sun"
+    },
+    {
+      "item": "dynamic_economy:sun"
+    },
+    {
+      "item": "dynamic_economy:sun"
+    }
+  ],
+  "result": {
+    "id": "dynamic_economy:divine",
+    "count": 1
+  }
+}

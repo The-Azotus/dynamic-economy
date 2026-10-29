@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.coin.Coins;
 import dynamiceconomy.data.MarketOverrides;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.FileToIdConverter;
@@ -259,6 +260,9 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         Optional<Item> item = BuiltInRegistries.ITEM.getOptional(value.item());
         if (item.isEmpty() || item.get() == Items.AIR) {
             return DataResult.error(() -> "unknown item " + value.item());
+        }
+        if (Coins.isCoin(item.get())) {
+            return DataResult.error(() -> value.item() + " is a coin, and coins can never be listed: selling one would create money");
         }
         DataResult<CatalogEntry> resolved = value.resolve(item.get(), itemClass);
         // Strict: never accept a partial result, e.g. an out-of-range optional field replaced by its default.
