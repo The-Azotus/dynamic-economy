@@ -915,7 +915,7 @@
     },
     {
       "item": "biomeswevegone:spirit_roots",
-      "base_price": 1,
+      "base_price": 3,
       "class": "farmable"
     },
     {

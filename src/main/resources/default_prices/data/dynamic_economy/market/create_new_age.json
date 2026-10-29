@@ -1,0 +1,23 @@
+{
+  "required_mods": [
+    "create_new_age"
+  ],
+  "entries": [
+    {
+      "item": "create_new_age:magnetite_block",
+      "base_price": 340,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:thorium",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "create_new_age:thorium_ore",
+      "base_price": 2,
+      "class": "common_resource",
+      "can_buy": false
+    }
+  ]
+}

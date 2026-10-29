@@ -229,7 +229,7 @@ public final class MachineRecipes {
     }
 
     /** Adds an input, merging it into an earlier one that accepts the same items. */
-    private static void add(List<Input> inputs, Ingredient ingredient, double amount) {
+    static void add(List<Input> inputs, Ingredient ingredient, double amount) {
         List<Item> options = new ArrayList<>();
         for (ItemStack stack : ingredient.getItems()) {
             if (!stack.isEmpty() && !options.contains(stack.getItem())) {

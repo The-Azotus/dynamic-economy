@@ -1,0 +1,42 @@
+{
+  "required_mods": [
+    "supplementaries"
+  ],
+  "entries": [
+    {
+      "item": "supplementaries:ash",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "supplementaries:barnacles",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "supplementaries:enderman_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "supplementaries:flax_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "supplementaries:music_disc_heave_ho",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "supplementaries:spider_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "supplementaries:wild_flax",
+      "base_price": 2,
+      "class": "farmable"
+    }
+  ]
+}

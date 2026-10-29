@@ -598,7 +598,7 @@ public final class PriceSuggestion {
                 unusable.merge("special recipes (map cloning, dyeing, ...)", 1, Integer::sum);
                 return Optional.empty();
             }
-            Optional<MachineRecipes.Read> machine = MachineRecipes.read(recipe);
+            Optional<MachineRecipes.Read> machine = CreateRecipes.sequencedAssembly(recipe).or(() -> MachineRecipes.read(recipe));
             if (machine.isPresent()) {
                 return machinePath(holder, type, machine.get(), unusable);
             }

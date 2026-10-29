@@ -1547,6 +1547,29 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = EMPTY)
+    public static void sequencedAssemblyInputsAreRead(GameTestHelper helper) {
+        // Create's precision mechanism: a golden sheet, then 5 loops of deploying a cogwheel, a large cogwheel and an iron
+        // nugget onto the half-made mechanism, which succeeds most of the time.
+        var holder = helper.getLevel().getServer().getRecipeManager()
+                .byKey(ResourceLocation.parse("create:sequenced_assembly/precision_mechanism")).orElseThrow();
+        dynamiceconomy.compat.MachineRecipes.Read read = dynamiceconomy.compat.CreateRecipes.sequencedAssembly(holder.value()).orElseThrow();
+        Map<Item, Double> amounts = new java.util.HashMap<>();
+        read.inputs().forEach(input -> input.options().forEach(item -> amounts.merge(item, input.amount(), Double::sum)));
+        Item mechanism = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:precision_mechanism"));
+        Item sheet = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:golden_sheet"));
+        Item cogwheel = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:cogwheel"));
+        Item incomplete = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:incomplete_precision_mechanism"));
+        helper.assertValueEqual(read.item(), mechanism, "makes the mechanism");
+        helper.assertValueEqual(amounts.get(sheet), 1.0, "starts from one golden sheet");
+        helper.assertValueEqual(amounts.get(cogwheel), 5.0, "deploys a cogwheel each loop");
+        helper.assertValueEqual(amounts.get(Items.IRON_NUGGET), 5.0, "and an iron nugget");
+        helper.assertTrue(!amounts.containsKey(incomplete), "the half-made mechanism isn't an input");
+        helper.assertTrue(read.expected() > 0.5 && read.expected() < 1, "made at its success chance, not every time");
+        helper.assertTrue(!read.fluids(), "uses no fluids");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
     public static void partlyUsedInputsAreCreditedOneRun(GameTestHelper helper) {
         // A quarry uses its drill up one run in ten. Credited with all ten runs, the drill would be raised to 10x what one
         // run makes, and chains of such inputs multiply without bound; it gets one run's worth.
