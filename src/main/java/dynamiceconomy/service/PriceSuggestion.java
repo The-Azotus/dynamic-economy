@@ -88,11 +88,12 @@ public final class PriceSuggestion {
             "create:mixing", "create:compacting", "create:filling", "create:emptying");
 
     /**
-     * Machine recipes whose real cost is energy on an endgame scale, not their items (Oritech's particle collider turns
-     * netherrack into netherite scrap). Accepted as generators, so like recipes that hide inputs they only price what
-     * nothing else makes, and never raise a price or count as a complete chain.
+     * Machine recipes whose real cost is energy, not their items: Oritech's particle collider turns netherrack into
+     * netherite scrap, and Modern Industrialization's quarry mines blocks with a drill it wears down. Accepted as
+     * generators, so like recipes that hide inputs they only price what nothing else makes, and never raise a price or
+     * count as a complete chain.
      */
-    public static final Set<String> ENERGY_CONVERSION_TYPES = Set.of("oritech:particle_collision");
+    public static final Set<String> ENERGY_CONVERSION_TYPES = Set.of("oritech:particle_collision", "modern_industrialization:quarry");
 
     private PriceSuggestion() {
     }
@@ -168,9 +169,10 @@ public final class PriceSuggestion {
         List<Path> paths = allPaths.stream().filter(path -> !leftOut(path.output())).toList();
         double premiumUsed = premium(catalog.values());
         Propagation state = new Propagation(catalog, BigDecimal.ONE.add(BigDecimal.valueOf(premiumUsed)));
-        // Complete recipes first; then the rest, only for items those couldn't price.
+        // Complete recipes first; then the rest, which only price items those couldn't. What they price can still make
+        // a complete recipe cheaper (an Oritech centrifuge from a processing unit only an incomplete recipe makes).
         Set<Item> looping = new HashSet<>(state.run(paths.stream().filter(Path::complete).toList()));
-        state.frozen.addAll(state.price.keySet());
+        state.completeOnly.addAll(state.price.keySet());
         looping.addAll(state.run(paths));
         Map<Item, BigDecimal> price = state.price;
         Map<Item, Path> chosen = state.chosen;
@@ -238,6 +240,8 @@ public final class PriceSuggestion {
         /** Every item each made item's price was built from, however deep, as it was when the price was set. */
         final Map<Item, Set<Item>> madeFrom = new HashMap<>();
         final Set<Item> frozen = new HashSet<>();
+        /** Items that only complete recipes may reprice. */
+        final Set<Item> completeOnly = new HashSet<>();
         final BigDecimal premium;
         /** The cheapest rare item in the catalog; a made item holding this much rare material is rare. */
         final BigDecimal oneRareUnit;
@@ -266,7 +270,7 @@ public final class PriceSuggestion {
             for (int pass = 0; pass < MAX_PASSES && (pass == 0 || !changed.isEmpty()); pass++) {
                 changed.clear();
                 for (Path path : paths) {
-                    if (frozen.contains(path.output())) {
+                    if (frozen.contains(path.output()) || !path.complete() && completeOnly.contains(path.output())) {
                         continue;
                     }
                     BigDecimal sum = BigDecimal.ZERO;

@@ -1526,6 +1526,16 @@ public final class MarketGameTests {
         helper.assertValueEqual(s.get(Items.LAPIS_LAZULI).itemClass(), "common_processed", "a trace of rare material doesn't count");
         helper.assertValueEqual(s.get(Items.LAPIS_BLOCK).itemClass(), "common_processed", "nor does it add up through a chain");
         helper.assertTrue(result.settled(), "settles");
+
+        // An item only an incomplete recipe makes still lowers a complete recipe that uses it: the gold block's
+        // crafting recipe from that cheap emerald beats the one from a 100-spur diamond.
+        Map<Item, CatalogEntry> late = seeds(seed(Items.DIAMOND, 100, null), seed(Items.COBBLESTONE, 1, null));
+        PriceSuggestion.Result lateResult = PriceSuggestion.suggest(List.of(
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.GOLD_BLOCK, 1, List.of(slot.apply(Items.DIAMOND, 1.0)), false, true),
+                new PriceSuggestion.Path(id, "test:altar", Items.EMERALD, 1, List.of(slot.apply(Items.COBBLESTONE, 2.0)), false, false),
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.GOLD_BLOCK, 1, List.of(slot.apply(Items.EMERALD, 1.0)), false, true)
+        ), late, new java.util.HashMap<>());
+        helper.assertValueEqual(lateResult.suggestions().get(Items.GOLD_BLOCK).basePrice(), Optional.of(2), "2 cobblestone × 1.1, not 110");
         helper.succeed();
     }
 
