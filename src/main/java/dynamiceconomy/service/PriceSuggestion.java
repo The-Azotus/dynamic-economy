@@ -73,6 +73,11 @@ public final class PriceSuggestion {
     private static final int CHAIN_STEPS = 6;
     /** Longest chain a suggestion is raised through: the short conversions it is for (9 nuggets to an ingot). */
     private static final int RAISE_STEPS = 3;
+    /**
+     * Times suggestions are priced: once, then once more with raised prices as floors. More rounds would let a loop that
+     * makes more than it takes (1 ingot to 2 nuggets, 1 nugget to 1 ingot) raise its prices again every round.
+     */
+    private static final int RAISE_ROUNDS = 2;
     /** One coal smelts 8 items. */
     private static final int ITEMS_PER_COAL = 8;
     private static final MathContext MATH = MathContext.DECIMAL64;
@@ -168,10 +173,63 @@ public final class PriceSuggestion {
     public static Result suggest(List<Path> allPaths, Map<Item, CatalogEntry> catalog, Map<String, Integer> unusable) {
         List<Path> paths = allPaths.stream().filter(path -> !leftOut(path.output())).toList();
         double premiumUsed = premium(catalog.values());
-        Propagation state = new Propagation(catalog, BigDecimal.ONE.add(BigDecimal.valueOf(premiumUsed)));
+        BigDecimal premium = BigDecimal.ONE.add(BigDecimal.valueOf(premiumUsed));
+        // A raised price is a floor for the next round, so what is made from a raised item is priced from its raised
+        // price: steel from iron dust raised to what it smelts into, not from the dust's cheap ore-processing cost.
+        Map<Item, BigDecimal> floors = new HashMap<>();
+        Map<Item, Suggestion> firstRaise = new HashMap<>();
+        Set<Item> looping = new HashSet<>();
+        Map<Item, Suggestion> suggestions = Map.of();
+        for (int round = 0; round < RAISE_ROUNDS; round++) {
+            looping.clear();
+            suggestions = suggestOnce(paths, catalog, premium, floors, looping);
+            boolean grew = false;
+            for (Suggestion s : suggestions.values()) {
+                if (!s.raised()) {
+                    continue;
+                }
+                firstRaise.putIfAbsent(s.item(), s);
+                // Rounded up, so the premium brings it back to at least the raised price.
+                BigDecimal raw = BigDecimal.valueOf(s.basePrice().orElseThrow()).divide(premium, new MathContext(34, RoundingMode.CEILING));
+                if (floors.getOrDefault(s.item(), BigDecimal.ZERO).compareTo(raw) < 0) {
+                    floors.put(s.item(), raw);
+                    grew = true;
+                }
+            }
+            if (!grew) {
+                break;
+            }
+        }
+        // An item held up by its floor keeps the recipe cost and chain from when it was first raised.
+        for (Map.Entry<Item, Suggestion> entry : firstRaise.entrySet()) {
+            Suggestion now = suggestions.get(entry.getKey());
+            Suggestion first = entry.getValue();
+            if (now != null && !now.raised()) {
+                suggestions.put(now.item(), new Suggestion(now.item(), first.cost(), now.basePrice(), now.itemClass(), first.recipe(),
+                        first.recipeType(), first.depth(), first.completeType(), now.reverse(), first.raisedVia()));
+            }
+        }
+
+        Set<Item> made = new HashSet<>();
+        paths.forEach(path -> made.add(path.output()));
+        Set<Item> noRecipe = new HashSet<>();
+        Set<Item> unpricedInputs = new HashSet<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item == Items.AIR || catalog.containsKey(item) || suggestions.containsKey(item) || leftOut(item)) {
+                continue;
+            }
+            (made.contains(item) ? unpricedInputs : noRecipe).add(item);
+        }
+        return new Result(suggestions, noRecipe, unpricedInputs, unusable, Set.copyOf(looping), premiumUsed);
+    }
+
+    /** One round of {@link #suggest}: prices every item from the seeds, none below its floor, then raises them. */
+    private static Map<Item, Suggestion> suggestOnce(List<Path> paths, Map<Item, CatalogEntry> catalog, BigDecimal premium,
+                                                     Map<Item, BigDecimal> floors, Set<Item> looping) {
+        Propagation state = new Propagation(catalog, premium, floors);
         // Complete recipes first; then the rest, which only price items those couldn't. What they price can still make
         // a complete recipe cheaper (an Oritech centrifuge from a processing unit only an incomplete recipe makes).
-        Set<Item> looping = new HashSet<>(state.run(paths.stream().filter(Path::complete).toList()));
+        looping.addAll(state.run(paths.stream().filter(Path::complete).toList()));
         state.completeOnly.addAll(state.price.keySet());
         looping.addAll(state.run(paths));
         Map<Item, BigDecimal> price = state.price;
@@ -207,18 +265,7 @@ public final class PriceSuggestion {
                     path.complete(), reverse, List.of()));
         }
         raiseToProcessedValue(paths, catalog, suggestions);
-
-        Set<Item> made = new HashSet<>();
-        paths.forEach(path -> made.add(path.output()));
-        Set<Item> noRecipe = new HashSet<>();
-        Set<Item> unpricedInputs = new HashSet<>();
-        for (Item item : BuiltInRegistries.ITEM) {
-            if (item == Items.AIR || catalog.containsKey(item) || suggestions.containsKey(item) || leftOut(item)) {
-                continue;
-            }
-            (made.contains(item) ? unpricedInputs : noRecipe).add(item);
-        }
-        return new Result(suggestions, noRecipe, unpricedInputs, unusable, Set.copyOf(looping), premiumUsed);
+        return suggestions;
     }
 
     /**
@@ -243,11 +290,14 @@ public final class PriceSuggestion {
         /** Items that only complete recipes may reprice. */
         final Set<Item> completeOnly = new HashSet<>();
         final BigDecimal premium;
+        /** The least each item may cost, before the premium (raised prices from an earlier round). */
+        final Map<Item, BigDecimal> floors;
         /** The cheapest rare item in the catalog; a made item holding this much rare material is rare. */
         final BigDecimal oneRareUnit;
 
-        Propagation(Map<Item, CatalogEntry> catalog, BigDecimal premium) {
+        Propagation(Map<Item, CatalogEntry> catalog, BigDecimal premium, Map<Item, BigDecimal> floors) {
             this.premium = premium;
+            this.floors = floors;
             BigDecimal cheapestRare = null;
             for (Map.Entry<Item, CatalogEntry> entry : catalog.entrySet()) {
                 BigDecimal p = BigDecimal.valueOf(entry.getValue().basePrice());
@@ -310,7 +360,7 @@ public final class PriceSuggestion {
                         sum = sum.add(price.get(Items.COAL).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
                     }
                     BigDecimal count = BigDecimal.valueOf(path.count());
-                    BigDecimal cost = sum.divide(count, MATH);
+                    BigDecimal cost = sum.divide(count, MATH).max(floors.getOrDefault(path.output(), BigDecimal.ZERO));
                     BigDecimal current = price.get(path.output());
                     Set<Item> from = current == null || cost.compareTo(current) < 0 ? builtFrom(used) : null;
                     if (from != null && !from.contains(path.output())) {
@@ -418,20 +468,29 @@ public final class PriceSuggestion {
      * {@value #CHAIN_STEPS} recipes. Furnace fuel is bought as coal; anything a recipe gives back is ignored. {@code market} is everything the market would list, with suggested items included.
      */
     public static List<ChainProfit> chainProfits(List<Path> allPaths, Map<Item, CatalogEntry> market) {
+        // Complete chains are found on their own first, so a bigger chain through a recipe that may hide inputs can't
+        // hide a real profit.
+        ChainValues complete = chainValues(allPaths.stream().filter(Path::complete).toList(), market, CHAIN_STEPS);
         ChainValues values = chainValues(allPaths, market, CHAIN_STEPS);
         List<ChainProfit> profits = new ArrayList<>();
         for (Map.Entry<Item, BigDecimal> entry : values.buy().entrySet()) {
             Item item = entry.getKey();
-            BigDecimal worth = values.value().get(item);
-            if (worth == null || !values.chain().containsKey(item) || worth.compareTo(entry.getValue()) <= 0) {
+            ChainValues found = profitable(complete, item, entry.getValue()) ? complete
+                    : profitable(values, item, entry.getValue()) ? values : null;
+            if (found == null) {
                 continue;
             }
-            List<Path> steps = values.chain().get(item);
-            profits.add(new ChainProfit(item, entry.getValue(), worth, steps, steps.stream().allMatch(Path::complete)));
+            List<Path> steps = found.chain().get(item);
+            profits.add(new ChainProfit(item, entry.getValue(), found.value().get(item), steps, steps.stream().allMatch(Path::complete)));
         }
         profits.sort(java.util.Comparator.comparing((ChainProfit p) -> !p.complete())
                 .thenComparing(p -> p.value().divide(p.buyCost().max(new BigDecimal("0.01")), MATH), java.util.Comparator.reverseOrder()));
         return profits;
+    }
+
+    private static boolean profitable(ChainValues values, Item item, BigDecimal buy) {
+        BigDecimal worth = values.value().get(item);
+        return worth != null && values.chain().containsKey(item) && worth.compareTo(buy) > 0;
     }
 
     /**

@@ -1492,8 +1492,9 @@ public final class MarketGameTests {
         PriceSuggestion.Result loop = PriceSuggestion.suggest(List.of(path(g, 1, false, a), path(h, 2, false, g), path(g, 1, false, h)),
                 catalog, new java.util.HashMap<>());
         helper.assertTrue(loop.settled(), "the loop settles: " + loop.looping());
-        helper.assertValueEqual(loop.suggestions().get(g).basePrice(), Optional.of(11), "g keeps its price from the seed");
         helper.assertValueEqual(loop.suggestions().get(h).basePrice(), Optional.of(8), "h costs 10 / 2 × 1.1, but one h crafts back into g, so it is raised to 11 / 1.4");
+        // Then two raised h sell for 16, so g is raised to 16 / 1.4; it stops there, rather than the two raising each other every round.
+        helper.assertValueEqual(loop.suggestions().get(g).basePrice(), Optional.of(12), "g is raised once to what two h sell for");
         helper.succeed();
     }
 
@@ -1558,6 +1559,16 @@ public final class MarketGameTests {
                 new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false),
                 path(nugget, 9, false, stone)), market).stream().map(PriceSuggestion.ChainProfit::item).toList();
         helper.assertValueEqual(heads, List.of(stone), "nuggets no longer profit; the stone seed is what's left to fix");
+
+        // What is made from a raised item is priced from its raised price: a gold nugget made from 9 iron nuggets costs
+        // 9 x 3 = 27 (the premium is in the nuggets' price already), not 9 x 1.22 from their cheap route.
+        PriceSuggestion.Result made = PriceSuggestion.suggest(List.of(
+                path(nugget, 9, false, stone),
+                new PriceSuggestion.Path(id, "minecraft:crafting", ingot, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false),
+                new PriceSuggestion.Path(id, "minecraft:crafting", Items.GOLD_NUGGET, 1, List.of(new PriceSuggestion.Slot(List.of(nugget), 9)), false)),
+                catalog, new java.util.HashMap<>());
+        helper.assertValueEqual(made.suggestions().get(Items.GOLD_NUGGET).basePrice(), Optional.of(27), "priced from the raised nuggets");
+        helper.assertTrue(made.suggestions().get(nugget).raised(), "and the nugget is still marked as raised");
         helper.succeed();
     }
 
