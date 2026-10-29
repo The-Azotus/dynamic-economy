@@ -232,7 +232,7 @@
     },
     {
       "item": "minecraft:charcoal",
-      "base_price": 4,
+      "base_price": 8,
       "class": "common_processed"
     },
     {
