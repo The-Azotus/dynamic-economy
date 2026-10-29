@@ -1,0 +1,195 @@
+{
+  "required_mods": [
+    "cognition"
+  ],
+  "entries": [
+    {
+      "item": "cognition:accelerator",
+      "base_price": 62,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:astute_assembly",
+      "base_price": 151,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:attunement_staff",
+      "base_price": 180,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:bibliophage",
+      "base_price": 350,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_alloy",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "cognition:cognitive_alloy_block",
+      "base_price": 237,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "cognition:cognitive_amalgam",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "cognition:cognitive_axe",
+      "base_price": 285,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_boots",
+      "base_price": 319,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_bow",
+      "base_price": 183,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_chestplate",
+      "base_price": 459,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_crystal",
+      "base_price": 123,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_crystal_block",
+      "base_price": 1108,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "cognition:cognitive_flux",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "cognition:cognitive_helmet",
+      "base_price": 354,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_hoe",
+      "base_price": 250,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_leggings",
+      "base_price": 424,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_pickaxe",
+      "base_price": 285,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_rod",
+      "base_price": 182,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_shears",
+      "base_price": 248,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_shovel",
+      "base_price": 214,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:cognitive_sword",
+      "base_price": 249,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:daydream_bottle",
+      "base_price": 72,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:enchanted_bookshelf",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "cognition:enlightened_amulet",
+      "base_price": 126,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:experience_fountain",
+      "base_price": 313,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:experience_obelisk",
+      "base_price": 332,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:flask_of_chaos",
+      "base_price": 240,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:flint_and_cognitive_alloy",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "cognition:fluorescent_jelly",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "cognition:linear_accelerator",
+      "base_price": 62,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "cognition:molecular_metamorpher",
+      "base_price": 820,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:nightmare_bottle",
+      "base_price": 73,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:precision_dispeller",
+      "base_price": 280,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:primordial_assembly",
+      "base_price": 206,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:transforming_focus",
+      "base_price": 143,
+      "class": "rare_processed"
+    },
+    {
+      "item": "cognition:whisperglass",
+      "base_price": 2,
+      "class": "common_processed"
+    }
+  ]
+}
