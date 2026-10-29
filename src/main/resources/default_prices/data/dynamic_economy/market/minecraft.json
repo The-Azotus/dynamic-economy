@@ -447,7 +447,7 @@
     },
     {
       "item": "minecraft:enchanted_golden_apple",
-      "base_price": 8192,
+      "base_price": 4096,
       "class": "rare_loot"
     },
     {
@@ -917,8 +917,8 @@
     },
     {
       "item": "minecraft:name_tag",
-      "base_price": 128,
-      "class": "rare_loot"
+      "base_price": 8,
+      "class": "common_processed"
     },
     {
       "item": "minecraft:nautilus_shell",
