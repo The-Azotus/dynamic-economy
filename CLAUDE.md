@@ -74,6 +74,8 @@ Precedence: server config < class < file `defaults` < entry < tag rules (creatio
 
 Done when: a locked item is invisible and untradeable for one player while another trades it; unlocking a stage shows it without reopening the game; works with the mod absent.
 
+Decided with the user (2026-10-29): allow ProgressiveStages `[3.1.1,4)`; if its lock API fails, fail open (hide nothing, log an error); a past trade of a now-locked item stays in History. Verified against the real 3.1.1 jar: item, tag and whole-mod (`mod:create`) locks are all detected, and a locked listed item is left out of that player's catalog.
+
 ## Report format (after every phase)
 
 - What was built, and anything deferred or uncertain
