@@ -16,7 +16,7 @@ Tabs along the top: **Market** (the item list) and **History** (your own trades)
 | Part | What it shows |
 | --- | --- |
 | **Bank** (top right) | Your Numismatics bank balance, in spurs. Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. On a narrow screen it sits at the end of the search row and large amounts are shortened, such as **123k**. |
-| **Search box** | Type part of an item's name to filter the list. Type a mod's name followed by `:` (for example `create:`) to see only that mod's items. |
+| **Search box** | Type part of an item's name to filter the list. **`@create`** shows only one mod's items (by its name or ID, so `@farmer` finds Farmer's Delight). **`#ingots`** shows items with a matching tag; `#c:ingots` matches that tag's full ID. Combine words to narrow it down: `@create #plates`, or `iron ingot` (both words must match). A mod ID followed by `:`, such as `create:`, still works too. |
 | **Sort button** | Click to cycle the order: **Name**, **Cheapest** (lowest buy price first), **Best pay** (highest sell price first), **Stock** (most first). |
 | **Filter button** | Click to cycle what's shown: **All**, **Buyable** (in stock and for sale), **Sellable** (the market buys it), **Held** (you have some it accepts). |
 | **Stock** | How many the market has. **∞** means it never runs out. **0** in red means it's sold out. |

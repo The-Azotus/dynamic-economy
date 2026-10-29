@@ -1,6 +1,7 @@
 {
   "screen.dynamic_economy.market": "Market",
-  "screen.dynamic_economy.search": "Search items...",
+  "screen.dynamic_economy.search": "Search, @mod, #tag",
+  "screen.dynamic_economy.search.tooltip": "Type part of an item's name. @create shows one mod's items, #ingots items with a matching tag (#c:ingots for an exact tag). Combine words to narrow it down.",
   "screen.dynamic_economy.quantity": "Quantity",
   "screen.dynamic_economy.step_hint": "Shift-click to change by 16",
   "screen.dynamic_economy.balance": "Bank: %s spurs",

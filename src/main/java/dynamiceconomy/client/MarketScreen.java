@@ -17,14 +17,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -85,6 +88,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     // Kept while the game runs, so the list looks the same the next time the market opens.
     private static MarketListing.Sort sort = MarketListing.Sort.NAME;
     private static MarketListing.Filter filter = MarketListing.Filter.ALL;
+    /** Lower-case mod display names by namespace, for {@code @mod} searches. The mod list never changes in a session. */
+    private static final Map<String, String> MOD_NAMES = new HashMap<>();
 
     /** The tabs along the top. Those not built yet are shown greyed out; Exchange joins them when it exists. */
     private enum Tab {
@@ -184,6 +189,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int searchWidth = Mth.clamp(toolbarEnd - LIST_X - 104, 60, 160);
         search = new EditBox(font, x + LIST_X, y + TOOLBAR_Y + 1, searchWidth, 14, Component.translatable("screen.dynamic_economy.search"));
         search.setHint(Component.translatable("screen.dynamic_economy.search").withColor(TEXT_DIM));
+        search.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.search.tooltip")));
         search.setMaxLength(50);
         search.setValue(searchText);
         addRenderableWidget(search);
@@ -378,18 +384,43 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         filterButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.filter." + filterKey + ".tooltip")));
     }
 
-    /**
-     * Matches the display name or the ID's path. The namespace only counts when the query contains ':', or every
-     * vanilla item would match "mine".
-     */
+    /** Every space-separated term must match: {@code @mod}, {@code #tag}, or a plain word (see {@link #matchesTerm}). */
     private static boolean matches(MarketPayloads.Row row, String query) {
-        if (query.isEmpty()) {
-            return true;
+        for (String term : query.split("\\s+")) {
+            if (!term.isEmpty() && !matchesTerm(row, term)) {
+                return false;
+            }
         }
-        if (query.contains(":")) {
-            return row.item().toString().contains(query);
+        return true;
+    }
+
+    /**
+     * {@code @create} matches the mod's display name or ID; {@code #ingots} matches a tag's path, and {@code #c:ingots}
+     * the full tag ID. A plain word matches the display name or the ID's path. The namespace only counts when the
+     * word contains ':', or every vanilla item would match "mine".
+     */
+    private static boolean matchesTerm(MarketPayloads.Row row, String term) {
+        if (term.startsWith("@")) {
+            String mod = term.substring(1);
+            return row.item().getNamespace().contains(mod) || modName(row.item().getNamespace()).contains(mod);
         }
-        return displayName(row).toLowerCase(Locale.ROOT).contains(query) || row.item().getPath().contains(query);
+        if (term.startsWith("#")) {
+            String tag = term.substring(1);
+            boolean full = tag.contains(":");
+            return BuiltInRegistries.ITEM.wrapAsHolder(BuiltInRegistries.ITEM.get(row.item())).tags()
+                    .anyMatch(key -> (full ? key.location().toString() : key.location().getPath()).contains(tag));
+        }
+        if (term.contains(":")) {
+            return row.item().toString().contains(term);
+        }
+        return displayName(row).toLowerCase(Locale.ROOT).contains(term) || row.item().getPath().contains(term);
+    }
+
+    /** A mod's display name in lower case, or "" for a namespace no loaded mod owns. */
+    private static String modName(String namespace) {
+        return MOD_NAMES.computeIfAbsent(namespace, ns -> ModList.get().getModContainerById(ns)
+                .map(container -> container.getModInfo().getDisplayName().toLowerCase(Locale.ROOT))
+                .orElse(""));
     }
 
     @Nullable
