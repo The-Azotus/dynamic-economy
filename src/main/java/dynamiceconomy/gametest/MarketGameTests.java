@@ -1888,8 +1888,10 @@ public final class MarketGameTests {
             helper.assertValueEqual(PriceModel.arbitrageRisk(PriceModel.inputs(entry)), Optional.empty(), entry.itemId() + " round trip");
         }
         net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        // Recipes that may hide inputs (Create filling a bottle with unpriced honey) are listed for review by hand, not errors.
         List<String> profits = PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(), server.registryAccess(),
-                loaded.entries()).stream().map(p -> "%s via %s: costs %s, sells for %s".formatted(key(p.output()), p.recipe(),
+                loaded.entries()).stream().filter(p -> p.kind() != PriceSuggestion.ProfitKind.MAY_HIDE_INPUTS)
+                .map(p -> "%s via %s: costs %s, sells for %s".formatted(key(p.output()), p.recipe(),
                 p.buyCost().setScale(2, RoundingMode.HALF_UP), p.sellValue().setScale(2, RoundingMode.HALF_UP))).toList();
         helper.assertValueEqual(profits, List.of(), "no listed item can be crafted from bought ingredients and sold at a profit");
         List<String> chains = PriceSuggestion.chainProfits(PriceSuggestion.paths(server.getRecipeManager().getRecipes(),

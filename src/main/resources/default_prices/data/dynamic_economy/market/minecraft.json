@@ -4064,7 +4064,7 @@
     },
     {
       "item": "minecraft:prismarine_crystals",
-      "base_price": 4,
+      "base_price": 5,
       "class": "farmable"
     },
     {
@@ -4732,12 +4732,12 @@
     },
     {
       "item": "minecraft:soul_sand",
-      "base_price": 1,
+      "base_price": 2,
       "class": "common_resource"
     },
     {
       "item": "minecraft:soul_soil",
-      "base_price": 1,
+      "base_price": 2,
       "class": "common_resource"
     },
     {

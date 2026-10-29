@@ -89,13 +89,15 @@ public final class PriceSuggestion {
     private static final Set<String> COMPLETE_TYPES = Set.of("minecraft:crafting", "minecraft:smelting", "minecraft:blasting",
             "minecraft:smoking", "minecraft:campfire_cooking", "minecraft:stonecutting", "minecraft:smithing",
             "create:pressing", "create:cutting", "create:milling", "create:crushing", "create:mechanical_crafting",
-            "create:deploying", "create:item_application", "create:splashing", "create:haunting", "create:sandpaper_polishing",
+            "create:deploying", "create:item_application", "create:splashing", "create:sandpaper_polishing",
             "create:mixing", "create:compacting", "create:filling", "create:emptying");
 
     /**
      * Machine recipes whose real cost is energy, not their items: Oritech's particle collider turns netherrack into
      * netherite scrap, Modern Industrialization's quarry mines blocks with a drill it wears down, and Mekanism's sawmill
-     * makes more wood than it takes (1 plank to 6 sticks, a chest back into more planks than it took). Accepted as
+     * makes more wood than it takes (1 plank to 6 sticks, a chest back into more planks than it took). Create's haunting
+     * (a fan over soul fire, which turns sand into soul sand for free) is left out of {@link #COMPLETE_TYPES} for the
+     * same reason. Accepted as
      * generators, so like recipes that hide inputs they only price what nothing else makes, and never raise a price or
      * count as a complete chain.
      */

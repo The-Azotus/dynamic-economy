@@ -479,7 +479,7 @@
     },
     {
       "item": "create:crimsite",
-      "base_price": 10,
+      "base_price": 11,
       "class": "common_processed"
     },
     {
