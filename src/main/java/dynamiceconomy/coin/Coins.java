@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * The mod's coins. They are always registered, so none vanish if Numismatics is added to a world later, but they are
+ * The mod's coins, and the Bank Card. The coins are always registered, so none vanish if Numismatics is added to a world later, but they are
  * only in use (in the creative menu, and craftable) while the world uses the mod's own bank.
  * <p>
  * Coins, ours and Numismatics', can never be listed in the market: selling one would create money from nothing.
@@ -43,6 +43,8 @@ public final class Coins {
             ITEMS_BY_COIN.put(coin, ITEMS.register(coin.id(), () -> new CoinItem(coin, new Item.Properties())));
         }
     }
+
+    public static final DeferredItem<BankCardItem> BANK_CARD = ITEMS.register("bank_card", () -> new BankCardItem(new Item.Properties()));
 
     public static final DeferredHolder<RecipeSerializer<?>, CoinRecipe.Serializer> COIN_RECIPE =
             SERIALIZERS.register("coin_exchange", CoinRecipe.Serializer::new);
@@ -65,6 +67,9 @@ public final class Coins {
             // Client side: the bank is the one the server last said. Tabs are rebuilt on joining a world.
             if (event.getTabKey() == CreativeModeTabs.INGREDIENTS && ClientMarketState.bank() == BankKind.OWN) {
                 ITEMS_BY_COIN.values().forEach(event::accept);
+            }
+            if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+                event.accept(BANK_CARD);
             }
         });
     }

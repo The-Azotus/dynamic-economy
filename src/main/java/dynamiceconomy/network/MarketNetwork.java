@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public final class MarketNetwork {
-    private static final String PROTOCOL_VERSION = "8";
+    private static final String PROTOCOL_VERSION = "9";
 
     private MarketNetwork() {
     }
@@ -21,6 +21,12 @@ public final class MarketNetwork {
         registrar.playToServer(MarketPayloads.TradeRequest.TYPE, MarketPayloads.TradeRequest.CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 MarketSync.handleTradeRequest(payload, player);
+            }
+        });
+
+        registrar.playToServer(MarketPayloads.BankRequest.TYPE, MarketPayloads.BankRequest.CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                MarketSync.handleBankRequest(payload, player);
             }
         });
 
@@ -54,6 +60,8 @@ public final class MarketNetwork {
                 (payload, context) -> payload.rows().forEach(ClientMarketState::applyRow));
         registrar.playToClient(MarketPayloads.PlayerState.TYPE, MarketPayloads.PlayerState.CODEC,
                 (payload, context) -> ClientMarketState.applyPlayerState(payload));
+        registrar.playToClient(MarketPayloads.BankOutcome.TYPE, MarketPayloads.BankOutcome.CODEC,
+                (payload, context) -> ClientMarketState.applyBankOutcome(payload));
         registrar.playToClient(MarketPayloads.TradeOutcome.TYPE, MarketPayloads.TradeOutcome.CODEC,
                 (payload, context) -> ClientMarketState.applyOutcome(payload));
     }

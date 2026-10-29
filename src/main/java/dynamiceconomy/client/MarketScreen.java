@@ -1,10 +1,13 @@
 package dynamiceconomy.client;
 
+import dynamiceconomy.bank.CoinMath;
+import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.OrderMath;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
@@ -33,6 +36,9 @@ import java.util.Optional;
 /**
  * The market catalog: a searchable, sortable list of items with stock and prices, and buy/sell controls for the
  * selection. Everything here is a hint; the server re-checks every trade.
+ *
+ * <p>The Bank tab lists the coins the player carries and deposits or withdraws them. Opened from a Bank Card, the
+ * screen is bank-only: the other tabs are greyed out.
  *
  * <p>The screen sizes itself to the window. On a wide window the selected item's panel sits beside the list; on a
  * narrow one it sits below. The list shows as many rows as fit.
@@ -93,20 +99,24 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     /** The tabs along the top. Those that can't be opened are shown greyed out; Exchange joins them when it exists. */
     private enum Tab {
-        MARKET, CONTRACTS, LEADERBOARD, HISTORY;
+        MARKET, BANK, CONTRACTS, LEADERBOARD, HISTORY;
 
-        /** Contracts isn't built yet, and the server can turn the leaderboard off. */
-        boolean available() {
+        /** Contracts isn't built yet, the server can turn the leaderboard off, and a Bank Card opens only the bank. */
+        boolean available(boolean bankOnly) {
+            if (bankOnly) {
+                return this == BANK;
+            }
             return switch (this) {
-                case MARKET, HISTORY -> true;
+                case MARKET, BANK, HISTORY -> true;
                 case CONTRACTS -> false;
                 case LEADERBOARD -> ClientMarketState.leaderboardEnabled();
             };
         }
 
         /** Why a greyed-out tab can't be opened. */
-        Component unavailableReason() {
-            return Component.translatable(this == LEADERBOARD ? "screen.dynamic_economy.tab.turned_off"
+        Component unavailableReason(boolean bankOnly) {
+            return Component.translatable(bankOnly && this != CONTRACTS ? "screen.dynamic_economy.tab.terminal_only"
+                    : this == LEADERBOARD ? "screen.dynamic_economy.tab.turned_off"
                     : "screen.dynamic_economy.tab.coming_soon");
         }
 
@@ -122,6 +132,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private Tab tab = Tab.MARKET;
     private Button buyButton;
     private Button sellButton;
+    /** The quantity and trade controls, hidden on the Bank tab. */
+    private final List<AbstractWidget> marketControls = new ArrayList<>();
+    private EditBox withdrawAmount;
+    private Button withdrawButton;
+    private Button depositButton;
 
     // The layout, worked out from the window size in init(). Positions are relative to leftPos/topPos.
     private boolean wide;
@@ -179,6 +194,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     public MarketScreen(MarketMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
+        tab = menu.bankOnly() ? Tab.BANK : Tab.MARKET;
+    }
+
+    private boolean available(Tab t) {
+        return t.available(menu.bankOnly());
     }
 
     @Override
@@ -193,6 +213,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         // init() runs again on every resize; keep what the player typed.
         String searchText = search != null ? search.getValue() : "";
         String quantityText = quantity != null ? quantity.getValue() : "1";
+        String withdrawText = withdrawAmount != null ? withdrawAmount.getValue() : "";
+        marketControls.clear();
 
         int toolbarEnd = (wide ? panelX - MARGIN : imageWidth - MARGIN) - (balanceInTabRow ? 0 : balanceReserve() + 4);
         int searchWidth = Mth.clamp(toolbarEnd - LIST_X - 104, 60, 160);
@@ -216,25 +238,41 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         updateListButtons();
 
         int controlsX = wide ? panelX : MARGIN;
-        addRenderableWidget(Button.builder(Component.literal("-"), b -> adjustQuantity(-step()))
+        marketControls.add(addRenderableWidget(Button.builder(Component.literal("-"), b -> adjustQuantity(-step()))
                 .bounds(x + controlsX, y + controlsY, 16, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.step_hint")))
-                .build());
+                .build()));
         quantity = new EditBox(font, x + controlsX + 18, y + controlsY + 2, 40, 14, Component.translatable("screen.dynamic_economy.quantity"));
         quantity.setFilter(s -> s.isEmpty() || (s.length() <= 7 && s.chars().allMatch(Character::isDigit)));
         quantity.setValue(quantityText);
-        addRenderableWidget(quantity);
-        addRenderableWidget(Button.builder(Component.literal("+"), b -> adjustQuantity(step()))
+        marketControls.add(addRenderableWidget(quantity));
+        marketControls.add(addRenderableWidget(Button.builder(Component.literal("+"), b -> adjustQuantity(step()))
                 .bounds(x + controlsX + 60, y + controlsY, 16, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.step_hint")))
-                .build());
-        addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.max"), b -> fillMaxBuy())
+                .build()));
+        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.max"), b -> fillMaxBuy())
                 .bounds(x + controlsX + 78, y + controlsY, 28, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.max.tooltip")))
-                .build());
-        addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.all"), b -> fillSellAll())
+                .build()));
+        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.all"), b -> fillSellAll())
                 .bounds(x + controlsX + 108, y + controlsY, 24, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.all.tooltip")))
+                .build()));
+
+        // The Bank tab's controls sit where the quantity and trade controls do.
+        int bankWidth = wide ? panelWidth : CONTROLS_WIDTH;
+        withdrawAmount = new EditBox(font, x + controlsX, y + controlsY + 2, bankWidth - 64, 14,
+                Component.translatable("screen.dynamic_economy.bank.amount"));
+        withdrawAmount.setHint(Component.translatable("screen.dynamic_economy.bank.amount").withColor(TEXT_DIM));
+        withdrawAmount.setFilter(s -> s.isEmpty() || (s.length() <= 10 && s.chars().allMatch(Character::isDigit)));
+        withdrawAmount.setValue(withdrawText);
+        addRenderableWidget(withdrawAmount);
+        withdrawButton = addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.bank.withdraw"), b -> withdraw())
+                .bounds(x + controlsX + bankWidth - 62, y + controlsY, 62, 18)
+                .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.bank.withdraw.tooltip")))
+                .build());
+        depositButton = addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.bank.deposit"), b -> deposit())
+                .bounds(x + (wide ? panelX : MARGIN), y + tradeY, panelWidth, 18)
                 .build());
 
         if (wide) {
@@ -249,6 +287,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             sellButton = addRenderableWidget(Button.builder(Component.empty(), b -> trade(false))
                     .bounds(x + MARGIN + panelWidth - half, y + tradeY, half, 18).build());
         }
+        marketControls.add(buyButton);
+        marketControls.add(sellButton);
+        updateListButtons();
 
         seenVersion = -1;
         totalsRow = null;
@@ -331,10 +372,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             rebuildList(query);
         }
         // The server can turn the leaderboard off while its tab is open.
-        if (!tab.available()) {
-            selectTab(Tab.MARKET);
+        if (!available(tab)) {
+            selectTab(menu.bankOnly() ? Tab.BANK : Tab.MARKET);
         }
         refreshButtons();
+        refreshBankButtons();
         requestHistoryIfStale();
     }
 
@@ -366,7 +408,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     /** Switches tabs, asking the server for the player's trades or the leaderboard when those open. */
     private void selectTab(Tab next) {
-        if (!next.available() || next == tab) {
+        if (!available(next) || next == tab) {
             return;
         }
         tab = next;
@@ -388,7 +430,14 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         search.visible = market;
         sortButton.visible = market;
         filterButton.visible = market;
-        if (!market && getFocused() == search) {
+        boolean bank = tab == Tab.BANK;
+        marketControls.forEach(widget -> widget.visible = !bank);
+        if (withdrawAmount != null) {
+            withdrawAmount.visible = bank;
+            withdrawButton.visible = bank;
+            depositButton.visible = bank;
+        }
+        if (getFocused() == search && !market || getFocused() == quantity && bank || getFocused() == withdrawAmount && !bank) {
             setFocused(null);
         }
         String sortKey = sort.name().toLowerCase(Locale.ROOT);
@@ -559,6 +608,68 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
     }
 
+    // ---- Bank ------------------------------------------------------------------------------------------------
+
+    /** The amount typed to withdraw, or 0 if none. Ten digits can exceed one transaction; the server says so. */
+    private long withdrawValue() {
+        try {
+            return Math.max(0, Long.parseLong(withdrawAmount.getValue()));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** Why the typed amount can't be withdrawn, or null if it looks fine. The server re-checks everything. */
+    @Nullable
+    private Component withdrawProblem(long amount, @Nullable long[] counts) {
+        if (amount > Integer.MAX_VALUE) {
+            return Component.translatable("screen.dynamic_economy.bank.result.too_large");
+        }
+        if (counts == null) {
+            return Component.translatable("screen.dynamic_economy.bank.result.bank_unavailable");
+        }
+        if (!ClientMarketState.looksAffordable(amount)) {
+            return Component.translatable("screen.dynamic_economy.bank.result.no_funds");
+        }
+        if (!ClientMarketState.coinsFit(counts)) {
+            return Component.translatable("screen.dynamic_economy.bank.result.no_space");
+        }
+        return null;
+    }
+
+    /** The fewest coins for {@code amount}, or null if the coins aren't known. */
+    @Nullable
+    private static long[] coinsFor(long amount) {
+        List<Denomination> coins = ClientMarketState.coins();
+        return coins.isEmpty() || amount > Integer.MAX_VALUE ? null : CoinMath.breakdown(coins, amount);
+    }
+
+    private void refreshBankButtons() {
+        if (tab != Tab.BANK) {
+            return;
+        }
+        long carried = ClientMarketState.carriedCoinValue();
+        depositButton.active = carried > 0;
+        depositButton.setMessage(carried > 0
+                ? Component.translatable("screen.dynamic_economy.bank.deposit_for", PriceFormat.money(PriceFormat.spurs(carried)))
+                : Component.translatable("screen.dynamic_economy.bank.deposit"));
+        depositButton.setTooltip(Tooltip.create(Component.translatable(carried > 0
+                ? "screen.dynamic_economy.bank.deposit.tooltip" : "screen.dynamic_economy.bank.result.no_coins")));
+        long amount = withdrawValue();
+        withdrawButton.active = amount > 0 && withdrawProblem(amount, coinsFor(amount)) == null;
+    }
+
+    private void deposit() {
+        PacketDistributor.sendToServer(new MarketPayloads.BankRequest(true, 0));
+    }
+
+    private void withdraw() {
+        long amount = withdrawValue();
+        if (amount > 0) {
+            PacketDistributor.sendToServer(new MarketPayloads.BankRequest(false, amount));
+        }
+    }
+
     private void trade(boolean buy) {
         MarketPayloads.Row row = selectedRow();
         int qty = quantityValue();
@@ -584,14 +695,14 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             Tab clickedTab = tabAt(mouseX, mouseY);
             if (clickedTab != null) {
-                if (clickedTab.available() && clickedTab != tab) {
+                if (available(clickedTab) && clickedTab != tab) {
                     minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     selectTab(clickedTab);
                 }
                 return true;
             }
             int index = rowAt(mouseX, mouseY);
-            if (index >= 0 && tab != Tab.LEADERBOARD) {
+            if (index >= 0 && (tab == Tab.MARKET || tab == Tab.HISTORY)) {
                 // Clicking a past trade goes back to the market with that item selected, to trade it again.
                 selected = showingTrades() ? trades().get(index).item() : visible.get(index).item();
                 selectTab(Tab.MARKET);
@@ -628,6 +739,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         return switch (tab) {
             case HISTORY -> trades().size();
             case LEADERBOARD -> leaderboardLines().size();
+            case BANK -> ClientMarketState.coins().size();
             default -> visible.size();
         };
     }
@@ -650,7 +762,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         // Keep typing in a text box from triggering the inventory key, which would close the screen.
         if (keyCode != GLFW.GLFW_KEY_ESCAPE && getFocused() instanceof EditBox box && box.canConsumeInput()) {
-            if (keyCode == GLFW.GLFW_KEY_ENTER && box == quantity) {
+            if (keyCode == GLFW.GLFW_KEY_ENTER && (box == quantity || box == withdrawAmount)) {
                 setFocused(null);
                 return true;
             }
@@ -688,8 +800,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         Tab hoveredTab = tabAt(mouseX, mouseY);
         int index = rowAt(mouseX, mouseY);
         MarketPayloads.Row chartRow = selectedRow();
-        if (hoveredTab != null && !hoveredTab.available()) {
-            graphics.renderTooltip(font, hoveredTab.unavailableReason(), mouseX, mouseY);
+        if (hoveredTab != null && !available(hoveredTab)) {
+            graphics.renderTooltip(font, hoveredTab.unavailableReason(menu.bankOnly()), mouseX, mouseY);
         } else if (chartRow != null && isOverChart(mouseX, mouseY)) {
             graphics.renderTooltip(font, chartTooltip(chartRow), Optional.empty(), mouseX, mouseY);
         } else if (index >= 0 && tab == Tab.MARKET) {
@@ -710,10 +822,15 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         switch (tab) {
             case HISTORY -> renderTradeList(graphics, x, y, mouseX, mouseY);
             case LEADERBOARD -> renderLeaderboard(graphics, x, y);
+            case BANK -> renderCoinList(graphics, x, y);
             default -> renderCatalogList(graphics, x, y, mouseX, mouseY);
         }
         renderScrollbar(graphics, x, y);
 
+        if (tab == Tab.BANK) {
+            renderBankPanel(graphics, x, y);
+            return;
+        }
         MarketPayloads.Row row = selectedRow();
         if (row != null) {
             int nameWidth = (wide ? panelWidth : chartX - MARGIN - 4) - 20;
@@ -738,11 +855,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             int right = left + tabWidth[t.ordinal()];
             int top = y + TAB_Y;
             boolean open = t == tab;
-            graphics.fill(left, top, right, top + TAB_HEIGHT, open ? TAB_ACTIVE : t == hovered && t.available() ? ROW_HOVER : TAB_IDLE);
+            graphics.fill(left, top, right, top + TAB_HEIGHT, open ? TAB_ACTIVE : t == hovered && available(t) ? ROW_HOVER : TAB_IDLE);
             if (open) {
                 graphics.fill(left, top + TAB_HEIGHT - 1, right, top + TAB_HEIGHT, 0xFF000000 | TEXT_MONEY);
             }
-            graphics.drawCenteredString(font, t.label(), (left + right) / 2, top + 3, open ? TEXT : t.available() ? TEXT_DIM : TEXT_OFF);
+            graphics.drawCenteredString(font, t.label(), (left + right) / 2, top + 3, open ? TEXT : available(t) ? TEXT_DIM : TEXT_OFF);
         }
         graphics.fill(x + MARGIN, y + TAB_Y + TAB_HEIGHT, x + imageWidth - MARGIN, y + TAB_Y + TAB_HEIGHT + 1, PANEL_BORDER);
     }
@@ -813,6 +930,82 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                             ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.leaderboard.none"),
                     x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
         }
+    }
+
+    /** The bank's coins, largest first: what each is worth and how many the player carries. */
+    private void renderCoinList(GuiGraphics graphics, int x, int y) {
+        List<Denomination> coins = ClientMarketState.coins();
+        int listRight = LIST_X + listWidth;
+        int worthRight = listRight - 60;
+        graphics.drawString(font, Component.translatable("screen.dynamic_economy.bank.col.coin"), x + LIST_X + 22, y + HEADER_Y, TEXT_DIM, false);
+        drawRight(graphics, Component.translatable("screen.dynamic_economy.bank.col.worth"), x + worthRight, y + HEADER_Y, TEXT_DIM);
+        drawRight(graphics, Component.translatable("screen.dynamic_economy.col.have"), x + listRight - 2, y + HEADER_Y, TEXT_DIM);
+        for (int i = 0; i < rows && scroll + i < coins.size(); i++) {
+            Denomination coin = coins.get(scroll + i);
+            int rowY = y + LIST_Y + i * ROW_HEIGHT;
+            if (i % 2 == 1) {
+                graphics.fill(x + LIST_X, rowY, x + listRight, rowY + ROW_HEIGHT, ROW_ALT);
+            }
+            graphics.renderItem(new ItemStack(coin.item()), x + LIST_X + 2, rowY + 1);
+            int textY = rowY + 5;
+            graphics.drawString(font, coin.item().getDescription(), x + LIST_X + 22, textY, TEXT, false);
+            drawRight(graphics, PriceFormat.money(PriceFormat.spurs(coin.value())), x + worthRight, textY, TEXT_MONEY);
+            int held = ClientMarketState.held(coin);
+            drawRight(graphics, Component.literal(PriceFormat.count(held)), x + listRight - 2, textY, held > 0 ? TEXT : TEXT_DIM);
+        }
+        if (coins.isEmpty()) {
+            graphics.drawCenteredString(font, Component.translatable("screen.dynamic_economy.bank.result.bank_unavailable"),
+                    x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
+        }
+    }
+
+    /** What the bank holds and the carried coins are worth, and what a withdrawal would give, or why it can't. */
+    private void renderBankPanel(GuiGraphics graphics, int x, int y) {
+        int left = x + panelX;
+        long balance = ClientMarketState.balance();
+        Component inBank = Component.translatable("screen.dynamic_economy.bank.in_bank",
+                PriceFormat.money(PriceFormat.spurs(balance) + (ClientMarketState.capped(balance) ? "+" : "")));
+        Component carried = Component.translatable("screen.dynamic_economy.bank.carried",
+                PriceFormat.money(PriceFormat.spurs(ClientMarketState.carriedCoinValue())));
+        if (wide) {
+            graphics.drawString(font, font.plainSubstrByWidth(inBank.getString(), panelWidth), left, y + panelY + 4, TEXT_MONEY, false);
+            graphics.drawString(font, font.plainSubstrByWidth(carried.getString(), panelWidth), left, y + panelY + 16, TEXT, false);
+            List<net.minecraft.util.FormattedCharSequence> help = font.split(
+                    Component.translatable("screen.dynamic_economy.bank.help"), panelWidth);
+            for (int i = 0; i < help.size() && panelY + 32 + i * 10 < controlsY - 10; i++) {
+                graphics.drawString(font, help.get(i), left, y + panelY + 32 + i * 10, TEXT_DIM, false);
+            }
+        } else {
+            String both = inBank.getString() + "   " + carried.getString();
+            graphics.drawString(font, font.plainSubstrByWidth(both, panelWidth), left, y + panelY + 4, TEXT, false);
+        }
+
+        long amount = withdrawValue();
+        long[] counts = coinsFor(amount);
+        Component problem = amount > 0 ? withdrawProblem(amount, counts) : null;
+        Component note;
+        int color = TEXT_DIM;
+        if (amount <= 0) {
+            note = Component.translatable("screen.dynamic_economy.bank.amount_hint");
+        } else if (problem != null) {
+            note = problem;
+            color = TEXT_BAD;
+        } else {
+            note = Component.translatable("screen.dynamic_economy.bank.as", coinList(counts));
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(note.getString(), noteWidth), x + noteX, y + noteY, color, false);
+    }
+
+    /** "2 × Crown, 1 × Bit". */
+    private static String coinList(long[] counts) {
+        List<Denomination> coins = ClientMarketState.coins();
+        List<String> parts = new ArrayList<>();
+        for (int i = 0; i < coins.size(); i++) {
+            if (counts[i] > 0) {
+                parts.add(counts[i] + " × " + coins.get(i).item().getDescription().getString());
+            }
+        }
+        return String.join(", ", parts);
     }
 
     /** "just now", "5 min ago", "3 h ago", "2 d ago". */
@@ -991,7 +1184,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private boolean isOverChart(double mouseX, double mouseY) {
         double x = mouseX - leftPos - chartX;
         double y = mouseY - topPos - chartY;
-        return selectedRow() != null && x >= 0 && x < chartWidth && y >= 0 && y < chartHeight;
+        return tab != Tab.BANK && selectedRow() != null && x >= 0 && x < chartWidth && y >= 0 && y < chartHeight;
     }
 
     private List<Component> chartTooltip(MarketPayloads.Row row) {

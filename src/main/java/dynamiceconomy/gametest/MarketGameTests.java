@@ -5,6 +5,8 @@ import dynamiceconomy.MarketConfig;
 import dynamiceconomy.MarketAccess;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.CoinMath;
+import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.bank.OwnBank;
 import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.block.MarketBlocks;
@@ -32,6 +34,7 @@ import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketListing;
+import dynamiceconomy.service.BankService;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.OrderMath;
 import dynamiceconomy.service.Leaderboard;
@@ -3005,6 +3008,178 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    // ---- Bank tab -----------------------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void withdrawalsUseTheFewestCoins(GameTestHelper helper) {
+        List<Denomination> ours = new OwnBank().coins();
+        helper.assertValueEqual(ours.get(0).item(), Coins.item(Coin.OMEGA), "ours run from Omega");
+        helper.assertValueEqual(ours.get(ours.size() - 1).item(), Coins.item(Coin.BIT), "down to Bit");
+        // Numismatics' values, on stand-in items: only the values matter here.
+        List<Denomination> numismatics = List.of(new Denomination(Items.STONE, 4096), new Denomination(Items.DIRT, 512),
+                new Denomination(Items.SAND, 64), new Denomination(Items.GRAVEL, 16), new Denomination(Items.CLAY, 8),
+                new Denomination(Items.FLINT, 1));
+        for (List<Denomination> coins : List.of(ours, numismatics)) {
+            int limit = 20_000;
+            int[] fewest = fewestCoins(coins, limit);
+            for (int amount = 0; amount <= limit; amount++) {
+                long[] counts = CoinMath.breakdown(coins, amount);
+                helper.assertValueEqual(CoinMath.value(coins, counts), (long) amount, "exactly " + amount);
+                helper.assertValueEqual(java.util.Arrays.stream(counts).sum(), (long) fewest[amount], "fewest coins for " + amount);
+            }
+        }
+        long[] mixed = CoinMath.breakdown(ours, 4_096 + 3 * 512 + 7);
+        helper.assertValueEqual(java.util.Arrays.toString(mixed), "[0, 0, 0, 1, 3, 0, 0, 7]", "a Crown, 3 Marks and 7 Bits");
+        helper.succeed();
+    }
+
+    /** The fewest coins for every amount up to {@code limit}, worked out the slow, sure way. */
+    private static int[] fewestCoins(List<Denomination> coins, int limit) {
+        int[] fewest = new int[limit + 1];
+        for (int amount = 1; amount <= limit; amount++) {
+            fewest[amount] = Integer.MAX_VALUE;
+            for (Denomination coin : coins) {
+                if (coin.value() <= amount && fewest[amount - coin.value()] + 1 < fewest[amount]) {
+                    fewest[amount] = fewest[amount - coin.value()] + 1;
+                }
+            }
+        }
+        return fewest;
+    }
+
+    @GameTest(template = EMPTY)
+    public static void depositThenWithdrawReturnsTheSameValue(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        List<Denomination> coins = f.bank().coins();
+        helper.assertFalse(coins.isEmpty(), "the world's bank has coins");
+        // A few of every coin, worth well within a test balance.
+        long carried = 0;
+        for (int i = 0; i < coins.size(); i++) {
+            int count = coins.size() - i;
+            f.give(new ItemStack(coins.get(i).item(), count));
+            carried += (long) count * coins.get(i).value();
+        }
+        int before = f.balance();
+        BankService.Outcome in = BankService.depositAll(f.player);
+        helper.assertTrue(in.ok() && in.amount() == carried, "deposited what was carried: " + in);
+        helper.assertValueEqual((long) f.balance(), before + carried, "balance");
+        helper.assertValueEqual(coinValue(f, coins), 0L, "no coins left");
+
+        BankService.Outcome out = BankService.withdraw(f.player, carried);
+        helper.assertTrue(out.ok() && out.amount() == carried, "withdrew it all: " + out);
+        helper.assertValueEqual(f.balance(), before, "balance back where it was");
+        helper.assertValueEqual(coinValue(f, coins), carried, "and exactly the same value in coins");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void depositTakesOnlyPlainCoinsFromTheMainInventory(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        Denomination smallest = smallestCoin(f);
+        ItemStack renamed = new ItemStack(smallest.item(), 5);
+        renamed.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.literal("keepsake"));
+        f.give(renamed);
+        f.player.getInventory().offhand.set(0, new ItemStack(smallest.item(), 7));
+        f.assertRejectedUnchanged(BankService.Result.NO_COINS, () -> BankService.depositAll(f.player));
+        f.give(new ItemStack(smallest.item(), 3));
+        BankService.Outcome outcome = BankService.depositAll(f.player);
+        helper.assertTrue(outcome.ok() && outcome.amount() == 3L * smallest.value(), "only the 3 plain coins: " + outcome);
+        helper.assertTrue(f.player.getInventory().items.stream().anyMatch(stack -> stack.is(smallest.item())
+                && stack.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME) && stack.getCount() == 5), "the renamed coins stay");
+        helper.assertValueEqual(f.player.getInventory().offhand.get(0).getCount(), 7, "and so does the offhand");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void withdrawRefusesWhatItCantDoAndChangesNothing(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        Denomination smallest = smallestCoin(f);
+        f.assertRejectedUnchanged(BankService.Result.NO_FUNDS, () -> BankService.withdraw(f.player, 10));
+        f.assertRejectedUnchanged(BankService.Result.INVALID_AMOUNT, () -> BankService.withdraw(f.player, 0));
+        f.assertRejectedUnchanged(BankService.Result.TOO_LARGE, () -> BankService.withdraw(f.player, Integer.MAX_VALUE + 1L));
+
+        f.deposit(1000);
+        // A full inventory: the coins wouldn't fit, so nothing is taken and nothing is dropped.
+        f.giveMany(Items.COBBLESTONE, 36 * 64);
+        f.assertRejectedUnchanged(BankService.Result.NO_SPACE, () -> BankService.withdraw(f.player, 9));
+        // One free slot fits one kind of coin, but not two.
+        f.player.getInventory().items.set(0, ItemStack.EMPTY);
+        f.assertRejectedUnchanged(BankService.Result.NO_SPACE, () -> BankService.withdraw(f.player, smallest.value() + coinAbove(f, smallest).value()));
+        BankService.Outcome one = BankService.withdraw(f.player, smallest.value());
+        helper.assertTrue(one.ok(), "one coin fits the free slot: " + one);
+        // A part-filled stack of that coin is room too, even with no slot free.
+        BankService.Outcome topUp = BankService.withdraw(f.player, smallest.value());
+        helper.assertTrue(topUp.ok() && f.count(smallest.item()) == 2, "tops up the stack: " + topUp);
+        helper.assertValueEqual(f.balance(), 1000 - 2 * smallest.value(), "paid for both");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void bankCardOpensOnlyTheBank(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        MarketMenu menu = MarketMenu.forBankCard();
+        helper.assertTrue(menu.bankOnly(), "bank-only");
+        helper.assertFalse(menu.stillValid(f.player), "not without a card");
+        f.give(new ItemStack(Coins.BANK_CARD.get()));
+        helper.assertTrue(menu.stillValid(f.player), "valid while the player carries a card");
+
+        // A trade sent from a Bank Card's screen is ignored, however it's dressed up.
+        f.setStock(Items.IRON_INGOT, 5);
+        f.deposit(10_000);
+        f.player.containerMenu = menu;
+        try {
+            MarketSync.handleTradeRequest(new MarketPayloads.TradeRequest(true, key(Items.IRON_INGOT), 1,
+                    f.quote(Items.IRON_INGOT).buyPrice()), f.player);
+        } finally {
+            f.player.containerMenu = f.player.inventoryMenu;
+        }
+        helper.assertValueEqual(f.balance(), 10_000, "nothing was paid");
+        helper.assertValueEqual(f.count(Items.IRON_INGOT), 0L, "nothing was bought");
+        helper.assertFalse(MarketMenu.forCommand().bankOnly(), "the full market isn't bank-only");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void bankCardCraftsFromACoinWorthEight(GameTestHelper helper) {
+        boolean own = WorldBank.kind(helper.getLevel().getServer()) == BankKind.OWN;
+        Item chip = Coins.item(Coin.CHIP);
+        Optional<ItemStack> fromChip = craft(helper, Items.PAPER, Items.GOLD_INGOT, chip, Items.AIR, Items.AIR, Items.AIR,
+                Items.AIR, Items.AIR, Items.AIR);
+        helper.assertTrue(fromChip.isPresent() && fromChip.get().is(Coins.BANK_CARD.get()), "paper, gold and a Chip: " + fromChip);
+        if (net.neoforged.fml.ModList.get().isLoaded(NumismaticsBridge.MOD_ID)) {
+            Item bevel = BuiltInRegistries.ITEM.get(ResourceLocation.parse("numismatics:bevel"));
+            Optional<ItemStack> fromBevel = craft(helper, Items.PAPER, Items.GOLD_INGOT, bevel, Items.AIR, Items.AIR, Items.AIR,
+                    Items.AIR, Items.AIR, Items.AIR);
+            helper.assertTrue(fromBevel.isPresent() && fromBevel.get().is(Coins.BANK_CARD.get()), "or a Bevel: " + fromBevel);
+        }
+        helper.assertTrue(own || net.neoforged.fml.ModList.get().isLoaded(NumismaticsBridge.MOD_ID),
+                "with Numismatics' bank, Numismatics is there to give a Bevel");
+        helper.succeed();
+    }
+
+    private static Denomination smallestCoin(Fixture f) {
+        List<Denomination> coins = f.bank().coins();
+        return coins.get(coins.size() - 1);
+    }
+
+    private static Denomination coinAbove(Fixture f, Denomination coin) {
+        List<Denomination> coins = f.bank().coins();
+        return coins.get(coins.indexOf(coin) - 1);
+    }
+
+    /** What the plain coins of {@code coins} in the main inventory are worth. */
+    private static long coinValue(Fixture f, List<Denomination> coins) {
+        long total = 0;
+        for (ItemStack stack : f.player.getInventory().items) {
+            for (Denomination coin : coins) {
+                if (BankService.isPlain(stack, coin)) {
+                    total += (long) stack.getCount() * coin.value();
+                }
+            }
+        }
+        return total;
+    }
+
     // ---- Banks --------------------------------------------------------------------------------------------------
 
     @GameTest(template = EMPTY)
@@ -3171,6 +3346,23 @@ public final class MarketGameTests {
         }
 
         /** A rejected trade must leave balance, inventory, stock, price factors, history and money counts as they were. */
+        /** A bank request that must be refused and change nothing: balance, main inventory or offhand. */
+        void assertRejectedUnchanged(BankService.Result expected, java.util.function.Supplier<BankService.Outcome> request) {
+            List<ItemStack> before = new ArrayList<>();
+            player.getInventory().items.forEach(s -> before.add(s.copy()));
+            ItemStack offhandBefore = player.getInventory().offhand.get(0).copy();
+            int balanceBefore = balance();
+            BankService.Outcome outcome = request.get();
+            helper.assertValueEqual(outcome.result(), expected, "bank result");
+            helper.assertValueEqual(outcome.amount(), 0L, "nothing moved");
+            helper.assertValueEqual(balance(), balanceBefore, "balance after " + expected);
+            NonNullList<ItemStack> after = player.getInventory().items;
+            for (int slot = 0; slot < after.size(); slot++) {
+                helper.assertTrue(ItemStack.matches(after.get(slot), before.get(slot)), "inventory slot " + slot + " changed after " + expected);
+            }
+            helper.assertTrue(ItemStack.matches(player.getInventory().offhand.get(0), offhandBefore), "offhand changed after " + expected);
+        }
+
         void assertRejectedUnchanged(Result expected, java.util.function.Supplier<TradeResult> trade) {
             List<ItemStack> inventoryBefore = new ArrayList<>();
             player.getInventory().items.forEach(s -> inventoryBefore.add(s.copy()));

@@ -11,6 +11,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -98,6 +99,11 @@ public final class WorldBank extends SavedData {
         @Override
         public boolean canListAccounts() {
             return false;
+        }
+
+        @Override
+        public List<Denomination> coins() {
+            return List.of();
         }
     }
 }

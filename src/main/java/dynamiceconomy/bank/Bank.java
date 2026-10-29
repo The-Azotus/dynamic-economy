@@ -2,6 +2,7 @@ package dynamiceconomy.bank;
 
 import net.minecraft.world.entity.player.Player;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +30,9 @@ public interface Bank {
      * {@link Long#MAX_VALUE} when every balance is shown in full.
      */
     long displayCap();
+
+    /** The coins this bank takes in and pays out, largest first; empty if they can't be found. */
+    List<Denomination> coins();
 
     /** One player's account. Single transactions are {@code int}, as both banks take; balances may be larger. */
     interface Account {

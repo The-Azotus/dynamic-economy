@@ -2,12 +2,15 @@ package dynamiceconomy.network;
 
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.Denomination;
+import dynamiceconomy.service.BankService;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -130,14 +133,19 @@ public final class MarketPayloads {
         }
     }
 
+    private static final StreamCodec<RegistryFriendlyByteBuf, Denomination> DENOMINATION_CODEC = StreamCodec.composite(
+            ByteBufCodecs.registry(Registries.ITEM), Denomination::item,
+            ByteBufCodecs.VAR_INT, Denomination::value,
+            Denomination::new);
+
     /**
      * Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes, with
      * the server's order limit so the screen can stop an oversized order before it is sent, whether the leaderboard
-     * tab is turned on, and the world's bank: it names the money unit, and its {@code balanceCap} is the largest
-     * balance it shows (a balance at the cap means "at least this much").
+     * tab is turned on, and the world's bank: it names the money unit, its {@code balanceCap} is the largest balance
+     * it shows (a balance at the cap means "at least this much"), and {@code coins} are what the Bank tab moves.
      */
     public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled, BankKind bank,
-                           long balanceCap) implements CustomPacketPayload {
+                           long balanceCap, List<Denomination> coins) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
         public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.composite(
                 Row.CODEC.apply(ByteBufCodecs.list()), Snapshot::rows,
@@ -145,6 +153,7 @@ public final class MarketPayloads {
                 ByteBufCodecs.BOOL, Snapshot::leaderboardEnabled,
                 ByteBufCodecs.idMapper(i -> BankKind.values()[i], BankKind::ordinal), Snapshot::bank,
                 ByteBufCodecs.VAR_LONG, Snapshot::balanceCap,
+                DENOMINATION_CODEC.apply(ByteBufCodecs.list(32)), Snapshot::coins,
                 Snapshot::new);
 
         @Override
@@ -167,8 +176,9 @@ public final class MarketPayloads {
     }
 
     /**
-     * Server to client: this player's balance, how many tradeable copies of each listed item they hold, and how much
-     * room their main inventory has (empty slots, plus the space left in stacks of each held item). The client cannot
+     * Server to client: this player's balance, how many tradeable copies of each listed item (and plain coins of the
+     * bank's set) they hold, and how much room their main inventory has (empty slots, plus the space left in stacks of
+     * each of those). The client cannot
      * work this out itself: vanilla does not sync the inventory while a slotless menu is open.
      */
     public record PlayerState(long balance, Map<ResourceLocation, Integer> held, int emptySlots,
@@ -188,6 +198,35 @@ public final class MarketPayloads {
 
         @Override
         public Type<PlayerState> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: from the Bank tab, deposit every coin in the main inventory, or withdraw {@code amount}. */
+    public record BankRequest(boolean deposit, long amount) implements CustomPacketPayload {
+        public static final Type<BankRequest> TYPE = payloadType("bank_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, BankRequest> CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL, BankRequest::deposit,
+                ByteBufCodecs.VAR_LONG, BankRequest::amount,
+                BankRequest::new);
+
+        @Override
+        public Type<BankRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /** Server to client: how a bank request went, and the amount moved. */
+    public record BankOutcome(boolean deposit, BankService.Result result, long amount) implements CustomPacketPayload {
+        public static final Type<BankOutcome> TYPE = payloadType("bank_outcome");
+        public static final StreamCodec<RegistryFriendlyByteBuf, BankOutcome> CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL, BankOutcome::deposit,
+                ByteBufCodecs.idMapper(i -> BankService.Result.values()[i], BankService.Result::ordinal), BankOutcome::result,
+                ByteBufCodecs.VAR_LONG, BankOutcome::amount,
+                BankOutcome::new);
+
+        @Override
+        public Type<BankOutcome> type() {
             return TYPE;
         }
     }

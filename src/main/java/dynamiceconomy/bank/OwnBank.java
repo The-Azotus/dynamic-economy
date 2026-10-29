@@ -1,12 +1,16 @@
 package dynamiceconomy.bank;
 
+import dynamiceconomy.coin.Coin;
+import dynamiceconomy.coin.Coins;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.saveddata.SavedData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +60,16 @@ public final class OwnBank extends SavedData implements Bank {
     @Override
     public long displayCap() {
         return Long.MAX_VALUE;
+    }
+
+    /** Omega down to Bit. */
+    @Override
+    public List<Denomination> coins() {
+        List<Denomination> coins = new ArrayList<>();
+        for (Coin coin : Coin.values()) {
+            coins.add(0, new Denomination(Coins.item(coin), coin.value()));
+        }
+        return coins;
     }
 
     private long balance(UUID owner) {

@@ -3,15 +3,21 @@ package dynamiceconomy.compat;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.Denomination;
 import dev.ithundxr.createnumismatics.Numismatics;
+import dev.ithundxr.createnumismatics.content.backend.Coin;
 import dev.ithundxr.createnumismatics.content.backend.BankAccount;
 import dev.ithundxr.createnumismatics.content.backend.GlobalBankManager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +39,7 @@ public final class NumismaticsBridge {
     private static final boolean AVAILABLE = ModList.get().isLoaded(MOD_ID) && Present.probe();
     /** Listing accounts (for the leaderboard) is checked separately, so a mismatch there never stops trading. */
     private static final boolean ACCOUNTS_LISTABLE = AVAILABLE && Present.probeAccountList();
+
 
     private NumismaticsBridge() {
     }
@@ -89,6 +96,17 @@ public final class NumismaticsBridge {
         public long displayCap() {
             return DISPLAYED_BALANCE_CAP;
         }
+
+        /** Numismatics' coins, Sun down to Spur, read from its own coin list once items exist; empty if it doesn't match. */
+        private List<Denomination> coins;
+
+        @Override
+        public List<Denomination> coins() {
+            if (coins == null) {
+                coins = Present.coins();
+            }
+            return coins;
+        }
     }
 
     /** Everything that touches Numismatics classes. */
@@ -121,6 +139,26 @@ public final class NumismaticsBridge {
                 DynamicEconomy.LOGGER.error("Numismatics account list does not match what this mod was built against; "
                         + "the leaderboard will be empty", e);
                 return false;
+            }
+        }
+
+        static List<Denomination> coins() {
+            try {
+                requireReturn(Coin.class.getField("value").getType(), int.class);
+                requireReturn(Coin.class.getMethod("asStack").getReturnType(), ItemStack.class);
+                List<Denomination> coins = new ArrayList<>();
+                for (Coin coin : Coin.values()) {
+                    coins.add(new Denomination(coin.asStack().getItem(), coin.value));
+                }
+                coins.sort(Comparator.comparingInt(Denomination::value).reversed());
+                if (coins.isEmpty() || coins.get(coins.size() - 1).value() != 1) {
+                    throw new IllegalStateException("Numismatics has no coin worth 1 spur: " + coins);
+                }
+                return List.copyOf(coins);
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+                DynamicEconomy.LOGGER.error("Numismatics coins do not match what this mod was built against; "
+                        + "the Bank tab can't deposit or withdraw them", e);
+                return List.of();
             }
         }
 

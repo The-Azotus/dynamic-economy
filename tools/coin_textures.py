@@ -1,6 +1,7 @@
-"""Draws the placeholder coin textures (16x16 PNGs) into the mod's resources.
+"""Draws the placeholder coin and Bank Card textures (16x16 PNGs) into the mod's resources.
 
-Each coin is a shaded disc in its metal's colour with an embossed emblem. Run from the repository root:
+Each coin is a shaded disc in its metal's colour with an embossed emblem; the card is a dark blue card with a gold
+chip. Run from the repository root:
     python tools/coin_textures.py
 Replace the PNGs by hand to use real art; this script overwrites them.
 """
@@ -112,6 +113,30 @@ def draw(face, emblem_colour, emblem):
     return pixels
 
 
+def draw_card():
+    blue, edge, light = (0x2A, 0x4A, 0x8C), (0x16, 0x26, 0x4A), (0x4A, 0x72, 0xC0)
+    gold, gold_dark = (0xF2, 0xC9, 0x4C), (0xB0, 0x8A, 0x26)
+    pixels = [[(0, 0, 0, 0)] * 16 for _ in range(16)]
+    top, bottom, left, right = 3, 12, 1, 14
+    for y in range(top, bottom + 1):
+        for x in range(left, right + 1):
+            corner = (x in (left, right)) and (y in (top, bottom))
+            if corner:
+                continue
+            border = x in (left, right) or y in (top, bottom)
+            pixels[y][x] = (edge if border else blue) + (255,)
+    for x in range(left + 1, right):
+        pixels[top + 1][x] = light + (255,)  # sheen along the top
+    for x in range(left + 1, right):
+        pixels[bottom - 2][x] = edge + (255,)  # magnetic stripe
+    for y in range(6, 9):
+        for x in range(3, 6):
+            pixels[y][x] = (gold_dark if (x + y) % 2 else gold) + (255,)  # chip
+    for x in range(8, 13, 2):
+        pixels[7][x] = gold + (255,)  # number
+    return pixels
+
+
 def png(pixels):
     height, width = len(pixels), len(pixels[0])
     raw = b''.join(b'\x00' + b''.join(bytes(p) for p in row) for row in pixels)
@@ -130,6 +155,9 @@ def main():
         with open(os.path.join(OUT, name + '.png'), 'wb') as f:
             f.write(png(draw(face, emblem_colour, emblem)))
         print('wrote', name)
+    with open(os.path.join(OUT, 'bank_card.png'), 'wb') as f:
+        f.write(png(draw_card()))
+    print('wrote bank_card')
 
 
 if __name__ == '__main__':

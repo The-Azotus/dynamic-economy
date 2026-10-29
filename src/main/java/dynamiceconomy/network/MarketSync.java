@@ -5,10 +5,12 @@ import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.bank.Bank;
+import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
+import dynamiceconomy.service.BankService;
 import dynamiceconomy.service.Leaderboard;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketVisibility;
@@ -173,9 +175,9 @@ public final class MarketSync {
         viewers.forEach(MarketSync::sendPlayerState);
     }
 
-    static void handleTradeRequest(MarketPayloads.TradeRequest request, ServerPlayer player) {
-        // Only trade from an open market screen; anything else is a stale or forged packet.
-        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
+    public static void handleTradeRequest(MarketPayloads.TradeRequest request, ServerPlayer player) {
+        // Only trade from an open market screen; anything else is a stale or forged packet. A Bank Card's can't trade.
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player) || menu.bankOnly()) {
             return;
         }
         Optional<Item> item = BuiltInRegistries.ITEM.getOptional(request.item());
@@ -203,6 +205,16 @@ public final class MarketSync {
                 }
             }
         }
+        sendPlayerState(player);
+    }
+
+    /** Deposit or withdraw from the Bank tab: any open market screen, including a Bank Card's. */
+    static void handleBankRequest(MarketPayloads.BankRequest request, ServerPlayer player) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
+            return;
+        }
+        BankService.Outcome outcome = request.deposit() ? BankService.depositAll(player) : BankService.withdraw(player, request.amount());
+        PacketDistributor.sendToPlayer(player, new MarketPayloads.BankOutcome(request.deposit(), outcome.result(), outcome.amount()));
         sendPlayerState(player);
     }
 
@@ -264,7 +276,7 @@ public final class MarketSync {
         }
         Bank bank = WorldBank.of(server);
         return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest(), MarketConfig.leaderboardEnabled(),
-                bank.kind(), bank.displayCap());
+                bank.kind(), bank.displayCap(), bank.coins());
     }
 
     private static Optional<MarketPayloads.Row> row(MinecraftServer server, Item item) {
@@ -278,7 +290,9 @@ public final class MarketSync {
      * purchase. One pass over the inventory, so the cost doesn't grow with the size of the catalog.
      */
     public static MarketPayloads.PlayerState playerState(ServerPlayer player) {
-        long balance = WorldBank.of(player.server).account(player).map(Bank.Account::balance).orElse(0L);
+        Bank bank = WorldBank.of(player.server);
+        long balance = bank.account(player).map(Bank.Account::balance).orElse(0L);
+        List<Denomination> coins = bank.coins();
         Map<ResourceLocation, Integer> held = new HashMap<>();
         Map<ResourceLocation, Integer> stackRoom = new HashMap<>();
         int emptySlots = 0;
@@ -291,6 +305,14 @@ public final class MarketSync {
                 held.merge(entry.itemId(), stack.getCount(), Integer::sum);
                 stackRoom.merge(entry.itemId(), Math.max(0, stack.getMaxStackSize() - stack.getCount()), Integer::sum);
             });
+            // Coins are never listed, so their ids can't clash with a listed item's.
+            for (Denomination coin : coins) {
+                if (BankService.isPlain(stack, coin)) {
+                    ResourceLocation id = BuiltInRegistries.ITEM.getKey(coin.item());
+                    held.merge(id, stack.getCount(), Integer::sum);
+                    stackRoom.merge(id, Math.max(0, stack.getMaxStackSize() - stack.getCount()), Integer::sum);
+                }
+            }
         }
         return new MarketPayloads.PlayerState(balance, held, emptySlots, stackRoom);
     }

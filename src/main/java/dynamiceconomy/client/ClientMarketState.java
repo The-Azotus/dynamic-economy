@@ -2,6 +2,9 @@ package dynamiceconomy.client;
 
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.CoinMath;
+import dynamiceconomy.bank.Denomination;
+import dynamiceconomy.service.BankService;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.service.MarketService;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -11,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -29,6 +33,8 @@ public final class ClientMarketState {
     private static boolean leaderboardEnabled = true;
     private static BankKind bank = BankKind.OWN;
     private static long balanceCap = Long.MAX_VALUE;
+    /** The coins the world's bank moves, largest first. */
+    private static List<Denomination> coins = List.of();
     /** The leaderboard, once the screen has asked for it. */
     @Nullable
     private static MarketPayloads.Leaderboard leaderboard;
@@ -58,6 +64,7 @@ public final class ClientMarketState {
         leaderboardEnabled = snapshot.leaderboardEnabled();
         bank = snapshot.bank();
         balanceCap = snapshot.balanceCap();
+        coins = List.copyOf(snapshot.coins());
         DynamicEconomy.LOGGER.debug("Market snapshot: {} rows, order limit {}", rows.size(), maxQuantity);
         version++;
     }
@@ -105,6 +112,19 @@ public final class ClientMarketState {
     /** Remembers a request as it is sent. */
     public static void sent(MarketPayloads.TradeRequest request) {
         lastRequest = request;
+    }
+
+    public static void applyBankOutcome(MarketPayloads.BankOutcome outcome) {
+        DynamicEconomy.LOGGER.debug("Bank outcome: {}", outcome);
+        if (outcome.result() == BankService.Result.OK) {
+            status = Component.translatable(outcome.deposit() ? "screen.dynamic_economy.bank.deposited" : "screen.dynamic_economy.bank.withdrew",
+                    PriceFormat.money(PriceFormat.spurs(outcome.amount())));
+            statusIsError = false;
+        } else {
+            status = Component.translatable("screen.dynamic_economy.bank.result." + outcome.result().name().toLowerCase(Locale.ROOT));
+            statusIsError = true;
+        }
+        version++;
     }
 
     public static void applyOutcome(MarketPayloads.TradeOutcome outcome) {
@@ -161,6 +181,9 @@ public final class ClientMarketState {
         rows.clear();
         maxQuantity = DEFAULT_MAX_QUANTITY;
         leaderboardEnabled = true;
+        bank = BankKind.OWN;
+        balanceCap = Long.MAX_VALUE;
+        coins = List.of();
     }
 
     public static Map<ResourceLocation, MarketPayloads.Row> rows() {
@@ -192,6 +215,32 @@ public final class ClientMarketState {
      */
     public static long balanceCap() {
         return balanceCap;
+    }
+
+    /** The coins the world's bank moves, largest first; empty until the server says, or if it can't find them. */
+    public static List<Denomination> coins() {
+        return coins;
+    }
+
+    /** How many plain copies of {@code coin} the main inventory holds. */
+    public static int held(Denomination coin) {
+        return held(BuiltInRegistries.ITEM.getKey(coin.item()));
+    }
+
+    /** What every coin in the main inventory is worth: what "deposit all" would pay in. */
+    public static long carriedCoinValue() {
+        long total = 0;
+        for (Denomination coin : coins) {
+            total += (long) held(coin) * coin.value();
+        }
+        return total;
+    }
+
+    /** Whether {@code counts} of {@link #coins()} would fit in the main inventory, counted as the server counts it. */
+    public static boolean coinsFit(long[] counts) {
+        return CoinMath.fits(coins, counts, player.emptySlots(),
+                coin -> player.stackRoom().getOrDefault(BuiltInRegistries.ITEM.getKey(coin.item()), 0),
+                coin -> new net.minecraft.world.item.ItemStack(coin.item()).getMaxStackSize());
     }
 
     /** Whether {@code balance} is at the cap, so it may hide more. */
