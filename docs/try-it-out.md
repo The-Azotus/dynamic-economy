@@ -1,4 +1,4 @@
-# Trying Dynamic Economy 0.1.0 in your modpack
+# Trying Dynamic-Economy 0.1.0 in your modpack
 
 This is the Phase 0–5 version (`v0.1.0`). Everything here works in your pack without touching the source.
 

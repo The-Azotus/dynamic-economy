@@ -125,7 +125,7 @@ public final class CatalogImport {
             JsonObject meta = new JsonObject();
             JsonObject packInfo = new JsonObject();
             packInfo.addProperty("pack_format", PACK_FORMAT);
-            packInfo.addProperty("description", "Market catalog imported by Numismatics: Dynamic Economy");
+            packInfo.addProperty("description", "Market catalog imported by Dynamic-Economy");
             meta.add("pack", packInfo);
             Files.writeString(mcmeta, CatalogExport.GSON.toJson(meta), StandardCharsets.UTF_8);
         }

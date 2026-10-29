@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.neoforged.fml.ModList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,15 @@ import java.util.Optional;
 
 /**
  * What the generic recipe methods don't say about Create's machine recipes: their outputs come with a chance (crushing
- * diorite gives quartz only sometimes), and some take fluids. Create is always present, since Numismatics needs it.
+ * diorite gives quartz only sometimes), and some take fluids.
+ * <p>
+ * The only class allowed to import Create, an optional dependency. Without Create every method returns empty and
+ * nothing here touches its classes: they're only referenced from {@link Present}, which loads only when Create does.
  */
 public final class CreateRecipes {
+    public static final String MOD_ID = "create";
+    private static final boolean AVAILABLE = ModList.get().isLoaded(MOD_ID);
+
     private CreateRecipes() {
     }
 
@@ -30,17 +37,7 @@ public final class CreateRecipes {
 
     /** The main output of a Create processing recipe and how many of it to expect; empty for other recipes. */
     public static Optional<Output> read(Recipe<?> recipe) {
-        if (!(recipe instanceof ProcessingRecipe<?, ?> processing) || processing.getRollableResults().isEmpty()) {
-            return Optional.empty();
-        }
-        Item item = processing.getRollableResults().get(0).getStack().getItem();
-        double expected = 0;
-        for (ProcessingOutput output : processing.getRollableResults()) {
-            if (output.getStack().getItem() == item) {
-                expected += output.getStack().getCount() * (double) output.getChance();
-            }
-        }
-        return Optional.of(new Output(item, expected, !processing.getFluidIngredients().isEmpty()));
+        return AVAILABLE ? Present.read(recipe) : Optional.empty();
     }
 
     /**
@@ -50,24 +47,45 @@ public final class CreateRecipes {
      * Empty for other recipes.
      */
     public static Optional<MachineRecipes.Read> sequencedAssembly(Recipe<?> recipe) {
-        if (!(recipe instanceof SequencedAssemblyRecipe assembly)) {
-            return Optional.empty();
-        }
-        Item transitional = assembly.getTransitionalItem().getItem();
-        List<MachineRecipes.Input> inputs = new ArrayList<>();
-        MachineRecipes.add(inputs, assembly.getIngredient(), 1);
-        boolean fluids = false;
-        for (SequencedRecipe<?> step : assembly.getSequence()) {
-            ProcessingRecipe<?, ?> processing = step.getRecipe();
-            for (Ingredient ingredient : processing.getIngredients()) {
-                if (!ingredient.test(new ItemStack(transitional))) {
-                    MachineRecipes.add(inputs, ingredient, assembly.getLoops());
+        return AVAILABLE ? Present.sequencedAssembly(recipe) : Optional.empty();
+    }
+
+    /** Everything that touches Create classes. */
+    private static final class Present {
+        static Optional<Output> read(Recipe<?> recipe) {
+            if (!(recipe instanceof ProcessingRecipe<?, ?> processing) || processing.getRollableResults().isEmpty()) {
+                return Optional.empty();
+            }
+            Item item = processing.getRollableResults().get(0).getStack().getItem();
+            double expected = 0;
+            for (ProcessingOutput output : processing.getRollableResults()) {
+                if (output.getStack().getItem() == item) {
+                    expected += output.getStack().getCount() * (double) output.getChance();
                 }
             }
-            fluids |= !processing.getFluidIngredients().isEmpty();
+            return Optional.of(new Output(item, expected, !processing.getFluidIngredients().isEmpty()));
         }
-        ItemStack result = assembly.getResultItem(null);
-        return Optional.of(new MachineRecipes.Read(List.copyOf(inputs), result.isEmpty() ? null : result.getItem(),
-                result.getCount() * (double) assembly.getOutputChance(), fluids));
+
+        static Optional<MachineRecipes.Read> sequencedAssembly(Recipe<?> recipe) {
+            if (!(recipe instanceof SequencedAssemblyRecipe assembly)) {
+                return Optional.empty();
+            }
+            Item transitional = assembly.getTransitionalItem().getItem();
+            List<MachineRecipes.Input> inputs = new ArrayList<>();
+            MachineRecipes.add(inputs, assembly.getIngredient(), 1);
+            boolean fluids = false;
+            for (SequencedRecipe<?> step : assembly.getSequence()) {
+                ProcessingRecipe<?, ?> processing = step.getRecipe();
+                for (Ingredient ingredient : processing.getIngredients()) {
+                    if (!ingredient.test(new ItemStack(transitional))) {
+                        MachineRecipes.add(inputs, ingredient, assembly.getLoops());
+                    }
+                }
+                fluids |= !processing.getFluidIngredients().isEmpty();
+            }
+            ItemStack result = assembly.getResultItem(null);
+            return Optional.of(new MachineRecipes.Read(List.copyOf(inputs), result.isEmpty() ? null : result.getItem(),
+                    result.getCount() * (double) assembly.getOutputChance(), fluids));
+        }
     }
 }

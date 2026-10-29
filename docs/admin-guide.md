@@ -1,6 +1,6 @@
 # Admin guide
 
-This guide is for server admins running the Numismatics: Dynamic Economy market. It covers:
+This guide is for server admins running the Dynamic-Economy market. It covers:
 
 - how players reach the market
 - how to price items, from a spreadsheet, catalog files or in-game commands

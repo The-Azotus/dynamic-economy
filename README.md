@@ -1,4 +1,4 @@
-# Numismatics: Dynamic Economy
+# Dynamic-Economy
 
 A server-wide market for [Create: Numismatics](https://modrinth.com/mod/numismatics). Players sell items to the server for coins and buy them back from one shared stock, and prices rise and fall with supply and demand.
 
@@ -18,8 +18,7 @@ A server-wide market for [Create: Numismatics](https://modrinth.com/mod/numismat
 ## Requirements
 
 - Minecraft 1.21.1 with NeoForge 21.1.228 or newer
-- [Create](https://modrinth.com/mod/create) 6.0.10
-- [Create: Numismatics](https://modrinth.com/mod/numismatics) 1.1.x
+- [Create: Numismatics](https://modrinth.com/mod/numismatics) 1.1.x, which needs [Create](https://modrinth.com/mod/create) 6.0.x. (Coming in 0.3.0: neither is needed; the mod brings its own coins and bank and uses Numismatics' bank when it's installed.)
 
 Install the mod on the **server and every client**. Clients need it for the market screen and the tooltips.
 

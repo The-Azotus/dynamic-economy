@@ -114,7 +114,7 @@ public final class DynamicEconomy {
      */
     private static void addExampleCatalog(AddPackFindersEvent event) {
         event.addPackFinders(ResourceLocation.fromNamespaceAndPath(MOD_ID, "example_catalog"), PackType.SERVER_DATA,
-                Component.literal("Dynamic Economy example catalog"), PackSource.FEATURE, false, Pack.Position.TOP);
+                Component.literal("Dynamic-Economy example catalog"), PackSource.FEATURE, false, Pack.Position.TOP);
     }
 
     /** The ID admins turn the built-in prices off with: {@code /datapack disable "mod/dynamic_economy:default_prices"}. */
@@ -132,6 +132,6 @@ public final class DynamicEconomy {
             return;
         }
         event.addPackFinders(ResourceLocation.fromNamespaceAndPath(MOD_ID, "default_prices"), PackType.SERVER_DATA,
-                Component.literal("Dynamic Economy default prices"), PackSource.BUILT_IN, false, Pack.Position.BOTTOM);
+                Component.literal("Dynamic-Economy default prices"), PackSource.BUILT_IN, false, Pack.Position.BOTTOM);
     }
 }
