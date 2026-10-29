@@ -4,9 +4,249 @@
   ],
   "entries": [
     {
+      "item": "draconicevolution:advanced_dislocator",
+      "base_price": 27984,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:advanced_magnet",
+      "base_price": 3299,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:awakened_core",
+      "base_price": 109276,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:awakened_crafting_injector",
+      "base_price": 60860,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:awakened_draconium_block",
+      "base_price": 5104,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:awakened_draconium_ingot",
+      "base_price": 567,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:awakened_draconium_nugget",
+      "base_price": 63,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:basic_crafting_injector",
+      "base_price": 3349,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:basic_io_crystal",
+      "base_price": 709,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:basic_relay_crystal",
+      "base_price": 1419,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:basic_wireless_crystal",
+      "base_price": 6523,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:celestial_manipulator",
+      "base_price": 99895,
+      "class": "rare_processed"
+    },
+    {
       "item": "draconicevolution:chaos_shard",
       "base_price": 8192,
       "class": "rare_loot"
+    },
+    {
+      "item": "draconicevolution:chaotic_axe",
+      "base_price": 727356,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_bow",
+      "base_price": 727356,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_capacitor",
+      "base_price": 1287370,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_chestpiece",
+      "base_price": 727356,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_core",
+      "base_price": 443379,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_crafting_injector",
+      "base_price": 78347,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_energy_core",
+      "base_price": 280574,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_hoe",
+      "base_price": 727356,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_pickaxe",
+      "base_price": 727356,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_shovel",
+      "base_price": 727356,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_staff",
+      "base_price": 1505880,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:chaotic_sword",
+      "base_price": 727356,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:crafting_core",
+      "base_price": 4470,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:crystal_binder",
+      "base_price": 3062,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:disenchanter",
+      "base_price": 3346,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:dislocation_inhibitor",
+      "base_price": 1817,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:dislocator",
+      "base_price": 924,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:dislocator_pedestal",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "draconicevolution:dislocator_receptacle",
+      "base_price": 2323,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_axe",
+      "base_price": 73814,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_bow",
+      "base_price": 73814,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_capacitor",
+      "base_price": 239684,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_chestpiece",
+      "base_price": 73814,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_energy_core",
+      "base_price": 42713,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_hoe",
+      "base_price": 73814,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_io_crystal",
+      "base_price": 5337,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:draconic_pickaxe",
+      "base_price": 73814,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_relay_crystal",
+      "base_price": 10674,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_shovel",
+      "base_price": 73814,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_staff",
+      "base_price": 267559,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_sword",
+      "base_price": 73814,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconic_wireless_crystal",
+      "base_price": 15778,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconium_block",
+      "base_price": 2534,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:draconium_chest",
+      "base_price": 6391,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:draconium_core",
+      "base_price": 1900,
+      "class": "rare_processed"
     },
     {
       "item": "draconicevolution:draconium_dust",
@@ -20,9 +260,457 @@
       "class": "rare_resource"
     },
     {
+      "item": "draconicevolution:draconium_nugget",
+      "base_price": 31,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
       "item": "draconicevolution:dragon_heart",
       "base_price": 8192,
       "class": "rare_loot"
+    },
+    {
+      "item": "draconicevolution:energy_core",
+      "base_price": 35288,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:energy_core_stabilizer",
+      "base_price": 4690,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:energy_pylon",
+      "base_price": 1922,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:energy_transfuser",
+      "base_price": 12685,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:entity_detector",
+      "base_price": 2336,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:entity_detector_advanced",
+      "base_price": 3960,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:fluid_gate",
+      "base_price": 2337,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:flux_gate",
+      "base_price": 2519,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:generator",
+      "base_price": 2023,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:grinder",
+      "base_price": 6170,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:infused_obsidian",
+      "base_price": 281,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_aoe",
+      "base_price": 833579,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_energy",
+      "base_price": 188280,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_energy_link",
+      "base_price": 652402,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_large_shield_capacity",
+      "base_price": 890089,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:item_chaotic_proj_accuracy",
+      "base_price": 186373,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_proj_penetration",
+      "base_price": 186294,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_shield_capacity",
+      "base_price": 176497,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_shield_control",
+      "base_price": 1248793,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_shield_recovery",
+      "base_price": 176501,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_chaotic_tree_harvest",
+      "base_price": 157783,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_aoe",
+      "base_price": 192925,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_auto_feed",
+      "base_price": 12004,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_ender_collection",
+      "base_price": 5546,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_energy",
+      "base_price": 39168,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_energy_link",
+      "base_price": 174121,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_large_shield_capacity",
+      "base_price": 188592,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:item_draconic_proj_accuracy",
+      "base_price": 38214,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_proj_anti_immune",
+      "base_price": 56594,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_proj_penetration",
+      "base_price": 38175,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_shield_capacity",
+      "base_price": 36197,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_shield_control",
+      "base_price": 288338,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_shield_recovery",
+      "base_price": 36202,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconic_tree_harvest",
+      "base_price": 41388,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconium_aoe",
+      "base_price": 5134,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconium_auto_feed",
+      "base_price": 3020,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_draconium_energy",
+      "base_price": 1214,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_aoe",
+      "base_price": 39649,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_aqua_adapt",
+      "base_price": 6711,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_auto_feed",
+      "base_price": 7949,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_auto_fire",
+      "base_price": 5705,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_ender_collection",
+      "base_price": 3304,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_energy",
+      "base_price": 6019,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_energy_link",
+      "base_price": 41604,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_flight",
+      "base_price": 14489,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_hill_step",
+      "base_price": 5517,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_large_shield_capacity",
+      "base_price": 23582,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:item_wyvern_mining_stability",
+      "base_price": 5673,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_proj_accuracy",
+      "base_price": 5542,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_proj_penetration",
+      "base_price": 5522,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_shield_capacity",
+      "base_price": 3195,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_shield_control",
+      "base_price": 67755,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_shield_recovery",
+      "base_price": 3200,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_tree_harvest",
+      "base_price": 8860,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:item_wyvern_undying",
+      "base_price": 10926,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:large_chaos_frag",
+      "base_price": 1001,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:magnet",
+      "base_price": 1579,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:medium_chaos_frag",
+      "base_price": 111,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:module_core",
+      "base_price": 550,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:p2p_dislocator_unbound",
+      "base_price": 3819,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:particle_generator",
+      "base_price": 2437,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:player_dislocator_unbound",
+      "base_price": 2895,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:potentiometer",
+      "base_price": 237,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:rain_sensor",
+      "base_price": 37,
+      "class": "common_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_core",
+      "base_price": 5115,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_injector",
+      "base_price": 17858,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_prt_focus_ring",
+      "base_price": 55404,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_prt_in_rotor",
+      "base_price": 4165,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_prt_out_rotor",
+      "base_price": 4153,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_prt_rotor_full",
+      "base_price": 43953,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_prt_stab_frame",
+      "base_price": 27530,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:reactor_stabilizer",
+      "base_price": 588152,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:small_chaos_frag",
+      "base_price": 12,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:wyvern_axe",
+      "base_price": 8725,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_bow",
+      "base_price": 8725,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_capacitor",
+      "base_price": 14819,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_chestpiece",
+      "base_price": 8725,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_core",
+      "base_price": 26752,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_crafting_injector",
+      "base_price": 35340,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_energy_core",
+      "base_price": 3423,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_hoe",
+      "base_price": 8725,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_io_crystal",
+      "base_price": 2658,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "draconicevolution:wyvern_pickaxe",
+      "base_price": 8725,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_relay_crystal",
+      "base_price": 5317,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_shovel",
+      "base_price": 8725,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_sword",
+      "base_price": 8725,
+      "class": "rare_processed"
+    },
+    {
+      "item": "draconicevolution:wyvern_wireless_crystal",
+      "base_price": 10421,
+      "class": "rare_processed"
     }
   ]
 }
