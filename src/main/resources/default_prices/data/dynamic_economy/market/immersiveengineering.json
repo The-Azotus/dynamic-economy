@@ -4,9 +4,640 @@
   ],
   "entries": [
     {
+      "item": "immersiveengineering:alloybrick",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_catwalk",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_catwalk_stairs",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_fence",
+      "base_price": 29,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_fence_gate",
+      "base_price": 70,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_post",
+      "base_price": 60,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_scaffolding_grate_top",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_scaffolding_standard",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_scaffolding_wooden_top",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_slope",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_wallmount",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:alu_window",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:aluminum_hanging_sign",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:aluminum_sign",
+      "base_price": 38,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_faraday_boots",
+      "base_price": 70,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_faraday_chestplate",
+      "base_price": 140,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_faraday_helmet",
+      "base_price": 88,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_faraday_leggings",
+      "base_price": 123,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_steel_boots",
+      "base_price": 43,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_steel_chestplate",
+      "base_price": 87,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_steel_helmet",
+      "base_price": 54,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:armor_steel_leggings",
+      "base_price": 76,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:axe_steel",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:balloon",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bannerpattern_bevels",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bannerpattern_ornate",
+      "base_price": 29,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bannerpattern_screwdriver",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bannerpattern_treated_wood",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bannerpattern_warning",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bannerpattern_windmill",
+      "base_price": 94,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bannerpattern_wolf",
+      "base_price": 69,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:basic_engineering",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:blastbrick",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:blastbrick_reinforced",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:blastfurnace_preheater",
+      "base_price": 262,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:blueprint",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:blueprint_shelf",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:breaker_switch",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_armor_piercing",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_buckshot",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_casull",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_dragons_breath",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_firework",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_flare",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_he",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_homing",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_potion",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_silver",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:bullet_wolfpack",
+      "base_price": 69,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:buzzsaw",
+      "base_price": 65,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:cagelamp",
+      "base_price": 29,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:charging_station",
+      "base_price": 156,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chemthrower",
+      "base_price": 256,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_aluminum",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_black",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_blue",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_brown",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_cyan",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_gray",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_green",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_light_blue",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_light_gray",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_lime",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_magenta",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_orange",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_pink",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_purple",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_red",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_white",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_colored_yellow",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_copper",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_iron",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:chute_steel",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:circuit_board",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:circuit_table",
+      "base_price": 147,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:clinker_brick",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:clinker_brick_quoin",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:clinker_brick_sill",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:cloche",
+      "base_price": 128,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:coil_hv",
+      "base_price": 93,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:coil_lv",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:coil_mv",
+      "base_price": 95,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:coke",
+      "base_price": 158,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:cokebrick",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:component_electronic",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:component_electronic_adv",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:component_iron",
+      "base_price": 79,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:component_steel",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_bundled",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_hv",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_hv_relay",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_lv",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_lv_relay",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_mv",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_mv_relay",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_probe",
+      "base_price": 29,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_redstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:connector_structural",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:conveyor_basic",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:conveyor_dropper",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:conveyor_extract",
+      "base_price": 90,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:conveyor_redstone",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:conveyor_splitter",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:conveyor_vertical",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:craftingtable",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:crate",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:current_transformer",
+      "base_price": 257,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:cushion",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:deepslate_ore_lead",
+      "base_price": 141,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:deepslate_ore_uranium",
+      "base_price": 423,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:drill",
+      "base_price": 133,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:drillhead_iron",
+      "base_price": 457,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:drillhead_steel",
+      "base_price": 141,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:duroplast",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:dust_aluminum",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:dust_coke",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:dust_constantan",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:dust_copper",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:dust_electrum",
+      "base_price": 14,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:dust_hop_graphite",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:dust_iron",
+      "base_price": 15,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:dust_lead",
+      "base_price": 16,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:dust_nickel",
+      "base_price": 14,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
       "item": "immersiveengineering:dust_saltpeter",
       "base_price": 4,
       "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:dust_silver",
+      "base_price": 29,
+      "class": "common_processed",
+      "can_buy": false
     },
     {
       "item": "immersiveengineering:dust_sulfur",
@@ -14,9 +645,155 @@
       "class": "common_processed"
     },
     {
+      "item": "immersiveengineering:dust_uranium",
+      "base_price": 15,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
       "item": "immersiveengineering:dust_wood",
       "base_price": 1,
       "class": "farmable"
+    },
+    {
+      "item": "immersiveengineering:dynamo",
+      "base_price": 243,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:earmuffs",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:electric_lantern",
+      "base_price": 45,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:electromagnet",
+      "base_price": 93,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:electron_tube",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:empty_casing",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:empty_shell",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:ersatz_leather",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:floodlight",
+      "base_price": 334,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:fluid_pipe",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:fluid_placer",
+      "base_price": 193,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:fluid_pump",
+      "base_price": 264,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:fluid_sorter",
+      "base_price": 142,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:fluorescent_tube",
+      "base_price": 204,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:furnace_heater",
+      "base_price": 95,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:generator",
+      "base_price": 126,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:glider",
+      "base_price": 143,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:graphite_electrode",
+      "base_price": 173,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:grindingdisk",
+      "base_price": 125,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:grit_sand",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:gunpart_barrel",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:gunpart_drum",
+      "base_price": 49,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:gunpart_hammer",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:gunpowder_barrel",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:hammer",
+      "base_price": 72,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:hatch",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:heavy_engineering",
+      "base_price": 45,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:hemp_fabric",
+      "base_price": 18,
+      "class": "common_processed"
     },
     {
       "item": "immersiveengineering:hemp_fiber",
@@ -24,9 +801,26 @@
       "class": "farmable"
     },
     {
+      "item": "immersiveengineering:hoe_steel",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
       "item": "immersiveengineering:ingot_aluminum",
       "base_price": 16,
       "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:ingot_constantan",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:ingot_electrum",
+      "base_price": 14,
+      "class": "common_processed",
+      "can_sell": false
     },
     {
       "item": "immersiveengineering:ingot_hop_graphite",
@@ -49,13 +843,261 @@
       "class": "common_processed"
     },
     {
+      "item": "immersiveengineering:ingot_steel",
+      "base_price": 10,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
       "item": "immersiveengineering:ingot_uranium",
       "base_price": 64,
       "class": "rare_resource"
     },
     {
+      "item": "immersiveengineering:insulating_glass",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:item_batcher",
+      "base_price": 138,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:jerrycan",
+      "base_price": 173,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:lantern",
+      "base_price": 25,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:light_bulb",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:light_engineering",
+      "base_price": 116,
+      "class": "common_processed"
+    },
+    {
       "item": "immersiveengineering:logic_circuit",
       "base_price": 64,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:logic_unit",
+      "base_price": 92,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:machine_interface",
+      "base_price": 101,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:maintenance_kit",
+      "base_price": 73,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:manual",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:metal_barrel",
+      "base_price": 228,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:metal_ladder_alu",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:metal_ladder_none",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:metal_ladder_steel",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:minecart_metalbarrel",
+      "base_price": 280,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:minecart_reinforcedcrate",
+      "base_price": 101,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:minecart_woodenbarrel",
+      "base_price": 60,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:minecart_woodencrate",
+      "base_price": 63,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_bullet_casing",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_gear",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_packing_4",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_packing_9",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_plate",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_rod",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_unpacking",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:mold_wire",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:nugget_electrum",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:nugget_lead",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:nugget_netherite",
+      "base_price": 89,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:nugget_nickel",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:nugget_silver",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:nugget_steel",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:ore_lead",
+      "base_price": 141,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:ore_uranium",
+      "base_price": 423,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:pickaxe_steel",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:pipe_valve",
+      "base_price": 134,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_aluminum",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_constantan",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_duroplast",
+      "base_price": 32,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_electrum",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_hop_graphite",
+      "base_price": 67,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:plate_lead",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_nickel",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_silver",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:plate_steel",
+      "base_price": 10,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:plate_uranium",
+      "base_price": 70,
+      "class": "rare_processed"
+    },
+    {
+      "item": "immersiveengineering:powerpack",
+      "base_price": 92,
       "class": "common_processed"
     },
     {
@@ -89,13 +1131,1243 @@
       "can_buy": false
     },
     {
+      "item": "immersiveengineering:razor_wire",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:redstone_breaker",
+      "base_price": 161,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:redstone_state_cell",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:redstone_switchboard",
+      "base_price": 86,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:redstone_timer",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:reinforced_crate",
+      "base_price": 50,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:reinforced_window",
+      "base_price": 402,
+      "class": "rare_processed"
+    },
+    {
+      "item": "immersiveengineering:resonanz_engineering",
+      "base_price": 93,
+      "class": "rare_processed"
+    },
+    {
+      "item": "immersiveengineering:revolver",
+      "base_price": 128,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:rockcutter",
+      "base_price": 2296,
+      "class": "rare_processed"
+    },
+    {
+      "item": "immersiveengineering:rs_engineering",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sample_drill",
+      "base_price": 320,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sawblade",
+      "base_price": 87,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:screwdriver",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
       "item": "immersiveengineering:seed",
       "base_price": 1,
       "class": "farmable"
     },
     {
+      "item": "immersiveengineering:sheetmetal_aluminum",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_black",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_blue",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_brown",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_cyan",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_gray",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_green",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_light_blue",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_light_gray",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_lime",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_magenta",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_orange",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_pink",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_purple",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_red",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_white",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_colored_yellow",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_constantan",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_copper",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_electrum",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_gold",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_iron",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_lead",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_nickel",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_silver",
+      "base_price": 48,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_steel",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sheetmetal_uranium",
+      "base_price": 70,
+      "class": "rare_processed"
+    },
+    {
+      "item": "immersiveengineering:shield",
+      "base_price": 112,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:shovel_steel",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:siren",
+      "base_price": 189,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:skyhook",
+      "base_price": 120,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:slab_alloybrick",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_alu_scaffolding_grate_top",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_alu_scaffolding_standard",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_alu_scaffolding_wooden_top",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_blastbrick",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_blastbrick_reinforced",
+      "base_price": 10,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_clinker_brick",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_coke",
+      "base_price": 79,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_cokebrick",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_insulating_glass",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_aluminum",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_black",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_blue",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_brown",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_cyan",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_gray",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_green",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_light_blue",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_light_gray",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_lime",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_magenta",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_orange",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_pink",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_purple",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_red",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_white",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_colored_yellow",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_constantan",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_copper",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_electrum",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_gold",
+      "base_price": 26,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_iron",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_lead",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_nickel",
+      "base_price": 12,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_silver",
+      "base_price": 24,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_steel",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_sheetmetal_uranium",
+      "base_price": 35,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_steel_scaffolding_grate_top",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_steel_scaffolding_standard",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_steel_scaffolding_wooden_top",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_aluminum",
+      "base_price": 79,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_constantan",
+      "base_price": 38,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_electrum",
+      "base_price": 66,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_lead",
+      "base_price": 99,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_nickel",
+      "base_price": 108,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_silver",
+      "base_price": 217,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_steel",
+      "base_price": 49,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:slab_storage_uranium",
+      "base_price": 316,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
       "item": "immersiveengineering:slag",
       "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:slag_brick",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:slag_glass",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:slag_gravel",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:sorter",
+      "base_price": 128,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:speedloader",
+      "base_price": 96,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_alu_scaffolding_grate_top",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_alu_scaffolding_standard",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_alu_scaffolding_wooden_top",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_clinker_brick",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_slag_brick",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_steel_scaffolding_grate_top",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_steel_scaffolding_standard",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_steel_scaffolding_wooden_top",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stairs_treated_wood_horizontal",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:stairs_treated_wood_packaged",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:stairs_treated_wood_vertical",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:steel_catwalk",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_catwalk_stairs",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_door",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_fence",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_fence_gate",
+      "base_price": 43,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_hanging_sign",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_post",
+      "base_price": 38,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_scaffolding_grate_top",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_scaffolding_standard",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_scaffolding_wooden_top",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_sign",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_slope",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_trapdoor",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_wallmount",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:steel_window",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stick_aluminum",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stick_iron",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:stick_netherite",
+      "base_price": 401,
+      "class": "rare_processed"
+    },
+    {
+      "item": "immersiveengineering:stick_steel",
+      "base_price": 5,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:storage_aluminum",
+      "base_price": 158,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:storage_constantan",
+      "base_price": 76,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:storage_electrum",
+      "base_price": 132,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:storage_lead",
+      "base_price": 198,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:storage_nickel",
+      "base_price": 217,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:storage_silver",
+      "base_price": 435,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:storage_steel",
+      "base_price": 98,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:storage_uranium",
+      "base_price": 633,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:strip_curtain",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:survey_tools",
+      "base_price": 64,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:sword_steel",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:thermoelectric_generator",
+      "base_price": 147,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolbox",
+      "base_price": 65,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_buzzsaw_spareblades",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_chemthrower_focus",
+      "base_price": 153,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_chemthrower_multitank",
+      "base_price": 246,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_drill_capacity",
+      "base_price": 70,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_drill_damage",
+      "base_price": 100,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_drill_waterproof",
+      "base_price": 167,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_powerpack_antenna",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_powerpack_induction",
+      "base_price": 125,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_powerpack_magnet",
+      "base_price": 96,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_powerpack_tesla",
+      "base_price": 122,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_railgun_capacitors",
+      "base_price": 47,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_railgun_scope",
+      "base_price": 38,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_revolver_bayonet",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_revolver_electro",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_revolver_magazine",
+      "base_price": 118,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_shield_flash",
+      "base_price": 149,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_shield_magnet",
+      "base_price": 137,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_shield_shock",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_skyhook_insulation",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_skyhook_mace",
+      "base_price": 2441,
+      "class": "rare_processed"
+    },
+    {
+      "item": "immersiveengineering:toolupgrade_skyhook_slope",
+      "base_price": 67,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:transformer",
+      "base_price": 210,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:transformer_hv",
+      "base_price": 215,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_door",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_door_framed",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:treated_fence",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_fence_gate",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_post",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_scaffold",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_trapdoor",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_trapdoor_framed",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:treated_wallmount",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_wood_hanging_sign",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_wood_horizontal",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:treated_wood_packaged",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:treated_wood_sign",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:treated_wood_vertical",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "immersiveengineering:turntable",
+      "base_price": 136,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:turret_chem",
+      "base_price": 745,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:turret_gun",
+      "base_price": 507,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:voltmeter",
+      "base_price": 162,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wall_clinker_brick",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wall_slag_brick",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_double_down",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_double_left",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_double_right",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_double_up",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_down",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_left",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_right",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_arrow_up",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_attention",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_cat",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_cold",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_creeper",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_ear_defenders",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_electric",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_falling",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_fire",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_hot",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_magnet",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_shrieker",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_sound",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_turret",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_villager",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:warning_sign_warden",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:watermill",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:waterwheel_segment",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:windmill",
+      "base_price": 93,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:windmill_blade",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:windmill_sail",
+      "base_price": 110,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wire_aluminum",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wire_copper",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wire_electrum",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wire_lead",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wire_steel",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wirecoil_copper",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wirecoil_copper_ins",
+      "base_price": 27,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:wirecoil_electrum",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wirecoil_electrum_ins",
+      "base_price": 30,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "immersiveengineering:wirecoil_redstone",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wirecoil_steel",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wirecoil_structure_rope",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wirecoil_structure_steel",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wirecutter",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wooden_barrel",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:wooden_grip",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "immersiveengineering:workbench",
+      "base_price": 50,
       "class": "common_processed"
     }
   ]
