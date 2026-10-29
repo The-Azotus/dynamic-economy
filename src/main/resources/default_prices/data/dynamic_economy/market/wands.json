@@ -1,0 +1,52 @@
+{
+  "required_mods": [
+    "wands"
+  ],
+  "entries": [
+    {
+      "item": "wands:copper_wand",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "wands:diamond_wand",
+      "base_price": 564,
+      "class": "rare_processed"
+    },
+    {
+      "item": "wands:iron_wand",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "wands:magic_bag_1",
+      "base_price": 59,
+      "class": "common_processed"
+    },
+    {
+      "item": "wands:magic_bag_2",
+      "base_price": 68,
+      "class": "common_processed"
+    },
+    {
+      "item": "wands:magic_bag_3",
+      "base_price": 18046,
+      "class": "rare_processed"
+    },
+    {
+      "item": "wands:netherite_wand",
+      "base_price": 2494,
+      "class": "rare_processed"
+    },
+    {
+      "item": "wands:palette",
+      "base_price": 87,
+      "class": "common_processed"
+    },
+    {
+      "item": "wands:stone_wand",
+      "base_price": 2,
+      "class": "common_processed"
+    }
+  ]
+}
