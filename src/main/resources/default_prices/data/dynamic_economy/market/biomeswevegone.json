@@ -810,7 +810,7 @@
     },
     {
       "item": "biomeswevegone:red_rock",
-      "base_price": 1,
+      "base_price": 2,
       "class": "common_resource"
     },
     {

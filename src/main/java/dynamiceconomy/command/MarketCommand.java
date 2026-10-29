@@ -456,9 +456,10 @@ public final class MarketCommand {
             // Listed prices that recipes can beat are written alongside, since the recipes are already loaded.
             List<PriceSuggestion.Path> paths = PriceSuggestion.paths(server.getRecipeManager().getRecipes(), server.registryAccess());
             List<PriceSuggestion.CraftProfit> profits = PriceSuggestion.craftProfits(paths, catalog);
-            List<PriceSuggestion.ChainProfit> chains = PriceSuggestion.chainProfits(paths, withSuggestions(catalog, result));
+            Map<Item, CatalogEntry> market = withSuggestions(catalog, result);
+            List<PriceSuggestion.ChainProfit> chains = PriceSuggestion.chainProfits(paths, market);
             java.nio.file.Files.write(written.folder().resolve("chain_profits.txt"), chainLines(chains, catalog));
-            java.nio.file.Files.write(written.folder().resolve("chain_details.txt"), chainDetails(chains, result));
+            java.nio.file.Files.write(written.folder().resolve("chain_details.txt"), chainDetails(chains, result, catalog, market));
             List<String> profitLines = new ArrayList<>(List.of(
                     "Listed items whose ingredients can be bought for less than the item sells for (at normal prices)."));
             Map<PriceSuggestion.ProfitKind, String> headings = Map.of(
@@ -577,10 +578,11 @@ public final class MarketCommand {
     private static final int DETAILS_SHOWN = 25;
 
     /**
-     * Every step, with its amounts, of the most-raised suggestions and the most profitable chains: a recipe read with the
-     * wrong amounts shows up as a step that makes more than it takes.
+     * Every step, with its amounts and each output's price, of the most-raised suggestions, the most profitable chains
+     * and every complete chain from a listed item: the step that makes more than it takes is the one to fix.
      */
-    private static List<String> chainDetails(List<PriceSuggestion.ChainProfit> chains, PriceSuggestion.Result result) {
+    private static List<String> chainDetails(List<PriceSuggestion.ChainProfit> chains, PriceSuggestion.Result result,
+                                             Map<Item, CatalogEntry> catalog, Map<Item, CatalogEntry> market) {
         List<String> lines = new ArrayList<>(List.of("Full recipe chains behind the largest raises and chain profits, step by step."));
         lines.add("");
         lines.add("Suggestions raised furthest above their recipe cost:");
@@ -590,7 +592,7 @@ public final class MarketCommand {
                 .limit(DETAILS_SHOWN).forEach(s -> {
                     lines.add("%s: recipe cost %s, raised to %d".formatted(BuiltInRegistries.ITEM.getKey(s.item()),
                             s.cost().setScale(2, java.math.RoundingMode.HALF_UP), s.basePrice().orElse(0)));
-                    s.raisedVia().forEach(step -> lines.add(stepLine(step)));
+                    s.raisedVia().forEach(step -> lines.add(stepLine(step, market)));
                 });
         for (boolean complete : new boolean[]{true, false}) {
             lines.add("");
@@ -598,21 +600,30 @@ public final class MarketCommand {
             chains.stream().filter(c -> c.complete() == complete).limit(DETAILS_SHOWN).forEach(c -> {
                 lines.add("%s: costs %s, processes into %s".formatted(BuiltInRegistries.ITEM.getKey(c.item()),
                         c.buyCost().setScale(2, java.math.RoundingMode.HALF_UP), c.value().setScale(2, java.math.RoundingMode.HALF_UP)));
-                c.steps().forEach(step -> lines.add(stepLine(step)));
+                c.steps().forEach(step -> lines.add(stepLine(step, market)));
             });
         }
+        lines.add("");
+        lines.add("Every complete chain from a listed item:");
+        chains.stream().filter(c -> c.complete() && catalog.containsKey(c.item())).forEach(c -> {
+            lines.add("%s: costs %s, processes into %s".formatted(BuiltInRegistries.ITEM.getKey(c.item()),
+                    c.buyCost().setScale(2, java.math.RoundingMode.HALF_UP), c.value().setScale(2, java.math.RoundingMode.HALF_UP)));
+            c.steps().forEach(step -> lines.add(stepLine(step, market)));
+        });
         return lines;
     }
 
-    /** {@code  recipe [type]: 9 x a|b + 1 x c -> 1 x d}, showing at most three options per slot. */
-    private static String stepLine(PriceSuggestion.Path step) {
+    /** {@code  recipe [type]: 9 x a|b + 1 x c -> 1 x d (price 5)}, showing at most three options per slot. */
+    private static String stepLine(PriceSuggestion.Path step, Map<Item, CatalogEntry> market) {
         String inputs = step.slots().stream().map(slot -> {
             String options = slot.options().stream().limit(3).map(i -> BuiltInRegistries.ITEM.getKey(i).toString())
                     .collect(java.util.stream.Collectors.joining("|")) + (slot.options().size() > 3 ? "|..." : "");
             return amount(slot.amount()) + " x " + options;
         }).collect(java.util.stream.Collectors.joining(" + "));
-        return "    %s [%s]: %s -> %s x %s%s".formatted(step.recipe(), step.type(), inputs, amount(step.count()),
-                BuiltInRegistries.ITEM.getKey(step.output()), step.complete() ? "" : " (check)");
+        CatalogEntry out = market.get(step.output());
+        return "    %s [%s]: %s -> %s x %s%s%s".formatted(step.recipe(), step.type(), inputs, amount(step.count()),
+                BuiltInRegistries.ITEM.getKey(step.output()), out == null ? "" : " (price " + out.basePrice() + ")",
+                step.complete() ? "" : " (check)");
     }
 
     private static String amount(double amount) {
