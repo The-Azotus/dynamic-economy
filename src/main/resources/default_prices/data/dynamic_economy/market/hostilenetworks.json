@@ -1,0 +1,42 @@
+{
+  "required_mods": [
+    "hostilenetworks"
+  ],
+  "entries": [
+    {
+      "item": "hostilenetworks:blank_data_model",
+      "base_price": 120,
+      "class": "common_processed"
+    },
+    {
+      "item": "hostilenetworks:data_center",
+      "base_price": 20538,
+      "class": "rare_processed"
+    },
+    {
+      "item": "hostilenetworks:data_center_io_port",
+      "base_price": 248,
+      "class": "common_processed"
+    },
+    {
+      "item": "hostilenetworks:deep_learner",
+      "base_price": 142,
+      "class": "common_processed"
+    },
+    {
+      "item": "hostilenetworks:loot_fabricator",
+      "base_price": 2081,
+      "class": "rare_processed"
+    },
+    {
+      "item": "hostilenetworks:prediction_matrix",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "hostilenetworks:sim_chamber",
+      "base_price": 135,
+      "class": "common_processed"
+    }
+  ]
+}
