@@ -1,0 +1,312 @@
+{
+  "required_mods": [
+    "functionalstorage"
+  ],
+  "entries": [
+    {
+      "item": "functionalstorage:acacia_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:acacia_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:acacia_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:armory_cabinet",
+      "base_price": 873,
+      "class": "rare_processed"
+    },
+    {
+      "item": "functionalstorage:birch_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:birch_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:birch_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:cherry_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:cherry_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:cherry_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:collector_upgrade",
+      "base_price": 94,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:compacting_drawer",
+      "base_price": 158,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:compacting_framed_drawer",
+      "base_price": 165,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:configuration_tool",
+      "base_price": 220,
+      "class": "rare_processed"
+    },
+    {
+      "item": "functionalstorage:controller_extension",
+      "base_price": 83,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:copper_upgrade",
+      "base_price": 213,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:crimson_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:crimson_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:crimson_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:dark_oak_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:dark_oak_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:dark_oak_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:diamond_upgrade",
+      "base_price": 14210,
+      "class": "rare_processed"
+    },
+    {
+      "item": "functionalstorage:ender_drawer",
+      "base_price": 138,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:fluid_1",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:fluid_2",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:fluid_4",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_1",
+      "base_price": 25,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_2",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_4",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_controller_extension",
+      "base_price": 89,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_fluid_1",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_fluid_2",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_fluid_4",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_simple_compacting_drawer",
+      "base_price": 112,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:framed_storage_controller",
+      "base_price": 93,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:gold_upgrade",
+      "base_price": 1808,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:iron_downgrade",
+      "base_price": 289,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:jungle_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:jungle_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:jungle_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:linking_tool",
+      "base_price": 678,
+      "class": "rare_processed"
+    },
+    {
+      "item": "functionalstorage:mangrove_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:mangrove_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:mangrove_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:netherite_upgrade",
+      "base_price": 16141,
+      "class": "rare_processed"
+    },
+    {
+      "item": "functionalstorage:oak_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:oak_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:oak_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:puller_upgrade",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:pusher_upgrade",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:redstone_upgrade",
+      "base_price": 333,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:simple_compacting_drawer",
+      "base_price": 104,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:spruce_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:spruce_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:spruce_4",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:storage_controller",
+      "base_price": 88,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:void_upgrade",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:warped_1",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:warped_2",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "functionalstorage:warped_4",
+      "base_price": 7,
+      "class": "common_processed"
+    }
+  ]
+}
