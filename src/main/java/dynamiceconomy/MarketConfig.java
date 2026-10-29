@@ -17,6 +17,9 @@ public final class MarketConfig {
     public static final ModConfigSpec.IntValue INTERVAL_TICKS;
     public static final ModConfigSpec.DoubleValue FLOOR;
     public static final ModConfigSpec.DoubleValue CEILING;
+    public static final ModConfigSpec.BooleanValue LEADERBOARD_ENABLED;
+    public static final ModConfigSpec.IntValue LEADERBOARD_SIZE;
+    public static final ModConfigSpec.BooleanValue LEADERBOARD_EXCLUDE_OPERATORS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -54,6 +57,18 @@ public final class MarketConfig {
         CEILING = builder
                 .comment("Highest s can rise to from buying.")
                 .defineInRange("ceiling", 5.0, 1.0, 1000.0);
+        builder.pop();
+
+        builder.comment("The Leaderboard tab: the richest players by Numismatics bank balance.").push("leaderboard");
+        LEADERBOARD_ENABLED = builder
+                .comment("Show the Leaderboard tab. When false the tab is greyed out and no balances are sent.")
+                .define("leaderboard_enabled", true);
+        LEADERBOARD_SIZE = builder
+                .comment("How many players the leaderboard lists.")
+                .defineInRange("leaderboard_size", 10, 1, 100);
+        LEADERBOARD_EXCLUDE_OPERATORS = builder
+                .comment("Leave operators off the leaderboard, for servers where admins hold test money.")
+                .define("leaderboard_exclude_operators", false);
         builder.pop();
         SPEC = builder.build();
     }
@@ -95,5 +110,17 @@ public final class MarketConfig {
 
     public static double ceiling() {
         return SPEC.isLoaded() ? CEILING.get() : CEILING.getDefault();
+    }
+
+    public static boolean leaderboardEnabled() {
+        return SPEC.isLoaded() ? LEADERBOARD_ENABLED.get() : LEADERBOARD_ENABLED.getDefault();
+    }
+
+    public static int leaderboardSize() {
+        return SPEC.isLoaded() ? LEADERBOARD_SIZE.get() : LEADERBOARD_SIZE.getDefault();
+    }
+
+    public static boolean leaderboardExcludeOperators() {
+        return SPEC.isLoaded() ? LEADERBOARD_EXCLUDE_OPERATORS.get() : LEADERBOARD_EXCLUDE_OPERATORS.getDefault();
     }
 }

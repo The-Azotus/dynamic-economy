@@ -381,6 +381,11 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `pricing.interval_ticks` | 1200 | 1 – 1,728,000 | Game ticks between recovery steps. 20 ticks is 1 second. |
 | `pricing.floor` | 0.2 | 0.001 – 1 | Lowest factor selling can reach. |
 | `pricing.ceiling` | 5.0 | 1 – 1000 | Highest factor buying can reach. |
+| `leaderboard.leaderboard_enabled` | true | true, false | Show the Leaderboard tab. When off, the tab is greyed out and no balances are sent to anyone. |
+| `leaderboard.leaderboard_size` | 10 | 1 – 100 | How many players the leaderboard lists. |
+| `leaderboard.leaderboard_exclude_operators` | false | true, false | Leave operators off the leaderboard, for servers where admins hold test money. |
+
+**The leaderboard** ranks players by their Numismatics bank balance, the same number the market screen's Bank line shows. Only personal accounts of players the server has seen count: shared Blaze Banker accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. Balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
 
 ## All commands
 

@@ -8,6 +8,7 @@ import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
+import dynamiceconomy.service.Leaderboard;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketVisibility;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -42,6 +43,9 @@ public final class MarketSync {
     /** Players whose stages changed, so what they can see may have; their catalog is resent on the next tick. */
     private static final Set<UUID> staleCatalogs = new HashSet<>();
     private static boolean allCatalogsStale;
+    /** Fewest ticks between one player's leaderboard requests, since each one reads every bank account. */
+    private static final int LEADERBOARD_COOLDOWN_TICKS = 20;
+    private static final Map<UUID, Integer> lastLeaderboardRequest = new HashMap<>();
 
     private MarketSync() {
     }
@@ -164,6 +168,7 @@ public final class MarketSync {
         }
         List<ServerPlayer> viewers = viewers(server);
         lastSentState.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
+        lastLeaderboardRequest.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         viewers.forEach(MarketSync::sendPlayerState);
     }
 
@@ -212,6 +217,24 @@ public final class MarketSync {
                 TradeHistory.get(player.server).recent(player.getUUID())));
     }
 
+    /** The leaderboard as this player sees it, ranked now. Read only on request: when the tab opens. */
+    static void handleLeaderboardRequest(ServerPlayer player) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player) || !MarketConfig.leaderboardEnabled()) {
+            return;
+        }
+        int now = player.server.getTickCount();
+        Integer last = lastLeaderboardRequest.get(player.getUUID());
+        if (last != null && now >= last && now - last < LEADERBOARD_COOLDOWN_TICKS) {
+            return;
+        }
+        lastLeaderboardRequest.put(player.getUUID(), now);
+        Leaderboard.View view = Leaderboard.viewFor(player);
+        List<MarketPayloads.LeaderboardLine> lines = view.top().stream()
+                .map(entry -> new MarketPayloads.LeaderboardLine(entry.name(), entry.balance(), entry.id().equals(player.getUUID())))
+                .toList();
+        PacketDistributor.sendToPlayer(player, new MarketPayloads.Leaderboard(lines, view.ownRank(), view.ranked()));
+    }
+
     static void handleHistoryRequest(MarketPayloads.HistoryRequest request, ServerPlayer player) {
         if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
             return;
@@ -238,7 +261,7 @@ public final class MarketSync {
                 row(server, entry.item()).ifPresent(rows::add);
             }
         }
-        return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest());
+        return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest(), MarketConfig.leaderboardEnabled());
     }
 
     private static Optional<MarketPayloads.Row> row(MinecraftServer server, Item item) {

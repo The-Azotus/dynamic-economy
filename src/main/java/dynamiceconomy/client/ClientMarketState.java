@@ -30,6 +30,10 @@ public final class ClientMarketState {
     private static final Map<ResourceLocation, MarketPayloads.Row> rows = new LinkedHashMap<>();
     private static MarketPayloads.PlayerState player = emptyPlayer();
     private static int maxQuantity = DEFAULT_MAX_QUANTITY;
+    private static boolean leaderboardEnabled = true;
+    /** The leaderboard, once the screen has asked for it. */
+    @Nullable
+    private static MarketPayloads.Leaderboard leaderboard;
     private static Component status = Component.empty();
     private static boolean statusIsError;
     private static int version;
@@ -53,6 +57,7 @@ public final class ClientMarketState {
         rows.clear();
         snapshot.rows().forEach(row -> rows.put(row.item(), row));
         maxQuantity = snapshot.maxQuantity();
+        leaderboardEnabled = snapshot.leaderboardEnabled();
         DynamicEconomy.LOGGER.debug("Market snapshot: {} rows, order limit {}", rows.size(), maxQuantity);
         version++;
     }
@@ -73,6 +78,22 @@ public final class ClientMarketState {
     public static void applyTrades(MarketPayloads.Trades received) {
         trades = received;
         version++;
+    }
+
+    public static void applyLeaderboard(MarketPayloads.Leaderboard received) {
+        leaderboard = received;
+        version++;
+    }
+
+    /** The leaderboard, or null until it's been received. */
+    @Nullable
+    public static MarketPayloads.Leaderboard leaderboard() {
+        return leaderboard;
+    }
+
+    /** Whether the server has the leaderboard turned on. */
+    public static boolean leaderboardEnabled() {
+        return leaderboardEnabled;
     }
 
     /** The player's recent trades, newest first, or null until they've been received. */
@@ -126,6 +147,7 @@ public final class ClientMarketState {
         player = emptyPlayer();
         lastRequest = null;
         trades = null;
+        leaderboard = null;
         status = Component.empty();
         statusIsError = false;
         version++;
@@ -136,6 +158,7 @@ public final class ClientMarketState {
         clear();
         rows.clear();
         maxQuantity = DEFAULT_MAX_QUANTITY;
+        leaderboardEnabled = true;
     }
 
     public static Map<ResourceLocation, MarketPayloads.Row> rows() {

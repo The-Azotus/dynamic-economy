@@ -131,13 +131,15 @@ public final class MarketPayloads {
 
     /**
      * Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes, with
-     * the server's order limit so the screen can stop an oversized order before it is sent.
+     * the server's order limit so the screen can stop an oversized order before it is sent, and whether the
+     * leaderboard tab is turned on.
      */
-    public record Snapshot(List<Row> rows, int maxQuantity) implements CustomPacketPayload {
+    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
         public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.composite(
                 Row.CODEC.apply(ByteBufCodecs.list()), Snapshot::rows,
                 ByteBufCodecs.VAR_INT, Snapshot::maxQuantity,
+                ByteBufCodecs.BOOL, Snapshot::leaderboardEnabled,
                 Snapshot::new);
 
         @Override
@@ -217,6 +219,44 @@ public final class MarketPayloads {
 
         @Override
         public Type<Trades> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: send me the leaderboard (the screen asks when its tab is opened). */
+    public record LeaderboardRequest() implements CustomPacketPayload {
+        public static final Type<LeaderboardRequest> TYPE = payloadType("leaderboard_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, LeaderboardRequest> CODEC = StreamCodec.unit(new LeaderboardRequest());
+
+        @Override
+        public Type<LeaderboardRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /** One leaderboard line: the player's name, their balance, and whether it's the player receiving it. */
+    public record LeaderboardLine(String name, int balance, boolean you) {
+        static final StreamCodec<ByteBuf, LeaderboardLine> CODEC = StreamCodec.composite(
+                ByteBufCodecs.stringUtf8(16), LeaderboardLine::name,
+                ByteBufCodecs.VAR_INT, LeaderboardLine::balance,
+                ByteBufCodecs.BOOL, LeaderboardLine::you,
+                LeaderboardLine::new);
+    }
+
+    /**
+     * Server to client: the richest players, richest first, and the receiving player's own rank (0 when they aren't
+     * ranked) out of {@code ranked} players with money.
+     */
+    public record Leaderboard(List<LeaderboardLine> lines, int ownRank, int ranked) implements CustomPacketPayload {
+        public static final Type<Leaderboard> TYPE = payloadType("leaderboard");
+        public static final StreamCodec<RegistryFriendlyByteBuf, Leaderboard> CODEC = StreamCodec.composite(
+                LeaderboardLine.CODEC.apply(ByteBufCodecs.list(100)), Leaderboard::lines,
+                ByteBufCodecs.VAR_INT, Leaderboard::ownRank,
+                ByteBufCodecs.VAR_INT, Leaderboard::ranked,
+                Leaderboard::new);
+
+        @Override
+        public Type<Leaderboard> type() {
             return TYPE;
         }
     }

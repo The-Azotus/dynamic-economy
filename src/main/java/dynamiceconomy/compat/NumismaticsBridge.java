@@ -8,7 +8,10 @@ import net.minecraft.world.entity.player.Player;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * The only class allowed to import Numismatics. Numismatics has no stable API and has renamed methods between
@@ -19,6 +22,8 @@ import java.util.Optional;
  */
 public final class NumismaticsBridge {
     private static final boolean AVAILABLE = probe();
+    /** Listing accounts (for the leaderboard) is checked separately, so a mismatch there never stops trading. */
+    private static final boolean ACCOUNTS_LISTABLE = AVAILABLE && probeAccountList();
 
     private NumismaticsBridge() {
     }
@@ -38,6 +43,55 @@ public final class NumismaticsBridge {
         } catch (LinkageError e) {
             DynamicEconomy.LOGGER.error("Numismatics bank lookup failed", e);
             return Optional.empty();
+        }
+    }
+
+    /**
+     * Every personal account's displayed balance, by owner UUID. Numismatics also has shared Blaze Banker accounts;
+     * those are left out. Empty if the account list can't be read.
+     */
+    public static Map<UUID, Integer> playerBalances() {
+        if (!ACCOUNTS_LISTABLE) {
+            return Map.of();
+        }
+        try {
+            Map<UUID, Integer> balances = new HashMap<>();
+            for (BankAccount account : Numismatics.BANK.accounts.values()) {
+                if (account.type == BankAccount.Type.PLAYER) {
+                    balances.put(account.id, account.getBalance());
+                }
+            }
+            return balances;
+        } catch (LinkageError | RuntimeException e) {
+            DynamicEconomy.LOGGER.error("Numismatics account list could not be read", e);
+            return Map.of();
+        }
+    }
+
+    /** Whether {@link #playerBalances()} works. */
+    public static boolean canListAccounts() {
+        return ACCOUNTS_LISTABLE;
+    }
+
+    /** GameTests only: a shared (Blaze Banker) account, which must never count as a player's. */
+    public static Optional<Account> sharedAccountForTest(UUID id) {
+        if (!AVAILABLE) {
+            return Optional.empty();
+        }
+        return Optional.of(new Account(Numismatics.BANK.getOrCreateAccount(id, BankAccount.Type.BLAZE_BANKER)));
+    }
+
+    private static boolean probeAccountList() {
+        try {
+            requireReturn(GlobalBankManager.class.getField("accounts").getType(), Map.class);
+            requireReturn(BankAccount.class.getField("id").getType(), UUID.class);
+            requireReturn(BankAccount.class.getField("type").getType(), BankAccount.Type.class);
+            BankAccount.Type.valueOf("PLAYER");
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
+            DynamicEconomy.LOGGER.error("Numismatics account list does not match what this mod was built against; "
+                    + "the leaderboard will be empty", e);
+            return false;
         }
     }
 

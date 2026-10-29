@@ -91,14 +91,23 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     /** Lower-case mod display names by namespace, for {@code @mod} searches. The mod list never changes in a session. */
     private static final Map<String, String> MOD_NAMES = new HashMap<>();
 
-    /** The tabs along the top. Those not built yet are shown greyed out; Exchange joins them when it exists. */
+    /** The tabs along the top. Those that can't be opened are shown greyed out; Exchange joins them when it exists. */
     private enum Tab {
-        MARKET(true), CONTRACTS(false), LEADERBOARD(false), HISTORY(true);
+        MARKET, CONTRACTS, LEADERBOARD, HISTORY;
 
-        final boolean available;
+        /** Contracts isn't built yet, and the server can turn the leaderboard off. */
+        boolean available() {
+            return switch (this) {
+                case MARKET, HISTORY -> true;
+                case CONTRACTS -> false;
+                case LEADERBOARD -> ClientMarketState.leaderboardEnabled();
+            };
+        }
 
-        Tab(boolean available) {
-            this.available = available;
+        /** Why a greyed-out tab can't be opened. */
+        Component unavailableReason() {
+            return Component.translatable(this == LEADERBOARD ? "screen.dynamic_economy.tab.turned_off"
+                    : "screen.dynamic_economy.tab.coming_soon");
         }
 
         Component label() {
@@ -321,6 +330,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             seenQuery = query;
             rebuildList(query);
         }
+        // The server can turn the leaderboard off while its tab is open.
+        if (!tab.available()) {
+            selectTab(Tab.MARKET);
+        }
         refreshButtons();
         requestHistoryIfStale();
     }
@@ -351,15 +364,17 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         scroll = Mth.clamp(scroll, 0, maxScroll());
     }
 
-    /** Switches tabs, asking the server for the player's trades when History opens. */
+    /** Switches tabs, asking the server for the player's trades or the leaderboard when those open. */
     private void selectTab(Tab next) {
-        if (!next.available || next == tab) {
+        if (!next.available() || next == tab) {
             return;
         }
         tab = next;
         scroll = 0;
         if (tab == Tab.HISTORY) {
             PacketDistributor.sendToServer(new MarketPayloads.TradesRequest());
+        } else if (tab == Tab.LEADERBOARD) {
+            PacketDistributor.sendToServer(new MarketPayloads.LeaderboardRequest());
         }
         updateListButtons();
     }
@@ -569,14 +584,14 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             Tab clickedTab = tabAt(mouseX, mouseY);
             if (clickedTab != null) {
-                if (clickedTab.available && clickedTab != tab) {
+                if (clickedTab.available() && clickedTab != tab) {
                     minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                     selectTab(clickedTab);
                 }
                 return true;
             }
             int index = rowAt(mouseX, mouseY);
-            if (index >= 0) {
+            if (index >= 0 && tab != Tab.LEADERBOARD) {
                 // Clicking a past trade goes back to the market with that item selected, to trade it again.
                 selected = showingTrades() ? trades().get(index).item() : visible.get(index).item();
                 selectTab(Tab.MARKET);
@@ -610,7 +625,16 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     /** How many rows the list has in its current mode. */
     private int listSize() {
-        return showingTrades() ? trades().size() : visible.size();
+        return switch (tab) {
+            case HISTORY -> trades().size();
+            case LEADERBOARD -> leaderboardLines().size();
+            default -> visible.size();
+        };
+    }
+
+    private static List<MarketPayloads.LeaderboardLine> leaderboardLines() {
+        MarketPayloads.Leaderboard board = ClientMarketState.leaderboard();
+        return board == null ? List.of() : board.lines();
     }
 
     @Override
@@ -664,13 +688,13 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         Tab hoveredTab = tabAt(mouseX, mouseY);
         int index = rowAt(mouseX, mouseY);
         MarketPayloads.Row chartRow = selectedRow();
-        if (hoveredTab != null && !hoveredTab.available) {
-            graphics.renderTooltip(font, Component.translatable("screen.dynamic_economy.tab.coming_soon"), mouseX, mouseY);
+        if (hoveredTab != null && !hoveredTab.available()) {
+            graphics.renderTooltip(font, hoveredTab.unavailableReason(), mouseX, mouseY);
         } else if (chartRow != null && isOverChart(mouseX, mouseY)) {
             graphics.renderTooltip(font, chartTooltip(chartRow), Optional.empty(), mouseX, mouseY);
-        } else if (index >= 0 && !showingTrades()) {
+        } else if (index >= 0 && tab == Tab.MARKET) {
             graphics.renderTooltip(font, tooltip(visible.get(index)), Optional.empty(), mouseX, mouseY);
-        } else if (index >= 0) {
+        } else if (index >= 0 && tab == Tab.HISTORY) {
             graphics.renderTooltip(font, Component.translatable("screen.dynamic_economy.trades.row_hint"), mouseX, mouseY);
         }
     }
@@ -683,10 +707,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         graphics.fill(x, y, x + imageWidth, y + imageHeight, PANEL);
         renderTabs(graphics, x, y, mouseX, mouseY);
 
-        if (showingTrades()) {
-            renderTradeList(graphics, x, y, mouseX, mouseY);
-        } else {
-            renderCatalogList(graphics, x, y, mouseX, mouseY);
+        switch (tab) {
+            case HISTORY -> renderTradeList(graphics, x, y, mouseX, mouseY);
+            case LEADERBOARD -> renderLeaderboard(graphics, x, y);
+            default -> renderCatalogList(graphics, x, y, mouseX, mouseY);
         }
         renderScrollbar(graphics, x, y);
 
@@ -714,11 +738,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             int right = left + tabWidth[t.ordinal()];
             int top = y + TAB_Y;
             boolean open = t == tab;
-            graphics.fill(left, top, right, top + TAB_HEIGHT, open ? TAB_ACTIVE : t == hovered && t.available ? ROW_HOVER : TAB_IDLE);
+            graphics.fill(left, top, right, top + TAB_HEIGHT, open ? TAB_ACTIVE : t == hovered && t.available() ? ROW_HOVER : TAB_IDLE);
             if (open) {
                 graphics.fill(left, top + TAB_HEIGHT - 1, right, top + TAB_HEIGHT, 0xFF000000 | TEXT_MONEY);
             }
-            graphics.drawCenteredString(font, t.label(), (left + right) / 2, top + 3, open ? TEXT : t.available ? TEXT_DIM : TEXT_OFF);
+            graphics.drawCenteredString(font, t.label(), (left + right) / 2, top + 3, open ? TEXT : t.available() ? TEXT_DIM : TEXT_OFF);
         }
         graphics.fill(x + MARGIN, y + TAB_Y + TAB_HEIGHT, x + imageWidth - MARGIN, y + TAB_Y + TAB_HEIGHT + 1, PANEL_BORDER);
     }
@@ -753,6 +777,41 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (trades.isEmpty()) {
             graphics.drawCenteredString(font, Component.translatable(received == null
                     ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.trades.none"),
+                    x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
+        }
+    }
+
+    /** The richest players: rank, name and balance, with the player's own line highlighted and their rank above. */
+    private void renderLeaderboard(GuiGraphics graphics, int x, int y) {
+        MarketPayloads.Leaderboard board = ClientMarketState.leaderboard();
+        List<MarketPayloads.LeaderboardLine> lines = leaderboardLines();
+        int listRight = LIST_X + listWidth;
+        graphics.drawString(font, Component.translatable("screen.dynamic_economy.leaderboard.title"),
+                x + LIST_X + 4, y + HEADER_Y, TEXT_DIM, false);
+        if (board != null) {
+            Component own = board.ownRank() > 0
+                    ? Component.translatable("screen.dynamic_economy.leaderboard.you", board.ownRank(), board.ranked())
+                    : Component.translatable("screen.dynamic_economy.leaderboard.you_unranked");
+            drawRight(graphics, own, x + listRight - 2, y + HEADER_Y, TEXT_DIM);
+        }
+        for (int i = 0; i < rows && scroll + i < lines.size(); i++) {
+            MarketPayloads.LeaderboardLine line = lines.get(scroll + i);
+            int rank = scroll + i + 1;
+            int rowY = y + LIST_Y + i * ROW_HEIGHT;
+            int background = line.you() ? ROW_SELECTED : i % 2 == 1 ? ROW_ALT : 0;
+            if (background != 0) {
+                graphics.fill(x + LIST_X, rowY, x + listRight, rowY + ROW_HEIGHT, background);
+            }
+            int textY = rowY + 5;
+            drawRight(graphics, Component.literal("#" + rank), x + LIST_X + 26, textY, rank <= 3 ? TEXT_MONEY : TEXT_DIM);
+            graphics.drawString(font, line.name(), x + LIST_X + 32, textY, line.you() ? TEXT_GOOD : TEXT, false);
+            drawRight(graphics, Component.translatable(line.balance() >= ClientMarketState.DISPLAYED_BALANCE_CAP
+                            ? "screen.dynamic_economy.leaderboard.balance_capped" : "screen.dynamic_economy.leaderboard.balance",
+                    PriceFormat.spurs(line.balance())), x + listRight - 2, textY, TEXT_MONEY);
+        }
+        if (lines.isEmpty()) {
+            graphics.drawCenteredString(font, Component.translatable(board == null
+                            ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.leaderboard.none"),
                     x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
         }
     }

@@ -27,6 +27,7 @@ import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.OrderMath;
+import dynamiceconomy.service.Leaderboard;
 import dynamiceconomy.service.MarketVisibility;
 import dynamiceconomy.service.MarketService.Result;
 import dynamiceconomy.service.MarketService.TradeResult;
@@ -2830,6 +2831,58 @@ public final class MarketGameTests {
         helper.assertFalse(StagesBridge.isLocked(f.player, Items.IRON_INGOT), "no item is locked");
         helper.assertValueEqual(MarketSync.catalogFor(f.player).rows().size(), MarketCatalog.INSTANCE.entries().size(),
                 "every listed item is sent");
+        helper.succeed();
+    }
+
+    // ---- Leaderboard (Phase 13) ---------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void leaderboardRanksRichestFirstAndSkipsWhoItShould(GameTestHelper helper) {
+        UUID alice = UUID.randomUUID();
+        UUID bob = UUID.randomUUID();
+        UUID carol = UUID.randomUUID();
+        UUID broke = UUID.randomUUID();
+        UUID stranger = UUID.randomUUID();
+        UUID admin = UUID.randomUUID();
+        Map<UUID, GameProfile> known = Map.of(alice, new GameProfile(alice, "alice"), bob, new GameProfile(bob, "Bob"),
+                carol, new GameProfile(carol, "carol"), broke, new GameProfile(broke, "broke"),
+                admin, new GameProfile(admin, "admin"));
+        Map<UUID, Integer> balances = Map.of(alice, 500, bob, 900, carol, 500, broke, 0, stranger, 10_000, admin, 99_999);
+
+        List<Leaderboard.Entry> ranked = Leaderboard.rank(balances, id -> Optional.ofNullable(known.get(id)),
+                profile -> profile.getName().equals("admin"));
+
+        helper.assertValueEqual(ranked.stream().map(Leaderboard.Entry::name).toList(), List.of("Bob", "alice", "carol"),
+                "richest first, ties by name; no empty, unknown or excluded accounts");
+        helper.assertValueEqual(ranked.get(0).balance(), 900, "exact balance");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void leaderboardReadsPersonalAccountsAtTheirBankBalance(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        UUID bankerId = UUID.randomUUID();
+        NumismaticsBridge.Account banker = NumismaticsBridge.sharedAccountForTest(bankerId).orElseThrow();
+        helper.assertTrue(NumismaticsBridge.canListAccounts(), "the Numismatics account list is readable");
+        f.deposit(1234);
+        banker.deposit(999);
+        try {
+            Map<UUID, Integer> balances = NumismaticsBridge.playerBalances();
+            helper.assertValueEqual(balances.get(f.player.getUUID()), f.balance(), "listed balance is the bank balance");
+            helper.assertFalse(balances.containsKey(bankerId), "a shared Blaze Banker account is never listed");
+
+            // With only this player known by name, every other account (test leftovers, the banker) stays off.
+            Leaderboard.View view = Leaderboard.viewFor(f.player, id -> id.equals(f.player.getUUID())
+                    ? Optional.of(f.player.getGameProfile()) : Optional.empty());
+            helper.assertValueEqual(view.ranked(), 1, "players ranked");
+            helper.assertValueEqual(view.ownRank(), 1, "own rank");
+            helper.assertValueEqual(view.top().get(0).id(), f.player.getUUID(), "the player's line");
+            helper.assertValueEqual(view.top().get(0).balance(), 1234, "ranked at the bank balance");
+        } finally {
+            // The GameTest world persists: leave both accounts empty, which keeps them off every later board.
+            f.account().deduct(f.balance());
+            banker.deduct(banker.balance());
+        }
         helper.succeed();
     }
 

@@ -11,7 +11,7 @@ The market is run by the server. You can sell it items for money and buy items f
 
 The screen fills most of the window, and the list shows as many items as fit. On a wide window the selected item's panel is to the right of the list; on a narrow one it's below it.
 
-Tabs along the top: **Market** (the item list) and **History** (your own trades). **Contracts** and **Leaderboard** are greyed out; they arrive in a later version.
+Tabs along the top: **Market** (the item list), **Leaderboard** (the richest players) and **History** (your own trades). **Contracts** is greyed out; it arrives in a later version.
 
 | Part | What it shows |
 | --- | --- |
@@ -26,6 +26,8 @@ Tabs along the top: **Market** (the item list) and **History** (your own trades)
 | **▲ / ▼** (last column) | The price is above (▲) or below (▼) normal. Hover over the row for the exact percentage. |
 
 The sort and filter you pick stay the same the next time you open the market, until you quit the game.
+
+The **Leaderboard** tab lists the server's richest players by bank balance, with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
 
 The **History** tab lists your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the Market tab with that item selected. Only you see your trades.
 
