@@ -33,7 +33,7 @@ A server-owned global market. Sell items to the server for currency and buy from
 
 [[dependencies.${mod_id}]]
     modId="numismatics"
-    type="required"
+    type="optional"
     versionRange="${numismatics_version_range}"
     ordering="AFTER"
     side="BOTH"

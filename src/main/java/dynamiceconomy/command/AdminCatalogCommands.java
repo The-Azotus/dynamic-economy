@@ -489,7 +489,7 @@ final class AdminCatalogCommands {
             CatalogEntry now = MarketCatalog.INSTANCE.get(item).orElse(null);
             CatalogEntry next = after.entries().get(item);
             if (now == null && next != null) {
-                added.add(id(item) + ": listed at " + next.basePrice() + " spurs");
+                added.add(id(item) + ": listed at " + next.basePrice() + " " + MarketCommand.unit(ctx.getSource()));
             } else if (now != null && next == null) {
                 taken.add(id(item) + ": taken off the market");
             } else if (now != null && !now.equals(next)) {

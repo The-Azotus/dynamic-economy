@@ -2,7 +2,7 @@ package dynamiceconomy.service;
 
 import com.mojang.authlib.GameProfile;
 import dynamiceconomy.MarketConfig;
-import dynamiceconomy.compat.NumismaticsBridge;
+import dynamiceconomy.bank.WorldBank;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.GameProfileCache;
@@ -17,16 +17,16 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * The richest players by Numismatics bank balance. Only personal accounts of known players count: shared Blaze Banker
- * accounts and accounts with no player profile never appear, nor do empty accounts. Balances are what Numismatics
- * displays, so they match the market screen's Bank line. Server thread only: it reads the bank.
+ * The richest players by balance in the world's bank. Only personal accounts of known players count: shared accounts
+ * (Numismatics' Blaze Bankers) and accounts with no player profile never appear, nor do empty accounts. Balances are
+ * what the bank displays, so they match the market screen's Bank line. Server thread only: it reads the bank.
  */
 public final class Leaderboard {
     private Leaderboard() {
     }
 
     /** One ranked player. */
-    public record Entry(UUID id, String name, int balance) {
+    public record Entry(UUID id, String name, long balance) {
     }
 
     /**
@@ -48,7 +48,7 @@ public final class Leaderboard {
         Predicate<GameProfile> excluded = MarketConfig.leaderboardExcludeOperators()
                 ? profile -> server.getPlayerList().isOp(profile)
                 : profile -> false;
-        List<Entry> ranked = rank(NumismaticsBridge.playerBalances(), profiles, excluded);
+        List<Entry> ranked = rank(WorldBank.of(server).playerBalances(), profiles, excluded);
         int ownRank = 0;
         for (int i = 0; i < ranked.size(); i++) {
             if (ranked.get(i).id().equals(viewer.getUUID())) {
@@ -64,7 +64,7 @@ public final class Leaderboard {
      * Every account worth listing, richest first; equal balances by name. Accounts with no balance, no known
      * profile, or an excluded profile are left out.
      */
-    public static List<Entry> rank(Map<UUID, Integer> balances, Function<UUID, Optional<GameProfile>> profiles,
+    public static List<Entry> rank(Map<UUID, Long> balances, Function<UUID, Optional<GameProfile>> profiles,
                                    Predicate<GameProfile> excluded) {
         List<Entry> entries = new ArrayList<>();
         balances.forEach((id, balance) -> {
@@ -75,7 +75,7 @@ public final class Leaderboard {
                     .filter(profile -> profile.getName() != null && !profile.getName().isEmpty() && !excluded.test(profile))
                     .ifPresent(profile -> entries.add(new Entry(id, profile.getName(), balance)));
         });
-        entries.sort(Comparator.comparingInt(Entry::balance).reversed()
+        entries.sort(Comparator.comparingLong(Entry::balance).reversed()
                 .thenComparing(Entry::name, String.CASE_INSENSITIVE_ORDER));
         return entries;
     }

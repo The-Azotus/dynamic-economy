@@ -17,6 +17,13 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+// `-PwithoutMods=numismatics` or `-PwithoutMods=create` leaves those optional mods out of every run (the code is still
+// compiled against them), to test the mod without them. Numismatics needs Create, so leaving out Create leaves out both.
+def withoutMods = (findProperty('withoutMods') ?: '').toString().split(',').collect { it.trim() }.findAll { it } as Set
+if (withoutMods.contains('create')) {
+    withoutMods << 'numismatics'
+}
+
 repositories {
     // Create, Ponder, Flywheel
     maven {
@@ -68,10 +75,11 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
-        // Runs every registered GameTest, then exits.
+        // Runs every registered GameTest, then exits. A run without optional mods gets its own world, since a world
+        // remembers its bank.
         gameTestServer {
             type = 'gameTestServer'
-            gameDirectory = project.file('run-gametest')
+            gameDirectory = project.file(withoutMods ? 'run-gametest-without-' + withoutMods.sort().join('-') : 'run-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
             // Tests use the small example catalog; the built-in prices are checked by loading their files directly.
             systemProperty 'dynamiceconomy.skipDefaultPrices', 'true'
@@ -102,14 +110,25 @@ neoForge {
 }
 
 dependencies {
-    // Create's POM pulls in many optional runtime mods (JEI, FTB, JourneyMap...), so take the slim jar
-    // without transitives and add the libraries it bundles explicitly.
-    implementation("com.simibubi.create:create-${minecraft_version}:${create_version}:slim") { transitive = false }
-    implementation("net.createmod.ponder:ponder-neoforge:${ponder_version}") { transitive = false }
-    implementation("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}") { transitive = false }
-    implementation("com.tterrag.registrate:Registrate:${registrate_version}") { transitive = false }
+    // Optional: only compat/CreateRecipes touches Create, and only when it is loaded. Create's POM pulls in many
+    // optional runtime mods (JEI, FTB, JourneyMap...), so take the slim jar without transitives and add the libraries
+    // it bundles explicitly.
+    def create = [
+            "com.simibubi.create:create-${minecraft_version}:${create_version}:slim",
+            "net.createmod.ponder:ponder-neoforge:${ponder_version}",
+            "dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}",
+            "com.tterrag.registrate:Registrate:${registrate_version}",
+    ]
+    create.each { compileOnly(it) { transitive = false } }
+    if (!withoutMods.contains('create')) {
+        create.each { runtimeOnly(it) { transitive = false } }
+    }
 
-    implementation("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
+    // Optional: only compat/NumismaticsBridge touches it, and only when it is loaded.
+    compileOnly("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
+    if (!withoutMods.contains('numismatics')) {
+        runtimeOnly("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
+    }
     // Optional: only compat/StagesBridge touches it, and only when the mod is loaded.
     compileOnly("maven.modrinth:progressivestages:${progressivestages_version}") { transitive = false }
 }

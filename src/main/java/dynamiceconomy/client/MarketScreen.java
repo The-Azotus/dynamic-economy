@@ -268,7 +268,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             tabWidth[t.ordinal()] = font.width(t.label()) + 10;
             tx += tabWidth[t.ordinal()] + 2;
         }
-        balanceInTabRow = tx + 8 + font.width(balanceText(ClientMarketState.DISPLAYED_BALANCE_CAP, false)) <= right;
+        balanceInTabRow = tx + 8 + font.width(balanceText(widestBalance(), false)) <= right;
 
         // Wide: the panel is a column on the right, stacked from the top; the chart takes spare height up to a limit.
         wide = imageWidth >= WIDE_MIN_WIDTH;
@@ -538,9 +538,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             buyTotal = row.buyTotal(qty);
             sellTotal = row.sellTotal(qty);
             buyButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.average",
-                    PriceFormat.decimal(OrderMath.average(buyTotal, qty)))));
+                    PriceFormat.money(PriceFormat.decimal(OrderMath.average(buyTotal, qty))))));
             sellButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.average",
-                    PriceFormat.decimal(OrderMath.average(sellTotal, qty)))));
+                    PriceFormat.money(PriceFormat.decimal(OrderMath.average(sellTotal, qty))))));
         }
         buyButton.setMessage(row.canBuy()
                 ? Component.translatable("screen.dynamic_economy.buy_for", PriceFormat.spurs(buyTotal))
@@ -805,9 +805,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             int textY = rowY + 5;
             drawRight(graphics, Component.literal("#" + rank), x + LIST_X + 26, textY, rank <= 3 ? TEXT_MONEY : TEXT_DIM);
             graphics.drawString(font, line.name(), x + LIST_X + 32, textY, line.you() ? TEXT_GOOD : TEXT, false);
-            drawRight(graphics, Component.translatable(line.balance() >= ClientMarketState.DISPLAYED_BALANCE_CAP
-                            ? "screen.dynamic_economy.leaderboard.balance_capped" : "screen.dynamic_economy.leaderboard.balance",
-                    PriceFormat.spurs(line.balance())), x + listRight - 2, textY, TEXT_MONEY);
+            drawRight(graphics, PriceFormat.money(PriceFormat.spurs(line.balance())
+                    + (ClientMarketState.capped(line.balance()) ? "+" : "")), x + listRight - 2, textY, TEXT_MONEY);
         }
         if (lines.isEmpty()) {
             graphics.drawCenteredString(font, Component.translatable(board == null
@@ -1028,7 +1027,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
-        int balance = ClientMarketState.balance();
+        long balance = ClientMarketState.balance();
         drawRight(graphics, balanceText(balance, !balanceInTabRow), imageWidth - MARGIN,
                 balanceInTabRow ? TAB_Y + 3 : TOOLBAR_Y + 4, TEXT_MONEY);
         Component status = ClientMarketState.status();
@@ -1039,15 +1038,23 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     }
 
     /** "Bank: 1,234 spurs"; abbreviated ("Bank: 123k spurs") where it has to share the toolbar. */
-    private static Component balanceText(int balance, boolean abbreviated) {
-        String amount = abbreviated ? PriceFormat.compact(balance) : PriceFormat.spurs(balance);
-        return Component.translatable(balance >= ClientMarketState.DISPLAYED_BALANCE_CAP
-                ? "screen.dynamic_economy.balance_capped" : "screen.dynamic_economy.balance", amount);
+    private static Component balanceText(long balance, boolean abbreviated) {
+        String amount = (abbreviated ? PriceFormat.compact(balance) : PriceFormat.spurs(balance))
+                + (ClientMarketState.capped(balance) ? "+" : "");
+        return Component.translatable("screen.dynamic_economy.balance", PriceFormat.money(amount));
+    }
+
+    /**
+     * The widest balance the layout makes room for: the bank's cap, or for a bank without one (ours) a balance of
+     * about 100 billion, far beyond any likely fortune.
+     */
+    private static long widestBalance() {
+        return Math.min(ClientMarketState.balanceCap(), 99_999_999_999L);
     }
 
     /** The toolbar room kept for the abbreviated balance: its widest form. */
     private int balanceReserve() {
-        return font.width(balanceText(ClientMarketState.DISPLAYED_BALANCE_CAP, true));
+        return font.width(balanceText(widestBalance(), true));
     }
 
     private void drawRight(GuiGraphics graphics, Component text, int right, int y, int color) {
@@ -1071,11 +1078,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         lines.add(row.canSell()
                 ? Component.translatable("screen.dynamic_economy.tooltip.sell",
-                        PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR)).withColor(TEXT_GOOD)
+                        PriceFormat.money(PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR))).withColor(TEXT_GOOD)
                 : Component.translatable("screen.dynamic_economy.tooltip.sell_disabled").withColor(TEXT_DIM));
         lines.add(row.canBuy()
                 ? Component.translatable("screen.dynamic_economy.tooltip.buy",
-                        PriceFormat.unitPrice(row.exactBuyPrice(), RoundingMode.CEILING)).withColor(TEXT_MONEY)
+                        PriceFormat.money(PriceFormat.unitPrice(row.exactBuyPrice(), RoundingMode.CEILING))).withColor(TEXT_MONEY)
                 : Component.translatable("screen.dynamic_economy.tooltip.buy_disabled").withColor(TEXT_DIM));
         lines.add((row.unlimited()
                 ? Component.translatable("screen.dynamic_economy.tooltip.unlimited")

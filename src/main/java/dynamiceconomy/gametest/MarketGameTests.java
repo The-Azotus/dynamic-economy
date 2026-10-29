@@ -3,6 +3,10 @@ package dynamiceconomy.gametest;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.MarketAccess;
+import dynamiceconomy.bank.Bank;
+import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.OwnBank;
+import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.block.MarketBlocks;
 import dynamiceconomy.block.MarketTerminalBlock;
 import dynamiceconomy.catalog.CatalogOverlay;
@@ -15,6 +19,7 @@ import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.catalog.FieldSource;
 import dynamiceconomy.catalog.ItemClasses;
+import dynamiceconomy.compat.CreateRecipes;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.compat.StagesBridge;
 import dynamiceconomy.data.MarketStockData;
@@ -1160,8 +1165,10 @@ public final class MarketGameTests {
     @GameTest(template = EMPTY)
     public static void terminalHasRecipeAndFacing(GameTestHelper helper) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "market_terminal");
-        helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(id).isPresent(),
-                "the recipe loads, so its Numismatics ingredient resolves");
+        // Until the mod has its own coins, the terminal recipe needs Numismatics' spurs and loads only with it.
+        helper.assertValueEqual(helper.getLevel().getServer().getRecipeManager().byKey(id).isPresent(),
+                net.neoforged.fml.ModList.get().isLoaded(NumismaticsBridge.MOD_ID),
+                "the recipe loads with Numismatics, so its Numismatics ingredient resolves");
         helper.setBlock(net.minecraft.core.BlockPos.ZERO, MarketBlocks.MARKET_TERMINAL.get().defaultBlockState()
                 .setValue(MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST));
         helper.assertBlockProperty(net.minecraft.core.BlockPos.ZERO, MarketTerminalBlock.FACING, net.minecraft.core.Direction.EAST);
@@ -1182,6 +1189,9 @@ public final class MarketGameTests {
 
     @GameTest(template = EMPTY)
     public static void terminalCraftsFromCraftingTableAndSpurs(GameTestHelper helper) {
+        if (skippedWithout(helper, NumismaticsBridge.MOD_ID) || skippedWithout(helper, CreateRecipes.MOD_ID)) {
+            return;
+        }
         Item spur = BuiltInRegistries.ITEM.get(ResourceLocation.parse("numismatics:spur"));
         helper.assertTrue(spur != Items.AIR, "Numismatics spur exists");
         Item t = Items.CRAFTING_TABLE;
@@ -1406,7 +1416,7 @@ public final class MarketGameTests {
     @GameTest(template = EMPTY)
     public static void filesForMissingModsAreSkippedQuietly(GameTestHelper helper) {
         String entries = "\"entries\": [ { \"item\": \"minecraft:iron_ingot\", \"base_price\": 16 } ]";
-        MarketCatalog.Loaded present = loadOne("{ \"required_mods\": [\"minecraft\", \"create\"], " + entries + " }");
+        MarketCatalog.Loaded present = loadOne("{ \"required_mods\": [\"minecraft\", \"dynamic_economy\"], " + entries + " }");
         helper.assertTrue(present.entries().containsKey(Items.IRON_INGOT), "loads when every mod is installed");
         MarketCatalog.Loaded missing = loadOne("{ \"required_mods\": [\"create\", \"not_a_real_mod\"], " + entries + " }");
         helper.assertTrue(missing.entries().isEmpty(), "skipped when one is missing");
@@ -1591,6 +1601,9 @@ public final class MarketGameTests {
 
     @GameTest(template = EMPTY)
     public static void sequencedAssemblyInputsAreRead(GameTestHelper helper) {
+        if (skippedWithout(helper, CreateRecipes.MOD_ID)) {
+            return;
+        }
         // Create's precision mechanism: a golden sheet, then 5 loops of deploying a cogwheel, a large cogwheel and an iron
         // nugget onto the half-made mechanism, which succeeds most of the time.
         var holder = helper.getLevel().getServer().getRecipeManager()
@@ -1762,10 +1775,12 @@ public final class MarketGameTests {
         helper.assertValueEqual(s.get(Items.IRON_BLOCK).basePrice(), Optional.of(316), "9 ingots × 32 × 1.1");
         helper.assertTrue(s.get(Items.IRON_NUGGET).reverse().contains(Items.IRON_INGOT), "nuggets turn back into ingots, and that's noted");
 
-        Item sheet = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:iron_sheet"));
-        helper.assertValueEqual(s.get(sheet).basePrice(), Optional.of(35), "Create pressing: 32 × 1.1");
-        helper.assertValueEqual(s.get(sheet).recipeType(), "create:pressing", "from the pressing recipe");
-        helper.assertTrue(s.get(sheet).completeType(), "a recipe type that lists everything");
+        if (net.neoforged.fml.ModList.get().isLoaded(CreateRecipes.MOD_ID)) {
+            Item sheet = BuiltInRegistries.ITEM.get(ResourceLocation.parse("create:iron_sheet"));
+            helper.assertValueEqual(s.get(sheet).basePrice(), Optional.of(35), "Create pressing: 32 × 1.1");
+            helper.assertValueEqual(s.get(sheet).recipeType(), "create:pressing", "from the pressing recipe");
+            helper.assertTrue(s.get(sheet).completeType(), "a recipe type that lists everything");
+        }
 
         PriceSuggestion.Suggestion sword = s.get(Items.NETHERITE_SWORD);
         helper.assertTrue(sword != null && sword.recipeType().equals("minecraft:smithing"), "smithing recipes are read: " + sword);
@@ -2030,8 +2045,10 @@ public final class MarketGameTests {
             f.assertRejectedUnchanged(Result.TOO_LARGE, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 2, ANY_PRICE));
             f.assertRejectedUnchanged(Result.TOO_LARGE, () -> MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, ANY_PRICE));
             f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 1, ANY_PRICE), Result.OK);
-            // Numismatics shows at most 2^30 − 1 and keeps the rest in a hidden overflow; nothing is lost.
-            helper.assertValueEqual(f.balance(), 1_073_741_823, "the displayed balance is capped");
+            // Numismatics shows at most 2^30 − 1 and keeps the rest in a hidden overflow; nothing is lost. Our bank
+            // shows it all.
+            helper.assertValueEqual(f.balance(), (int) Math.min(Integer.MAX_VALUE, f.bank().displayCap()),
+                    "the displayed balance is capped at the bank's cap");
             helper.assertTrue(f.account().deduct(Integer.MAX_VALUE), "but the whole payout can be spent");
             helper.assertValueEqual(f.balance(), 0, "and then the account is empty");
         });
@@ -2739,12 +2756,12 @@ public final class MarketGameTests {
             f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.OK);
 
             List<String> overall = runCommand(helper, "market admin stats");
-            helper.assertTrue(overall.size() >= 4 && overall.get(1).contains("%,d spurs".formatted(f.market.totals().paidOut())),
+            helper.assertTrue(overall.size() >= 4 && overall.get(1).contains("%,d %s".formatted(f.market.totals().paidOut(), f.bank().kind().unit())),
                     "overall stats show what sellers were paid: " + overall);
             List<String> iron = runCommand(helper, "market admin stats minecraft:iron_ingot");
             MarketStockData.Totals ironTotals = f.market.totals(key(Items.IRON_INGOT));
             helper.assertTrue(iron.get(0).startsWith("minecraft:iron_ingot")
-                            && iron.get(1).contains("%,d spurs for %,d items".formatted(ironTotals.paidOut(), ironTotals.unitsSold())),
+                            && iron.get(1).contains("%,d %s for %,d items".formatted(ironTotals.paidOut(), f.bank().kind().unit(), ironTotals.unitsSold())),
                     "item stats: " + iron);
         });
         helper.succeed();
@@ -2847,14 +2864,14 @@ public final class MarketGameTests {
         Map<UUID, GameProfile> known = Map.of(alice, new GameProfile(alice, "alice"), bob, new GameProfile(bob, "Bob"),
                 carol, new GameProfile(carol, "carol"), broke, new GameProfile(broke, "broke"),
                 admin, new GameProfile(admin, "admin"));
-        Map<UUID, Integer> balances = Map.of(alice, 500, bob, 900, carol, 500, broke, 0, stranger, 10_000, admin, 99_999);
+        Map<UUID, Long> balances = Map.of(alice, 500L, bob, 900L, carol, 500L, broke, 0L, stranger, 10_000L, admin, 99_999L);
 
         List<Leaderboard.Entry> ranked = Leaderboard.rank(balances, id -> Optional.ofNullable(known.get(id)),
                 profile -> profile.getName().equals("admin"));
 
         helper.assertValueEqual(ranked.stream().map(Leaderboard.Entry::name).toList(), List.of("Bob", "alice", "carol"),
                 "richest first, ties by name; no empty, unknown or excluded accounts");
-        helper.assertValueEqual(ranked.get(0).balance(), 900, "exact balance");
+        helper.assertValueEqual(ranked.get(0).balance(), 900L, "exact balance");
         helper.succeed();
     }
 
@@ -2862,13 +2879,15 @@ public final class MarketGameTests {
     public static void leaderboardReadsPersonalAccountsAtTheirBankBalance(GameTestHelper helper) {
         Fixture f = new Fixture(helper);
         UUID bankerId = UUID.randomUUID();
-        NumismaticsBridge.Account banker = NumismaticsBridge.sharedAccountForTest(bankerId).orElseThrow();
-        helper.assertTrue(NumismaticsBridge.canListAccounts(), "the Numismatics account list is readable");
+        // Only Numismatics' bank has shared accounts.
+        Optional<Bank.Account> banker = f.bank().kind() == BankKind.NUMISMATICS
+                ? NumismaticsBridge.sharedAccountForTest(bankerId) : Optional.empty();
+        helper.assertTrue(f.bank().canListAccounts(), "the bank's account list is readable");
         f.deposit(1234);
-        banker.deposit(999);
+        banker.ifPresent(account -> account.deposit(999));
         try {
-            Map<UUID, Integer> balances = NumismaticsBridge.playerBalances();
-            helper.assertValueEqual(balances.get(f.player.getUUID()), f.balance(), "listed balance is the bank balance");
+            Map<UUID, Long> balances = f.bank().playerBalances();
+            helper.assertValueEqual(balances.get(f.player.getUUID()), (long) f.balance(), "listed balance is the bank balance");
             helper.assertFalse(balances.containsKey(bankerId), "a shared Blaze Banker account is never listed");
 
             // With only this player known by name, every other account (test leftovers, the banker) stays off.
@@ -2877,11 +2896,11 @@ public final class MarketGameTests {
             helper.assertValueEqual(view.ranked(), 1, "players ranked");
             helper.assertValueEqual(view.ownRank(), 1, "own rank");
             helper.assertValueEqual(view.top().get(0).id(), f.player.getUUID(), "the player's line");
-            helper.assertValueEqual(view.top().get(0).balance(), 1234, "ranked at the bank balance");
+            helper.assertValueEqual(view.top().get(0).balance(), 1234L, "ranked at the bank balance");
         } finally {
             // The GameTest world persists: leave both accounts empty, which keeps them off every later board.
             f.account().deduct(f.balance());
-            banker.deduct(banker.balance());
+            banker.ifPresent(account -> account.deduct(Math.toIntExact(account.balance())));
         }
         helper.succeed();
     }
@@ -2896,9 +2915,87 @@ public final class MarketGameTests {
         return BuiltInRegistries.ITEM.getKey(item);
     }
 
+    // ---- Banks --------------------------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void worldUsesTheBankItsModsSuggest(GameTestHelper helper) {
+        // The dev world had a market before banks were recorded, so it uses Numismatics'; a fresh world without
+        // Numismatics (the run without optional mods) uses ours.
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        BankKind expected = NumismaticsBridge.bank().isPresent() ? BankKind.NUMISMATICS : BankKind.OWN;
+        helper.assertValueEqual(WorldBank.kind(server), expected, "the world's bank");
+        helper.assertValueEqual(WorldBank.of(server).kind(), expected, "and the bank used is that one");
+        helper.assertTrue(WorldBank.available(server), "and it can be reached");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void ownBankDeductsAllOrNothing(GameTestHelper helper) {
+        OwnBank bank = new OwnBank();
+        UUID owner = UUID.randomUUID();
+        Bank.Account account = bank.account(owner);
+        helper.assertValueEqual(account.balance(), 0L, "a new account is empty");
+        helper.assertFalse(bank.playerBalances().containsKey(owner), "and not listed");
+        account.deposit(100);
+        helper.assertFalse(account.deduct(101), "can't deduct more than the balance");
+        helper.assertValueEqual(account.balance(), 100L, "and a failed deduction changes nothing");
+        helper.assertTrue(account.deduct(100), "can deduct exactly the balance");
+        helper.assertValueEqual(account.balance(), 0L, "leaving nothing");
+        helper.assertFalse(bank.playerBalances().containsKey(owner), "an emptied account is forgotten");
+        helper.assertTrue(account.deduct(0), "deducting nothing always works");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void ownBankHoldsMoreThanAnInt(GameTestHelper helper) {
+        OwnBank bank = new OwnBank();
+        UUID owner = UUID.randomUUID();
+        Bank.Account account = bank.account(owner);
+        for (int i = 0; i < 3; i++) {
+            account.deposit(Integer.MAX_VALUE);
+        }
+        long expected = 3L * Integer.MAX_VALUE;
+        helper.assertValueEqual(account.balance(), expected, "balances are longs");
+        helper.assertValueEqual(bank.displayCap(), Long.MAX_VALUE, "and all of it is shown");
+        helper.assertTrue(account.deduct(Integer.MAX_VALUE), "spent a transaction at a time");
+        helper.assertValueEqual(account.balance(), expected - Integer.MAX_VALUE, "exactly");
+
+        // Saved and loaded back with the world.
+        OwnBank loaded = OwnBank.fromTag(bank.save(new net.minecraft.nbt.CompoundTag(), helper.getLevel().registryAccess()),
+                helper.getLevel().registryAccess());
+        helper.assertValueEqual(loaded.account(owner).balance(), expected - Integer.MAX_VALUE, "the balance survives a save");
+        helper.assertValueEqual(loaded.playerBalances(), bank.playerBalances(), "as does every account");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void ownBankSavesOnlyWhenChanged(GameTestHelper helper) {
+        OwnBank bank = new OwnBank();
+        Bank.Account account = bank.account(UUID.randomUUID());
+        account.balance();
+        account.deduct(5);
+        helper.assertFalse(bank.isDirty(), "reading or a refused deduction changes nothing to save");
+        account.deposit(5);
+        helper.assertTrue(bank.isDirty(), "a deposit is saved");
+        helper.succeed();
+    }
+
+    /** Ends a test that needs {@code mod} as passed when it isn't installed, noting it in the log. */
+    private static boolean skippedWithout(GameTestHelper helper, String mod) {
+        if (net.neoforged.fml.ModList.get().isLoaded(mod)) {
+            return false;
+        }
+        DynamicEconomy.LOGGER.info("GameTest skipped: it needs {}, which isn't installed", mod);
+        helper.succeed();
+        return true;
+    }
+
     // ---- Fixture ------------------------------------------------------------------------------------------------
 
-    /** A fresh player with an empty inventory and a new, empty bank account (Numismatics' starter coins default to 0). */
+    /**
+     * A fresh player with an empty inventory and a new, empty account in the world's bank (Numismatics' starter coins
+     * default to 0).
+     */
     private static final class Fixture {
         final GameTestHelper helper;
         final ServerPlayer player;
@@ -2909,7 +3006,7 @@ public final class MarketGameTests {
             this.player = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
                     new GameProfile(UUID.randomUUID(), "market-test"), ClientInformation.createDefault());
             this.market = MarketStockData.get(helper.getLevel().getServer());
-            helper.assertTrue(NumismaticsBridge.isAvailable(), "Numismatics bridge must be available");
+            helper.assertTrue(WorldBank.available(player.server), "the world's bank must be reachable");
             // Every test starts from base prices; tests share the market but each runs within a single tick.
             market.resetAllFactors();
             int starting = balance();
@@ -2918,12 +3015,17 @@ public final class MarketGameTests {
             }
         }
 
-        NumismaticsBridge.Account account() {
-            return NumismaticsBridge.account(player).orElseThrow();
+        Bank bank() {
+            return WorldBank.of(player.server);
         }
 
+        Bank.Account account() {
+            return bank().account(player).orElseThrow();
+        }
+
+        /** Test balances stay well within an int. */
         int balance() {
-            return account().balance();
+            return Math.toIntExact(account().balance());
         }
 
         void deposit(int spurs) {

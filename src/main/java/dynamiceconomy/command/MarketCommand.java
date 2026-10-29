@@ -9,6 +9,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.MarketAccess;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.service.PriceSuggestion;
@@ -194,8 +195,10 @@ public final class MarketCommand {
             String stock = describeStock(ctx.getSource().getServer(), item);
             String verb = selling ? "Sold" : "Bought";
             String direction = selling ? "received" : "paid";
-            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d spurs (first unit %d); you %s %d spurs. Market stock: %s"
-                    .formatted(verb, result.quantity(), id(item), result.total(), result.unitPrice(), direction, result.total(), stock)), false);
+            String unit = unit(ctx.getSource());
+            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d %s (first unit %d); you %s %d %s. Market stock: %s"
+                    .formatted(verb, result.quantity(), id(item), result.total(), unit, result.unitPrice(), direction,
+                            result.total(), unit, stock)), false);
             return result.quantity();
         }
         ctx.getSource().sendFailure(Component.literal("%s failed: %s".formatted(selling ? "Sell" : "Buy", result.result())));
@@ -239,8 +242,9 @@ public final class MarketCommand {
             return 0;
         }
         MarketService.Quote q = quote.get();
-        String sell = q.entry().canSell() ? q.sellPrice() + " spurs" : "disabled";
-        String buy = q.entry().canBuy() ? q.buyPrice() + " spurs" : "disabled";
+        String unit = unit(ctx.getSource());
+        String sell = q.entry().canSell() ? q.sellPrice() + " " + unit : "disabled";
+        String buy = q.entry().canBuy() ? q.buyPrice() + " " + unit : "disabled";
         String stock = describeStock(ctx.getSource().getServer(), item);
         String factor = q.entry().dynamic() ? "%.4f".formatted(q.factor()) : "fixed";
         ctx.getSource().sendSuccess(() -> Component.literal("%s — market pays %s, market charges %s, stock %s, price factor %s"
@@ -419,11 +423,17 @@ public final class MarketCommand {
 
     private static void describeTotals(CommandSourceStack source, String title, MarketStockData.Totals totals) {
         long net = totals.netCreated();
+        String unit = unit(source);
         List.of(title + ":",
-                "  Paid to sellers: %,d spurs for %,d items (new money)".formatted(totals.paidOut(), totals.unitsSold()),
-                "  Paid by buyers: %,d spurs for %,d items (removed from the economy)".formatted(totals.collected(), totals.unitsBought()),
-                "  Net: %s%,d spurs %s".formatted(net >= 0 ? "+" : "", net, net >= 0 ? "added to the economy" : "removed from the economy"))
+                "  Paid to sellers: %,d %s for %,d items (new money)".formatted(totals.paidOut(), unit, totals.unitsSold()),
+                "  Paid by buyers: %,d %s for %,d items (removed from the economy)".formatted(totals.collected(), unit, totals.unitsBought()),
+                "  Net: %s%,d %s %s".formatted(net >= 0 ? "+" : "", net, unit, net >= 0 ? "added to the economy" : "removed from the economy"))
                 .forEach(line -> source.sendSuccess(() -> Component.literal(line), false));
+    }
+
+    /** The world's money unit: spurs with Numismatics' bank, bits with the mod's own. */
+    static String unit(CommandSourceStack source) {
+        return WorldBank.kind(source.getServer()).unit();
     }
 
     /** {@code config/dynamic_economy/}: the only folder export writes to and import reads from. */

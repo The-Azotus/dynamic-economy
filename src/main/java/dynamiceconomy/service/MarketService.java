@@ -3,7 +3,8 @@ package dynamiceconomy.service;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
-import dynamiceconomy.compat.NumismaticsBridge;
+import dynamiceconomy.bank.Bank;
+import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import net.minecraft.core.NonNullList;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 /**
- * The only code that changes market stock or player money.
+ * The only code that changes market stock or player money. Money moves only through the world's {@link Bank}.
  * <p>
  * Every check runs before anything changes, and once the first change is made no remaining step can fail. That holds
  * because everything runs on the server thread, so nothing else can touch the inventory, stock or bank in between.
@@ -35,7 +36,7 @@ public final class MarketService {
         TOO_LARGE,
         /** Quantity was zero or negative. */
         INVALID_QUANTITY,
-        /** The Numismatics bank API is missing or changed. */
+        /** The world's bank can't be reached: Numismatics' bank with Numismatics missing, or its API changed. */
         BANK_UNAVAILABLE
     }
 
@@ -130,7 +131,7 @@ public final class MarketService {
         if (countMatching(items, entry) < qty) {
             return new TradeResult(Result.NOT_ENOUGH_ITEMS, 0, unitPrice, order.total());
         }
-        Optional<NumismaticsBridge.Account> account = NumismaticsBridge.account(player);
+        Optional<Bank.Account> account = WorldBank.of(player.server).account(player);
         if (account.isEmpty()) {
             return TradeResult.fail(Result.BANK_UNAVAILABLE);
         }
@@ -192,7 +193,7 @@ public final class MarketService {
         if (spaceFor(items, entry) < qty) {
             return new TradeResult(Result.NO_SPACE, 0, unitPrice, order.total());
         }
-        Optional<NumismaticsBridge.Account> account = NumismaticsBridge.account(player);
+        Optional<Bank.Account> account = WorldBank.of(player.server).account(player);
         if (account.isEmpty()) {
             return TradeResult.fail(Result.BANK_UNAVAILABLE);
         }

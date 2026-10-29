@@ -1,6 +1,7 @@
 package dynamiceconomy.client;
 
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.bank.BankKind;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.service.MarketService;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -19,11 +20,6 @@ import java.util.Map;
  * Render thread only. Deliberately uses no client-only classes, so the network code can reference it on both sides.
  */
 public final class ClientMarketState {
-    /**
-     * The largest balance Numismatics shows. Anything above it is kept in a hidden overflow that can still be spent,
-     * so a balance at this value means "at least this much".
-     */
-    public static final int DISPLAYED_BALANCE_CAP = 1_073_741_823;
     /** The server's default order limit, used until the first snapshot arrives. */
     private static final int DEFAULT_MAX_QUANTITY = 640;
 
@@ -31,6 +27,8 @@ public final class ClientMarketState {
     private static MarketPayloads.PlayerState player = emptyPlayer();
     private static int maxQuantity = DEFAULT_MAX_QUANTITY;
     private static boolean leaderboardEnabled = true;
+    private static BankKind bank = BankKind.OWN;
+    private static long balanceCap = Long.MAX_VALUE;
     /** The leaderboard, once the screen has asked for it. */
     @Nullable
     private static MarketPayloads.Leaderboard leaderboard;
@@ -58,6 +56,8 @@ public final class ClientMarketState {
         snapshot.rows().forEach(row -> rows.put(row.item(), row));
         maxQuantity = snapshot.maxQuantity();
         leaderboardEnabled = snapshot.leaderboardEnabled();
+        bank = snapshot.bank();
+        balanceCap = snapshot.balanceCap();
         DynamicEconomy.LOGGER.debug("Market snapshot: {} rows, order limit {}", rows.size(), maxQuantity);
         version++;
     }
@@ -112,15 +112,17 @@ public final class ClientMarketState {
         Component itemName = BuiltInRegistries.ITEM.get(outcome.item()).getDescription();
         if (outcome.result() == MarketService.Result.OK) {
             status = Component.translatable(outcome.buy() ? "screen.dynamic_economy.bought" : "screen.dynamic_economy.sold",
-                    outcome.quantity(), itemName, outcome.total());
+                    outcome.quantity(), itemName, PriceFormat.money(PriceFormat.spurs(outcome.total())));
             statusIsError = false;
         } else if (outcome.result() == MarketService.Result.PRICE_CHANGED) {
             // The server also sent the refreshed row, so the button already shows the new total.
             MarketPayloads.TradeRequest request = lastRequest;
             status = request != null && request.buy() == outcome.buy() && request.item().equals(outcome.item())
                     ? Component.translatable("screen.dynamic_economy.price_changed_from_to",
-                            PriceFormat.spurs(request.quotedTotal()), PriceFormat.spurs(outcome.total()))
-                    : Component.translatable("screen.dynamic_economy.price_changed_to", PriceFormat.spurs(outcome.total()));
+                            PriceFormat.money(PriceFormat.spurs(request.quotedTotal())),
+                            PriceFormat.money(PriceFormat.spurs(outcome.total())))
+                    : Component.translatable("screen.dynamic_economy.price_changed_to",
+                            PriceFormat.money(PriceFormat.spurs(outcome.total())));
             statusIsError = true;
         } else {
             status = Component.translatable("screen.dynamic_economy.result." + outcome.result().name().toLowerCase(Locale.ROOT));
@@ -174,14 +176,32 @@ public final class ClientMarketState {
         return player.room(item, maxStackSize);
     }
 
-    /** The balance as Numismatics displays it; see {@link #DISPLAYED_BALANCE_CAP}. */
-    public static int balance() {
+    /** The balance as the bank displays it; see {@link #balanceCap()}. */
+    public static long balance() {
         return player.balance();
+    }
+
+    /** The world's bank, which names the money unit. */
+    public static BankKind bank() {
+        return bank;
+    }
+
+    /**
+     * The largest balance the bank shows. Numismatics keeps anything above it in a hidden overflow that can still be
+     * spent, so a balance at this value means "at least this much". {@link Long#MAX_VALUE} for our own bank.
+     */
+    public static long balanceCap() {
+        return balanceCap;
+    }
+
+    /** Whether {@code balance} is at the cap, so it may hide more. */
+    public static boolean capped(long balance) {
+        return balance >= balanceCap;
     }
 
     /** Whether the balance looks enough for {@code total}. A capped balance may hide more, so it always looks enough. */
     public static boolean looksAffordable(long total) {
-        return player.balance() >= DISPLAYED_BALANCE_CAP || player.balance() >= total;
+        return capped(player.balance()) || player.balance() >= total;
     }
 
     /** The server's limit on one order's quantity. */

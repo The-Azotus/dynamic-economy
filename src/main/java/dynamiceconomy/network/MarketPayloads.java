@@ -1,6 +1,7 @@
 package dynamiceconomy.network;
 
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.bank.BankKind;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.OptionalLong;
 
-/** Every packet the market sends. Prices and totals are in spurs. */
+/** Every packet the market sends. Prices, totals and balances are in bits (= spurs). */
 public final class MarketPayloads {
     private MarketPayloads() {
     }
@@ -131,15 +132,19 @@ public final class MarketPayloads {
 
     /**
      * Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes, with
-     * the server's order limit so the screen can stop an oversized order before it is sent, and whether the
-     * leaderboard tab is turned on.
+     * the server's order limit so the screen can stop an oversized order before it is sent, whether the leaderboard
+     * tab is turned on, and the world's bank: it names the money unit, and its {@code balanceCap} is the largest
+     * balance it shows (a balance at the cap means "at least this much").
      */
-    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled) implements CustomPacketPayload {
+    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled, BankKind bank,
+                           long balanceCap) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
         public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.composite(
                 Row.CODEC.apply(ByteBufCodecs.list()), Snapshot::rows,
                 ByteBufCodecs.VAR_INT, Snapshot::maxQuantity,
                 ByteBufCodecs.BOOL, Snapshot::leaderboardEnabled,
+                ByteBufCodecs.idMapper(i -> BankKind.values()[i], BankKind::ordinal), Snapshot::bank,
+                ByteBufCodecs.VAR_LONG, Snapshot::balanceCap,
                 Snapshot::new);
 
         @Override
@@ -166,11 +171,11 @@ public final class MarketPayloads {
      * room their main inventory has (empty slots, plus the space left in stacks of each held item). The client cannot
      * work this out itself: vanilla does not sync the inventory while a slotless menu is open.
      */
-    public record PlayerState(int balance, Map<ResourceLocation, Integer> held, int emptySlots,
+    public record PlayerState(long balance, Map<ResourceLocation, Integer> held, int emptySlots,
                               Map<ResourceLocation, Integer> stackRoom) implements CustomPacketPayload {
         public static final Type<PlayerState> TYPE = payloadType("player_state");
         public static final StreamCodec<RegistryFriendlyByteBuf, PlayerState> CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT, PlayerState::balance,
+                ByteBufCodecs.VAR_LONG, PlayerState::balance,
                 ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::held,
                 ByteBufCodecs.VAR_INT, PlayerState::emptySlots,
                 ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::stackRoom,
@@ -235,10 +240,10 @@ public final class MarketPayloads {
     }
 
     /** One leaderboard line: the player's name, their balance, and whether it's the player receiving it. */
-    public record LeaderboardLine(String name, int balance, boolean you) {
+    public record LeaderboardLine(String name, long balance, boolean you) {
         static final StreamCodec<ByteBuf, LeaderboardLine> CODEC = StreamCodec.composite(
                 ByteBufCodecs.stringUtf8(16), LeaderboardLine::name,
-                ByteBufCodecs.VAR_INT, LeaderboardLine::balance,
+                ByteBufCodecs.VAR_LONG, LeaderboardLine::balance,
                 ByteBufCodecs.BOOL, LeaderboardLine::you,
                 LeaderboardLine::new);
     }

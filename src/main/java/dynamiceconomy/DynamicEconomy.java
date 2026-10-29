@@ -1,10 +1,10 @@
 package dynamiceconomy;
 
 import com.mojang.logging.LogUtils;
+import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.command.MarketCommand;
-import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.compat.StagesBridge;
 import dynamiceconomy.block.MarketBlocks;
 import dynamiceconomy.data.MarketOverrides;
@@ -68,8 +68,11 @@ public final class DynamicEconomy {
 
         // Once the world is up its admin edits can be applied; again after every /reload, since tags may change.
         NeoForge.EVENT_BUS.addListener((ServerStartedEvent event) -> {
-            if (!NumismaticsBridge.isAvailable()) {
-                LOGGER.error("Numismatics bank API not found; the market will refuse all trades");
+            // Records the world's bank on its first start, before anything can pay into one. Only our own bank is
+            // always there.
+            if (!WorldBank.available(event.getServer())) {
+                LOGGER.error("This world uses Numismatics' bank, but Numismatics isn't installed or its bank API doesn't "
+                        + "match this mod; the market will refuse all trades");
             }
             catalogReloaded(event.getServer());
         });

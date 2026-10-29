@@ -4,7 +4,8 @@ import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
-import dynamiceconomy.compat.NumismaticsBridge;
+import dynamiceconomy.bank.Bank;
+import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
@@ -261,7 +262,9 @@ public final class MarketSync {
                 row(server, entry.item()).ifPresent(rows::add);
             }
         }
-        return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest(), MarketConfig.leaderboardEnabled());
+        Bank bank = WorldBank.of(server);
+        return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest(), MarketConfig.leaderboardEnabled(),
+                bank.kind(), bank.displayCap());
     }
 
     private static Optional<MarketPayloads.Row> row(MinecraftServer server, Item item) {
@@ -275,7 +278,7 @@ public final class MarketSync {
      * purchase. One pass over the inventory, so the cost doesn't grow with the size of the catalog.
      */
     public static MarketPayloads.PlayerState playerState(ServerPlayer player) {
-        int balance = NumismaticsBridge.account(player).map(NumismaticsBridge.Account::balance).orElse(0);
+        long balance = WorldBank.of(player.server).account(player).map(Bank.Account::balance).orElse(0L);
         Map<ResourceLocation, Integer> held = new HashMap<>();
         Map<ResourceLocation, Integer> stackRoom = new HashMap<>();
         int emptySlots = 0;

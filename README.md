@@ -37,7 +37,7 @@ The [admin guide](docs/admin-guide.md) covers every command, catalog field and s
 
 ## Building from source
 
-Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests.
+Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests. Create and Numismatics are optional: add `-PwithoutMods=numismatics` to run without Numismatics, or `-PwithoutMods=create` to run without both (Numismatics needs Create). Each such run uses its own test world, since a world remembers which bank it uses.
 
 Released versions are tagged in git (for example `v0.2.0`).
 
