@@ -1,0 +1,112 @@
+{
+  "required_mods": [
+    "ironchest"
+  ],
+  "entries": [
+    {
+      "item": "ironchest:copper_chest",
+      "base_price": 76,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:copper_to_iron_chest_upgrade",
+      "base_price": 158,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:crystal_chest",
+      "base_price": 1805,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironchest:diamond_chest",
+      "base_price": 1787,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironchest:diamond_to_crystal_chest_upgrade",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:diamond_to_obsidian_chest_upgrade",
+      "base_price": 72,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:dirt_chest",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:gold_chest",
+      "base_price": 648,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:gold_to_diamond_chest_upgrade",
+      "base_price": 1192,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironchest:iron_chest",
+      "base_price": 225,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:iron_to_gold_chest_upgrade",
+      "base_price": 457,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:obsidian_chest",
+      "base_price": 1858,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironchest:trapped_copper_chest",
+      "base_price": 94,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:trapped_crystal_chest",
+      "base_price": 1824,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironchest:trapped_diamond_chest",
+      "base_price": 1806,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironchest:trapped_dirt_chest",
+      "base_price": 33,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:trapped_gold_chest",
+      "base_price": 666,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:trapped_iron_chest",
+      "base_price": 244,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:trapped_obsidian_chest",
+      "base_price": 1876,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ironchest:wood_to_copper_chest_upgrade",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "ironchest:wood_to_iron_chest_upgrade",
+      "base_price": 283,
+      "class": "common_processed"
+    }
+  ]
+}
