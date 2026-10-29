@@ -152,7 +152,7 @@ Done when: the new recipe crafts the terminal and the old one no longer does; th
 
 A class is a named set of pricing defaults, so groups of items behave alike (rare items volatile and slow to recover, common ones stable). It is the main anti-exploit tool: **no per-player quotas** (decided); dumping is limited by price impact.
 
-- Classes live in `data/<namespace>/market_classes/*.json`, loaded by the same reload. A class may set any of: `markup`, `sell_fee`, `can_sell`, `can_buy`, `dynamic`, `unlimited_stock`, `min_buy_markup`, `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling`, and later contract settings (Phase 14). Same validation as catalog entries.
+- Classes live in `data/<namespace>/market_classes/*.json`, loaded by the same reload. A class may set any of: `markup`, `sell_fee`, `can_sell`, `can_buy`, `dynamic`, `unlimited_stock`, `min_buy_markup`, `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling`, and later contract settings (Phase 15, Contracts). Same validation as catalog entries.
 - Catalog entries, file `defaults`, tag rules and in-game edits accept `"class": "<id>"`. Unknown class: warning, entry skipped.
 - Precedence: server config < class < file `defaults` < entry < tag rules < per-item edits.
 - Built-in classes (placeholder values, tuned in Phase 10): `common_resource`, `common_processed`, `rare_resource`, `rare_processed`, `rare_loot`, `unique`, `farmable` (crops and mob drops that automated farms flood: cheap, steep sell impact). No equipment class.
@@ -198,7 +198,7 @@ As built (branch `phase11`). Approved by the user on 2026-10-29 after seeing the
 
 - The screen sizes to the window, up to 600×400 (`MAX_WIDTH`/`MAX_HEIGHT` in `MarketScreen`), and the list shows as many 18 px rows as fit. Columns: item, stock, buy, sell, have, trend (▲/▼ = price vs. base).
 - From 440 px wide the selection panel is a 150 px column right of the list: name, a price chart up to 80 px tall, buy/sell/stock/have/vs. base lines, quantity controls, Buy and Sell. Narrower, it sits under the list as before. Search text and quantity survive a resize.
-- Tabs **Market | Contracts | Leaderboard | History**, drawn by the screen. History is the old Trades view (clicking a trade selects it in Market). Contracts and Leaderboard are greyed out with a "Coming in a later version" tooltip until Phases 13–14; Exchange is added when Phase 16 adds its config switch.
+- Tabs **Market | Contracts | Leaderboard | History**, drawn by the screen. History is the old Trades view (clicking a trade selects it in Market). Contracts and Leaderboard are greyed out with a "Coming in a later version" tooltip until Phases 13–14; Exchange is added when Phase 17 adds its config switch.
 - The balance sits beside the tabs; when it doesn't fit, it moves to the end of the search row, abbreviated (`123k`).
 - Search: space-separated terms must all match; `@mod` matches a mod's display name or ID, `#tag` a tag's path (`#c:ingots` the full tag ID), `mod:` still filters by namespace.
 - Decided with the user: keep the Have column; trend = vs. base; 18 px rows (the screen grows instead); greyed-out tabs.

@@ -1,12 +1,12 @@
-# Numismatics: Dynamic Economy — build brief
+# Dynamic-Economy — build brief
 
-NeoForge 1.21.1 companion mod for Create: Numismatics (NeoForge 21.1.228, Java 21, Create 6.0.10, Numismatics 1.1.0). Adds a **server-owned global market**: players sell items to the server for Numismatics currency, sold items enter one shared persistent stock, and players buy from that stock at a markup. Prices move with supply and demand.
+NeoForge 1.21.1 mod (NeoForge 21.1.228, Java 21; optional: Create 6.0.10, Numismatics 1.1.0). Adds a **server-owned global market**: players sell items to the server for currency paid into their bank account, sold items enter one shared persistent stock, and players buy from that stock at a markup. Prices move with supply and demand. Until Phase 14 is done the mod still requires Create and Numismatics and is named "Numismatics: Dynamic Economy"; Phase 14 renames it and gives it its own coins and bank, using Numismatics' bank when that mod is installed.
 
 Where to find more (read only when needed):
 - `docs/market-design.md` — background and reasoning. This file overrides it.
 - `docs/admin-guide.md`, `docs/player-guide.md` — every command, catalog field and config option as built.
 - `docs/phase-history.md` — specs for finished Phases 0–13 (Phase 10 includes how `suggest` and the built-in prices work).
-- `docs/roadmap.md` — specs for Phases 15–16.
+- `docs/roadmap.md` — specs for Phases 15–17.
 
 ## How to work
 
@@ -18,14 +18,16 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). **Phase 14 (Contracts) is next, on branch `phase14`** (from `phase13`; `main` is still v0.2.0): not started; the open questions under Current phase come first. Then 15 Difficulty preset → 16 Player exchange (optional).
+Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). **Phase 14 (Standalone currency) is next, on branch `phase14`** (from `phase13`; `main` is still v0.2.0): not started; the open questions under Current phase come first. It was put ahead of Contracts on 2026-10-29 so that Contracts and the Exchange are built on the final bank. Then 15 Contracts → 16 Difficulty preset → 17 Player exchange (optional).
 
 Phases 8+ target v0.3.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
 ## Decisions already made (don't revisit)
 
-- Separate companion mod. Don't fork or modify Numismatics or Create: Stock Market; don't copy Stock Market code (AGPL-3.0).
-- **All payments go through the player's Numismatics bank account**, both directions. No physical coins.
+- Separate mod. Don't fork or modify Numismatics or Create: Stock Market; don't copy Stock Market code (AGPL-3.0) or Numismatics' textures.
+- From Phase 14: named **Dynamic-Economy** (mod id stays `dynamic_economy`). Create and Numismatics are optional. With Numismatics installed the mod uses Numismatics' bank; otherwise its own coins and bank.
+- **All market payments go through the player's bank account**, both directions. The market never pays out or takes physical coins; coins only move in and out of the bank through deposit and withdraw.
+- Own coins (value in bits): Bit 1, Chip 8, Stack 64, Mark 512, Crown 4,096, Sun 32,768, Divine 262,144, Omega 2,097,152. **1 bit = 1 Numismatics spur**, so prices and price files mean the same under either bank.
 - One server-wide market. Same prices for every player; team size never affects them.
 - Market pays `base × s × (1 − sell_fee)`; charges `ceil(base × s × (1 + markup))`. `s` is the per-item supply-and-demand factor.
 - Only items with default components are accepted (no enchanted, damaged or renamed copies).
@@ -42,13 +44,15 @@ Phases 8+ target v0.3.0. Repo: https://github.com/The-Azotus/dynamic-economy (MI
 - **Never drop items on the ground.** Don't use Numismatics' `ItemUtil.givePlayerItem` for market output.
 - Totals in `long`. Reject with `TOO_LARGE` above `Integer.MAX_VALUE` (bank methods take `int`). `qty` capped per request (config, default 640).
 - Buying N then selling N must never profit (markup + fee + impact). Any new feature that pays out (contracts, presets) must keep this true.
-- `compat/NumismaticsBridge` is the **only** class allowed to import `dev.ithundxr.createnumismatics.*`.
+- `compat/NumismaticsBridge` is the **only** class allowed to import `dev.ithundxr.createnumismatics.*`; `compat/CreateRecipes` the only one allowed to import Create.
+- From Phase 14, everything that moves money goes through the bank interface, never a bank directly. The own bank follows the same rules (server main thread, all-or-nothing `deduct`).
+- Coin items (ours and Numismatics') can never be listed in the market; selling them would create money from nothing.
 
 Result enum: `OK, NOT_LISTED, SELL_DISABLED, BUY_DISABLED, NOT_ENOUGH_ITEMS, NO_STOCK, NO_FUNDS, NO_SPACE, PRICE_CHANGED, TOO_LARGE`.
 
 ## Catalog format
 
-Files in `data/<namespace>/market/*.json`; classes in `data/<namespace>/market_classes/*.json`. Prices are integer **spurs**. A file's `defaults` block applies to every entry in it unless overridden.
+Files in `data/<namespace>/market/*.json`; classes in `data/<namespace>/market_classes/*.json`. Prices are integer **spurs** (bits from Phase 14; the same unit). A file's `defaults` block applies to every entry in it unless overridden.
 
 ```json
 {
@@ -65,23 +69,29 @@ Fields: `item` (exact ID), `class`, `base_price` (> 0; ≤ 0 is skipped), `marku
 
 Precedence: server config < class < file `defaults` < entry < tag rules (creation order) < per-item in-game edits.
 
-## Current phase: 14 — Contracts
+## Current phase: 14 — Standalone currency
 
-- A global board, regenerated every **5 in-game days by day count** (sleeping counts). Generated from the catalog using class settings: large orders for common classes, small ones for rare, single items for `unique`. Number of contracts configurable.
-- Flow: a player **claims** a contract, which locks it to them. Claiming takes a **deposit** (fraction of the reward, configurable). They deliver in batches from the **main inventory only**. Delivered items **disappear** (not added to stock).
-- Completion pays the reward and returns the deposit. At expiry, an incomplete contract pays for units delivered and the deposit is lost. A player may abandon, with the same outcome. Max active contracts per player configurable (default 1).
-- Integrity: per-unit reward stays below the lowest buy price the market can reach for that item, so buying from the market to fill a contract never profits. Transaction rules apply (checks before changes, `long` totals, `TOO_LARGE`).
-- New Result values for contract actions (e.g. `CONTRACT_TAKEN`, `CONTRACT_EXPIRED`); list them in the report.
+Make the mod work without Create and Numismatics, with its own coins and bank, while still using Numismatics' bank when it's installed. Prices don't change: 1 bit = 1 spur. Big phase, so it's built in steps; **stop and report after each step**.
 
-Done when: two players can't both claim one contract; partial and full delivery pay exactly as specified; expiry and refresh happen on the right day, including after sleeping and a restart; buy-from-market-and-deliver never profits (GameTest).
+1. **Rename and optional Create.** Display name `Dynamic-Economy` everywhere (`gradle.properties` `mod_name`, README, docs, lang); mod id `dynamic_economy` and the repo stay, so worlds and datapacks keep working. Create becomes an optional dependency: `compat/CreateRecipes` loads only when Create is (nested `Present` class, as in `StagesBridge`); without Create, `suggest` skips Create's chance outputs and sequenced assembly.
+2. **Bank interface and own bank.** One `Bank` interface (balance, `deposit`, all-or-nothing `deduct`, list player balances); two versions: Numismatics' (through `NumismaticsBridge`) and our own (balances saved with the world, keyed by player UUID). MarketService, MarketSync, Leaderboard and the startup code use only the interface. Numismatics becomes optional. The world records which bank it uses and never switches on its own.
+3. **Coins.** Eight items, Bit to Omega (values above), original textures. Recipes: 8 of one ⇄ 1 of the next. Hidden and uncraftable while Numismatics' bank is in use.
+4. **Bank tab and remote access.** A **Bank** tab in the market screen: deposit every coin from the main inventory, or withdraw an amount as the fewest coins (only if it all fits in the main inventory; never drop items). With Numismatics' bank it moves Numismatics coins. A carried item opens the Bank tab from anywhere.
+5. **Team accounts** (own bank only; Numismatics has none), as the answers to question 1 decide.
+6. **Switching and finishing.** Admin command to move a world from one bank to the other (moves balances, warns about loose coins); Market Terminal recipe with a mod-loaded condition (spurs with Numismatics, our coins without); docs for both setups.
+
+Done when: the mod loads and the market works with no Create or Numismatics installed, and with each alone; GameTests pass on both banks (a Gradle run without Numismatics and Create is needed, since the dev runtime has both); deposit then withdraw returns exactly the same value; withdraw never drops items; coins can't be listed in the market; buy-then-sell still never profits.
 
 Not started. Branch `phase14` exists (from `phase13`). First: read the code, then ask the user these before building (none is decided):
 
-1. **The reward cap conflicts with selling.** The lowest buy price an item can reach is `base × floor × (1 + markup)`, which with defaults (floor 0.2, markup 0.5) is 0.3 × base, below what simply selling pays (base × s). Capping rewards there makes contracts worse than selling. Options to put to the user: cap against the buy price at claim time and stop the item's price falling below that while the contract is open; exclude contract items from market buying while claimed; only offer contracts for `can_buy: false` items (none can be bought, so any reward is safe); or accept a lower-but-still-useful premium (e.g. reward ≤ min over the contract's life). Whatever is chosen, buy-from-market-and-deliver must never profit (GameTest).
-2. **Defaults:** number of contracts on the board, deposit fraction, contract size per class (common / rare / `unique`), reward premium, and whether items with `unlimited_stock` or `can_sell: false` can appear.
-3. **Class settings:** Phase 9 reserved per-class contract settings. Which fields (e.g. `contract_weight`, `contract_size`, `contract_premium`, or opting a class out)?
-4. **Visibility (Phase 12):** a contract for an item locked for a player is hidden from them; confirm they also can't claim it, and that a claimed contract stays deliverable if their stage is revoked.
-5. **Board timing:** "every 5 in-game days by day count" — confirm contracts expire at the same refresh (one shared lifetime), and what a player sees for a claimed contract that expired while offline (payout for delivered units goes to their bank either way).
+1. **Team accounts:** what a team is (our own `/bank team` commands, vanilla scoreboard teams, or FTB Teams if the pack has it); who can deposit and withdraw; whether market trades can pay from or into a team account, and how a player picks it.
+2. **Switching banks:** confirm the recommendation: coins always registered (so none vanish if Numismatics is added later) but hidden and uncraftable while Numismatics' bank is in use; the world remembers its bank; only an admin command switches. Also: import existing Numismatics balances when a world moves to our bank? Check early that the bank choice can be known when recipes load (recipe conditions run when datapacks load).
+3. **Name clash:** Numismatics also has a Crown (512 spurs) and a Sun (4,096 spurs), while ours are 4,096 and 32,768. Players only see one coin set at a time, but guides and chat could confuse them. Keep the names?
+4. **Unit label:** prices currently read "spurs". Show "bits" always, or "spurs" when Numismatics' bank is in use?
+5. **Remote access item:** what it is (wallet, bank card), its name and recipe; and whether it opens only the Bank tab or the whole market.
+6. **Balance limit:** Numismatics stores balances as `int` (about 2.1 billion bits ≈ 1,024 Omega). Should our bank allow more (`long`)? Each transaction stays capped at `Integer.MAX_VALUE` either way.
+7. **Coin art:** will the user supply textures, or should placeholders be made?
+8. **Terminal recipe without Numismatics:** which coin replaces the 8 spurs?
 
 ## Report format (after every phase)
 
