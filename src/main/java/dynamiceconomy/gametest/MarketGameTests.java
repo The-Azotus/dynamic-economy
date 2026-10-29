@@ -1570,6 +1570,15 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = EMPTY)
+    public static void energyConversionsAreNotComplete(GameTestHelper helper) {
+        // The particle collider turns netherrack into netherite scrap: priced as complete, it raised a charcoal block to 404M.
+        helper.assertTrue(!PriceSuggestion.completeMachineRecipe("oritech:particle_collision", false), "the particle collider hides its cost");
+        helper.assertTrue(PriceSuggestion.completeMachineRecipe("oritech:foundry", false), "other machines without fluids are complete");
+        helper.assertTrue(!PriceSuggestion.completeMachineRecipe("oritech:foundry", true), "machines using fluids aren't");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
     public static void partlyUsedInputsAreCreditedOneRun(GameTestHelper helper) {
         // A quarry uses its drill up one run in ten. Credited with all ten runs, the drill would be raised to 10x what one
         // run makes, and chains of such inputs multiply without bound; it gets one run's worth.

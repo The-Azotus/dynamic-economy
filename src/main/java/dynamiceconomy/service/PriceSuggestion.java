@@ -79,7 +79,19 @@ public final class PriceSuggestion {
             "create:deploying", "create:item_application", "create:splashing", "create:haunting", "create:sandpaper_polishing",
             "create:mixing", "create:compacting", "create:filling", "create:emptying");
 
+    /**
+     * Machine recipes whose real cost is energy on an endgame scale, not their items (Oritech's particle collider turns
+     * netherrack into netherite scrap). Accepted as generators, so like recipes that hide inputs they only price what
+     * nothing else makes, and never raise a price or count as a complete chain.
+     */
+    public static final Set<String> ENERGY_CONVERSION_TYPES = Set.of("oritech:particle_collision");
+
     private PriceSuggestion() {
+    }
+
+    /** Whether a machine recipe of this type, read with all its items, counts as fully priced. */
+    public static boolean completeMachineRecipe(String type, boolean fluids) {
+        return !fluids && !ENERGY_CONVERSION_TYPES.contains(type);
     }
 
     /**
@@ -658,7 +670,8 @@ public final class PriceSuggestion {
 
     /**
      * A machine recipe read by {@link MachineRecipes}, with the inputs and amounts its generic data leaves out. Machines
-     * run on energy, which isn't priced, so a recipe counts as complete unless it uses up fluids or chemicals.
+     * run on energy, which isn't priced, so a recipe counts as complete unless it uses up fluids or chemicals or is an
+     * {@link #ENERGY_CONVERSION_TYPES energy conversion}.
      */
     private static Optional<Path> machinePath(RecipeHolder<?> holder, String type, MachineRecipes.Read read,
                                               Map<String, Integer> unusable) {
@@ -671,7 +684,8 @@ public final class PriceSuggestion {
             return Optional.empty();
         }
         List<Slot> slots = read.inputs().stream().map(input -> new Slot(input.options(), input.amount())).toList();
-        return Optional.of(new Path(holder.id(), type, read.item(), read.expected(), slots, false, !read.fluids()));
+        return Optional.of(new Path(holder.id(), type, read.item(), read.expected(), slots, false,
+                completeMachineRecipe(type, read.fluids())));
     }
 
     /**
