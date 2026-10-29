@@ -5,8 +5,8 @@ NeoForge 1.21.1 companion mod for Create: Numismatics (NeoForge 21.1.228, Java 2
 Where to find more (read only when needed):
 - `docs/market-design.md` — background and reasoning. This file overrides it.
 - `docs/admin-guide.md`, `docs/player-guide.md` — every command, catalog field and config option as built.
-- `docs/phase-history.md` — specs for finished Phases 0–11 (Phase 10 includes how `suggest` and the built-in prices work).
-- `docs/roadmap.md` — specs for Phases 13–16.
+- `docs/phase-history.md` — specs for finished Phases 0–12 (Phase 10 includes how `suggest` and the built-in prices work).
+- `docs/roadmap.md` — specs for Phases 14–16.
 
 ## How to work
 
@@ -18,7 +18,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). **Phase 12 (ProgressiveStages) is built on branch `phase12`** (from `phase11`; `main` is still v0.2.0), awaiting approval: `compat/StagesBridge` + `service/MarketVisibility`, per-player catalog sync, 107 GameTests pass; verified against the real 3.1.1 jar (showcase locks detected), in-pack check still to do. Then 13 Leaderboard → 14 Contracts → 15 Difficulty preset → 16 Player exchange (optional).
+Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). **Phase 13 (Leaderboard) is in progress on branch `phase13`** (from `phase12`; `main` is still v0.2.0): not started beyond reading the code. Then 14 Contracts → 15 Difficulty preset → 16 Player exchange (optional).
 
 Phases 8+ target v0.3.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
@@ -65,16 +65,14 @@ Fields: `item` (exact ID), `class`, `base_price` (> 0; ≤ 0 is skipped), `marku
 
 Precedence: server config < class < file `defaults` < entry < tag rules (creation order) < per-item in-game edits.
 
-## Current phase: 12 — ProgressiveStages hooks
+## Current phase: 13 — Leaderboard
 
-- Soft dependency on ProgressiveStages **3.1.1**. Verify its API against the released jar before use (as in Phase 0). `compat/StagesBridge` is the only class allowed to import it; without the mod, nothing changes.
-- An item locked for a player is **hidden** from that player: snapshot, deltas, tooltips, contracts and exchange. Catalog sync becomes per-player.
-- The server enforces it too: buying or selling a locked item is rejected as `NOT_LISTED` (doesn't reveal locked items).
-- Prices stay the same for everyone; only visibility differs. Stage changes re-sync the player's market.
+- Top N **player** bank balances with exact amounts, read via `NumismaticsBridge`. Team and shared accounts are excluded; only accounts belonging to a known player profile count (verify how Numismatics distinguishes them).
+- Offline players shown by name from the profile cache.
+- Config: `leaderboard_enabled`, `leaderboard_size`, `leaderboard_exclude_operators`.
+- Read on the main thread; refreshed when the tab opens, not every tick.
 
-Done when: a locked item is invisible and untradeable for one player while another trades it; unlocking a stage shows it without reopening the game; works with the mod absent.
-
-Decided with the user (2026-10-29): allow ProgressiveStages `[3.1.1,4)`; if its lock API fails, fail open (hide nothing, log an error); a past trade of a now-locked item stays in History. Verified against the real 3.1.1 jar: item, tag and whole-mod (`mod:create`) locks are all detected, and a locked listed item is left out of that player's catalog.
+Done when: balances match `/market` bank values; non-player accounts never appear.
 
 ## Report format (after every phase)
 

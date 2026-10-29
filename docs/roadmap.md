@@ -1,15 +1,6 @@
-# Roadmap (Phases 13–16, not started)
+# Roadmap (Phases 14–16, not started)
 
 Archived from `CLAUDE.md`. When a phase becomes the current one, move its section back into `CLAUDE.md` under "Current phase".
-
-## Phase 13 — Leaderboard
-
-- Top N **player** bank balances with exact amounts, read via `NumismaticsBridge`. Team and shared accounts are excluded; only accounts belonging to a known player profile count (verify how Numismatics distinguishes them).
-- Offline players shown by name from the profile cache.
-- Config: `leaderboard_enabled`, `leaderboard_size`, `leaderboard_exclude_operators`.
-- Read on the main thread; refreshed when the tab opens, not every tick.
-
-Done when: balances match `/market` bank values; non-player accounts never appear.
 
 ## Phase 14 — Contracts
 

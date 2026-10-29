@@ -1,4 +1,4 @@
-# Phase history (Phases 0–11, done)
+# Phase history (Phases 0–12, done)
 
 Archived from `CLAUDE.md`. These are the original specs for finished phases. The code and the guides in `docs/` are now the source of truth; read this only when you need the reasoning behind how something was built.
 
@@ -202,3 +202,16 @@ As built (branch `phase11`). Approved by the user on 2026-10-29 after seeing the
 - The balance sits beside the tabs; when it doesn't fit, it moves to the end of the search row, abbreviated (`123k`).
 - Search: space-separated terms must all match; `@mod` matches a mod's display name or ID, `#tag` a tag's path (`#c:ingots` the full tag ID), `mod:` still filters by namespace.
 - Decided with the user: keep the Have column; trend = vs. base; 18 px rows (the screen grows instead); greyed-out tabs.
+
+## Phase 12 — ProgressiveStages hooks (done)
+
+- Soft dependency on ProgressiveStages **3.1.1**. Verify its API against the released jar before use (as in Phase 0). `compat/StagesBridge` is the only class allowed to import it; without the mod, nothing changes.
+- An item locked for a player is **hidden** from that player: snapshot, deltas, tooltips, contracts and exchange. Catalog sync becomes per-player.
+- The server enforces it too: buying or selling a locked item is rejected as `NOT_LISTED` (doesn't reveal locked items).
+- Prices stay the same for everyone; only visibility differs. Stage changes re-sync the player's market.
+
+Done when: a locked item is invisible and untradeable for one player while another trades it; unlocking a stage shows it without reopening the game; works with the mod absent.
+
+Decided with the user (2026-10-29): allow ProgressiveStages `[3.1.1,4)`; if its lock API fails, fail open (hide nothing, log an error); a past trade of a now-locked item stays in History. Verified against the real 3.1.1 jar: item, tag and whole-mod (`mod:create`) locks are all detected, and a locked listed item is left out of that player's catalog.
+
+As built (branch `phase12`): `compat/StagesBridge` asks ProgressiveStages' `LockRegistry.isItemBlockedFor(player, item)` (missing stage; ignores creative, category switches and structure locks), probed by reflection once. `service/MarketVisibility` wraps it and has a GameTest hook (`setTestLocks`). `MarketSync` sends each player only what they can see (one shared broadcast when nothing can be hidden); stage events mark catalogs stale, resent next tick. Trading a hidden item returns `NOT_LISTED` before any other check; `/market price|stock` hide it from players. Approved 2026-10-29; the two-player and in-pack checks were left to the user.
