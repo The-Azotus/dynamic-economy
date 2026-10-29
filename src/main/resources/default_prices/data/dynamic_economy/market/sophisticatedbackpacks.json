@@ -1,0 +1,352 @@
+{
+  "required_mods": [
+    "sophisticatedbackpacks"
+  ],
+  "entries": [
+    {
+      "item": "sophisticatedbackpacks:advanced_alchemy_upgrade",
+      "base_price": 1108,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_compacting_upgrade",
+      "base_price": 1167,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_deposit_upgrade",
+      "base_price": 1007,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_feeding_upgrade",
+      "base_price": 1320,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_filter_upgrade",
+      "base_price": 339,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_jukebox_upgrade",
+      "base_price": 1511,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_magnet_upgrade",
+      "base_price": 1142,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_mob_catcher_upgrade",
+      "base_price": 3234,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_pickup_upgrade",
+      "base_price": 947,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_pump_upgrade",
+      "base_price": 1579,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_refill_upgrade",
+      "base_price": 988,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_restock_upgrade",
+      "base_price": 1010,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_tool_swapper_upgrade",
+      "base_price": 965,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:advanced_void_upgrade",
+      "base_price": 925,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:alchemy_upgrade",
+      "base_price": 407,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:anvil_upgrade",
+      "base_price": 1129,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:auto_blasting_upgrade",
+      "base_price": 1672,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:auto_smelting_upgrade",
+      "base_price": 1644,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:auto_smoking_upgrade",
+      "base_price": 1671,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:backpack",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:battery_upgrade",
+      "base_price": 760,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:blasting_upgrade",
+      "base_price": 339,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:compacting_upgrade",
+      "base_price": 465,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:copper_backpack",
+      "base_price": 111,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:crafting_upgrade",
+      "base_price": 235,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:deposit_upgrade",
+      "base_price": 306,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:diamond_backpack",
+      "base_price": 5180,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:everlasting_upgrade",
+      "base_price": 72761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:feeding_upgrade",
+      "base_price": 618,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:filter_upgrade",
+      "base_price": 201,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:gold_backpack",
+      "base_price": 674,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:inception_upgrade",
+      "base_price": 20040,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:iron_backpack",
+      "base_price": 252,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:jukebox_upgrade",
+      "base_price": 809,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:magnet_upgrade",
+      "base_price": 441,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:mob_catcher_upgrade",
+      "base_price": 265,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:netherite_backpack",
+      "base_price": 7110,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:pickup_upgrade",
+      "base_price": 245,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:pump_upgrade",
+      "base_price": 290,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:refill_upgrade",
+      "base_price": 286,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:restock_upgrade",
+      "base_price": 308,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:smelting_upgrade",
+      "base_price": 311,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:smithing_upgrade",
+      "base_price": 305,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:smoking_upgrade",
+      "base_price": 337,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_downgrade_tier_1",
+      "base_price": 159,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_downgrade_tier_2",
+      "base_price": 160,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_downgrade_tier_3",
+      "base_price": 160,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_omega_tier",
+      "base_price": 938470,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_starter_tier",
+      "base_price": 786,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_starter_tier_to_tier_1_conversion",
+      "base_price": 1274,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_starter_tier_to_tier_2_conversion",
+      "base_price": 5076,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_starter_tier_to_tier_3_conversion",
+      "base_price": 45626,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_starter_tier_to_tier_4_conversion",
+      "base_price": 103495,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_1",
+      "base_price": 2053,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_1_to_tier_2_conversion",
+      "base_price": 3809,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_1_to_tier_3_conversion",
+      "base_price": 44359,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_1_to_tier_4_conversion",
+      "base_price": 102228,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_2",
+      "base_price": 5855,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_2_to_tier_3_conversion",
+      "base_price": 40558,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_2_to_tier_4_conversion",
+      "base_price": 98426,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_3",
+      "base_price": 46405,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_3_to_tier_4_conversion",
+      "base_price": 57876,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stack_upgrade_tier_4",
+      "base_price": 104274,
+      "class": "rare_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:stonecutter_upgrade",
+      "base_price": 276,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:tank_upgrade",
+      "base_price": 170,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:tool_swapper_upgrade",
+      "base_price": 263,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:upgrade_base",
+      "base_price": 152,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:void_upgrade",
+      "base_price": 223,
+      "class": "common_processed"
+    },
+    {
+      "item": "sophisticatedbackpacks:xp_pump_upgrade",
+      "base_price": 1852,
+      "class": "rare_processed"
+    }
+  ]
+}
