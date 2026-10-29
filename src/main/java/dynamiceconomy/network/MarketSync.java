@@ -9,6 +9,7 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.MarketVisibility;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -16,21 +17,31 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.Set;
 import java.util.UUID;
 
-/** Server side: keeps every open market screen up to date. Server thread only. */
+/**
+ * Server side: keeps every player's copy of the catalog, and every open market screen, up to date. Each player is
+ * sent only the items they can see ({@link MarketVisibility}); when nothing can be hidden, everyone gets the same.
+ * Server thread only.
+ */
 public final class MarketSync {
     /** How often to re-check viewers' balance and held items for changes made outside the market (pickups, bank). */
     private static final int PLAYER_STATE_INTERVAL_TICKS = 20;
 
     private static final Map<UUID, MarketPayloads.PlayerState> lastSentState = new HashMap<>();
+    /** Players whose stages changed, so what they can see may have; their catalog is resent on the next tick. */
+    private static final Set<UUID> staleCatalogs = new HashSet<>();
+    private static boolean allCatalogsStale;
 
     private MarketSync() {
     }
@@ -45,39 +56,91 @@ public final class MarketSync {
     public static void sendFullState(ServerPlayer player) {
         // A newly opened screen starts empty, so resend even if nothing changed since the last send.
         lastSentState.remove(player.getUUID());
-        PacketDistributor.sendToPlayer(player, snapshot(player.server));
+        sendCatalog(player);
         sendPlayerState(player);
     }
 
     /** After a catalog reload: prices or listings may have changed for everyone. */
     public static void broadcastSnapshot(MinecraftServer server) {
         // Every player keeps the catalog, so item tooltips can show what the market pays.
-        PacketDistributor.sendToAllPlayers(snapshot(server));
+        if (MarketVisibility.active()) {
+            server.getPlayerList().getPlayers().forEach(MarketSync::sendCatalog);
+        } else {
+            PacketDistributor.sendToAllPlayers(snapshot(server, null));
+        }
         viewers(server).forEach(MarketSync::sendPlayerState);
     }
 
     /** The catalog for one player, e.g. on joining; their tooltips need it even with the market closed. */
     public static void sendCatalog(ServerPlayer player) {
-        PacketDistributor.sendToPlayer(player, snapshot(player.server));
+        PacketDistributor.sendToPlayer(player, catalogFor(player));
     }
 
-    /** After an item's stock or price changed: every player sees the new row in the same tick. */
+    /**
+     * After a player's stages changed, or null for any player's. Their catalog is resent on the next tick, so a burst
+     * of changes (logging in, joining a team) sends it once.
+     */
+    public static void stagesChanged(@Nullable ServerPlayer player) {
+        if (player == null) {
+            allCatalogsStale = true;
+        } else {
+            staleCatalogs.add(player.getUUID());
+        }
+    }
+
+    /** After an item's stock or price changed: every player who can see it gets the new row in the same tick. */
     public static void broadcastRow(MinecraftServer server, Item item) {
         row(server, item).ifPresent(row -> {
             DynamicEconomy.LOGGER.debug("Market row update for {} (stock {}, factor {})", row.item(), row.stock(), row.factor());
-            PacketDistributor.sendToAllPlayers(new MarketPayloads.RowUpdate(List.of(row)));
+            MarketPayloads.RowUpdate update = new MarketPayloads.RowUpdate(List.of(row));
+            if (!MarketVisibility.active()) {
+                PacketDistributor.sendToAllPlayers(update);
+                return;
+            }
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                if (!MarketVisibility.hidden(player, item)) {
+                    PacketDistributor.sendToPlayer(player, update);
+                }
+            }
         });
     }
 
     /** At a recovery step only items whose price is away from base can have moved, so send just those. */
     private static void broadcastRecoveredRows(MinecraftServer server) {
-        List<MarketPayloads.Row> rows = new ArrayList<>();
+        Map<Item, MarketPayloads.Row> rows = new HashMap<>();
         for (ResourceLocation id : MarketStockData.get(server).factorsView().keySet()) {
-            BuiltInRegistries.ITEM.getOptional(id).flatMap(item -> row(server, item)).ifPresent(rows::add);
+            BuiltInRegistries.ITEM.getOptional(id).ifPresent(item -> row(server, item).ifPresent(row -> rows.put(item, row)));
         }
-        if (!rows.isEmpty()) {
-            PacketDistributor.sendToAllPlayers(new MarketPayloads.RowUpdate(rows));
+        if (rows.isEmpty()) {
+            return;
         }
+        if (!MarketVisibility.active()) {
+            PacketDistributor.sendToAllPlayers(new MarketPayloads.RowUpdate(List.copyOf(rows.values())));
+            return;
+        }
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            List<MarketPayloads.Row> visible = rows.entrySet().stream()
+                    .filter(e -> !MarketVisibility.hidden(player, e.getKey()))
+                    .map(Map.Entry::getValue)
+                    .toList();
+            if (!visible.isEmpty()) {
+                PacketDistributor.sendToPlayer(player, new MarketPayloads.RowUpdate(visible));
+            }
+        }
+    }
+
+    /** Resends the catalog to players whose stages changed since the last tick. */
+    private static void resendStaleCatalogs(MinecraftServer server) {
+        if (!allCatalogsStale && staleCatalogs.isEmpty()) {
+            return;
+        }
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            if (allCatalogsStale || staleCatalogs.contains(player.getUUID())) {
+                sendCatalog(player);
+            }
+        }
+        allCatalogsStale = false;
+        staleCatalogs.clear();
     }
 
     /** Sends a viewer their balance and held counts, but only if they changed since the last send. */
@@ -90,6 +153,7 @@ public final class MarketSync {
     }
 
     public static void tick(MinecraftServer server) {
+        resendStaleCatalogs(server);
         // Recovery steps happen server-wide at interval boundaries; refresh open screens when any price moved.
         long now = MarketStockData.now(server);
         if (now % MarketConfig.intervalTicks() == 0) {
@@ -125,9 +189,12 @@ public final class MarketSync {
                 broadcastRow(player.server, item.get());
                 sendTrades(player);
             } else {
-                // A rejected trade usually means the client's view is stale (price, stock), so refresh just this row.
-                row(player.server, item.get()).ifPresent(row ->
-                        PacketDistributor.sendToPlayer(player, new MarketPayloads.RowUpdate(List.of(row))));
+                // A rejected trade usually means the client's view is stale (price, stock), so refresh just this row,
+                // unless the player can't see it.
+                if (!MarketVisibility.hidden(player, item.get())) {
+                    row(player.server, item.get()).ifPresent(row ->
+                            PacketDistributor.sendToPlayer(player, new MarketPayloads.RowUpdate(List.of(row))));
+                }
             }
         }
         sendPlayerState(player);
@@ -149,15 +216,27 @@ public final class MarketSync {
         if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
             return;
         }
+        Optional<Item> item = BuiltInRegistries.ITEM.getOptional(request.item());
+        if (item.isEmpty() || MarketVisibility.hidden(player, item.get())) {
+            return;
+        }
         MarketStockData.History history = MarketStockData.get(player.server).history(request.item());
         PacketDistributor.sendToPlayer(player, new MarketPayloads.History(request.item(), MarketStockData.now(player.server),
                 history.ticks(), history.factors()));
     }
 
-    private static MarketPayloads.Snapshot snapshot(MinecraftServer server) {
+    /** The catalog as {@code player} may see it. */
+    public static MarketPayloads.Snapshot catalogFor(ServerPlayer player) {
+        return snapshot(player.server, MarketVisibility.active() ? player : null);
+    }
+
+    /** Every listed item, or only those {@code viewer} can see. */
+    private static MarketPayloads.Snapshot snapshot(MinecraftServer server, @Nullable ServerPlayer viewer) {
         List<MarketPayloads.Row> rows = new ArrayList<>();
         for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
-            row(server, entry.item()).ifPresent(rows::add);
+            if (viewer == null || !MarketVisibility.hidden(viewer, entry.item())) {
+                row(server, entry.item()).ifPresent(rows::add);
+            }
         }
         return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest());
     }

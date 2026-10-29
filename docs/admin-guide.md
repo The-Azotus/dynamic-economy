@@ -51,6 +51,19 @@ Spur  Spur            Spur
 
 To change or remove the recipe, override `data/dynamic_economy/recipe/market_terminal.json` in a datapack. To hand them out yourself, use `/give @p dynamic_economy:market_terminal`. Terminals are wooden tables: they break by hand, faster with an axe, and always drop themselves.
 
+### ProgressiveStages: hiding locked items
+
+With [ProgressiveStages](https://modrinth.com/mod/progressivestages) 3.1.1 or a later 3.x installed, an item locked for a player is hidden from that player in the market. Nothing needs setting up: the market uses the item locks you already defined in ProgressiveStages.
+
+- **Hidden means hidden.** The item isn't in the player's list or search, its market price isn't shown in their tooltips, and `/market price` and `/market stock` act as if it isn't listed.
+- **Enforced by the server.** Buying or selling a locked item is refused as *"That item is not on the market"*, the same answer as for an unlisted item, so the reply doesn't reveal it.
+- **Prices are shared.** Everyone trades at the same price and from the same stock. A locked item still moves in price when others trade it.
+- **Updates live.** When a player gains or loses a stage, their market updates on the next tick, even with the screen open. Team stages update every member.
+- **Locked means a missing stage.** Creative mode, ProgressiveStages' per-category enforcement switches and structure-only locks don't change what the market shows.
+- **Console and admins.** `/market admin` commands and the server console see every item.
+
+The log says `ProgressiveStages found: items locked for a player are hidden from them in the market` at startup. If a future ProgressiveStages version changes the lock API, the log shows an error and the market stops hiding items instead of breaking. Without ProgressiveStages, nothing changes.
+
 ## Pricing items
 
 There are three ways to price items, and you can mix them:

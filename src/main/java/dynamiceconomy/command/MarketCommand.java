@@ -24,6 +24,7 @@ import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.MarketVisibility;
 import dynamiceconomy.service.PriceModel;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -163,6 +164,11 @@ public final class MarketCommand {
         return BuiltInRegistries.ITEM.getKey(item);
     }
 
+    /** Whether the command was run by a player who can't see this item; the console sees everything. */
+    private static boolean hiddenFrom(CommandSourceStack source, Item item) {
+        return source.getPlayer() != null && MarketVisibility.hidden(source.getPlayer(), item);
+    }
+
     private static int open(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         if (!MarketAccess.commandsAllowed(ctx.getSource())) {
             ctx.getSource().sendFailure(Component.translatable("message.dynamic_economy.block_only"));
@@ -201,15 +207,24 @@ public final class MarketCommand {
             ctx.getSource().sendFailure(Component.literal("The market catalog is empty"));
             return 0;
         }
+        int shown = 0;
         for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
+            if (hiddenFrom(ctx.getSource(), entry.item())) {
+                continue;
+            }
             String stock = describeStock(ctx.getSource().getServer(), entry.item());
             ctx.getSource().sendSuccess(() -> Component.literal("%s: %s".formatted(entry.itemId(), stock)), false);
+            shown++;
         }
-        return MarketCatalog.INSTANCE.entries().size();
+        return shown;
     }
 
     private static int showStock(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
+        if (hiddenFrom(ctx.getSource(), item)) {
+            ctx.getSource().sendSuccess(() -> Component.literal("%s: 0 (not listed)".formatted(id(item))), false);
+            return 1;
+        }
         String stock = describeStock(ctx.getSource().getServer(), item);
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (not listed)";
         ctx.getSource().sendSuccess(() -> Component.literal("%s: %s%s".formatted(id(item), stock, listed)), false);
@@ -219,7 +234,7 @@ public final class MarketCommand {
     private static int showPrice(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
         Optional<MarketService.Quote> quote = MarketService.quote(ctx.getSource().getServer(), item);
-        if (quote.isEmpty()) {
+        if (quote.isEmpty() || hiddenFrom(ctx.getSource(), item)) {
             ctx.getSource().sendFailure(Component.literal(id(item) + " is not listed"));
             return 0;
         }

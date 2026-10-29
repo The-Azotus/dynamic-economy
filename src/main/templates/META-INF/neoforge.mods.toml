@@ -37,3 +37,10 @@ A server-owned global market for Create: Numismatics. Sell items to the server f
     versionRange="${numismatics_version_range}"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="progressivestages"
+    type="optional"
+    versionRange="${progressivestages_version_range}"
+    ordering="AFTER"
+    side="BOTH"

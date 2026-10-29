@@ -16,6 +16,7 @@ import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.catalog.FieldSource;
 import dynamiceconomy.catalog.ItemClasses;
 import dynamiceconomy.compat.NumismaticsBridge;
+import dynamiceconomy.compat.StagesBridge;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.io.CatalogExport;
 import dynamiceconomy.io.CatalogImport;
@@ -26,6 +27,7 @@ import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.OrderMath;
+import dynamiceconomy.service.MarketVisibility;
 import dynamiceconomy.service.MarketService.Result;
 import dynamiceconomy.service.MarketService.TradeResult;
 import dynamiceconomy.service.PriceModel;
@@ -2765,6 +2767,80 @@ public final class MarketGameTests {
         }
         helper.assertTrue(MarketCatalog.INSTANCE.get(Items.BIRCH_LOG).isEmpty(), "reverting the rule unlists birch logs again");
         helper.succeed();
+    }
+
+    // ---- Stage locks (Phase 12) -------------------------------------------------------------------------------
+    // ProgressiveStages isn't in the test environment; these lock items through MarketVisibility's test hook, which
+    // every check consults exactly as it does the real locks.
+
+    @GameTest(template = EMPTY)
+    public static void lockedItemIsHiddenAndUntradeableForOnePlayerOnly(GameTestHelper helper) {
+        Fixture locked = new Fixture(helper);
+        Fixture free = new Fixture(helper);
+        locked.setStock(Items.IRON_INGOT, 50);
+        locked.deposit(10_000);
+        free.deposit(10_000);
+        locked.giveMany(Items.IRON_INGOT, 10);
+        free.giveMany(Items.IRON_INGOT, 10);
+        MarketVisibility.setTestLocks((player, item) -> player == locked.player
+                && (item == Items.IRON_INGOT || item == Items.NETHER_STAR));
+        try {
+            locked.assertRejectedUnchanged(Result.NOT_LISTED, () -> MarketService.trySell(locked.player, Items.IRON_INGOT, 5, ANY_PRICE));
+            locked.assertRejectedUnchanged(Result.NOT_LISTED, () -> MarketService.tryBuy(locked.player, Items.IRON_INGOT, 1, ANY_PRICE));
+            // A locked item answers as an unlisted one, never with its own reason (the nether star can't be sold).
+            locked.assertRejectedUnchanged(Result.NOT_LISTED, () -> MarketService.trySell(locked.player, Items.NETHER_STAR, 1, ANY_PRICE));
+            helper.assertTrue(rowIds(MarketSync.catalogFor(locked.player)).stream().noneMatch(id -> id.equals(id(Items.IRON_INGOT))),
+                    "locked player's catalog has no iron");
+            helper.assertTrue(rowIds(MarketSync.catalogFor(locked.player)).contains(id(Items.DIAMOND)),
+                    "locked player still sees unlocked items");
+
+            helper.assertTrue(rowIds(MarketSync.catalogFor(free.player)).contains(id(Items.IRON_INGOT)), "other player sees iron");
+            free.assertResult(MarketService.trySell(free.player, Items.IRON_INGOT, 5, ANY_PRICE), Result.OK);
+            free.assertResult(MarketService.tryBuy(free.player, Items.IRON_INGOT, 1, ANY_PRICE), Result.OK);
+        } finally {
+            MarketVisibility.setTestLocks(null);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void unlockingShowsTheItemAgainAtTheSamePrice(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        f.giveMany(Items.IRON_INGOT, 5);
+        MarketPayloads.Row before = MarketSync.catalogFor(f.player).rows().stream()
+                .filter(row -> row.item().equals(id(Items.IRON_INGOT))).findFirst().orElseThrow();
+        MarketVisibility.setTestLocks((player, item) -> item == Items.IRON_INGOT);
+        try {
+            helper.assertFalse(rowIds(MarketSync.catalogFor(f.player)).contains(id(Items.IRON_INGOT)), "iron hidden while locked");
+        } finally {
+            MarketVisibility.setTestLocks(null);
+        }
+        MarketPayloads.Row after = MarketSync.catalogFor(f.player).rows().stream()
+                .filter(row -> row.item().equals(id(Items.IRON_INGOT))).findFirst().orElseThrow();
+        helper.assertValueEqual(after, before, "iron row after unlocking (prices are the same for everyone)");
+        f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 5, ANY_PRICE), Result.OK);
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void withoutProgressiveStagesNothingIsHidden(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        helper.assertFalse(StagesBridge.isAvailable(), "ProgressiveStages is not in the test environment");
+        helper.assertFalse(MarketVisibility.active(), "nothing can be hidden");
+        helper.assertFalse(StagesBridge.isLocked(f.player, Items.IRON_INGOT), "no item is locked");
+        helper.assertValueEqual(MarketSync.catalogFor(f.player).rows().size(), MarketCatalog.INSTANCE.entries().size(),
+                "every listed item is sent");
+        helper.succeed();
+    }
+
+    private static Set<ResourceLocation> rowIds(MarketPayloads.Snapshot snapshot) {
+        Set<ResourceLocation> ids = new java.util.HashSet<>();
+        snapshot.rows().forEach(row -> ids.add(row.item()));
+        return ids;
+    }
+
+    private static ResourceLocation id(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item);
     }
 
     // ---- Fixture ------------------------------------------------------------------------------------------------

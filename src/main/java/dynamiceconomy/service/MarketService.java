@@ -99,7 +99,8 @@ public final class MarketService {
     public static TradeResult trySell(ServerPlayer player, Item item, int qty, OptionalLong expectedTotal) {
         requireServerThread(player);
         Optional<CatalogEntry> listing = MarketCatalog.INSTANCE.get(item);
-        if (listing.isEmpty()) {
+        // A locked item answers exactly as an unlisted one, so the reply doesn't reveal it.
+        if (listing.isEmpty() || MarketVisibility.hidden(player, item)) {
             return TradeResult.fail(Result.NOT_LISTED);
         }
         CatalogEntry entry = listing.get();
@@ -157,7 +158,8 @@ public final class MarketService {
     public static TradeResult tryBuy(ServerPlayer player, Item item, int qty, OptionalLong expectedTotal) {
         requireServerThread(player);
         Optional<CatalogEntry> listing = MarketCatalog.INSTANCE.get(item);
-        if (listing.isEmpty()) {
+        // A locked item answers exactly as an unlisted one, so the reply doesn't reveal it.
+        if (listing.isEmpty() || MarketVisibility.hidden(player, item)) {
             return TradeResult.fail(Result.NOT_LISTED);
         }
         CatalogEntry entry = listing.get();

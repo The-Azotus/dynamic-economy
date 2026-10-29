@@ -110,6 +110,8 @@ dependencies {
     implementation("com.tterrag.registrate:Registrate:${registrate_version}") { transitive = false }
 
     implementation("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
+    // Optional: only compat/StagesBridge touches it, and only when the mod is loaded.
+    compileOnly("maven.modrinth:progressivestages:${progressivestages_version}") { transitive = false }
 }
 
 var generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
@@ -120,6 +122,7 @@ var generateModMetadata = tasks.register('generateModMetadata', ProcessResources
             loader_version_range     : loader_version_range,
             create_version_range     : create_version_range,
             numismatics_version_range: numismatics_version_range,
+            progressivestages_version_range: progressivestages_version_range,
             mod_id                   : mod_id,
             mod_name                 : mod_name,
             mod_license              : mod_license,

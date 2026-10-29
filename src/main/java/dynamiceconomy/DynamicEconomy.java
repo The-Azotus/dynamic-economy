@@ -5,6 +5,7 @@ import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.command.MarketCommand;
 import dynamiceconomy.compat.NumismaticsBridge;
+import dynamiceconomy.compat.StagesBridge;
 import dynamiceconomy.block.MarketBlocks;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
@@ -49,6 +50,8 @@ public final class DynamicEconomy {
         modBus.addListener(DynamicEconomy::addDefaultPrices);
 
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(MarketCatalog.INSTANCE));
+        // With ProgressiveStages, what a player can see changes with their stages.
+        StagesBridge.listen(MarketSync::stagesChanged);
         NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
                 MarketCommand.register(event.getDispatcher(), event.getBuildContext()));
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> {
