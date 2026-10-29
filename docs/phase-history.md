@@ -1,4 +1,4 @@
-# Phase history (Phases 0–9, done)
+# Phase history (Phases 0–10, done)
 
 Archived from `CLAUDE.md`. These are the original specs for finished phases. The code and the guides in `docs/` are now the source of truth; read this only when you need the reasoning behind how something was built.
 
@@ -159,3 +159,35 @@ A class is a named set of pricing defaults, so groups of items behave alike (rar
 - Admin tooling knows classes: CSV `class` column in export/import, `info` shows the class as a field source, `diagnose` flags unknown classes, `/market admin classes` lists them with member counts.
 
 Done when: an entry with a class gets the class's values unless overridden at a higher level; changing a class and reloading reprices all members without touching stock or `s`; the CSV round-trip test still passes with the class column; all earlier GameTests pass.
+
+## Phase 10 — Built-in price packs (done)
+
+As built. Full detail for admins: `docs/admin-guide.md` (built-in prices, `suggest`, the check files).
+
+**Stages** (each ended with tests, a commit and a report): A code; B price scale (cobblestone 1, log 8, iron ingot 32, diamond 512, nether star 16,384); C seeds, one mod per commit; D suggest loop and packaging, one mod per commit.
+
+**Large-data rules** (still apply to any pricing work):
+- Export and suggest output files the user provides live in `pricing-work/` (gitignored). Never ask for them to be pasted into chat.
+- Never read `items.csv`, `suggested.csv` or any large export in full. Use scripts to filter, count and pull only what you need.
+- Generate seed and catalog JSON with a script. Don't print generated files back; report counts and a few sample lines.
+
+**Built-in pack**
+- `src/main/resources/default_prices/data/dynamic_economy/market/<modid>.json`, **enabled by default**; one file per mod, `minecraft.json` for vanilla.
+- File-level `"required_mods": [...]`: if any is missing, the file is skipped silently (one debug line). Admins can disable the pack with `/datapack` or override entries in their own files.
+- Chipped and Rechiseled are left out of the market entirely.
+- Packaging rules (decided): items that convert back into a listed item (storage blocks, nuggets, dusts, variants) get `can_sell: false`; ore-stage items (raw ores and blocks, crushed ores, Mekanism crystals/shards/clumps/dirty dusts, metal dusts, Spectrum pure metals) get `can_buy: false`; **safety net**: suggested items that still start a complete profitable chain get `can_buy: false` (suggested items only; hand-set items that start chains stay buyable and are listed for the user); an item that would get both is left out; Numismatics cards and guide/quest items are left out. Seeds are never overwritten by packaging.
+- Class markups (rare-tier audit, decided): `rare_resource` 1.0, `rare_processed` 1.0, `rare_loot` 1.5, `unique` 2.0.
+- Seed decisions: ProjectE left as priced (user balances it with KubeJS and ProgressiveStages); wither rose stays; slime ball 2 (Create crafts it from dough + lime dye); enchanted golden apple 4096 (Create: New Age assembles it from gold blocks); milk bucket 112 with `can_sell: false`; IE electrum stays 24.
+
+**`/market admin suggest [modid]`** (permission 4). Prices every unlisted item from recipes, treating every live catalog entry as known. Changes nothing in the market.
+- Reads recipes with the generic methods, plus readers that recover inputs, amounts and outputs where those hide them: Create (chance outputs at their average; sequenced assembly: starting item plus each step's additions per loop, output at the success chance), Modern Industrialization, Immersive Engineering, Mekanism and Oritech (`compat/MachineRecipes`, by reflection; one warning per mod if a version renames something). Inputs a machine uses up only sometimes count at their average.
+- An item's price is its cheapest recipe: each slot's cheapest priced option (identical crafting-grid slots merged), minus priced crafting remainders, plus furnace fuel, divided by output count. Costs add up raw through the chain; the 10% premium (kept below the smallest markup) is applied once at the end. An item is never priced from ingredients priced from it (loop guard).
+- **Complete vs. may-hide-inputs** (decided): recipes using fluids or chemicals, and recipe types that may hide inputs, only price items no complete recipe can; what they price can still lower a complete recipe that uses it. Energy conversions are treated the same way, as accepted generators: Oritech's particle collider, MI's quarry, Mekanism's sawmill, Create's haunting (`PriceSuggestion.ENERGY_CONVERSION_TYPES`; haunting is left out of `COMPLETE_TYPES`).
+- **Raise**: a suggestion is raised to what it can be processed into (through complete recipes, at most 3 steps), divided by its class markup, so buying and processing it doesn't profit (9 nuggets can't cost less than an ingot). The raise is capped at the item's cost to make from bought ingredients; above that it profits at any price, so it keeps its cost and is reported instead. Raised prices become floors and everything is priced once more (two rounds only, or generator loops raise each other every round). Items worth under 1 spur stay unpriced. A partly used input (quarry drill) is credited one run; a tool the grid hands back (a knife) isn't credited.
+- Suggested class: `rare_processed` if rare inputs are worth at least half the cost or one unit of the cheapest rare item, else `common_processed`.
+- Writes to a new export folder: `suggested.csv` (the `items.csv` format plus reference columns: price source, exact cost, recipe, type, depth, notes for under-1-spur, raised, may-hide-inputs, converts-back, no recipe), `craft_profits.txt` (one-step profits: price gaps / check by hand / self-multiplying), `chain_profits.txt` (multi-step buy-process-sell profits, at most 6 steps, complete chains found first, suggestions valued as if imported), `chain_details.txt` (every step with amounts and prices: the biggest raises, the top chains, and every complete chain from a listed item) and `skipped_recipes.txt`.
+- Workflow (used for Stage D): Claude writes seeds from `items.csv`; the user runs `suggest` in the pack and puts the files in `pricing-work/`; Claude fixes seeds or the suggester and repeats; then packages per mod with the rules above (`tools/pricing/package.py`, which also writes `pricing-work/safety_net.txt`; `add_seeds.py`, `check_seeds.py` and `ore_stage.py` beside it).
+
+**Known limits** (accepted): generator recipes in a pack (prismarine doubling, prismarine → quartz, coal → black dye, MI gravel → 2 flint, MI mixer stone recipes, Spectrum and Mekanism conversions) profit at any price; only recipe changes close them. Whole-spur rounding leaves small gaps on 1–2-spur items. Both are covered by the safety net and listed for the pack author.
+
+Done when: the full pack loads with no warnings; removing a mod drops its file with no warnings; vanilla-only loads just the vanilla file; round-trip arbitrage tests pass against the packaged catalog. Status: the default-prices GameTest (vanilla + Create + Numismatics) checks the loaded files follow the installed mods, round trips, and no price gaps or complete chain profits; the user confirmed the in-pack `suggest`/`diagnose` results and that removing a mod caused no issues.

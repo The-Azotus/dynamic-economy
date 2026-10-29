@@ -1,15 +1,6 @@
-# Roadmap (Phases 11–16, not started)
+# Roadmap (Phases 12–16, not started)
 
 Archived from `CLAUDE.md`. When a phase becomes the current one, move its section back into `CLAUDE.md` under "Current phase".
-
-## Phase 11 — GUI rework
-
-- The screen sizes to the window; the list shows as many rows as fit (not a fixed 7). Compact rows with columns: item, stock, buy, sell, trend.
-- The selected-item panel moves beside the list on wide windows, below it on narrow ones.
-- Tabs: **Market | Contracts | Leaderboard | History**, plus **Exchange** when enabled. Later phases fill their tabs.
-- All existing functions (search, sort, filters, Max Buy, Sell All, price history, rejection messages) still work.
-
-Done when: usable at GUI scales 1–4 and small windows; no regressions in Phase 3/7 behaviour (manual checks listed).
 
 ## Phase 12 — ProgressiveStages hooks
 
