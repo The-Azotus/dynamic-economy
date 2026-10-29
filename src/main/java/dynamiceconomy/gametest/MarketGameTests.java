@@ -5,6 +5,9 @@ import dynamiceconomy.MarketConfig;
 import dynamiceconomy.MarketAccess;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.BankTeam;
+import dynamiceconomy.bank.BankTeams;
+import dynamiceconomy.bank.OwnTeams;
 import dynamiceconomy.bank.CoinMath;
 import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.bank.OwnBank;
@@ -24,6 +27,7 @@ import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.catalog.FieldSource;
 import dynamiceconomy.catalog.ItemClasses;
 import dynamiceconomy.compat.CreateRecipes;
+import dynamiceconomy.compat.FtbTeamsBridge;
 import dynamiceconomy.compat.NumismaticsBridge;
 import dynamiceconomy.compat.StagesBridge;
 import dynamiceconomy.data.MarketStockData;
@@ -3178,6 +3182,170 @@ public final class MarketGameTests {
             }
         }
         return total;
+    }
+
+    // ---- Team accounts ------------------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void teamAccountsAreSeparateAndNeverLoseMoney(GameTestHelper helper) {
+        OwnBank bank = new OwnBank();
+        UUID team = UUID.randomUUID();
+        UUID heir = UUID.randomUUID();
+        bank.account(heir).deposit(5);
+        bank.teamAccount(team).deposit(1000);
+        helper.assertValueEqual(bank.teamAccount(team).balance(), 1000L, "the team's balance");
+        helper.assertFalse(bank.playerBalances().containsKey(team), "a team isn't a player, so it's off the leaderboard");
+        helper.assertValueEqual(bank.account(team).balance(), 0L, "and its ID has no personal account");
+
+        helper.assertValueEqual(bank.closeTeam(team, heir), 1000L, "closing pays out the whole balance");
+        helper.assertValueEqual(bank.account(heir).balance(), 1005L, "to the heir's own account");
+        helper.assertTrue(bank.teamBalances().isEmpty(), "and the team's account is gone");
+        helper.assertValueEqual(bank.closeTeam(team, heir), 0L, "closing an empty team pays nothing");
+
+        // Saved with the world, choices included.
+        bank.teamAccount(team).deposit(7);
+        OwnBank loaded = OwnBank.fromTag(bank.save(new net.minecraft.nbt.CompoundTag(), helper.getLevel().registryAccess()),
+                helper.getLevel().registryAccess());
+        helper.assertValueEqual(loaded.teamBalances(), bank.teamBalances(), "team balances survive a save");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void ownTeamsKeepTheirMembers(GameTestHelper helper) {
+        OwnTeams teams = new OwnTeams();
+        UUID owner = UUID.randomUUID();
+        UUID second = UUID.randomUUID();
+        helper.assertTrue(OwnTeams.validName("Gold_Diggers-2") && !OwnTeams.validName("two words") && !OwnTeams.validName(""),
+                "names are one word");
+        BankTeam team = teams.create("Miners", owner);
+        helper.assertTrue(teams.byName("miners").isPresent(), "names match ignoring case");
+        helper.assertFalse(teams.invited(second, team.id()), "not invited yet");
+        teams.invite(team.id(), second);
+        teams.join(team.id(), second);
+        helper.assertValueEqual(teams.teamOf(second).map(BankTeam::id), Optional.of(team.id()), "joined");
+        helper.assertValueEqual(teams.teamOf(owner).orElseThrow().members(), Set.of(owner, second), "both are members");
+
+        OwnTeams loaded = OwnTeams.fromTag(teams.save(new net.minecraft.nbt.CompoundTag(), helper.getLevel().registryAccess()),
+                helper.getLevel().registryAccess());
+        helper.assertValueEqual(loaded.teamOf(second), teams.teamOf(second), "saved with the world");
+
+        helper.assertTrue(teams.remove(owner).isEmpty(), "the owner leaving doesn't end the team");
+        helper.assertValueEqual(teams.teamOf(second).orElseThrow().owner(), second, "the next member becomes owner");
+        BankTeam ended = teams.remove(second).orElseThrow();
+        helper.assertValueEqual(ended.id(), team.id(), "the last member leaving ends it");
+        helper.assertValueEqual(ended.owner(), second, "and they're the one paid its balance");
+        helper.assertTrue(teams.byName("Miners").isEmpty(), "the team is gone");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void ftbTeamsProvidesTheTeamsWhenInstalled(GameTestHelper helper) {
+        boolean installed = net.neoforged.fml.ModList.get().isLoaded(FtbTeamsBridge.MOD_ID);
+        helper.assertValueEqual(FtbTeamsBridge.isAvailable(), installed, "its API matches 2101.1.11 when installed");
+        helper.assertValueEqual(BankTeams.fromFtbTeams(), installed, "and then its parties are the teams");
+        // A player in no party has only FTB Teams' personal team, which isn't a shared account.
+        Fixture f = new Fixture(helper);
+        helper.assertTrue(FtbTeamsBridge.teamOf(f.player.getUUID()).isEmpty(), "no party, no team");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void teamMembersShareOneAccount(GameTestHelper helper) {
+        Fixture a = new Fixture(helper);
+        Fixture b = new Fixture(helper);
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        String name = "t" + UUID.randomUUID().toString().substring(0, 8);
+        List<String> created = runCommandAs(helper, a.player, "bank team create " + name);
+        if (WorldBank.kind(server) != BankKind.OWN) {
+            helper.assertValueEqual(created, List.of("command.dynamic_economy.team.numismatics"), "no teams with Numismatics' bank");
+            helper.succeed();
+            return;
+        }
+        if (BankTeams.fromFtbTeams()) {
+            helper.assertValueEqual(created, List.of("command.dynamic_economy.team.ftb"), "FTB Teams parties are the teams");
+            helper.succeed();
+            return;
+        }
+        helper.assertValueEqual(created, List.of("command.dynamic_economy.team.created"), "created");
+        helper.assertValueEqual(runCommandAs(helper, a.player, "bank team create other"), List.of("command.dynamic_economy.team.already_in"),
+                "one team at a time");
+        helper.assertValueEqual(runCommandAs(helper, b.player, "bank team join " + name), List.of("command.dynamic_economy.team.not_invited"),
+                "joining needs an invitation");
+        OwnTeams teams = OwnTeams.get(server);
+        BankTeam team = teams.byName(name).orElseThrow();
+        teams.invite(team.id(), b.player.getUUID());
+        helper.assertValueEqual(runCommandAs(helper, b.player, "bank team join " + name), List.of("command.dynamic_economy.team.joined"), "joined");
+
+        OwnBank bank = OwnBank.get(server);
+        bank.teamAccount(team.id()).deposit(1000);
+        a.setStock(Items.IRON_INGOT, 5);
+        try {
+            // A uses the team's account: a purchase is paid from it, and A's own money is untouched.
+            bank.payFromTeam(a.player, true);
+            helper.assertTrue(bank.payingFromTeam(a.player), "A pays from the team");
+            TradeResult bought = MarketService.tryBuy(a.player, Items.IRON_INGOT, 1, ANY_PRICE);
+            a.assertResult(bought, Result.OK);
+            helper.assertValueEqual(bank.teamAccount(team.id()).balance(), 1000 - bought.total(), "the team paid");
+            helper.assertValueEqual(a.balance(), 0, "not A");
+            // B didn't choose it: B's withdrawal comes from B's own account, which is empty.
+            b.assertRejectedUnchanged(BankService.Result.NO_FUNDS, () -> BankService.withdraw(b.player, 1));
+            bank.payFromTeam(b.player, true);
+            BankService.Outcome withdrawn = BankService.withdraw(b.player, 8);
+            helper.assertTrue(withdrawn.ok(), "B can withdraw from the team once chosen: " + withdrawn);
+        } finally {
+            bank.payFromTeam(a.player, false);
+            bank.payFromTeam(b.player, false);
+        }
+
+        long left = bank.teamAccount(team.id()).balance();
+        helper.assertValueEqual(runCommandAs(helper, a.player, "bank team leave"), List.of("command.dynamic_economy.team.left"), "A leaves");
+        helper.assertFalse(bank.payingFromTeam(a.player), "out of the team, A is back on their own account");
+        helper.assertValueEqual(runCommandAs(helper, b.player, "bank team leave"), List.of("command.dynamic_economy.team.ended"),
+                "B, the last member, ends it");
+        helper.assertValueEqual((long) b.balance(), left, "and receives everything the team had");
+        helper.assertFalse(bank.teamBalances().containsKey(team.id()), "nothing is left behind");
+        helper.succeed();
+    }
+
+    /** The first translation key in a message: failures arrive wrapped in a red, empty component. */
+    private static Optional<String> translationKey(Component message) {
+        if (message.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents key) {
+            return Optional.of(key.getKey());
+        }
+        return message.getSiblings().stream().map(MarketGameTests::translationKey).flatMap(Optional::stream).findFirst();
+    }
+
+    /** Runs a command as {@code player}, returning its messages as translation keys, so tests don't depend on wording. */
+    private static List<String> runCommandAs(GameTestHelper helper, ServerPlayer player, String command) {
+        List<String> output = new ArrayList<>();
+        net.minecraft.commands.CommandSource capture = new net.minecraft.commands.CommandSource() {
+            @Override
+            public void sendSystemMessage(Component message) {
+                output.add(translationKey(message).orElse(message.getString()));
+            }
+
+            @Override
+            public boolean acceptsSuccess() {
+                return true;
+            }
+
+            @Override
+            public boolean acceptsFailure() {
+                return true;
+            }
+
+            @Override
+            public boolean shouldInformAdmins() {
+                return false;
+            }
+        };
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        try {
+            server.getCommands().getDispatcher().execute(command, server.createCommandSourceStack().withSource(capture).withEntity(player));
+        } catch (com.mojang.brigadier.exceptions.CommandSyntaxException e) {
+            throw new GameTestAssertException("/" + command + " was rejected: " + e.getMessage());
+        }
+        return output;
     }
 
     // ---- Banks --------------------------------------------------------------------------------------------------

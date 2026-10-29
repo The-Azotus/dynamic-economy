@@ -1,11 +1,15 @@
 package dynamiceconomy;
 
 import com.mojang.logging.LogUtils;
+import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.OwnBank;
 import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.coin.Coins;
 import dynamiceconomy.catalog.MarketCatalog;
+import dynamiceconomy.command.BankCommand;
 import dynamiceconomy.command.MarketCommand;
+import dynamiceconomy.compat.FtbTeamsBridge;
 import dynamiceconomy.compat.StagesBridge;
 import dynamiceconomy.block.MarketBlocks;
 import dynamiceconomy.data.MarketOverrides;
@@ -33,6 +37,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -54,8 +59,20 @@ public final class DynamicEconomy {
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) -> event.addListener(MarketCatalog.INSTANCE));
         // With ProgressiveStages, what a player can see changes with their stages.
         StagesBridge.listen(MarketSync::stagesChanged);
-        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) ->
-                MarketCommand.register(event.getDispatcher(), event.getBuildContext()));
+        NeoForge.EVENT_BUS.addListener((RegisterCommandsEvent event) -> {
+            MarketCommand.register(event.getDispatcher(), event.getBuildContext());
+            BankCommand.register(event.getDispatcher());
+        });
+        // A deleted FTB Teams party's account goes to its owner, so no money is lost with it.
+        FtbTeamsBridge.onPartyDeleted(team -> {
+            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+            if (server != null && WorldBank.kind(server) == BankKind.OWN) {
+                long paid = OwnBank.get(server).closeTeam(team.id(), team.owner());
+                if (paid > 0) {
+                    LOGGER.info("FTB Teams party {} was deleted; its {} bits went to its owner {}", team.name(), paid, team.owner());
+                }
+            }
+        });
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Post event) -> {
             boolean recoveryStep = MarketStockData.now(event.getServer()) % MarketConfig.intervalTicks() == 0;
             if (recoveryStep) {

@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Moves money between a player's coins and their account in the world's bank: the only way coins become money and
- * back. The market itself never pays or takes coins.
+ * Moves money between a player's coins and their active account in the world's bank (their own, or their team's if
+ * they chose it): the only way coins become money and back. The market itself never pays or takes coins.
  * <p>
  * Same rules as {@link MarketService}: server thread only, every check before anything changes, and once something has
  * changed no remaining step can fail. Only the main inventory is read or written, only plain coins (no renamed or
@@ -50,12 +50,12 @@ public final class BankService {
         }
     }
 
-    /** Pays every plain coin of the bank's coin set in the player's main inventory into their account. */
+    /** Pays every plain coin of the bank's coin set in the player's main inventory into their active account. */
     public static Outcome depositAll(ServerPlayer player) {
         requireServerThread(player);
         Bank bank = WorldBank.of(player.server);
         List<Denomination> coins = bank.coins();
-        Optional<Bank.Account> account = bank.account(player);
+        Optional<Bank.Account> account = bank.activeAccount(player);
         if (account.isEmpty() || coins.isEmpty()) {
             return Outcome.fail(Result.BANK_UNAVAILABLE);
         }
@@ -86,8 +86,8 @@ public final class BankService {
     }
 
     /**
-     * Takes {@code amount} from the player's account and gives it to them as the fewest coins, only if they all fit in
-     * the main inventory.
+     * Takes {@code amount} from the player's active account and gives it to them as the fewest coins, only if they all
+     * fit in the main inventory.
      */
     public static Outcome withdraw(ServerPlayer player, long amount) {
         requireServerThread(player);
@@ -99,7 +99,7 @@ public final class BankService {
         }
         Bank bank = WorldBank.of(player.server);
         List<Denomination> coins = bank.coins();
-        Optional<Bank.Account> account = bank.account(player);
+        Optional<Bank.Account> account = bank.activeAccount(player);
         if (account.isEmpty() || coins.isEmpty()) {
             return Outcome.fail(Result.BANK_UNAVAILABLE);
         }

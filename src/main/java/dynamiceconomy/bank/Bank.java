@@ -1,5 +1,6 @@
 package dynamiceconomy.bank;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.List;
@@ -16,8 +17,30 @@ import java.util.UUID;
 public interface Bank {
     BankKind kind();
 
-    /** The player's account, created on first use. Empty if the bank can't be reached. */
+    /** The player's own account, created on first use. Empty if the bank can't be reached. */
     Optional<Account> account(Player player);
+
+    /**
+     * The account the player trades and banks with: their team's when they chose it and are in a team, otherwise their
+     * own. Only the mod's own bank has team accounts.
+     */
+    default Optional<Account> activeAccount(ServerPlayer player) {
+        return account(player);
+    }
+
+    /** The player's team, if this bank has team accounts and they're in one. */
+    default Optional<BankTeam> team(ServerPlayer player) {
+        return Optional.empty();
+    }
+
+    /** Whether {@link #activeAccount} is the team's. */
+    default boolean payingFromTeam(ServerPlayer player) {
+        return false;
+    }
+
+    /** Chooses the team's account ({@code true}) or the player's own. Remembered; ignored without team accounts. */
+    default void payFromTeam(ServerPlayer player, boolean team) {
+    }
 
     /** Every personal account's balance, by owner UUID. Empty if the accounts can't be listed. */
     Map<UUID, Long> playerBalances();

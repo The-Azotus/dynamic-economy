@@ -17,8 +17,9 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-// `-PwithoutMods=numismatics` or `-PwithoutMods=create` leaves those optional mods out of every run (the code is still
-// compiled against them), to test the mod without them. Numismatics needs Create, so leaving out Create leaves out both.
+// `-PwithoutMods=numismatics`, `-PwithoutMods=create` or `-PwithoutMods=ftbteams` (comma-separated for several) leaves
+// those optional mods out of every run (the code is still compiled against them), to test the mod without them.
+// Numismatics needs Create, so leaving out Create leaves out both.
 def withoutMods = (findProperty('withoutMods') ?: '').toString().split(',').collect { it.trim() }.findAll { it } as Set
 if (withoutMods.contains('create')) {
     withoutMods << 'numismatics'
@@ -38,6 +39,16 @@ repositories {
     maven {
         url = 'https://mvn.devos.one/snapshots'
         content { includeGroup 'com.tterrag.registrate' }
+    }
+    // FTB Teams, FTB Library
+    maven {
+        url = 'https://maven.ftb.dev/releases'
+        content { includeGroup 'dev.ftb.mods' }
+    }
+    // Architectury, which FTB Teams needs
+    maven {
+        url = 'https://maven.architectury.dev'
+        content { includeGroup 'dev.architectury' }
     }
     // Numismatics
     exclusiveContent {
@@ -129,6 +140,18 @@ dependencies {
     if (!withoutMods.contains('numismatics')) {
         runtimeOnly("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
     }
+    // Optional: only compat/FtbTeamsBridge touches FTB Teams, and only when it is loaded. FTB Library and Architectury
+    // are what FTB Teams itself needs.
+    def ftbTeams = [
+            "dev.ftb.mods:ftb-teams-neoforge:${ftbteams_version}",
+            "dev.ftb.mods:ftb-library-neoforge:${ftblibrary_version}",
+            "dev.architectury:architectury-neoforge:${architectury_version}",
+    ]
+    ftbTeams.each { compileOnly(it) { transitive = false } }
+    if (!withoutMods.contains('ftbteams')) {
+        ftbTeams.each { runtimeOnly(it) { transitive = false } }
+    }
+
     // Optional: only compat/StagesBridge touches it, and only when the mod is loaded.
     compileOnly("maven.modrinth:progressivestages:${progressivestages_version}") { transitive = false }
 }
@@ -142,6 +165,7 @@ var generateModMetadata = tasks.register('generateModMetadata', ProcessResources
             create_version_range     : create_version_range,
             numismatics_version_range: numismatics_version_range,
             progressivestages_version_range: progressivestages_version_range,
+            ftbteams_version_range   : ftbteams_version_range,
             mod_id                   : mod_id,
             mod_name                 : mod_name,
             mod_license              : mod_license,

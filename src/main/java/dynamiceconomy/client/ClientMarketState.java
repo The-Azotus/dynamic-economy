@@ -54,7 +54,7 @@ public final class ClientMarketState {
     }
 
     private static MarketPayloads.PlayerState emptyPlayer() {
-        return new MarketPayloads.PlayerState(0, Map.of(), 0, Map.of());
+        return new MarketPayloads.PlayerState(0, Map.of(), 0, Map.of(), "", false);
     }
 
     public static void applySnapshot(MarketPayloads.Snapshot snapshot) {
@@ -78,7 +78,7 @@ public final class ClientMarketState {
     public static void applyPlayerState(MarketPayloads.PlayerState state) {
         DynamicEconomy.LOGGER.debug("Market player state: balance={} held={} emptySlots={}", state.balance(), state.held(), state.emptySlots());
         player = new MarketPayloads.PlayerState(state.balance(), Map.copyOf(state.held()), state.emptySlots(),
-                Map.copyOf(state.stackRoom()));
+                Map.copyOf(state.stackRoom()), state.team(), state.usingTeam());
         version++;
     }
 
@@ -202,6 +202,16 @@ public final class ClientMarketState {
     /** The balance as the bank displays it; see {@link #balanceCap()}. */
     public static long balance() {
         return player.balance();
+    }
+
+    /** The player's team's name, or "" when they're in none (or the bank has no team accounts). */
+    public static String team() {
+        return player.team();
+    }
+
+    /** Whether {@link #balance()} and every trade use the team's account. */
+    public static boolean usingTeam() {
+        return player.usingTeam();
     }
 
     /** The world's bank, which names the money unit. */

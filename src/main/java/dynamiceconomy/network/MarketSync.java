@@ -5,6 +5,7 @@ import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.bank.Bank;
+import dynamiceconomy.bank.BankTeam;
 import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.data.MarketStockData;
@@ -218,6 +219,14 @@ public final class MarketSync {
         sendPlayerState(player);
     }
 
+    /** The Bank tab's choice of account: the team's or the player's own. */
+    static void handlePayFromRequest(MarketPayloads.PayFromRequest request, ServerPlayer player) {
+        if (player.containerMenu instanceof MarketMenu menu && menu.stillValid(player)) {
+            WorldBank.of(player.server).payFromTeam(player, request.team());
+            sendPlayerState(player);
+        }
+    }
+
     static void handleTradesRequest(ServerPlayer player) {
         if (player.containerMenu instanceof MarketMenu menu && menu.stillValid(player)) {
             sendTrades(player);
@@ -291,7 +300,8 @@ public final class MarketSync {
      */
     public static MarketPayloads.PlayerState playerState(ServerPlayer player) {
         Bank bank = WorldBank.of(player.server);
-        long balance = bank.account(player).map(Bank.Account::balance).orElse(0L);
+        long balance = bank.activeAccount(player).map(Bank.Account::balance).orElse(0L);
+        String team = bank.team(player).map(BankTeam::name).orElse("");
         List<Denomination> coins = bank.coins();
         Map<ResourceLocation, Integer> held = new HashMap<>();
         Map<ResourceLocation, Integer> stackRoom = new HashMap<>();
@@ -314,6 +324,6 @@ public final class MarketSync {
                 }
             }
         }
-        return new MarketPayloads.PlayerState(balance, held, emptySlots, stackRoom);
+        return new MarketPayloads.PlayerState(balance, held, emptySlots, stackRoom, team, bank.payingFromTeam(player));
     }
 }

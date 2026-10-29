@@ -39,6 +39,13 @@ A server-owned global market. Sell items to the server for currency and buy from
     side="BOTH"
 
 [[dependencies.${mod_id}]]
+    modId="ftbteams"
+    type="optional"
+    versionRange="${ftbteams_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
     modId="progressivestages"
     type="optional"
     versionRange="${progressivestages_version_range}"

@@ -131,7 +131,7 @@ public final class MarketService {
         if (countMatching(items, entry) < qty) {
             return new TradeResult(Result.NOT_ENOUGH_ITEMS, 0, unitPrice, order.total());
         }
-        Optional<Bank.Account> account = WorldBank.of(player.server).account(player);
+        Optional<Bank.Account> account = WorldBank.of(player.server).activeAccount(player);
         if (account.isEmpty()) {
             return TradeResult.fail(Result.BANK_UNAVAILABLE);
         }
@@ -193,7 +193,7 @@ public final class MarketService {
         if (spaceFor(items, entry) < qty) {
             return new TradeResult(Result.NO_SPACE, 0, unitPrice, order.total());
         }
-        Optional<Bank.Account> account = WorldBank.of(player.server).account(player);
+        Optional<Bank.Account> account = WorldBank.of(player.server).activeAccount(player);
         if (account.isEmpty()) {
             return TradeResult.fail(Result.BANK_UNAVAILABLE);
         }

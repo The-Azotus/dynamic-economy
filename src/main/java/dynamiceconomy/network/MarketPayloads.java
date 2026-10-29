@@ -176,19 +176,22 @@ public final class MarketPayloads {
     }
 
     /**
-     * Server to client: this player's balance, how many tradeable copies of each listed item (and plain coins of the
-     * bank's set) they hold, and how much room their main inventory has (empty slots, plus the space left in stacks of
-     * each of those). The client cannot
+     * Server to client: the balance of the account this player uses, how many tradeable copies of each listed item (and
+     * plain coins of the bank's set) they hold, and how much room their main inventory has (empty slots, plus the space
+     * left in stacks of each of those). {@code team} is their team's name ("" if none) and {@code usingTeam} whether
+     * the balance is the team's. The client cannot
      * work this out itself: vanilla does not sync the inventory while a slotless menu is open.
      */
     public record PlayerState(long balance, Map<ResourceLocation, Integer> held, int emptySlots,
-                              Map<ResourceLocation, Integer> stackRoom) implements CustomPacketPayload {
+                              Map<ResourceLocation, Integer> stackRoom, String team, boolean usingTeam) implements CustomPacketPayload {
         public static final Type<PlayerState> TYPE = payloadType("player_state");
         public static final StreamCodec<RegistryFriendlyByteBuf, PlayerState> CODEC = StreamCodec.composite(
                 ByteBufCodecs.VAR_LONG, PlayerState::balance,
                 ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::held,
                 ByteBufCodecs.VAR_INT, PlayerState::emptySlots,
                 ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::stackRoom,
+                ByteBufCodecs.stringUtf8(64), PlayerState::team,
+                ByteBufCodecs.BOOL, PlayerState::usingTeam,
                 PlayerState::new);
 
         /** Room for {@code item}, counted the way the server's purchase check counts it. */
@@ -212,6 +215,19 @@ public final class MarketPayloads {
 
         @Override
         public Type<BankRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: from the Bank tab, use the team's account ({@code team}) or the player's own. */
+    public record PayFromRequest(boolean team) implements CustomPacketPayload {
+        public static final Type<PayFromRequest> TYPE = payloadType("pay_from_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, PayFromRequest> CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL, PayFromRequest::team,
+                PayFromRequest::new);
+
+        @Override
+        public Type<PayFromRequest> type() {
             return TYPE;
         }
     }

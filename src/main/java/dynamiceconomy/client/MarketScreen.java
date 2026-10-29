@@ -137,6 +137,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private EditBox withdrawAmount;
     private Button withdrawButton;
     private Button depositButton;
+    /** Switches between the player's own account and their team's; shown only to team members. */
+    private Button accountButton;
 
     // The layout, worked out from the window size in init(). Positions are relative to leftPos/topPos.
     private boolean wide;
@@ -273,6 +275,12 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 .build());
         depositButton = addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.bank.deposit"), b -> deposit())
                 .bounds(x + (wide ? panelX : MARGIN), y + tradeY, panelWidth, 18)
+                .build());
+        // Wide: under the two balance lines. Narrow: beside Deposit, which then takes half the row.
+        accountButton = addRenderableWidget(Button.builder(Component.empty(), b -> switchAccount())
+                .bounds(x + (wide ? panelX : MARGIN + panelWidth - (panelWidth - 2) / 2), y + (wide ? panelY + 28 : tradeY),
+                        wide ? panelWidth : (panelWidth - 2) / 2, 18)
+                .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.bank.use.tooltip")))
                 .build());
 
         if (wide) {
@@ -436,6 +444,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             withdrawAmount.visible = bank;
             withdrawButton.visible = bank;
             depositButton.visible = bank;
+            accountButton.visible = bank && !ClientMarketState.team().isEmpty();
         }
         if (getFocused() == search && !market || getFocused() == quantity && bank || getFocused() == withdrawAmount && !bank) {
             setFocused(null);
@@ -648,6 +657,15 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (tab != Tab.BANK) {
             return;
         }
+        // Joining or leaving a team changes this while the screen is open.
+        boolean inTeam = !ClientMarketState.team().isEmpty();
+        accountButton.visible = inTeam;
+        accountButton.setMessage(ClientMarketState.usingTeam()
+                ? Component.translatable("screen.dynamic_economy.bank.use_team", ClientMarketState.team())
+                : Component.translatable("screen.dynamic_economy.bank.use_own"));
+        if (!wide) {
+            depositButton.setWidth(inTeam ? (panelWidth - 2) / 2 : panelWidth);
+        }
         long carried = ClientMarketState.carriedCoinValue();
         depositButton.active = carried > 0;
         depositButton.setMessage(carried > 0
@@ -657,6 +675,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 ? "screen.dynamic_economy.bank.deposit.tooltip" : "screen.dynamic_economy.bank.result.no_coins")));
         long amount = withdrawValue();
         withdrawButton.active = amount > 0 && withdrawProblem(amount, coinsFor(amount)) == null;
+    }
+
+    private void switchAccount() {
+        PacketDistributor.sendToServer(new MarketPayloads.PayFromRequest(!ClientMarketState.usingTeam()));
     }
 
     private void deposit() {
@@ -963,8 +985,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private void renderBankPanel(GuiGraphics graphics, int x, int y) {
         int left = x + panelX;
         long balance = ClientMarketState.balance();
-        Component inBank = Component.translatable("screen.dynamic_economy.bank.in_bank",
-                PriceFormat.money(PriceFormat.spurs(balance) + (ClientMarketState.capped(balance) ? "+" : "")));
+        Component inBankAmount = PriceFormat.money(PriceFormat.spurs(balance) + (ClientMarketState.capped(balance) ? "+" : ""));
+        Component inBank = ClientMarketState.usingTeam()
+                ? Component.translatable("screen.dynamic_economy.bank.in_team_bank", ClientMarketState.team(), inBankAmount)
+                : Component.translatable("screen.dynamic_economy.bank.in_bank", inBankAmount);
         Component carried = Component.translatable("screen.dynamic_economy.bank.carried",
                 PriceFormat.money(PriceFormat.spurs(ClientMarketState.carriedCoinValue())));
         if (wide) {
@@ -972,8 +996,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             graphics.drawString(font, font.plainSubstrByWidth(carried.getString(), panelWidth), left, y + panelY + 16, TEXT, false);
             List<net.minecraft.util.FormattedCharSequence> help = font.split(
                     Component.translatable("screen.dynamic_economy.bank.help"), panelWidth);
-            for (int i = 0; i < help.size() && panelY + 32 + i * 10 < controlsY - 10; i++) {
-                graphics.drawString(font, help.get(i), left, y + panelY + 32 + i * 10, TEXT_DIM, false);
+            int helpY = panelY + (accountButton.visible ? 52 : 32);
+            for (int i = 0; i < help.size() && helpY + i * 10 < controlsY - 10; i++) {
+                graphics.drawString(font, help.get(i), left, y + helpY + i * 10, TEXT_DIM, false);
             }
         } else {
             String both = inBank.getString() + "   " + carried.getString();
