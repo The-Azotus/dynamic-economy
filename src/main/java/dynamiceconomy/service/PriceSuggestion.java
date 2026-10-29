@@ -65,6 +65,14 @@ public final class PriceSuggestion {
     public static final Set<String> LEFT_OUT_MODS = Set.of("chipped", "rechiseled");
     /** Recipes are applied at most this many times over; enough for any real chain, and a stop for loops. */
     private static final int MAX_PASSES = 64;
+    /**
+     * Longest chain of recipes {@link #chainProfits} follows: enough for stone to crushed ore to nuggets to an ingot to a
+     * block. A pack has many accepted generators (quarries, ProjectE's philosopher's stone, ore rebuilt from dust), and
+     * a long enough chain through them multiplies without bound.
+     */
+    private static final int CHAIN_STEPS = 6;
+    /** Longest chain a suggestion is raised through: the short conversions it is for (9 nuggets to an ingot). */
+    private static final int RAISE_STEPS = 3;
     /** One coal smelts 8 items. */
     private static final int ITEMS_PER_COAL = 8;
     private static final MathContext MATH = MathContext.DECIMAL64;
@@ -402,10 +410,11 @@ public final class PriceSuggestion {
      * Recipes that make more of their own ingredient are left out (they're generators, reported by {@link #craftProfits}),
      * as is any step that would lead back to the item, so values settle. An input a recipe uses up only sometimes (a
      * quarry drill) is credited with one run's output, not the many runs it lasts, or chains of them multiply without
-     * bound. Furnace fuel is bought as coal; anything a recipe gives back is ignored. {@code market} is everything the market would list, with suggested items included.
+     * bound. A tool the crafting grid hands back (a knife) isn't credited with what it helps make, and chains stop at
+     * {@value #CHAIN_STEPS} recipes. Furnace fuel is bought as coal; anything a recipe gives back is ignored. {@code market} is everything the market would list, with suggested items included.
      */
     public static List<ChainProfit> chainProfits(List<Path> allPaths, Map<Item, CatalogEntry> market) {
-        ChainValues values = chainValues(allPaths, market);
+        ChainValues values = chainValues(allPaths, market, CHAIN_STEPS);
         List<ChainProfit> profits = new ArrayList<>();
         for (Map.Entry<Item, BigDecimal> entry : values.buy().entrySet()) {
             Item item = entry.getKey();
@@ -428,7 +437,7 @@ public final class PriceSuggestion {
     private record ChainValues(Map<Item, BigDecimal> value, Map<Item, List<Path>> chain, Map<Item, BigDecimal> buy) {
     }
 
-    private static ChainValues chainValues(List<Path> allPaths, Map<Item, CatalogEntry> market) {
+    private static ChainValues chainValues(List<Path> allPaths, Map<Item, CatalogEntry> market, int maxSteps) {
         List<Path> paths = allPaths.stream()
                 .filter(path -> path.slots().stream().noneMatch(slot -> slot.options().contains(path.output()))).toList();
         Map<Item, BigDecimal> buy = new HashMap<>();
@@ -485,8 +494,8 @@ public final class PriceSuggestion {
                     List<Path> after = chain.getOrDefault(path.output(), List.of());
                     for (Item option : slots.get(k).options()) {
                         BigDecimal current = value.get(option);
-                        if ((current == null || perUnit.compareTo(current) > 0) && after.size() < MAX_PASSES
-                                && option != path.output() && after.stream().noneMatch(step -> step.output() == option)) {
+                        if ((current == null || perUnit.compareTo(current) > 0) && after.size() < maxSteps
+                                && option != path.output() && remainder(option) != option && after.stream().noneMatch(step -> step.output() == option)) {
                             List<Path> steps = new ArrayList<>(after.size() + 1);
                             steps.add(path);
                             steps.addAll(after);
@@ -504,7 +513,8 @@ public final class PriceSuggestion {
 
     /**
      * Raises each suggestion to at least what the item can be processed into, through recipes the suggester fully
-     * reads, divided by its class's markup, so buying it and processing it never profits. Suggestions too cheap to
+     * reads, at most {@value #RAISE_STEPS} recipes on, divided by its class's markup, so buying it and processing it
+     * never profits. Suggestions too cheap to
      * price (under 1 spur) stay unpriced: rounded up to 1, they'd sell for more than they cost to make (9 tiny dusts
      * unpacked from a 1-spur dust).
      */
@@ -517,7 +527,7 @@ public final class PriceSuggestion {
                 market.put(s.item(), entry);
             });
         }
-        ChainValues values = chainValues(paths.stream().filter(Path::complete).toList(), market);
+        ChainValues values = chainValues(paths.stream().filter(Path::complete).toList(), market, RAISE_STEPS);
         for (Suggestion s : List.copyOf(suggestions.values())) {
             BigDecimal worth = values.chain().containsKey(s.item()) ? values.value().get(s.item()) : null;
             CatalogEntry entry = asListed.get(s.item());

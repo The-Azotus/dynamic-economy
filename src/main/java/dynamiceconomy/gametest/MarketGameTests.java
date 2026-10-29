@@ -1432,6 +1432,11 @@ public final class MarketGameTests {
         return map;
     }
 
+    private static boolean remainderIsItself(Item item) {
+        ItemStack left = item.getCraftingRemainingItem(new ItemStack(item));
+        return !left.isEmpty() && left.getItem() == item;
+    }
+
     private static PriceSuggestion.Path path(Item output, int count, boolean fuel, Item... inputs) {
         List<PriceSuggestion.Slot> slots = new ArrayList<>();
         for (Item input : inputs) {
@@ -1619,6 +1624,28 @@ public final class MarketGameTests {
         List<PriceSuggestion.ChainProfit> doubling = PriceSuggestion.chainProfits(List.of(
                 path(Items.BRICK, 2, false, Items.CLAY_BALL), path(Items.CLAY_BALL, 2, false, Items.BRICK)), clayMarket);
         helper.assertValueEqual(doubling, List.of(), "a loop through another item doesn't count");
+
+        // Many generators in a row multiply without end: each step here doubles, so chains stop at 6 recipes (2^6 = 64).
+        List<Item> line = List.of(Items.OAK_LOG, Items.OAK_PLANKS, Items.STICK, Items.LADDER, Items.CHEST, Items.BARREL,
+                Items.LECTERN, Items.BOOKSHELF, Items.CRAFTING_TABLE, Items.BOWL);
+        List<PriceSuggestion.Path> doublers = new ArrayList<>();
+        for (int i = 0; i + 1 < line.size(); i++) {
+            doublers.add(path(line.get(i + 1), 2, false, line.get(i)));
+        }
+        Map<Item, CatalogEntry> lineMarket = seeds(line.stream().map(item -> seed(item, 1, null)).toArray(CatalogEntry[]::new));
+        PriceSuggestion.ChainProfit log = PriceSuggestion.chainProfits(doublers, lineMarket).stream()
+                .filter(p -> p.item() == Items.OAK_LOG).findFirst().orElseThrow();
+        helper.assertValueEqual(log.steps().size(), 6, "the chain stops at 6 recipes");
+        helper.assertValueEqual(log.value().compareTo(new BigDecimal("64")), 0, "so a log is worth 2^6 of what the chain ends in, not 2^9");
+
+        // A knife the crafting grid hands back isn't worth what it helps cut.
+        Item knife = BuiltInRegistries.ITEM.stream().filter(i -> remainderIsItself(i)).findFirst().orElse(null);
+        if (knife != null) {
+            Map<Item, CatalogEntry> toolMarket = seeds(seed(knife, 1, null), seed(Items.BREAD, 1000, null), seed(Items.WHEAT, 1, null));
+            List<PriceSuggestion.ChainProfit> tool = PriceSuggestion.chainProfits(List.of(
+                    path(Items.BREAD, 1, false, knife, Items.WHEAT)), toolMarket);
+            helper.assertTrue(tool.stream().noneMatch(p -> p.item() == knife), "a returned tool isn't credited");
+        }
         helper.succeed();
     }
 
