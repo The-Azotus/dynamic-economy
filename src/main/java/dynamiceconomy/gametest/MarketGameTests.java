@@ -5,6 +5,7 @@ import dynamiceconomy.MarketConfig;
 import dynamiceconomy.MarketAccess;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.BankSwitch;
 import dynamiceconomy.bank.BankTeam;
 import dynamiceconomy.bank.BankTeams;
 import dynamiceconomy.bank.OwnTeams;
@@ -3346,6 +3347,117 @@ public final class MarketGameTests {
             throw new GameTestAssertException("/" + command + " was rejected: " + e.getMessage());
         }
         return output;
+    }
+
+    // ---- Switching banks ----------------------------------------------------------------------------------------
+
+    @GameTest(template = EMPTY)
+    public static void drainingTakesWhatADisplayCapHides(GameTestHelper helper) {
+        // A stand-in for a Numismatics account: it shows at most the cap but can pay out everything.
+        long cap = NumismaticsBridge.DISPLAYED_BALANCE_CAP;
+        for (long start : new long[] {0, 7, cap - 1, cap, cap + 1, Integer.MAX_VALUE, 5_000_000_000L}) {
+            long[] total = {start};
+            Bank.Account account = new Bank.Account() {
+                @Override
+                public long balance() {
+                    return Math.min(total[0], cap);
+                }
+
+                @Override
+                public void deposit(int amount) {
+                    total[0] += amount;
+                }
+
+                @Override
+                public boolean deduct(int amount) {
+                    if (amount > total[0]) {
+                        return false;
+                    }
+                    total[0] -= amount;
+                    return true;
+                }
+            };
+            long[] paid = {0};
+            long moved = BankSwitch.drain(account, cap, amount -> paid[0] += amount);
+            helper.assertValueEqual(moved, start, "all of " + start + " is taken");
+            helper.assertValueEqual(paid[0], start, "and all of it is paid on");
+            helper.assertValueEqual(total[0], 0L, "leaving nothing behind");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void switchingBanksMovesEveryBalanceAndBack(GameTestHelper helper) {
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        BankKind start = WorldBank.kind(server);
+        if (NumismaticsBridge.bank().isEmpty()) {
+            BankSwitch.Result refused = BankSwitch.plan(server, BankKind.NUMISMATICS);
+            helper.assertTrue(refused.plan().isEmpty() && refused.problem().contains("Numismatics isn't installed"),
+                    "no switch without Numismatics: " + refused.problem());
+            helper.assertValueEqual(WorldBank.kind(server), start, "and the bank stays");
+            helper.succeed();
+            return;
+        }
+        helper.assertValueEqual(start, BankKind.NUMISMATICS, "the dev world uses Numismatics' bank");
+        helper.assertTrue(BankSwitch.plan(server, BankKind.NUMISMATICS).plan().isEmpty(), "no switch to the bank in use");
+
+        Fixture rich = new Fixture(helper);
+        Fixture modest = new Fixture(helper);
+        // More than Numismatics displays: part of it sits in its hidden overflow.
+        rich.deposit(Integer.MAX_VALUE);
+        rich.deposit(Integer.MAX_VALUE);
+        modest.deposit(1234);
+        long richTotal = 2L * Integer.MAX_VALUE;
+        OwnBank own = OwnBank.get(server);
+        UUID goneTeam = UUID.randomUUID();
+        try {
+            BankSwitch.Plan plan = BankSwitch.plan(server, BankKind.OWN).plan().orElseThrow();
+            helper.assertValueEqual(plan.balances().get(modest.player.getUUID()), 1234L, "the plan lists each balance");
+            helper.assertTrue(BankSwitch.switchTo(server, BankKind.OWN).plan().isPresent(), "switched");
+            helper.assertValueEqual(WorldBank.kind(server), BankKind.OWN, "the world records the new bank");
+            helper.assertValueEqual(own.account(rich.player.getUUID()).balance(), richTotal, "every bit moved, the hidden part too");
+            helper.assertValueEqual(own.account(modest.player.getUUID()).balance(), 1234L, "each to the same player");
+            helper.assertValueEqual(NumismaticsBridge.accountById(rich.player.getUUID()).orElseThrow().balance(), 0L,
+                    "nothing left behind in Numismatics' bank");
+
+            // A team account whose team is gone can't go to Numismatics' bank: it stays put rather than vanish.
+            own.teamAccount(goneTeam).deposit(50);
+            BankSwitch.Plan back = BankSwitch.plan(server, BankKind.NUMISMATICS).plan().orElseThrow();
+            helper.assertValueEqual(back.lostTeams().get(goneTeam), 50L, "the lost team is reported");
+        } finally {
+            if (WorldBank.kind(server) != BankKind.NUMISMATICS) {
+                helper.assertTrue(BankSwitch.switchTo(server, BankKind.NUMISMATICS).plan().isPresent(), "switched back");
+            }
+        }
+        helper.assertValueEqual(WorldBank.kind(server), BankKind.NUMISMATICS, "back on Numismatics' bank");
+        helper.assertValueEqual(own.teamBalances().get(goneTeam), 50L, "the lost team's balance waited in the mod's bank");
+        helper.assertValueEqual(own.account(rich.player.getUUID()).balance(), 0L, "the players' balances moved back");
+        Bank.Account richAccount = rich.account();
+        helper.assertTrue(richAccount.deduct(Integer.MAX_VALUE) && richAccount.deduct(Integer.MAX_VALUE)
+                && richAccount.balance() == 0, "all of it, overflow included");
+        helper.assertValueEqual(modest.balance(), 1234, "to the same players");
+        own.closeTeam(goneTeam, modest.player.getUUID());
+        own.drain(modest.player.getUUID());
+        modest.account().deduct(1234);
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void bankAdminCommandShowsBeforeItSwitches(GameTestHelper helper) {
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        BankKind start = WorldBank.kind(server);
+        List<String> info = runCommand(helper, "market admin bank");
+        helper.assertTrue(info.get(0).startsWith("This world uses " + BankSwitch.describe(start)), "says which bank: " + info);
+        BankKind other = start == BankKind.OWN ? BankKind.NUMISMATICS : BankKind.OWN;
+        List<String> preview = runCommand(helper, "market admin bank switch " + other.id());
+        if (NumismaticsBridge.bank().isPresent()) {
+            helper.assertTrue(preview.get(0).startsWith("Switching from"), "a preview first: " + preview);
+            helper.assertTrue(preview.stream().anyMatch(line -> line.startsWith("Coins don't move")), "with the coin warning");
+        } else {
+            helper.assertTrue(preview.get(0).contains("Numismatics isn't installed"), "nothing to switch to: " + preview);
+        }
+        helper.assertValueEqual(WorldBank.kind(server), start, "a preview changes nothing");
+        helper.succeed();
     }
 
     // ---- Banks --------------------------------------------------------------------------------------------------

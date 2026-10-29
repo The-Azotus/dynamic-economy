@@ -102,6 +102,21 @@ public final class OwnBank extends SavedData implements Bank {
         return balance;
     }
 
+    /** Takes a player's whole personal balance out of this bank and returns it, when moving it to another bank. */
+    public long drain(UUID player) {
+        long balance = balances.getOrDefault(player, 0L);
+        new Account(balances, player).set(0);
+        return balance;
+    }
+
+    /** Adds to a player's personal balance, when moving money in from another bank. Can't fail. */
+    public void credit(UUID player, long amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Negative credit: " + amount);
+        }
+        new Account(balances, player).add(amount);
+    }
+
     /** Personal accounts only: teams aren't players, so they stay off the leaderboard. */
     @Override
     public Map<UUID, Long> playerBalances() {

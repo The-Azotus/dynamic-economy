@@ -3,6 +3,7 @@
 This guide is for server admins running the Dynamic-Economy market. It covers:
 
 - how players reach the market
+- which bank the world uses (Numismatics' or the mod's own), coins, team accounts, and switching banks
 - how to price items, from a spreadsheet, catalog files or in-game commands
 - item classes, which give groups of items shared pricing behaviour
 - how prices move, every catalog field and config option, and every command
@@ -11,7 +12,7 @@ For what players see, read the [player guide](player-guide.md).
 
 ## How the market works
 
-The market is owned by the server. Players sell items to it and buy items from it, and all money moves through their Numismatics bank accounts. Every player sees the same prices and the same stock.
+The market is owned by the server. Players sell items to it and buy items from it, and all money moves through their bank accounts (see [Banks and coins](#banks-and-coins)). Every player sees the same prices and the same stock.
 
 - **Stock.** Items players sell go into one shared stock, and players buy from that stock. Items marked *unlimited* are always in stock instead.
 - **Prices.** Each item has a base price. The market pays a little less than the going rate and charges a markup on top.
@@ -24,6 +25,37 @@ The market is owned by the server. Players sell items to it and buy items from i
 3. **Item edits**: in-game changes to one item.
 
 A higher layer only changes the fields it sets. Pricing one item by hand always beats a tag rule. In-game edits are saved with the world and never touch stock or current prices.
+
+## Banks and coins
+
+Every payment, both ways, goes through the player's bank account; the market never pays out or takes coins. Coins only move in and out of the bank in the market screen's **Bank** tab.
+
+**Which bank.** A world uses one of two banks:
+
+- **Numismatics' bank**, when Create: Numismatics is installed. Money is in spurs, and the Bank tab moves Numismatics' coins.
+- **The mod's own bank**, without Numismatics. Money is in bits, saved with the world (`data/dynamic_economy_bank.dat`), and the Bank tab moves the mod's own coins, Bit to Omega. Balances have no practical limit; Numismatics shows at most 1,073,741,823.
+
+1 bit = 1 spur, so prices and catalog files mean the same under either bank.
+
+The world picks its bank on its first start with this version and remembers it: a world that already had a market (from 0.2.x, which needed Numismatics), or a new world with Numismatics installed, uses Numismatics' bank. Anything else uses the mod's own. **Adding or removing Numismatics never moves money on its own.** If a world uses Numismatics' bank and Numismatics is removed, the market refuses every trade and the log says why. Put Numismatics back, or switch banks.
+
+**Switching banks.** `/market admin bank` says which bank the world uses. `/market admin bank switch <own|numismatics>` shows what a switch would do, and `... confirm` does it:
+
+- Every player's balance moves to the same player's account in the other bank, Numismatics' hidden overflow above its display limit included.
+- Numismatics' bank has no team accounts, so moving to it first pays each team account to the team's owner. A team account whose team no longer exists stays in the mod's bank until you switch back.
+- **Coins don't move.** Coins of the old set that players still carry, or that sit in chests, stop counting: the Bank tab no longer takes them. The preview counts what online players carry; have players deposit first.
+- Every balance is written to the [audit log](#audit-log) before anything moves.
+- Players see the new coins in the creative menu after rejoining.
+
+Switching needs Numismatics installed in both directions, since its accounts are read or written.
+
+**The mod's coins** are always registered, so none vanish if Numismatics is added later. While Numismatics' bank is in use they're hidden from the creative menu and can't be crafted; recipe viewers such as JEI may still list them. Each is worth 8 of the one before: Bit 1, Chip 8, Stack 64, Mark 512, Crown 4,096, Sun 32,768, Divine 262,144, Omega 2,097,152 bits. Numismatics also has a Crown and a Sun, worth 512 and 4,096 spurs; only one set is in use on a server.
+
+**Coins can never be listed in the market**, ours or Numismatics': selling one would create money from nothing. A catalog file, spreadsheet row, item edit or tag rule that lists one is refused with a warning.
+
+**Recipes.** The Market Terminal takes 8 spurs around a crafting table with Numismatics installed, or 8 Bits without it. The Bank Card, which opens just the Bank tab from anywhere, takes a paper, a gold ingot and a Chip, or a Numismatics Bevel when Numismatics is installed. Replace them with a datapack or KubeJS like any recipe.
+
+**Team accounts** (the mod's own bank only). Players in a team share one account; each member chooses in the Bank tab whether they use it or their own. Every member can use it. With FTB Teams installed, a team is an FTB Teams party. When a party is deleted, its balance goes to its owner. Without FTB Teams, players use `/bank team create | invite | join | leave | kick` (see the [player guide](player-guide.md#the-bank-tab)). The last member to leave gets what's left. Team accounts never appear on the leaderboard.
 
 ## Letting players in
 
@@ -307,7 +339,7 @@ Automatic backups (taken before a restore or a prune) are kept up to the newest 
 
 ## Catalog fields
 
-Prices are whole numbers of **spurs**, the smallest Numismatics coin (1 bevel = 8 spurs, 1 sprocket = 16, 1 cog = 64, 1 crown = 512, 1 sun = 4096). These fields are used in catalog files, spreadsheet columns and `/market admin set`.
+Prices are whole numbers of **spurs** (Numismatics' bank) or **bits** (the mod's own); 1 bit = 1 spur, so a price file means the same under either bank. See [Banks and coins](#banks-and-coins) for the coins. These fields are used in catalog files, spreadsheet columns and `/market admin set`.
 
 | Field | Default | What it does |
 | --- | --- | --- |
@@ -385,7 +417,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `leaderboard.leaderboard_size` | 10 | 1 – 100 | How many players the leaderboard lists. |
 | `leaderboard.leaderboard_exclude_operators` | false | true, false | Leave operators off the leaderboard, for servers where admins hold test money. |
 
-**The leaderboard** ranks players by their Numismatics bank balance, the same number the market screen's Bank line shows. Only personal accounts of players the server has seen count: shared Blaze Banker accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. Balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
+**The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows. Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
 
 ## All commands
 
@@ -409,6 +441,9 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
 | `/market admin import "<path>" [preview]` | 4 | Imports a priced CSV. The path is relative to `config/dynamic_economy/`. |
+| `/market admin bank` | 2 | Which bank the world uses and what its accounts hold. |
+| `/market admin bank switch <own\|numismatics> [confirm]` | 2 | Shows, then does, a move of every balance to the other bank; see [Banks and coins](#banks-and-coins). |
+| `/bank team ...` | everyone | The mod's own teams, for team accounts; see the [player guide](player-guide.md#the-bank-tab). Off with Numismatics' bank; with FTB Teams only the info line (`/bank team`) works, since parties are the teams. |
 | `/market admin suggest [modid]` | 4 | Works out prices for unlisted items from their recipes and writes `suggested.csv`; see [Suggesting prices from recipes](#suggesting-prices-from-recipes). |
 
 \* Operators only when `access_mode` is `BLOCK_ONLY`. Permission 4 means the server console or a level-4 operator, since those commands read and write files on the server.
@@ -455,5 +490,8 @@ The rest of the file still imports. The first 15 reasons appear in chat, and all
 | `Market admin edit not applied: …` | A saved in-game edit no longer fits, for example because a catalog file changed. Check `/market admin info <item>`. |
 | `Market item …: a round trip may make a profit` | The item's impacts, markup and fee allow a profit from buying then selling back, or selling then buying back; see [Supply and demand](#supply-and-demand). |
 | The market is empty after upgrading | The example items are now an optional datapack; see [Pricing items](#pricing-items). |
-| `Numismatics bank API not found; the market will refuse all trades` | The installed Numismatics version isn't compatible. This mod was built against 1.1.0. |
+| `This world uses Numismatics' bank, but Numismatics isn't installed or its bank API doesn't match this mod; the market will refuse all trades` | Install Numismatics 1.1.x again, or move the world to the mod's own bank with `/market admin bank switch own` (which needs Numismatics installed to read the balances). |
+| `This world will use …` | Logged once, when a world first records its bank. |
+| `Market file … entry N: … is a coin, and coins can never be listed` | Coins can't be sold to the market; remove the entry. |
+| `FTB Teams is installed but its team API does not match …` | A different FTB Teams version; the mod's own `/bank team` commands are used instead. Built against 2101.1.11. |
 | A player sees "The market is only available at a Market Terminal" | `access_mode` is `BLOCK_ONLY`. |

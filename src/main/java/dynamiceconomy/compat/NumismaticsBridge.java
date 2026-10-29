@@ -49,6 +49,19 @@ public final class NumismaticsBridge {
         return AVAILABLE ? Optional.of(NumismaticsBank.INSTANCE) : Optional.empty();
     }
 
+    /** The personal account of the player {@code id}, online or not; created if they have none. */
+    public static Optional<Bank.Account> accountById(UUID id) {
+        if (!AVAILABLE) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Present.accountById(id));
+        } catch (RuntimeException | LinkageError e) {
+            DynamicEconomy.LOGGER.error("Numismatics bank lookup failed", e);
+            return Optional.empty();
+        }
+    }
+
     /** GameTests only: a shared (Blaze Banker) account, which must never count as a player's. */
     public static Optional<Bank.Account> sharedAccountForTest(UUID id) {
         return AVAILABLE ? Optional.of(Present.sharedAccount(id)) : Optional.empty();
@@ -174,6 +187,10 @@ public final class NumismaticsBridge {
                 }
             }
             return balances;
+        }
+
+        static Bank.Account accountById(UUID id) {
+            return new Account(Numismatics.BANK.getOrCreateAccount(id, BankAccount.Type.PLAYER));
         }
 
         static Bank.Account sharedAccount(UUID id) {

@@ -1,6 +1,8 @@
 # Player guide
 
-The market is run by the server. You can sell it items for money and buy items from what everyone has sold. Everything is paid through your Numismatics bank account, so you don't need coins in your inventory.
+The market is run by the server. You can sell it items for money and buy items from what everyone has sold. Everything is paid through your bank account, so you don't need coins in your inventory.
+
+Which bank depends on the server. With Create: Numismatics installed, it's your **Numismatics bank account** and money is counted in **spurs**. Without it, the market has its **own bank** and coins, and money is counted in **bits**. 1 bit is worth exactly 1 spur, so prices are the same either way. The screen always shows the right unit.
 
 ## Opening the market
 
@@ -11,11 +13,11 @@ The market is run by the server. You can sell it items for money and buy items f
 
 The screen fills most of the window, and the list shows as many items as fit. On a wide window the selected item's panel is to the right of the list; on a narrow one it's below it.
 
-Tabs along the top: **Market** (the item list), **Leaderboard** (the richest players) and **History** (your own trades). **Contracts** is greyed out; it arrives in a later version.
+Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see [The Bank tab](#the-bank-tab)), **Leaderboard** (the richest players) and **History** (your own trades). **Contracts** is greyed out; it arrives in a later version.
 
 | Part | What it shows |
 | --- | --- |
-| **Bank** (top right) | Your Numismatics bank balance, in spurs. Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. On a narrow screen it sits at the end of the search row and large amounts are shortened, such as **123k**. |
+| **Bank** (top right) | The balance of the account you're using, in spurs or bits. Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. On a narrow screen it sits at the end of the search row and large amounts are shortened, such as **123k**. |
 | **Search box** | Type part of an item's name to filter the list. **`@create`** shows only one mod's items (by its name or ID, so `@farmer` finds Farmer's Delight). **`#ingots`** shows items with a matching tag; `#c:ingots` matches that tag's full ID. Combine words to narrow it down: `@create #plates`, or `iron ingot` (both words must match). A mod ID followed by `:`, such as `create:`, still works too. |
 | **Sort button** | Click to cycle the order: **Name**, **Cheapest** (lowest buy price first), **Best pay** (highest sell price first), **Stock** (most first). |
 | **Filter button** | Click to cycle what's shown: **All**, **Buyable** (in stock and for sale), **Sellable** (the market buys it), **Held** (you have some it accepts). |
@@ -27,7 +29,7 @@ Tabs along the top: **Market** (the item list), **Leaderboard** (the richest pla
 
 The sort and filter you pick stay the same the next time you open the market, until you quit the game.
 
-The **Leaderboard** tab lists the server's richest players by bank balance, with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
+The **Leaderboard** tab lists the server's richest players by bank balance, with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker or team accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
 
 The **History** tab lists your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the Market tab with that item selected. Only you see your trades.
 
@@ -43,6 +45,46 @@ The **Buy** and **Sell** buttons show the total for that quantity; hover over on
 Next to the selected item, a small line shows its price over the last hour or so; the dotted line is the normal price. Hover over it for the low, the high and the current price. On a wide screen the panel also lists the item's buy and sell price, stock, how many you have, and its price as a percentage of normal (**Vs. base**).
 
 The line along the bottom of the screen tells you how your last trade went.
+
+## The Bank tab
+
+The Bank tab moves money between coins and your bank account. The market itself never pays or takes coins: it only uses the account.
+
+- **Deposit coins** pays every coin in your inventory into the bank. Only your main inventory counts (not armour or the offhand), and renamed coins are left alone. The button shows what your coins are worth.
+- **Withdraw** takes an amount out as the fewest coins. Type the amount, and the line below shows the coins you'll get, such as *"As 1 × Crown, 3 × Mark, 7 × Bit"*, or why it can't happen. If the coins wouldn't all fit in your inventory, nothing is withdrawn; nothing is ever dropped on the ground.
+- The list shows each coin, what it's worth, and how many you carry.
+
+With Numismatics' bank, the tab moves Numismatics' coins. With the market's own bank, it moves the market's coins.
+
+**Bank Card.** Right-click a Bank Card to open the Bank tab anywhere, without a terminal. It opens only the Bank tab; buy and sell at a terminal. Recipe: a paper, a gold ingot and a Chip (or a Numismatics Bevel, on servers with Numismatics), in any arrangement.
+
+**Team accounts** (the market's own bank only). If you're in a team, a **Using: my account / Using: team …** button appears in the Bank tab. The account you choose pays for what you buy, receives what you sell, and is where deposits and withdrawals go. Every member can use the team account. On servers with FTB Teams, your FTB Teams party is your team. Otherwise:
+
+| Command | What it does |
+| --- | --- |
+| `/bank team create <name>` | Starts a team, with you as its owner. Names are one word: letters, digits, `_` and `-`. |
+| `/bank team invite <player>` | Owner only: invites an online player. |
+| `/bank team join <name>` | Joins a team that invited you. |
+| `/bank team leave` | Leaves your team. If the owner leaves, the longest-standing member becomes owner. The last member to leave gets everything left in the team account. |
+| `/bank team kick <player>` | Owner only: removes a member. |
+| `/bank team` | Shows your team, its members and its balance. |
+
+## Coins
+
+The market's own coins (only on servers without Numismatics' bank):
+
+| Coin | Worth | Coin | Worth |
+| --- | --- | --- | --- |
+| Bit | 1 bit | Crown | 4,096 bits |
+| Chip | 8 bits | Sun | 32,768 bits |
+| Stack | 64 bits | Divine | 262,144 bits |
+| Mark | 512 bits | Omega | 2,097,152 bits |
+
+Each is worth 8 of the one before. Put 8 of a coin in a crafting grid to make one of the next, or one coin to break it back into 8.
+
+Numismatics' coins (on servers with Numismatics): spur 1, bevel 8, sprocket 16, cog 64, crown 512, sun 4,096 spurs. **Numismatics' Crown and Sun are worth less than the market's coins of the same name**, which is easy to mix up in guides; a server only uses one set.
+
+On a server using Numismatics' bank, recipe viewers such as JEI may still list the market's coins, but they can't be crafted there.
 
 ## Selling from anywhere: tooltips
 
@@ -61,7 +103,7 @@ If an item has no such line, the market doesn't buy it. To turn the line off, se
 - **Prices recover.** Every minute or so, each price moves part of the way back toward normal.
 - Buying something and selling it straight back always loses a little money, so there's no free profit.
 
-Money is counted in **spurs**: 1 bevel = 8 spurs, 1 sprocket = 16, 1 cog = 64, 1 crown = 512, 1 sun = 4096.
+Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
 
 ## What the market accepts
 
@@ -74,8 +116,8 @@ Money is counted in **spurs**: 1 bevel = 8 spurs, 1 sprocket = 16, 1 cog = 64, 1
 
 | Message | Meaning |
 | --- | --- |
-| *Bought N × item for X spurs* / *Sold N × item for X spurs* | Done. |
-| *Price changed from X to Y spurs. Click again to confirm* | Someone else traded, or prices recovered, just as you clicked. Nothing was bought or sold. The button now shows the new total. |
+| *Bought N × item for X* / *Sold N × item for X* | Done. |
+| *Price changed from X to Y. Click again to confirm* | Someone else traded, or prices recovered, just as you clicked. Nothing was bought or sold. The button now shows the new total. |
 | *You don't have that many (enchanted, damaged or renamed copies don't count)* | You hold fewer plain copies than you tried to sell. |
 | *The market doesn't have that many in stock* | Try a smaller quantity. |
 | *Your bank account can't cover that* | Not enough money for this order. |
@@ -83,14 +125,18 @@ Money is counted in **spurs**: 1 bevel = 8 spurs, 1 sprocket = 16, 1 cog = 64, 1
 | *The market does not buy this item* / *The market does not sell this item* | That direction is switched off for this item. |
 | *That item is not on the market* | It was taken off the market while you had the screen open. |
 | *That order is too large* | Orders are capped (640 by default). Split it up. |
-| *The bank is unavailable right now* | The server's Numismatics version doesn't match; tell an admin. |
+| *The bank is unavailable right now* | The server's bank can't be reached, usually because the world uses Numismatics' bank and Numismatics is missing or a different version. Tell an admin. |
+| *Deposited X* / *Withdrew X* | Done. |
+| *You carry no coins to deposit* | No plain coins of this server's set in your main inventory. |
+| *Not enough money in the bank* | The account you're using can't cover the withdrawal. |
+| *Not enough room in your inventory for the coins* | Make space, or withdraw less. |
 
 ## Crafting a terminal
 
 ```
-Spur  Spur            Spur
-Spur  Crafting table  Spur
-Spur  Spur            Spur
+Coin  Coin            Coin
+Coin  Crafting table  Coin
+Coin  Coin            Coin
 ```
 
-The spur is the smallest Numismatics coin. Your server may use a different recipe; check a recipe viewer if this one doesn't work. Break the terminal (by hand or with an axe) to pick it up again.
+The coins are 8 spurs on servers with Numismatics, or 8 Bits without it. Your server may use a different recipe; check a recipe viewer if this one doesn't work. Break the terminal (by hand or with an axe) to pick it up again.

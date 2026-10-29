@@ -18,7 +18,7 @@ import java.util.UUID;
 
 /**
  * Which bank the world uses, chosen once and saved with it, so balances never move to another bank on their own when
- * a mod is added or removed. A new world takes Numismatics' bank when Numismatics is installed and the mod's own bank
+ * a mod is added or removed. Only an admin switches it ({@link BankSwitch}). A new world takes Numismatics' bank when Numismatics is installed and the mod's own bank
  * otherwise. A world that already had a market before the choice was recorded used Numismatics' bank, since the
  * market needed it then.
  * <p>
@@ -28,7 +28,7 @@ import java.util.UUID;
 public final class WorldBank extends SavedData {
     public static final String ID = "dynamic_economy_bank_choice";
 
-    private final BankKind kind;
+    private BankKind kind;
 
     private WorldBank(BankKind kind) {
         this.kind = kind;
@@ -49,6 +49,13 @@ public final class WorldBank extends SavedData {
 
     public static BankKind kind(MinecraftServer server) {
         return get(server).kind;
+    }
+
+    /** Records a new bank for the world. Only {@link BankSwitch} calls this, after moving every balance across. */
+    static void record(MinecraftServer server, BankKind kind) {
+        WorldBank data = get(server);
+        data.kind = kind;
+        data.setDirty();
     }
 
     /** Whether the world's bank can be reached. */

@@ -46,6 +46,19 @@ public final class FtbTeamsBridge {
         }
     }
 
+    /** The party with the ID {@code team}, if it still exists. */
+    public static Optional<BankTeam> teamById(UUID team) {
+        if (!AVAILABLE) {
+            return Optional.empty();
+        }
+        try {
+            return Present.teamById(team);
+        } catch (RuntimeException | LinkageError e) {
+            DynamicEconomy.LOGGER.error("FTB Teams lookup failed", e);
+            return Optional.empty();
+        }
+    }
+
     /** Calls {@code onDeleted} when a party is deleted (its last member left, or it was disbanded). */
     public static void onPartyDeleted(Consumer<BankTeam> onDeleted) {
         if (AVAILABLE) {
@@ -60,6 +73,7 @@ public final class FtbTeamsBridge {
                 requireReturn(FTBTeamsAPI.class.getMethod("api").getReturnType(), FTBTeamsAPI.API.class);
                 requireReturn(FTBTeamsAPI.API.class.getMethod("getManager").getReturnType(), TeamManager.class);
                 requireReturn(TeamManager.class.getMethod("getTeamForPlayerID", UUID.class).getReturnType(), Optional.class);
+                requireReturn(TeamManager.class.getMethod("getTeamByID", UUID.class).getReturnType(), Optional.class);
                 requireReturn(Team.class.getMethod("isPartyTeam").getReturnType(), boolean.class);
                 requireReturn(Team.class.getMethod("getId").getReturnType(), UUID.class);
                 requireReturn(Team.class.getMethod("getOwner").getReturnType(), UUID.class);
@@ -81,6 +95,14 @@ public final class FtbTeamsBridge {
                 return Optional.empty();
             }
             return api.getManager().getTeamForPlayerID(player).filter(Team::isPartyTeam).map(Present::bankTeam);
+        }
+
+        static Optional<BankTeam> teamById(UUID id) {
+            FTBTeamsAPI.API api = FTBTeamsAPI.api();
+            if (api == null || !api.isManagerLoaded()) {
+                return Optional.empty();
+            }
+            return api.getManager().getTeamByID(id).filter(Team::isPartyTeam).map(Present::bankTeam);
         }
 
         static void onPartyDeleted(Consumer<BankTeam> onDeleted) {

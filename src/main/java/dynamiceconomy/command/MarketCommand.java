@@ -154,6 +154,7 @@ public final class MarketCommand {
                                                                              CommandBuildContext context) {
         AdminCatalogCommands.addTo(admin, context);
         AdminRecoveryCommands.addTo(admin);
+        AdminBankCommands.addTo(admin);
         return admin;
     }
 
