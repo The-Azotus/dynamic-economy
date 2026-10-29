@@ -1,0 +1,42 @@
+{
+  "required_mods": [
+    "create_hypertube"
+  ],
+  "entries": [
+    {
+      "item": "create_hypertube:hypertube",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_hypertube:hypertube_accelerator",
+      "base_price": 154,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_hypertube:hypertube_entrance",
+      "base_price": 185,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_hypertube:hypertube_funnel",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_hypertube:hypertube_junction",
+      "base_price": 147,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_hypertube:redstone_detector_tube_attachment",
+      "base_price": 106,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_hypertube:tube_scanner_attachment",
+      "base_price": 259,
+      "class": "common_processed"
+    }
+  ]
+}
