@@ -968,7 +968,7 @@
     },
     {
       "item": "minecraft:obsidian",
-      "base_price": 16,
+      "base_price": 8,
       "class": "common_resource"
     },
     {
@@ -1156,7 +1156,7 @@
     },
     {
       "item": "minecraft:redstone",
-      "base_price": 8,
+      "base_price": 10,
       "class": "common_processed"
     },
     {
@@ -1286,7 +1286,7 @@
     },
     {
       "item": "minecraft:slime_ball",
-      "base_price": 8,
+      "base_price": 2,
       "class": "farmable"
     },
     {
