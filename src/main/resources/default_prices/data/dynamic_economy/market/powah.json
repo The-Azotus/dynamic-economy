@@ -4,13 +4,644 @@
   ],
   "entries": [
     {
+      "item": "powah:aerial_pearl",
+      "base_price": 93,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:battery_basic",
+      "base_price": 730,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:battery_blazing",
+      "base_price": 1589,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:battery_hardened",
+      "base_price": 1182,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:battery_niotic",
+      "base_price": 7017,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:battery_nitro",
+      "base_price": 19113,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:battery_spirited",
+      "base_price": 8327,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:battery_starter",
+      "base_price": 347,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:binding_card",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:blank_card",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:blazing_crystal_block",
+      "base_price": 316,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "powah:book",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:capacitor_basic",
+      "base_price": 60,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:capacitor_basic_large",
+      "base_price": 121,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:capacitor_basic_tiny",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:capacitor_blazing",
+      "base_price": 133,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:capacitor_hardened",
+      "base_price": 151,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:capacitor_niotic",
+      "base_price": 2379,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:capacitor_nitro",
+      "base_price": 4761,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:capacitor_spirited",
+      "base_price": 549,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:charged_snowball",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:crystal_blazing",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:crystal_niotic",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:crystal_nitro",
+      "base_price": 1158,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:crystal_spirited",
+      "base_price": 105,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:dielectric_casing",
+      "base_price": 164,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:dielectric_paste",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:dielectric_rod",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:dielectric_rod_horizontal",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:dry_ice",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_cell_basic",
+      "base_price": 415,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_cell_blazing",
+      "base_price": 415,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_cell_hardened",
+      "base_price": 450,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_cell_niotic",
+      "base_price": 2527,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:ender_cell_nitro",
+      "base_price": 4908,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:ender_cell_spirited",
+      "base_price": 696,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:ender_cell_starter",
+      "base_price": 284,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_core",
+      "base_price": 239,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_gate_basic",
+      "base_price": 82,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_gate_blazing",
+      "base_price": 88,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_gate_hardened",
+      "base_price": 91,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:ender_gate_niotic",
+      "base_price": 363,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:ender_gate_nitro",
+      "base_price": 661,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:ender_gate_spirited",
+      "base_price": 135,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:ender_gate_starter",
+      "base_price": 74,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energized_steel_block",
+      "base_price": 396,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "powah:energizing_orb",
+      "base_price": 194,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energizing_rod_basic",
+      "base_price": 534,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energizing_rod_blazing",
+      "base_price": 1461,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energizing_rod_hardened",
+      "base_price": 1015,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energizing_rod_niotic",
+      "base_price": 6399,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energizing_rod_nitro",
+      "base_price": 17377,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energizing_rod_spirited",
+      "base_price": 7676,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energizing_rod_starter",
+      "base_price": 234,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cable_basic",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cable_blazing",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cable_hardened",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cable_niotic",
+      "base_price": 295,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_cable_nitro",
+      "base_price": 592,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_cable_spirited",
+      "base_price": 66,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_cable_starter",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cell_basic",
+      "base_price": 548,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cell_blazing",
+      "base_price": 4055,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cell_hardened",
+      "base_price": 1740,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_cell_niotic",
+      "base_price": 15288,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_cell_nitro",
+      "base_price": 78848,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_cell_spirited",
+      "base_price": 32263,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_cell_starter",
+      "base_price": 427,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_discharger_basic",
+      "base_price": 294,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_discharger_blazing",
+      "base_price": 441,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_discharger_hardened",
+      "base_price": 476,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_discharger_niotic",
+      "base_price": 4933,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_discharger_nitro",
+      "base_price": 9696,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_discharger_spirited",
+      "base_price": 1272,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_discharger_starter",
+      "base_price": 234,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_hopper_basic",
+      "base_price": 556,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_hopper_blazing",
+      "base_price": 1471,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_hopper_hardened",
+      "base_price": 1031,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:energy_hopper_niotic",
+      "base_price": 6403,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_hopper_nitro",
+      "base_price": 17369,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_hopper_spirited",
+      "base_price": 7674,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:energy_hopper_starter",
+      "base_price": 262,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:furnator_basic",
+      "base_price": 703,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:furnator_blazing",
+      "base_price": 2000,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:furnator_hardened",
+      "base_price": 1391,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:furnator_niotic",
+      "base_price": 9741,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:furnator_nitro",
+      "base_price": 27014,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:furnator_spirited",
+      "base_price": 11533,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:furnator_starter",
+      "base_price": 241,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:magmator_basic",
+      "base_price": 703,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:magmator_blazing",
+      "base_price": 2000,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:magmator_hardened",
+      "base_price": 1391,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:magmator_niotic",
+      "base_price": 9740,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:magmator_nitro",
+      "base_price": 27013,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:magmator_spirited",
+      "base_price": 11532,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:magmator_starter",
+      "base_price": 240,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:niotic_crystal_block",
+      "base_price": 5068,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "powah:nitro_crystal_block",
+      "base_price": 10427,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "powah:photoelectric_pane",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:reactor_basic",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:reactor_blazing",
+      "base_price": 499,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:reactor_hardened",
+      "base_price": 362,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:reactor_niotic",
+      "base_price": 2882,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:reactor_nitro",
+      "base_price": 8199,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:reactor_spirited",
+      "base_price": 3435,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:reactor_starter",
+      "base_price": 83,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:solar_panel_basic",
+      "base_price": 1457,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:solar_panel_blazing",
+      "base_price": 15459,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:solar_panel_hardened",
+      "base_price": 4973,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:solar_panel_niotic",
+      "base_price": 52992,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:solar_panel_nitro",
+      "base_price": 494841,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:solar_panel_spirited",
+      "base_price": 160559,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:solar_panel_starter",
+      "base_price": 355,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:spirited_crystal_block",
+      "base_price": 950,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "powah:steel_energized",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:thermo_generator_basic",
+      "base_price": 1101,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:thermo_generator_blazing",
+      "base_price": 2525,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:thermo_generator_hardened",
+      "base_price": 1835,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:thermo_generator_niotic",
+      "base_price": 8235,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:thermo_generator_nitro",
+      "base_price": 20895,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:thermo_generator_spirited",
+      "base_price": 9827,
+      "class": "rare_processed"
+    },
+    {
+      "item": "powah:thermo_generator_starter",
+      "base_price": 558,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:thermoelectric_plate",
+      "base_price": 109,
+      "class": "common_processed"
+    },
+    {
       "item": "powah:uraninite",
       "base_price": 11,
       "class": "common_processed"
     },
     {
+      "item": "powah:uraninite_block",
+      "base_price": 108,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "powah:uraninite_raw",
       "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "powah:wrench",
+      "base_price": 74,
       "class": "common_processed"
     }
   ]
