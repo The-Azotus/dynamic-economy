@@ -1,0 +1,58 @@
+{
+  "required_mods": [
+    "productivelib"
+  ],
+  "entries": [
+    {
+      "item": "productivelib:upgrade_adult",
+      "base_price": 941,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "productivelib:upgrade_anti_teleport",
+      "base_price": 1079,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_base",
+      "base_price": 886,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_child",
+      "base_price": 941,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_entity_filter",
+      "base_price": 1011,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_gene_sampler",
+      "base_price": 3199,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_range",
+      "base_price": 2206,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_simulator",
+      "base_price": 1273,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_time",
+      "base_price": 1789,
+      "class": "rare_processed"
+    },
+    {
+      "item": "productivelib:upgrade_time_2",
+      "base_price": 44088,
+      "class": "rare_processed"
+    }
+  ]
+}
