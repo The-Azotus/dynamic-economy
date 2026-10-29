@@ -14,9 +14,63 @@
       "class": "common_resource"
     },
     {
+      "item": "yungscavebiomes:ancient_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:ancient_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "yungscavebiomes:ancient_sandstone_stairs",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:ancient_sandstone_wall",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:brittle_ancient_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:brittle_red_sandstone",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "yungscavebiomes:brittle_sandstone",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "yungscavebiomes:chiseled_ancient_sandstone",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
       "item": "yungscavebiomes:clock_pottery_sherd",
       "base_price": 64,
       "class": "rare_loot"
+    },
+    {
+      "item": "yungscavebiomes:cut_ancient_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:cut_ancient_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
     },
     {
       "item": "yungscavebiomes:frost_lily",
@@ -39,6 +93,21 @@
       "class": "farmable"
     },
     {
+      "item": "yungscavebiomes:layered_ancient_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:layered_red_sandstone",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:layered_sandstone",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
       "item": "yungscavebiomes:prickly_peach",
       "base_price": 2,
       "class": "farmable"
@@ -56,6 +125,21 @@
     {
       "item": "yungscavebiomes:rare_ice",
       "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:smooth_ancient_sandstone",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:smooth_ancient_sandstone_slab",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "yungscavebiomes:smooth_ancient_sandstone_stairs",
+      "base_price": 5,
       "class": "common_processed"
     }
   ]
