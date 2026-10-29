@@ -9,21 +9,25 @@ The market is run by the server. You can sell it items for money and buy items f
 
 ## The market screen
 
+The screen fills most of the window, and the list shows as many items as fit. On a wide window the selected item's panel is to the right of the list; on a narrow one it's below it.
+
+Tabs along the top: **Market** (the item list) and **History** (your own trades). **Contracts** and **Leaderboard** are greyed out; they arrive in a later version.
+
 | Part | What it shows |
 | --- | --- |
-| **Bank** (top right) | Your Numismatics bank balance, in spurs. Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. |
+| **Bank** (top right) | Your Numismatics bank balance, in spurs. Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. On a narrow screen it sits at the end of the search row and large amounts are shortened, such as **123k**. |
 | **Search box** | Type part of an item's name to filter the list. Type a mod's name followed by `:` (for example `create:`) to see only that mod's items. |
 | **Sort button** | Click to cycle the order: **Name**, **Cheapest** (lowest buy price first), **Best pay** (highest sell price first), **Stock** (most first). |
 | **Filter button** | Click to cycle what's shown: **All**, **Buyable** (in stock and for sale), **Sellable** (the market buys it), **Held** (you have some it accepts). |
 | **Stock** | How many the market has. **∞** means it never runs out. **0** in red means it's sold out. |
-| **Sell** | What the market pays you for one. Cheap items show decimals, such as **0.99**. **–** means the market doesn't buy this item. |
-| **Buy** | What the market charges you for one. **–** means the market doesn't sell this item. |
+| **Buy** | What the market charges you for one. Cheap items show decimals, such as **0.99**. **–** means the market doesn't sell this item. |
+| **Sell** | What the market pays you for one. **–** means the market doesn't buy this item. |
 | **Have** | How many you could sell right now. |
-| **▲ / ▼** | The price is above (▲) or below (▼) normal. Hover over the row for the exact percentage. |
+| **▲ / ▼** (last column) | The price is above (▲) or below (▼) normal. Hover over the row for the exact percentage. |
 
 The sort and filter you pick stay the same the next time you open the market, until you quit the game.
 
-**Trades** (top right) swaps the list for your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the market with that item selected; **Items** returns without one. Only you see your trades.
+The **History** tab lists your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the Market tab with that item selected. Only you see your trades.
 
 Click an item to select it. Set a quantity with the box and the **−** / **+** buttons; hold Shift to change it by 16. Or use:
 
@@ -34,9 +38,9 @@ These only fill in the quantity; you still click **Buy** or **Sell**. The text b
 
 The **Buy** and **Sell** buttons show the total for that quantity; hover over one for the average price per item. They're greyed out if you can't afford the order, don't hold enough, don't have room, or the market is out of stock.
 
-Next to the selected item, a small line shows its price over the last hour or so; the dotted line is the normal price. Hover over it for the low, the high and the current price.
+Next to the selected item, a small line shows its price over the last hour or so; the dotted line is the normal price. Hover over it for the low, the high and the current price. On a wide screen the panel also lists the item's buy and sell price, stock, how many you have, and its price as a percentage of normal (**Vs. base**).
 
-The line under the buttons tells you how your last trade went.
+The line along the bottom of the screen tells you how your last trade went.
 
 ## Selling from anywhere: tooltips
 
