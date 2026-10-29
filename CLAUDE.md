@@ -18,7 +18,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). **Phase 14 (Standalone currency) is next, on branch `phase14`** (from `phase13`; `main` is still v0.2.0): not started; the open questions under Current phase come first. It was put ahead of Contracts on 2026-10-29 so that Contracts and the Exchange are built on the final bank. Then 15 Contracts → 16 Difficulty preset → 17 Player exchange (optional).
+Phases 0–7 done (v0.2.0 on `main`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). **Phase 14 (Standalone currency) is next, on branch `phase14`** (from `phase13`; `main` is still v0.2.0): open questions answered 2026-10-29; step 1 in progress. It was put ahead of Contracts on 2026-10-29 so that Contracts and the Exchange are built on the final bank. Then 15 Contracts → 16 Difficulty preset → 17 Player exchange (optional).
 
 Phases 8+ target v0.3.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
@@ -82,16 +82,20 @@ Make the mod work without Create and Numismatics, with its own coins and bank, w
 
 Done when: the mod loads and the market works with no Create or Numismatics installed, and with each alone; GameTests pass on both banks (a Gradle run without Numismatics and Create is needed, since the dev runtime has both); deposit then withdraw returns exactly the same value; withdraw never drops items; coins can't be listed in the market; buy-then-sell still never profits.
 
-Not started. Branch `phase14` exists (from `phase13`). First: read the code, then ask the user these before building (none is decided):
+Started 2026-10-29 on branch `phase14` (from `phase13`). Gaps found in the code at the start: nothing stops a coin from being listed (no guard exists yet; add it by step 3); the terminal recipe hard-codes `numismatics:spur`; GameTests call `NumismaticsBridge` directly; the dev runtime always has Create and Numismatics (`implementation`).
 
-1. **Team accounts:** what a team is (our own `/bank team` commands, vanilla scoreboard teams, or FTB Teams if the pack has it); who can deposit and withdraw; whether market trades can pay from or into a team account, and how a player picks it.
-2. **Switching banks:** confirm the recommendation: coins always registered (so none vanish if Numismatics is added later) but hidden and uncraftable while Numismatics' bank is in use; the world remembers its bank; only an admin command switches. Also: import existing Numismatics balances when a world moves to our bank? Check early that the bank choice can be known when recipes load (recipe conditions run when datapacks load).
-3. **Name clash:** Numismatics also has a Crown (512 spurs) and a Sun (4,096 spurs), while ours are 4,096 and 32,768. Players only see one coin set at a time, but guides and chat could confuse them. Keep the names?
-4. **Unit label:** prices currently read "spurs". Show "bits" always, or "spurs" when Numismatics' bank is in use?
-5. **Remote access item:** what it is (wallet, bank card), its name and recipe; and whether it opens only the Bank tab or the whole market.
-6. **Balance limit:** Numismatics stores balances as `int` (about 2.1 billion bits ≈ 1,024 Omega). Should our bank allow more (`long`)? Each transaction stays capped at `Integer.MAX_VALUE` either way.
-7. **Coin art:** will the user supply textures, or should placeholders be made?
-8. **Terminal recipe without Numismatics:** which coin replaces the 8 spurs?
+Decided with the user on 2026-10-29:
+
+1. **Team accounts:** a team is an FTB Teams party when FTB Teams is installed, otherwise our own `/bank team` commands. Every member can deposit and withdraw. A "pay from: Me / Team" choice in the Bank tab decides which account market purchases charge and sales pay into.
+2. **Switching banks:** as recommended. Coins are always registered, but hidden and uncraftable while Numismatics' bank is in use; the world remembers its bank; only an admin command switches. The switch moves every player's balance across (both directions) and warns about loose coins. Recipe conditions run before the world's saved data loads, so they can't see the bank: coin recipes check it when crafted (to verify in step 2).
+3. **Names:** keep Crown and Sun; the docs note that Numismatics' coins of the same name are worth less.
+4. **Unit label:** follows the bank: "spurs" with Numismatics' bank, "bits" with our own.
+5. **Remote access:** a **Bank Card** (shapeless: paper + gold ingot + a Chip); it opens only the Bank tab. Its recipe with Numismatics' bank is decided in step 4.
+6. **Balances:** our bank stores `long`; each transaction stays capped at `Integer.MAX_VALUE`.
+7. **Coin art:** placeholder textures made by Claude; the user may replace them later.
+8. **Terminal recipe without Numismatics:** 8 Bits around a crafting table.
+
+Step 1 (rename, optional Create): in progress.
 
 ## Report format (after every phase)
 
