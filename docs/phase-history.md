@@ -1,4 +1,4 @@
-# Phase history (Phases 0–12, done)
+# Phase history (Phases 0–13, done)
 
 Archived from `CLAUDE.md`. These are the original specs for finished phases. The code and the guides in `docs/` are now the source of truth; read this only when you need the reasoning behind how something was built.
 
@@ -215,3 +215,15 @@ Done when: a locked item is invisible and untradeable for one player while anoth
 Decided with the user (2026-10-29): allow ProgressiveStages `[3.1.1,4)`; if its lock API fails, fail open (hide nothing, log an error); a past trade of a now-locked item stays in History. Verified against the real 3.1.1 jar: item, tag and whole-mod (`mod:create`) locks are all detected, and a locked listed item is left out of that player's catalog.
 
 As built (branch `phase12`): `compat/StagesBridge` asks ProgressiveStages' `LockRegistry.isItemBlockedFor(player, item)` (missing stage; ignores creative, category switches and structure locks), probed by reflection once. `service/MarketVisibility` wraps it and has a GameTest hook (`setTestLocks`). `MarketSync` sends each player only what they can see (one shared broadcast when nothing can be hidden); stage events mark catalogs stale, resent next tick. Trading a hidden item returns `NOT_LISTED` before any other check; `/market price|stock` hide it from players. Approved 2026-10-29; the two-player and in-pack checks were left to the user.
+
+## Phase 13 — Leaderboard (done)
+
+- Top N **player** bank balances with exact amounts, read via `NumismaticsBridge`. Team and shared accounts are excluded; only accounts belonging to a known player profile count (verify how Numismatics distinguishes them).
+- Offline players shown by name from the profile cache.
+- Config: `leaderboard_enabled`, `leaderboard_size`, `leaderboard_exclude_operators`.
+- Read on the main thread; refreshed when the tab opens, not every tick.
+
+Done when: balances match `/market` bank values; non-player accounts never appear.
+
+As built (branch `phase13`), approved 2026-10-29: `NumismaticsBridge.playerBalances()` lists accounts of type `PLAYER` (Numismatics' other type is `BLAZE_BANKER`, the shared accounts; there are no team accounts; sub-accounts are spending permissions, not money), probed separately so a mismatch only empties the board. `service/Leaderboard` ranks balances > 0 of players with a known profile (online, else the server's profile cache), richest first, ties by name; balances are the displayed ones (capped values show with "+"). Config `leaderboard.leaderboard_enabled` (true), `leaderboard_size` (10, 1–100), `leaderboard_exclude_operators` (false). The tab sends `LeaderboardRequest` on open (20-tick cooldown per player); the snapshot carries the enabled flag; network protocol 8. The GameTest server has no profile cache, so `viewFor(viewer, profiles)` takes a lookup for tests. The in-game look was left for the user to check.
+
