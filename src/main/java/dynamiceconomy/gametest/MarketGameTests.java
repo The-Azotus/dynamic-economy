@@ -1599,6 +1599,7 @@ public final class MarketGameTests {
     public static void energyConversionsAreNotComplete(GameTestHelper helper) {
         // The particle collider turns netherrack into netherite scrap: priced as complete, it raised a charcoal block to 404M.
         helper.assertTrue(!PriceSuggestion.completeMachineRecipe("oritech:particle_collision", false), "the particle collider hides its cost");
+        helper.assertTrue(!PriceSuggestion.completeMachineRecipe("mekanism:sawing", false), "nor does Mekanism's sawmill, which makes more wood than it takes");
         helper.assertTrue(PriceSuggestion.completeMachineRecipe("oritech:foundry", false), "other machines without fluids are complete");
         helper.assertTrue(!PriceSuggestion.completeMachineRecipe("oritech:foundry", true), "machines using fluids aren't");
         helper.succeed();

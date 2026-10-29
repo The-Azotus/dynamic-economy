@@ -94,11 +94,13 @@ public final class PriceSuggestion {
 
     /**
      * Machine recipes whose real cost is energy, not their items: Oritech's particle collider turns netherrack into
-     * netherite scrap, and Modern Industrialization's quarry mines blocks with a drill it wears down. Accepted as
+     * netherite scrap, Modern Industrialization's quarry mines blocks with a drill it wears down, and Mekanism's sawmill
+     * makes more wood than it takes (1 plank to 6 sticks, a chest back into more planks than it took). Accepted as
      * generators, so like recipes that hide inputs they only price what nothing else makes, and never raise a price or
      * count as a complete chain.
      */
-    public static final Set<String> ENERGY_CONVERSION_TYPES = Set.of("oritech:particle_collision", "modern_industrialization:quarry");
+    public static final Set<String> ENERGY_CONVERSION_TYPES = Set.of("oritech:particle_collision", "modern_industrialization:quarry",
+            "mekanism:sawing");
 
     private PriceSuggestion() {
     }

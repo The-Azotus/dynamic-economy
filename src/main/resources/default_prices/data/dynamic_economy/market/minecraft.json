@@ -778,7 +778,8 @@
     {
       "item": "minecraft:milk_bucket",
       "base_price": 112,
-      "class": "farmable"
+      "class": "farmable",
+      "can_sell": false
     },
     {
       "item": "minecraft:miner_pottery_sherd",
