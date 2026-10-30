@@ -52,7 +52,7 @@ The Bank tab moves money between coins and your bank account. The market itself 
 
 - **Deposit coins** pays every coin in your inventory into the bank. Only your main inventory counts (not armour or the offhand), and renamed coins are left alone. The button shows what your coins are worth.
 - **Withdraw** takes an amount out as the fewest coins. Type the amount, and the line below shows the coins you'll get, such as *"As 1 × Crown, 3 × Mark, 7 × Bit"*, or why it can't happen. If the coins wouldn't all fit in your inventory, nothing is withdrawn; nothing is ever dropped on the ground.
-- The list shows each coin, what it's worth, and how many you carry.
+- The list shows each coin, what it's worth, and how many you carry. **Click a coin** to withdraw one of exactly that coin; **Shift-click** for a stack of it, or as many as your balance covers. No amount to type. The same room rule applies.
 
 With Numismatics' bank, the tab moves Numismatics' coins. With the market's own bank, it moves the market's coins.
 

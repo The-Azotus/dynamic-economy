@@ -14,11 +14,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalLong;
 
 /** Every packet the market sends. Prices, totals and balances are in bits (= spurs). */
@@ -205,13 +207,22 @@ public final class MarketPayloads {
         }
     }
 
-    /** Client to server: from the Bank tab, deposit every coin in the main inventory, or withdraw {@code amount}. */
-    public record BankRequest(boolean deposit, long amount) implements CustomPacketPayload {
+    /**
+     * Client to server: from the Bank tab, deposit every coin in the main inventory, or withdraw
+     * {@code amount} as the fewest coins, or, with {@code coin}, {@code amount} of exactly that coin.
+     */
+    public record BankRequest(boolean deposit, long amount, Optional<Item> coin) implements CustomPacketPayload {
         public static final Type<BankRequest> TYPE = payloadType("bank_request");
         public static final StreamCodec<RegistryFriendlyByteBuf, BankRequest> CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, BankRequest::deposit,
                 ByteBufCodecs.VAR_LONG, BankRequest::amount,
+                ByteBufCodecs.optional(ByteBufCodecs.registry(Registries.ITEM)), BankRequest::coin,
                 BankRequest::new);
+
+        /** Withdraws {@code count} of exactly this coin, instead of an amount as the fewest coins. */
+        public static BankRequest withdrawCoins(Item coin, int count) {
+            return new BankRequest(false, count, Optional.of(coin));
+        }
 
         @Override
         public Type<BankRequest> type() {

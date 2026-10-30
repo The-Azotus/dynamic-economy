@@ -6,6 +6,7 @@ import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.bank.WorldBank;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,13 +104,47 @@ public final class BankService {
         if (account.isEmpty() || coins.isEmpty()) {
             return Outcome.fail(Result.BANK_UNAVAILABLE);
         }
-        long[] counts = CoinMath.breakdown(coins, amount);
+        return pay(player, account.get(), coins, amount, CoinMath.breakdown(coins, amount));
+    }
+
+    /**
+     * Takes {@code count} of one coin's worth from the player's active account and gives exactly that many of that
+     * coin, only if they all fit in the main inventory. {@code coin} must be one of the bank's coins.
+     */
+    public static Outcome withdrawCoins(ServerPlayer player, Item coin, int count) {
+        requireServerThread(player);
+        Bank bank = WorldBank.of(player.server);
+        List<Denomination> coins = bank.coins();
+        Optional<Bank.Account> account = bank.activeAccount(player);
+        if (account.isEmpty() || coins.isEmpty()) {
+            return Outcome.fail(Result.BANK_UNAVAILABLE);
+        }
+        int index = -1;
+        for (int i = 0; i < coins.size(); i++) {
+            if (coins.get(i).item() == coin) {
+                index = i;
+            }
+        }
+        if (count <= 0 || index < 0) {
+            return Outcome.fail(Result.INVALID_AMOUNT);
+        }
+        long amount = (long) coins.get(index).value() * count;
+        if (amount > Integer.MAX_VALUE) {
+            return Outcome.fail(Result.TOO_LARGE);
+        }
+        long[] counts = new long[coins.size()];
+        counts[index] = count;
+        return pay(player, account.get(), coins, amount, counts);
+    }
+
+    /** Takes {@code amount} (at most {@code Integer.MAX_VALUE}) and gives {@code counts} of each coin, worth as much. */
+    private static Outcome pay(ServerPlayer player, Bank.Account account, List<Denomination> coins, long amount, long[] counts) {
         NonNullList<ItemStack> items = player.getInventory().items;
         if (!CoinMath.fits(coins, counts, emptySlots(items), coin -> stackRoom(items, coin), BankService::maxStackSize)) {
             return Outcome.fail(Result.NO_SPACE);
         }
         // The deduction is itself the funds check: it changes nothing when it returns false.
-        if (!account.get().deduct((int) amount)) {
+        if (!account.deduct((int) amount)) {
             return Outcome.fail(Result.NO_FUNDS);
         }
 

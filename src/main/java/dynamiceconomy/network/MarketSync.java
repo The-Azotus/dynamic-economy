@@ -214,7 +214,9 @@ public final class MarketSync {
         if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
             return;
         }
-        BankService.Outcome outcome = request.deposit() ? BankService.depositAll(player) : BankService.withdraw(player, request.amount());
+        BankService.Outcome outcome = request.deposit() ? BankService.depositAll(player)
+                : request.coin().isPresent() ? BankService.withdrawCoins(player, request.coin().get(), (int) Math.min(request.amount(), Integer.MAX_VALUE))
+                : BankService.withdraw(player, request.amount());
         PacketDistributor.sendToPlayer(player, new MarketPayloads.BankOutcome(request.deposit(), outcome.result(), outcome.amount()));
         sendPlayerState(player);
     }

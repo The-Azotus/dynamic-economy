@@ -4,6 +4,7 @@ import dynamiceconomy.bank.CoinMath;
 import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketPayloads;
+import dynamiceconomy.service.BankService;
 import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.OrderMath;
 import net.minecraft.client.gui.GuiGraphics;
@@ -682,14 +683,27 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     }
 
     private void deposit() {
-        PacketDistributor.sendToServer(new MarketPayloads.BankRequest(true, 0));
+        PacketDistributor.sendToServer(new MarketPayloads.BankRequest(true, 0, Optional.empty()));
     }
 
     private void withdraw() {
         long amount = withdrawValue();
         if (amount > 0) {
-            PacketDistributor.sendToServer(new MarketPayloads.BankRequest(false, amount));
+            PacketDistributor.sendToServer(new MarketPayloads.BankRequest(false, amount, Optional.empty()));
         }
+    }
+
+    /** How many of {@code coin} a click withdraws: one, or with Shift a stack, or as many as the balance covers. */
+    private static int coinsPerClick(Denomination coin) {
+        if (!hasShiftDown()) {
+            return 1;
+        }
+        long affordable = ClientMarketState.balance() / coin.value();
+        return (int) Math.max(1, Math.min(BankService.maxStackSize(coin), affordable));
+    }
+
+    private void withdrawCoins(Denomination coin) {
+        PacketDistributor.sendToServer(MarketPayloads.BankRequest.withdrawCoins(coin.item(), coinsPerClick(coin)));
     }
 
     private void trade(boolean buy) {
@@ -730,6 +744,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 selectTab(Tab.MARKET);
                 setFocused(null);
                 refreshButtons();
+                return true;
+            }
+            if (index >= 0 && tab == Tab.BANK) {
+                minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                withdrawCoins(ClientMarketState.coins().get(index));
                 return true;
             }
         }
@@ -830,6 +849,13 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             graphics.renderTooltip(font, tooltip(visible.get(index)), Optional.empty(), mouseX, mouseY);
         } else if (index >= 0 && tab == Tab.HISTORY) {
             graphics.renderTooltip(font, Component.translatable("screen.dynamic_economy.trades.row_hint"), mouseX, mouseY);
+        } else if (index >= 0 && tab == Tab.BANK) {
+            Denomination coin = ClientMarketState.coins().get(index);
+            int count = coinsPerClick(coin);
+            graphics.renderComponentTooltip(font, List.of(
+                    Component.translatable("screen.dynamic_economy.bank.click_withdraw", count, coin.item().getDescription(),
+                            PriceFormat.money(PriceFormat.spurs((long) count * coin.value()))),
+                    Component.translatable("screen.dynamic_economy.bank.click_hint").withColor(TEXT_DIM)), mouseX, mouseY);
         }
     }
 
@@ -844,7 +870,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         switch (tab) {
             case HISTORY -> renderTradeList(graphics, x, y, mouseX, mouseY);
             case LEADERBOARD -> renderLeaderboard(graphics, x, y);
-            case BANK -> renderCoinList(graphics, x, y);
+            case BANK -> renderCoinList(graphics, x, y, mouseX, mouseY);
             default -> renderCatalogList(graphics, x, y, mouseX, mouseY);
         }
         renderScrollbar(graphics, x, y);
@@ -954,19 +980,21 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
     }
 
-    /** The bank's coins, largest first: what each is worth and how many the player carries. */
-    private void renderCoinList(GuiGraphics graphics, int x, int y) {
+    /** The bank's coins, largest first: what each is worth and how many the player carries. Clicking one withdraws it. */
+    private void renderCoinList(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
         List<Denomination> coins = ClientMarketState.coins();
         int listRight = LIST_X + listWidth;
         int worthRight = listRight - 60;
         graphics.drawString(font, Component.translatable("screen.dynamic_economy.bank.col.coin"), x + LIST_X + 22, y + HEADER_Y, TEXT_DIM, false);
         drawRight(graphics, Component.translatable("screen.dynamic_economy.bank.col.worth"), x + worthRight, y + HEADER_Y, TEXT_DIM);
         drawRight(graphics, Component.translatable("screen.dynamic_economy.col.have"), x + listRight - 2, y + HEADER_Y, TEXT_DIM);
+        int hovered = rowAt(mouseX, mouseY);
         for (int i = 0; i < rows && scroll + i < coins.size(); i++) {
             Denomination coin = coins.get(scroll + i);
             int rowY = y + LIST_Y + i * ROW_HEIGHT;
-            if (i % 2 == 1) {
-                graphics.fill(x + LIST_X, rowY, x + listRight, rowY + ROW_HEIGHT, ROW_ALT);
+            int background = scroll + i == hovered ? ROW_HOVER : i % 2 == 1 ? ROW_ALT : 0;
+            if (background != 0) {
+                graphics.fill(x + LIST_X, rowY, x + listRight, rowY + ROW_HEIGHT, background);
             }
             graphics.renderItem(new ItemStack(coin.item()), x + LIST_X + 2, rowY + 1);
             int textY = rowY + 5;

@@ -3120,6 +3120,33 @@ public final class MarketGameTests {
     }
 
     @GameTest(template = EMPTY)
+    public static void withdrawingOneCoinGivesExactlyThatCoin(GameTestHelper helper) {
+        Fixture f = new Fixture(helper);
+        Denomination smallest = smallestCoin(f);
+        Denomination above = coinAbove(f, smallest);
+        f.assertRejectedUnchanged(BankService.Result.NO_FUNDS, () -> BankService.withdrawCoins(f.player, smallest.item(), 1));
+        f.assertRejectedUnchanged(BankService.Result.INVALID_AMOUNT, () -> BankService.withdrawCoins(f.player, smallest.item(), 0));
+        f.assertRejectedUnchanged(BankService.Result.INVALID_AMOUNT, () -> BankService.withdrawCoins(f.player, Items.DIAMOND, 1));
+        f.assertRejectedUnchanged(BankService.Result.TOO_LARGE, () -> BankService.withdrawCoins(f.player, above.item(), Integer.MAX_VALUE));
+
+        // Enough small coins to make the one above: the fewest-coins withdrawal would hand that over instead.
+        int count = above.value() / smallest.value();
+        f.deposit(above.value());
+        BankService.Outcome out = BankService.withdrawCoins(f.player, smallest.item(), count);
+        helper.assertTrue(out.ok() && out.amount() == above.value(), "paid what the coins are worth: " + out);
+        helper.assertValueEqual(f.count(smallest.item()), (long) count, "exactly that many of that coin");
+        helper.assertValueEqual(f.count(above.item()), 0L, "none of the coin above");
+        helper.assertValueEqual(f.balance(), 0, "the balance paid for them");
+
+        // No room: nothing is taken and nothing is dropped.
+        f.deposit(above.value());
+        f.player.getInventory().items.clear();
+        f.giveMany(Items.COBBLESTONE, 36 * 64);
+        f.assertRejectedUnchanged(BankService.Result.NO_SPACE, () -> BankService.withdrawCoins(f.player, above.item(), 1));
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
     public static void bankCardOpensOnlyTheBank(GameTestHelper helper) {
         Fixture f = new Fixture(helper);
         MarketMenu menu = MarketMenu.forBankCard();
