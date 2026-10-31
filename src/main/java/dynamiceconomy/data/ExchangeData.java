@@ -1,11 +1,14 @@
 package dynamiceconomy.data;
 
+import dynamiceconomy.DynamicEconomy;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.util.ArrayList;
@@ -19,12 +22,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * The player exchange, saved with the world: open orders, each player's collection box, and anything owed or still
- * to be told. Orders, boxes and owed money are one saved file, so a restart never splits a trade between them. Only
+ * The player exchange, saved with the world: open orders and listings, each player's collection box, and anything owed
+ * or still to be told. All of it is one saved file, so a restart never splits a trade between them. Only
  * {@code ExchangeService} changes it. Server thread only.
  * <p>
  * What an order holds: a buy order holds {@code price × remaining} in money, taken when it was posted; a sell order
- * holds its remaining items, taken from the seller's inventory when it was posted.
+ * holds its remaining items, taken from the seller's inventory when it was posted. A listing holds its remaining
+ * units of one exact item (enchanted, damaged, renamed and so on), which buyers take at its price.
  */
 public final class ExchangeData extends SavedData {
     public static final String ID = "dynamic_economy_exchange";
@@ -58,6 +62,33 @@ public final class ExchangeData extends SavedData {
         }
     }
 
+    /**
+     * One listing: an item with its own components, offered at a fixed price each until it sells out or is cancelled.
+     *
+     * @param stack     one unit of the item exactly as listed (count 1); never changed, copied on the way out
+     * @param team      the team account the proceeds go to, while that team exists
+     * @param price     per unit, in bits
+     * @param quantity  units listed; {@code sold} of them have been bought
+     * @param postedDay the contracts' day count when it was posted, for expiry
+     */
+    public record Listing(long id, UUID owner, Optional<UUID> team, ItemStack stack, long price, int quantity, int sold, long postedDay) {
+        public int remaining() {
+            return quantity - sold;
+        }
+
+        public ResourceLocation item() {
+            return BuiltInRegistries.ITEM.getKey(stack.getItem());
+        }
+
+        public Listing withSold(int total) {
+            return new Listing(id, owner, team, stack, price, quantity, total, postedDay);
+        }
+    }
+
+    /** Items with their own components waiting in a collection box: {@code count} units like {@code stack} (count 1). */
+    public record Parcel(long id, ItemStack stack, long count) {
+    }
+
     public enum NoticeKind {
         /** A sell order sold units: {@code amount} is what was paid in, after tax. */
         SOLD,
@@ -76,8 +107,16 @@ public final class ExchangeData extends SavedData {
     }
 
     private final List<Order> orders = new ArrayList<>();
+    private final List<Listing> listings = new ArrayList<>();
     /** Items waiting for each player, by item, in the order they arrived. */
     private final Map<UUID, Map<ResourceLocation, Long>> boxes = new LinkedHashMap<>();
+    /** Items with their own components waiting for each player, in the order they arrived. */
+    private final Map<UUID, List<Parcel>> parcels = new LinkedHashMap<>();
+    /**
+     * Saved listings and parcels whose item can't be read now (its mod was removed). They're kept as saved, untouched,
+     * so the items come back if the mod does.
+     */
+    private final ListTag unreadable = new ListTag();
     private final List<Notice> notices = new ArrayList<>();
     private final List<Payout> owed = new ArrayList<>();
     private long nextId = 1;
@@ -136,8 +175,47 @@ public final class ExchangeData extends SavedData {
         return orders.stream().filter(o -> o.item().equals(item) && o.buy() == buy).sorted(buy ? BIDS : ASKS).toList();
     }
 
+    /** The player's open orders and listings together, which {@code max_open_orders} limits. */
     public int openOrders(UUID player) {
-        return (int) orders.stream().filter(o -> o.owner().equals(player)).count();
+        return (int) (orders.stream().filter(o -> o.owner().equals(player)).count()
+                + listings.stream().filter(l -> l.owner().equals(player)).count());
+    }
+
+    // ---- Listings --------------------------------------------------------------------------------------------
+
+    public List<Listing> listings() {
+        return Collections.unmodifiableList(listings);
+    }
+
+    public Optional<Listing> findListing(long id) {
+        return listings.stream().filter(l -> l.id() == id).findFirst();
+    }
+
+    public void add(Listing listing) {
+        listings.add(listing);
+        setDirty();
+    }
+
+    /** Replaces the listing with the same ID, or removes it once nothing remains. */
+    public void update(Listing listing) {
+        for (int i = 0; i < listings.size(); i++) {
+            if (listings.get(i).id() == listing.id()) {
+                if (listing.remaining() <= 0) {
+                    listings.remove(i);
+                } else {
+                    listings.set(i, listing);
+                }
+                setDirty();
+                return;
+            }
+        }
+        throw new IllegalArgumentException("No exchange listing " + listing.id());
+    }
+
+    public void removeListing(long id) {
+        if (listings.removeIf(l -> l.id() == id)) {
+            setDirty();
+        }
     }
 
     // ---- Collection boxes ------------------------------------------------------------------------------------
@@ -175,6 +253,63 @@ public final class ExchangeData extends SavedData {
             box.put(item, have - count);
         }
         setDirty();
+    }
+
+    /** Items with their own components waiting in the player's box, in the order they arrived. */
+    public List<Parcel> parcels(UUID player) {
+        return Collections.unmodifiableList(parcels.getOrDefault(player, List.of()));
+    }
+
+    public Map<UUID, List<Parcel>> allParcels() {
+        return Collections.unmodifiableMap(parcels);
+    }
+
+    /** Whether anything at all waits in the player's box. */
+    public boolean hasBox(UUID player) {
+        return boxes.containsKey(player) || parcels.containsKey(player);
+    }
+
+    /** Adds {@code count} units like {@code stack} to the player's box, joining a parcel of exactly the same item. */
+    public void addParcel(UUID player, ItemStack stack, long count) {
+        if (count <= 0 || stack.isEmpty()) {
+            return;
+        }
+        List<Parcel> theirs = parcels.computeIfAbsent(player, p -> new ArrayList<>());
+        for (int i = 0; i < theirs.size(); i++) {
+            Parcel parcel = theirs.get(i);
+            if (ItemStack.isSameItemSameComponents(parcel.stack(), stack)) {
+                theirs.set(i, new Parcel(parcel.id(), parcel.stack(), parcel.count() + count));
+                setDirty();
+                return;
+            }
+        }
+        theirs.add(new Parcel(takeId(), stack.copyWithCount(1), count));
+        setDirty();
+    }
+
+    /** Takes {@code count} units out of one of the player's parcels; the caller has checked there are that many. */
+    public void takeParcel(UUID player, long id, long count) {
+        List<Parcel> theirs = parcels.getOrDefault(player, List.of());
+        for (int i = 0; i < theirs.size(); i++) {
+            Parcel parcel = theirs.get(i);
+            if (parcel.id() != id) {
+                continue;
+            }
+            if (count > parcel.count()) {
+                throw new IllegalArgumentException("Parcel " + id + " holds " + parcel.count() + ", not " + count);
+            }
+            if (count == parcel.count()) {
+                theirs.remove(i);
+                if (theirs.isEmpty()) {
+                    parcels.remove(player);
+                }
+            } else {
+                theirs.set(i, new Parcel(parcel.id(), parcel.stack(), parcel.count() - count));
+            }
+            setDirty();
+            return;
+        }
+        throw new IllegalArgumentException("No parcel " + id + " in the box of " + player);
     }
 
     // ---- Notices and owed money ------------------------------------------------------------------------------
@@ -267,6 +402,21 @@ public final class ExchangeData extends SavedData {
                         item, o.getBoolean("buy"), o.getLong("price"), o.getInt("quantity"), o.getInt("filled"), o.getLong("posted_day")));
             }
         }
+        for (Tag element : tag.getList("listings", Tag.TAG_COMPOUND)) {
+            readListing(data, (CompoundTag) element, registries);
+        }
+        for (Tag element : tag.getList("parcels", Tag.TAG_COMPOUND)) {
+            readParcel(data, (CompoundTag) element, registries);
+        }
+        // Kept from an earlier load because their item couldn't be read; tried again in case the mod is back.
+        for (Tag element : tag.getList("unreadable", Tag.TAG_COMPOUND)) {
+            CompoundTag u = (CompoundTag) element;
+            if ("listing".equals(u.getString("kind"))) {
+                readListing(data, u, registries);
+            } else {
+                readParcel(data, u, registries);
+            }
+        }
         for (Tag element : tag.getList("boxes", Tag.TAG_COMPOUND)) {
             CompoundTag b = (CompoundTag) element;
             ResourceLocation item = ResourceLocation.tryParse(b.getString("item"));
@@ -297,6 +447,33 @@ public final class ExchangeData extends SavedData {
         return data;
     }
 
+    private static void readListing(ExchangeData data, CompoundTag l, HolderLookup.Provider registries) {
+        Optional<ItemStack> stack = ItemStack.parse(registries, l.getCompound("stack"));
+        if (stack.isEmpty() || !l.hasUUID("owner")) {
+            keepUnreadable(data, l, "listing");
+            return;
+        }
+        data.listings.add(new Listing(l.getLong("id"), l.getUUID("owner"), l.hasUUID("team") ? Optional.of(l.getUUID("team")) : Optional.empty(),
+                stack.get().copyWithCount(1), l.getLong("price"), l.getInt("quantity"), l.getInt("sold"), l.getLong("posted_day")));
+    }
+
+    private static void readParcel(ExchangeData data, CompoundTag p, HolderLookup.Provider registries) {
+        Optional<ItemStack> stack = ItemStack.parse(registries, p.getCompound("stack"));
+        if (stack.isEmpty() || !p.hasUUID("player")) {
+            keepUnreadable(data, p, "parcel");
+            return;
+        }
+        data.parcels.computeIfAbsent(p.getUUID("player"), id -> new ArrayList<>())
+                .add(new Parcel(p.getLong("id"), stack.get().copyWithCount(1), p.getLong("count")));
+    }
+
+    private static void keepUnreadable(ExchangeData data, CompoundTag tag, String kind) {
+        CompoundTag kept = tag.copy();
+        kept.putString("kind", kind);
+        data.unreadable.add(kept);
+        DynamicEconomy.LOGGER.warn("Exchange {} {} can't be read (was its mod removed?); it's kept as saved", kind, tag.getLong("id"));
+    }
+
     @Override
     public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putInt("version", 1);
@@ -318,6 +495,31 @@ public final class ExchangeData extends SavedData {
             orderList.add(o);
         }
         tag.put("orders", orderList);
+        ListTag listingList = new ListTag();
+        for (Listing listing : listings) {
+            CompoundTag l = new CompoundTag();
+            l.putLong("id", listing.id());
+            l.putUUID("owner", listing.owner());
+            listing.team().ifPresent(id -> l.putUUID("team", id));
+            l.put("stack", listing.stack().save(registries));
+            l.putLong("price", listing.price());
+            l.putInt("quantity", listing.quantity());
+            l.putInt("sold", listing.sold());
+            l.putLong("posted_day", listing.postedDay());
+            listingList.add(l);
+        }
+        tag.put("listings", listingList);
+        ListTag parcelList = new ListTag();
+        parcels.forEach((player, theirs) -> theirs.forEach(parcel -> {
+            CompoundTag p = new CompoundTag();
+            p.putUUID("player", player);
+            p.putLong("id", parcel.id());
+            p.put("stack", parcel.stack().save(registries));
+            p.putLong("count", parcel.count());
+            parcelList.add(p);
+        }));
+        tag.put("parcels", parcelList);
+        tag.put("unreadable", unreadable.copy());
         ListTag boxList = new ListTag();
         boxes.forEach((player, box) -> box.forEach((item, count) -> {
             CompoundTag b = new CompoundTag();

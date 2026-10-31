@@ -58,7 +58,9 @@ public final class MarketService {
         /** Exchange: the order is someone else's. */
         NOT_YOUR_ORDER,
         /** Exchange: a price of zero or less. */
-        INVALID_PRICE
+        INVALID_PRICE,
+        /** Exchange: buying from one's own listing. */
+        OWN_LISTING
     }
 
     /**

@@ -1,5 +1,6 @@
 package dynamiceconomy.network;
 
+import com.mojang.authlib.GameProfile;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
@@ -56,6 +57,10 @@ public final class MarketSync {
     private static final Map<UUID, Integer> lastLeaderboardRequest = new HashMap<>();
     /** The item whose exchange book each viewer last asked for, resent to them whenever the exchange changes. */
     private static final Map<UUID, ResourceLocation> watchedBooks = new HashMap<>();
+    /** Viewers browsing the exchange's listings, who get them again whenever the exchange changes. */
+    private static final Set<UUID> watchingListings = new HashSet<>();
+    /** The most bytes of listings sent at once, in order of item ID; the rest are left out and the screen says so. */
+    private static final int LISTINGS_BUDGET_BYTES = 512 * 1024;
 
     private MarketSync() {
     }
@@ -73,6 +78,7 @@ public final class MarketSync {
         sendCatalog(player);
         sendPlayerState(player);
         watchedBooks.remove(player.getUUID());
+        watchingListings.remove(player.getUUID());
         if (exchangeVisible(player)) {
             sendExchange(player);
         }
@@ -184,6 +190,7 @@ public final class MarketSync {
         lastSentState.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         lastLeaderboardRequest.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         watchedBooks.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
+        watchingListings.removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         viewers.forEach(MarketSync::sendPlayerState);
     }
 
@@ -325,8 +332,22 @@ public final class MarketSync {
             return;
         }
         request.book().ifPresentOrElse(item -> watchedBooks.put(player.getUUID(), item), () -> watchedBooks.remove(player.getUUID()));
+        if (request.listings()) {
+            watchingListings.add(player.getUUID());
+        } else {
+            watchingListings.remove(player.getUUID());
+        }
         sendExchange(player);
         sendBook(player);
+        sendListings(player);
+    }
+
+    /** List an item from the Exchange tab of an open market screen (not a Bank Card's). */
+    static void handleListItem(MarketPayloads.ListItem request, ServerPlayer player) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player) || menu.bankOnly()) {
+            return;
+        }
+        replyExchange(player, ExchangeService.list(player, request.slot(), request.expected(), request.price(), request.quantity()));
     }
 
     /** Post, cancel or collect from the Exchange tab of an open market screen (not a Bank Card's). */
@@ -340,8 +361,19 @@ public final class MarketSync {
                     .orElse(new ExchangeService.Outcome(ExchangeService.Action.POST, MarketService.Result.NOT_LISTED,
                             BuiltInRegistries.ITEM.getDefaultKey(), 0, 0, 0, 0));
             case CANCEL -> ExchangeService.cancel(player, request.orderId());
-            case COLLECT -> ExchangeService.collect(player, request.item());
+            case COLLECT -> request.item().isEmpty() && request.orderId() > 0
+                    ? ExchangeService.collectParcel(player, request.orderId())
+                    : ExchangeService.collect(player, request.item());
+            case BUY_LISTING -> ExchangeService.buyListing(player, request.orderId(), request.quantity(), request.price());
+            // Listing comes as its own packet, with the item the player saw.
+            case LIST -> new ExchangeService.Outcome(ExchangeService.Action.LIST, MarketService.Result.NOT_LISTED,
+                    BuiltInRegistries.ITEM.getDefaultKey(), 0, 0, 0, 0);
         };
+        replyExchange(player, outcome);
+    }
+
+    /** Tells the player how an exchange request went, and refreshes whoever's screen it changed. */
+    private static void replyExchange(ServerPlayer player, ExchangeService.Outcome outcome) {
         PacketDistributor.sendToPlayer(player, new MarketPayloads.ExchangeOutcome(outcome.action(), outcome.item(), outcome.result(),
                 outcome.quantity(), outcome.filled(), outcome.amount()));
         if (outcome.ok() && outcome.action() != ExchangeService.Action.COLLECT) {
@@ -359,13 +391,14 @@ public final class MarketSync {
             if (!((MarketMenu) player.containerMenu).bankOnly() && exchangeVisible(player)) {
                 sendExchange(player);
                 sendBook(player);
+                sendListings(player);
             }
         }
     }
 
     /** Whether the player can use the Exchange tab: while it's on, or while they have items waiting in their box. */
     private static boolean exchangeVisible(ServerPlayer player) {
-        return MarketConfig.exchangeEnabled() || !ExchangeData.get(player.server).box(player.getUUID()).isEmpty();
+        return MarketConfig.exchangeEnabled() || ExchangeData.get(player.server).hasBox(player.getUUID());
     }
 
     public static void sendExchange(ServerPlayer player) {
@@ -380,6 +413,34 @@ public final class MarketSync {
         }
     }
 
+    /** Every listing the player may see, if they're browsing them, up to {@link #LISTINGS_BUDGET_BYTES}. */
+    private static void sendListings(ServerPlayer player) {
+        if (!watchingListings.contains(player.getUUID())) {
+            return;
+        }
+        ExchangeData data = ExchangeData.get(player.server);
+        int expiry = MarketConfig.orderExpiryDays();
+        long today = ExchangeService.today(player.server);
+        List<MarketPayloads.ListingLine> lines = new ArrayList<>();
+        int bytes = 0;
+        boolean more = false;
+        for (ExchangeData.Listing listing : ExchangeService.visibleListings(player, data)) {
+            bytes += ExchangeService.encodedSize(listing.stack(), player.server.registryAccess()) + 64;
+            if (bytes > LISTINGS_BUDGET_BYTES) {
+                more = true;
+                break;
+            }
+            lines.add(listingLine(player, listing, expiry, today));
+        }
+        PacketDistributor.sendToPlayer(player, new MarketPayloads.ExchangeListings(lines, more));
+    }
+
+    private static MarketPayloads.ListingLine listingLine(ServerPlayer viewer, ExchangeData.Listing l, int expiry, long today) {
+        String seller = Leaderboard.profile(viewer.server, l.owner()).map(GameProfile::getName).orElse("?");
+        return new MarketPayloads.ListingLine(l.id(), l.stack().copy(), l.price(), l.quantity(), l.sold(), seller,
+                l.owner().equals(viewer.getUUID()), expiry > 0 ? Math.max(0, l.postedDay() + expiry - today) : -1);
+    }
+
     /** The exchange as {@code player} sees it. */
     public static MarketPayloads.Exchange exchangeFor(ServerPlayer player) {
         ExchangeData data = ExchangeData.get(player.server);
@@ -389,11 +450,17 @@ public final class MarketSync {
                 .map(o -> new MarketPayloads.OrderLine(o.id(), o.item(), o.buy(), o.price(), o.quantity(), o.filled(),
                         expiry > 0 ? Math.max(0, o.postedDay() + expiry - today) : -1))
                 .toList();
+        List<MarketPayloads.ListingLine> listings = ExchangeService.listingsOf(player.getUUID(), data).stream()
+                .map(l -> listingLine(player, l, expiry, today))
+                .toList();
         List<MarketPayloads.BoxLine> box = data.box(player.getUUID()).entrySet().stream()
                 .map(e -> new MarketPayloads.BoxLine(e.getKey(), e.getValue()))
                 .toList();
-        return new MarketPayloads.Exchange(ExchangeService.summaries(player, data), orders, box, MarketConfig.maxOpenOrders(),
-                MarketConfig.maxOrderSize(), MarketConfig.exchangeTax(), expiry);
+        List<MarketPayloads.ParcelLine> parcels = data.parcels(player.getUUID()).stream()
+                .map(p -> new MarketPayloads.ParcelLine(p.id(), p.stack().copy(), p.count()))
+                .toList();
+        return new MarketPayloads.Exchange(ExchangeService.summaries(player, data), orders, listings, box, parcels,
+                MarketConfig.maxOpenOrders(), MarketConfig.maxOrderSize(), MarketConfig.exchangeTax(), expiry);
     }
 
     static void handleHistoryRequest(MarketPayloads.HistoryRequest request, ServerPlayer player) {

@@ -114,7 +114,7 @@ A contract always pays less per unit than the market could ever sell you that it
 
 ## The Exchange tab
 
-Where the server turns it on, the **Exchange** tab lets you trade with other players at prices you choose. The button at the top of the toolbar switches the list between **Items**, **My orders** and your **Box**.
+Where the server turns it on, the **Exchange** tab lets you trade with other players at prices you choose. The button at the top of the toolbar switches the list between **Items**, **Listings**, **List an item**, **My orders** and your **Box**.
 
 **Items** lists the items that have orders, then the items you carry, with the cheapest seller's price (**Ask**), the highest buyer's price (**Bid**) and how many you have. Type in the search box to find any item at all, listed on the market or not. The ⇄ button on the Market tab's item panel opens the selected item here.
 
@@ -125,11 +125,15 @@ Click an item to see its **book**: what sellers ask above the line (cheapest nea
 
 When a sale goes through, the money goes to your bank less the exchange tax (5% by default, rounded up to a whole bit); the button's tooltip shows what you'd get. Items you buy go to your **collection box**. You're paid and your box fills even while you're offline; you get a message when you next log in. Your own orders never trade with each other. You may have up to 10 open orders by default.
 
-**My orders** lists your open orders with their price and how much has filled. Click one, then **Cancel order** to get back what it still holds: a buy order's money to your bank, a sell order's items to your box. If the server makes orders expire, the panel shows the days left; an expired order is returned the same way.
+**Listings** are for items the book can't take: enchanted, damaged, renamed and other one-of-a-kind items (potions, enchanted books, tipped arrows too). A seller puts up one stack's worth of one exact item at a fixed price each, and buyers take it at that price; nothing is matched or haggled. The list shows each listing's price and how many are left, with a * on your own. Hover over one, or click it, to see the item in full: enchantments, durability, name. Set how many you want and press **Buy N for X**: the money is taken now and the items go to your **collection box**, exactly as listed.
+
+**List an item** shows what in your main inventory can be listed. Click one, set a **Price each** and how many (up to one stack; **All** fills in what you have, up to a stack), and press **List N for X**. The items are taken from your inventory and held until bought. Each sale is paid into your bank less the exchange tax, as with sell orders; the note under the quantity shows the tax if all of it sells. Containers such as shulker boxes and bundles can be listed only when empty. Listings count toward your open orders.
+
+**My orders** lists your open orders and listings with their price and how much has filled or sold. Click one, then **Cancel order** to get back what it still holds: a buy order's money to your bank, the items of a sell order or listing to your box. If the server makes orders expire, the panel shows the days left; an expired order or listing is returned the same way.
 
 **Box** lists what waits for you. Click a line to take that item out, or **Take all**. Only what fits in your free inventory space moves; the rest stays as long as you like.
 
-`/market exchange` lists your orders and box in chat; `/market exchange book <item>`, `buy <item> <amount> <price>`, `sell <item> <amount> <price>`, `cancel <id>` and `collect [item]` do the same as the screen, where the server allows `/market`.
+`/market exchange` lists your orders, listings and box in chat; `/market exchange book <item>`, `buy <item> <amount> <price>`, `sell <item> <amount> <price>`, `cancel <id>` and `collect [item]` do the same as the screen, where the server allows `/market`. `/market exchange list <amount> <price>` lists the item in your selected hotbar slot, `listings` shows every listing with its number, and `buylisting <number> <amount>` buys from one at its price.
 
 ## How prices move
 
@@ -176,7 +180,8 @@ Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
 | *The exchange is turned off on this server* | Ask an admin. Your box still works. |
 | *You already have as many open orders as you may* | Cancel one, or wait for one to fill. |
 | *That order is no longer open* | It filled or was cancelled while you had the screen open. |
-| *That item can't be traded on the exchange* | Coins can't be, and neither can items you haven't unlocked. |
+| *That item can't be traded on the exchange* | Coins can't be, and neither can items you haven't unlocked. Plain items go on the book, not in a listing; full shulker boxes and bundles can't be listed. |
+| *That's your own listing* | Cancel it under **My orders** instead. |
 | *Enter a price of at least 1* | Type a price each in the Price box. |
 
 ## Crafting a terminal

@@ -62,6 +62,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -4556,6 +4557,324 @@ public final class MarketGameTests {
             long selling = data.orders().stream().filter(o -> !o.buy() && o.item().equals(id(item))).mapToLong(ExchangeData.Order::remaining).sum();
             long boxes = players.stream().mapToLong(f -> boxed(data, f, item)).sum();
             helper.assertValueEqual(carried + selling + boxes, 64L * players.size(), id(item) + " at " + when);
+        }
+    }
+
+    // ---- Exchange listings --------------------------------------------------------------------------------------
+
+    /** {@code count} cobblestone renamed {@code name}: an item only a listing can sell. */
+    private static ItemStack named(String name, int count) {
+        ItemStack stack = new ItemStack(Items.COBBLESTONE, count);
+        stack.set(DataComponents.CUSTOM_NAME, Component.literal(name));
+        return stack;
+    }
+
+    /** A damaged, renamed diamond sword with Sharpness. */
+    private static ItemStack fineSword(GameTestHelper helper) {
+        ItemStack sword = new ItemStack(Items.DIAMOND_SWORD);
+        sword.set(DataComponents.DAMAGE, 40);
+        sword.set(DataComponents.CUSTOM_NAME, Component.literal("Edge"));
+        sword.enchant(helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.SHARPNESS), 3);
+        return sword;
+    }
+
+    private static long countLike(Fixture f, ItemStack like) {
+        return f.player.getInventory().items.stream().filter(s -> ItemStack.isSameItemSameComponents(s, like))
+                .mapToLong(ItemStack::getCount).sum();
+    }
+
+    private static long parcelled(ExchangeData data, Fixture f, ItemStack like) {
+        return data.parcels(f.player.getUUID()).stream().filter(p -> ItemStack.isSameItemSameComponents(p.stack(), like))
+                .mapToLong(ExchangeData.Parcel::count).sum();
+    }
+
+    /** Lists from {@code slot}, as the screen does: with the item the player sees there. */
+    private static ExchangeService.Outcome listFrom(Fixture f, ExchangeData data, int slot, long price, int qty) {
+        return ExchangeService.list(f.player, data, slot, f.player.getInventory().items.get(slot).copy(), price, qty, 0);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void listingSellsAtItsPriceLessTax(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture buyer = new Fixture(helper);
+            ItemStack stone = named("Lucky stone", 16);
+            seller.give(stone.copy());
+            buyer.deposit(100);
+
+            ExchangeService.Outcome listed = listFrom(seller, data, 0, 7, 10);
+            helper.assertValueEqual(listed.result(), Result.OK, "listed");
+            long id = listed.orderId();
+            helper.assertValueEqual(countLike(seller, stone), 6L, "the listing holds ten");
+            helper.assertValueEqual(data.openOrders(seller.player.getUUID()), 1, "it counts as an open order");
+            helper.assertTrue(data.orders().isEmpty() && ExchangeService.summaries(buyer.player, data).isEmpty(), "it's not on the book");
+
+            ExchangeService.Outcome bought = ExchangeService.buyListing(buyer.player, data, id, 4, 7);
+            helper.assertValueEqual(bought.result(), Result.OK, "bought");
+            helper.assertValueEqual(bought.amount(), 28L, "4 at 7 each");
+            helper.assertValueEqual(buyer.balance(), 72, "the buyer paid 28");
+            helper.assertValueEqual(seller.balance(), 26, "28 less a tax of 1.4, rounded up to 2");
+            helper.assertValueEqual(data.taxCollected(), 2L, "the tax was destroyed");
+            helper.assertValueEqual(parcelled(data, buyer, stone), 4L, "the units wait in the buyer's box");
+            helper.assertValueEqual(data.findListing(id).orElseThrow().remaining(), 6, "six left");
+
+            // They come out exactly as listed, never as plain cobblestone.
+            helper.assertValueEqual(ExchangeService.collect(buyer.player, data, Optional.empty()).quantity(), 4, "collected");
+            helper.assertValueEqual(countLike(buyer, stone), 4L, "the renamed stones");
+            helper.assertValueEqual(buyer.count(Items.COBBLESTONE), 0L, "no plain cobblestone");
+            helper.assertTrue(data.parcels(buyer.player.getUUID()).isEmpty(), "the box is empty");
+
+            helper.assertValueEqual(ExchangeService.buyListing(buyer.player, data, id, 6, 7).result(), Result.OK, "the rest");
+            helper.assertTrue(data.findListing(id).isEmpty(), "sold out, so closed");
+            helper.assertValueEqual(ExchangeService.cancel(seller.player, data, id).result(), Result.ORDER_GONE, "nothing left to cancel");
+            helper.assertValueEqual(data.openOrders(seller.player.getUUID()), 0, "no longer counted");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void cancellingAListingReturnsItsItemsToTheBox(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture other = new Fixture(helper);
+            ItemStack sword = fineSword(helper);
+            seller.give(sword.copy());
+            long id = listFrom(seller, data, 0, 500, 1).orderId();
+            helper.assertValueEqual(countLike(seller, sword), 0L, "the listing holds the sword");
+
+            helper.assertValueEqual(ExchangeService.cancel(other.player, data, id).result(), Result.NOT_YOUR_ORDER, "someone else's listing");
+            ExchangeService.Outcome cancelled = ExchangeService.cancel(seller.player, data, id);
+            helper.assertValueEqual(cancelled.result(), Result.OK, "cancelled");
+            helper.assertValueEqual(cancelled.quantity(), 1, "one sword back");
+            helper.assertValueEqual(parcelled(data, seller, sword), 1L, "in the box");
+            long parcel = data.parcels(seller.player.getUUID()).get(0).id();
+            helper.assertValueEqual(ExchangeService.collectParcel(seller.player, data, parcel).quantity(), 1, "taken out");
+            helper.assertTrue(ItemStack.matches(seller.player.getInventory().items.get(0), sword), "exactly the sword that was listed");
+            helper.assertTrue(data.allParcels().isEmpty(), "the box is empty");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void refusedListingRequestsChangeNothing(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture f = new Fixture(helper);
+            Fixture other = new Fixture(helper);
+            Fixture poor = new Fixture(helper);
+            f.give(new ItemStack(Items.COBBLESTONE, 5));
+            f.give(named("Odd", 5));
+            ItemStack full = new ItemStack(Items.SHULKER_BOX);
+            full.set(DataComponents.CONTAINER, net.minecraft.world.item.component.ItemContainerContents.fromItems(List.of(new ItemStack(Items.DIRT))));
+            f.give(full);
+            f.give(fineSword(helper));
+            ItemStack coin = new ItemStack(Coins.item(Coin.BIT));
+            coin.set(DataComponents.CUSTOM_NAME, Component.literal("Lucky bit"));
+            f.give(coin);
+            f.deposit(100);
+            other.deposit(100);
+
+            assertListRejected(helper, f, data, Result.NOT_LISTED, 0, 5, 1, "a plain item goes on the book");
+            assertListRejected(helper, f, data, Result.NOT_LISTED, 2, 5, 1, "a container with something inside");
+            assertListRejected(helper, f, data, Result.NOT_LISTED, 4, 5, 1, "a coin, even a renamed one");
+            helper.assertValueEqual(ExchangeService.list(f.player, data, 1, new ItemStack(Items.COBBLESTONE), 5, 1, 0).result(),
+                    Result.NOT_ENOUGH_ITEMS, "the slot no longer holds what the player saw");
+            assertListRejected(helper, f, data, Result.NOT_ENOUGH_ITEMS, 10, 5, 1, "an empty slot");
+            assertListRejected(helper, f, data, Result.INVALID_QUANTITY, 1, 5, 0, "no quantity");
+            assertListRejected(helper, f, data, Result.INVALID_PRICE, 1, 0, 1, "no price");
+            assertListRejected(helper, f, data, Result.TOO_LARGE, 3, 5, 2, "more than one stack of swords");
+            assertListRejected(helper, f, data, Result.TOO_LARGE, 1, Integer.MAX_VALUE, 2, "more than one payment can carry");
+            assertListRejected(helper, f, data, Result.NOT_ENOUGH_ITEMS, 1, 5, 6, "more than held");
+            MarketConfig.MAX_OPEN_ORDERS.set(1);
+            long order = posted(helper, f, data, Items.OAK_LOG, true, 1, 1).orderId();
+            assertListRejected(helper, f, data, Result.ORDER_LIMIT, 1, 5, 1, "orders and listings share the limit");
+            ExchangeService.cancel(f.player, data, order);
+            MarketConfig.MAX_OPEN_ORDERS.set(10);
+            MarketConfig.EXCHANGE_ENABLED.set(false);
+            assertListRejected(helper, f, data, Result.EXCHANGE_CLOSED, 1, 5, 1, "the exchange is off");
+            MarketConfig.EXCHANGE_ENABLED.set(true);
+
+            long id = listFrom(f, data, 1, 5, 5).orderId();
+            assertBuyRejected(helper, f, data, Result.OWN_LISTING, id, 1, 5);
+            assertBuyRejected(helper, other, data, Result.INVALID_QUANTITY, id, 0, 5);
+            assertBuyRejected(helper, other, data, Result.NO_STOCK, id, 6, 5);
+            assertBuyRejected(helper, other, data, Result.PRICE_CHANGED, id, 1, 4);
+            assertBuyRejected(helper, other, data, Result.ORDER_GONE, id + 1000, 1, 5);
+            assertBuyRejected(helper, poor, data, Result.NO_FUNDS, id, 1, 5);
+            MarketConfig.EXCHANGE_ENABLED.set(false);
+            assertBuyRejected(helper, other, data, Result.EXCHANGE_CLOSED, id, 1, 5);
+        });
+        helper.succeed();
+    }
+
+    /** A listing request that must be refused and change nothing: inventory and listings stay as they were. */
+    private static void assertListRejected(GameTestHelper helper, Fixture f, ExchangeData data, Result expected, int slot, long price, int qty,
+                                           String why) {
+        List<ItemStack> before = new ArrayList<>();
+        f.player.getInventory().items.forEach(stack -> before.add(stack.copy()));
+        List<ExchangeData.Listing> listings = List.copyOf(data.listings());
+        helper.assertValueEqual(listFrom(f, data, slot, price, qty).result(), expected, why);
+        NonNullList<ItemStack> after = f.player.getInventory().items;
+        for (int i = 0; i < after.size(); i++) {
+            helper.assertTrue(ItemStack.matches(after.get(i), before.get(i)), "slot " + i + " changed: " + why);
+        }
+        helper.assertValueEqual(data.listings(), listings, "listings changed: " + why);
+    }
+
+    /** A purchase from a listing that must be refused and change nothing: balance, listings and box. */
+    private static void assertBuyRejected(GameTestHelper helper, Fixture f, ExchangeData data, Result expected, long id, int qty, long price) {
+        int balance = f.balance();
+        List<ExchangeData.Listing> listings = List.copyOf(data.listings());
+        int parcels = data.parcels(f.player.getUUID()).size();
+        helper.assertValueEqual(ExchangeService.buyListing(f.player, data, id, qty, price).result(), expected, "buying");
+        helper.assertValueEqual(f.balance(), balance, "balance after " + expected);
+        helper.assertValueEqual(data.listings(), listings, "listings after " + expected);
+        helper.assertValueEqual(data.parcels(f.player.getUUID()).size(), parcels, "box after " + expected);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void listingsSurviveARestartWithTheirComponents(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture buyer = new Fixture(helper);
+            ItemStack sword = fineSword(helper);
+            ItemStack stone = named("Keepsake", 8);
+            seller.give(sword.copy());
+            seller.give(stone.copy());
+            buyer.deposit(1000);
+            long swordId = listFrom(seller, data, 0, 300, 1).orderId();
+            long stoneId = listFrom(seller, data, 1, 9, 5).orderId();
+            ExchangeService.buyListing(buyer.player, data, stoneId, 2, 9);
+
+            ExchangeData restarted = ExchangeData.fromTag(data.save(new CompoundTag(), helper.getLevel().registryAccess()),
+                    helper.getLevel().registryAccess());
+            helper.assertValueEqual(restarted.listings().size(), 2, "both listings");
+            for (int i = 0; i < 2; i++) {
+                ExchangeData.Listing was = data.listings().get(i);
+                ExchangeData.Listing is = restarted.listings().get(i);
+                helper.assertTrue(was.id() == is.id() && was.owner().equals(is.owner()) && was.price() == is.price()
+                        && was.quantity() == is.quantity() && was.sold() == is.sold(), "listing " + was.id());
+                helper.assertTrue(ItemStack.matches(was.stack(), is.stack()), "with its enchantments, damage and name");
+            }
+            helper.assertValueEqual(parcelled(restarted, buyer, stone), 2L, "the buyer's box");
+            helper.assertValueEqual(restarted.openOrders(seller.player.getUUID()), 2, "still counted");
+
+            ExchangeService.Outcome bought = ExchangeService.buyListing(buyer.player, restarted, swordId, 1, 300);
+            helper.assertValueEqual(bought.result(), Result.OK, "buying carries on");
+            helper.assertValueEqual(parcelled(restarted, buyer, sword), 1L, "the sword, exactly");
+
+            // An item whose mod is gone is kept as saved, so it comes back with the mod.
+            CompoundTag saved = restarted.save(new CompoundTag(), helper.getLevel().registryAccess());
+            CompoundTag lost = saved.getList("listings", Tag.TAG_COMPOUND).getCompound(0).copy();
+            lost.getCompound("stack").putString("id", "missing_mod:relic");
+            lost.putLong("id", 777);
+            saved.getList("listings", Tag.TAG_COMPOUND).add(lost);
+            ExchangeData loaded = ExchangeData.fromTag(saved, helper.getLevel().registryAccess());
+            helper.assertTrue(loaded.findListing(777).isEmpty(), "it can't be offered");
+            helper.assertValueEqual(loaded.listings().size(), 1, "the readable listing is");
+            CompoundTag again = loaded.save(new CompoundTag(), helper.getLevel().registryAccess());
+            helper.assertValueEqual(again.getList("unreadable", Tag.TAG_COMPOUND).size(), 1, "but it's saved again");
+            helper.assertValueEqual(again.getList("unreadable", Tag.TAG_COMPOUND).getCompound(0).getLong("id"), 777L, "untouched");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void listingsExpireAndCloseLikeOrders(GameTestHelper helper) {
+        withExchange(() -> {
+            net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            ItemStack old = named("Old", 3);
+            ItemStack fresh = named("Fresh", 2);
+            seller.give(old.copy());
+            seller.give(fresh.copy());
+            ExchangeService.list(seller.player, data, 0, old, 5, 3, 0);
+            ExchangeService.list(seller.player, data, 1, fresh, 5, 2, 2);
+
+            helper.assertValueEqual(ExchangeService.expire(server, data, 2, 3), 0, "nothing is 3 days old on day 2");
+            helper.assertValueEqual(ExchangeService.expire(server, data, 3, 3), 1, "the old listing expires on day 3");
+            helper.assertValueEqual(parcelled(data, seller, old), 3L, "its items wait in the box");
+            helper.assertValueEqual(data.takeNotices(seller.player.getUUID()).size(), 1, "the seller is told");
+
+            ExchangeService.closeAll(server, data);
+            helper.assertTrue(data.listings().isEmpty(), "turning the exchange off closes every listing");
+            helper.assertValueEqual(parcelled(data, seller, fresh), 2L, "items in the box");
+            ExchangeService.collect(seller.player, data, Optional.empty());
+            helper.assertTrue(countLike(seller, old) == 3 && countLike(seller, fresh) == 2, "and back in the inventory");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 200)
+    public static void randomListingRequestsReconcile(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            List<Fixture> players = List.of(new Fixture(helper), new Fixture(helper), new Fixture(helper));
+            List<ItemStack> kinds = List.of(named("Charm", 1), named("Totem", 1));
+            for (Fixture f : players) {
+                f.deposit(1000);
+                kinds.forEach(kind -> f.give(kind.copyWithCount(64)));
+            }
+            java.util.Random random = new java.util.Random(23);
+            for (int step = 0; step < 300; step++) {
+                Fixture f = players.get(random.nextInt(players.size()));
+                switch (random.nextInt(5)) {
+                    case 0, 1 -> {
+                        ItemStack kind = kinds.get(random.nextInt(kinds.size()));
+                        NonNullList<ItemStack> items = f.player.getInventory().items;
+                        for (int slot = 0; slot < items.size(); slot++) {
+                            if (ItemStack.isSameItemSameComponents(items.get(slot), kind)) {
+                                listFrom(f, data, slot, 1 + random.nextInt(10), 1 + random.nextInt(20));
+                                break;
+                            }
+                        }
+                    }
+                    case 2 -> {
+                        List<ExchangeData.Listing> open = data.listings();
+                        if (!open.isEmpty()) {
+                            ExchangeData.Listing l = open.get(random.nextInt(open.size()));
+                            ExchangeService.buyListing(f.player, data, l.id(), 1 + random.nextInt(l.remaining() + 1),
+                                    random.nextInt(10) == 0 ? l.price() + 1 : l.price());
+                        }
+                    }
+                    case 3 -> {
+                        List<ExchangeData.Listing> mine = ExchangeService.listingsOf(f.player.getUUID(), data);
+                        if (!mine.isEmpty()) {
+                            ExchangeService.cancel(f.player, data, mine.get(random.nextInt(mine.size())).id());
+                        }
+                    }
+                    default -> ExchangeService.collect(f.player, data, Optional.empty());
+                }
+                assertListingsReconcile(helper, data, players, kinds, "step " + step);
+            }
+            helper.assertTrue(data.volume() > 0, "some sales happened");
+            for (Fixture f : players) {
+                ExchangeService.listingsOf(f.player.getUUID(), data).forEach(l -> ExchangeService.cancel(f.player, data, l.id()));
+                ExchangeService.collect(f.player, data, Optional.empty());
+            }
+            assertListingsReconcile(helper, data, players, kinds, "after cancelling everything");
+            helper.assertTrue(data.listings().isEmpty() && data.allParcels().isEmpty(), "nothing left on the exchange");
+        });
+        helper.succeed();
+    }
+
+    /**
+     * Money: balances plus the tax destroyed is what the players started with (listings hold no money). Items:
+     * inventories, plus what listings hold, plus boxes, is what they started with, for each kind.
+     */
+    private static void assertListingsReconcile(GameTestHelper helper, ExchangeData data, List<Fixture> players, List<ItemStack> kinds, String when) {
+        long money = players.stream().mapToLong(Fixture::balance).sum();
+        helper.assertValueEqual(money + data.taxCollected(), 1000L * players.size(), "money at " + when);
+        for (ItemStack kind : kinds) {
+            long carried = players.stream().mapToLong(f -> countLike(f, kind)).sum();
+            long listed = data.listings().stream().filter(l -> ItemStack.isSameItemSameComponents(l.stack(), kind))
+                    .mapToLong(ExchangeData.Listing::remaining).sum();
+            long boxes = players.stream().mapToLong(f -> parcelled(data, f, kind)).sum();
+            helper.assertValueEqual(carried + listed + boxes, 64L * players.size(), kind.getHoverName().getString() + " at " + when);
         }
     }
 

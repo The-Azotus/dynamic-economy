@@ -40,6 +40,9 @@ public final class ClientMarketState {
     /** The book of the item the Exchange tab last asked about. */
     @Nullable
     private static MarketPayloads.ExchangeBook exchangeBook;
+    /** Every listing, once the Exchange tab has asked to browse them. */
+    @Nullable
+    private static MarketPayloads.ExchangeListings exchangeListings;
     /** The contract board, once the screen has asked for it. */
     @Nullable
     private static MarketPayloads.Contracts contracts;
@@ -132,6 +135,17 @@ public final class ClientMarketState {
         version++;
     }
 
+    public static void applyExchangeListings(MarketPayloads.ExchangeListings received) {
+        exchangeListings = received;
+        version++;
+    }
+
+    /** Every listing the player may see, or null until they've been received. */
+    @Nullable
+    public static MarketPayloads.ExchangeListings exchangeListings() {
+        return exchangeListings;
+    }
+
     /** The exchange, or null until it's been received. */
     @Nullable
     public static MarketPayloads.Exchange exchange() {
@@ -164,6 +178,8 @@ public final class ClientMarketState {
                         ? Component.translatable("screen.dynamic_economy.exchange.cancelled_money", itemName, amount)
                         : Component.translatable("screen.dynamic_economy.exchange.cancelled_items", outcome.quantity(), itemName);
                 case COLLECT -> Component.translatable("screen.dynamic_economy.exchange.collected", outcome.quantity());
+                case LIST -> Component.translatable("screen.dynamic_economy.exchange.listed", outcome.quantity(), itemName);
+                case BUY_LISTING -> Component.translatable("screen.dynamic_economy.exchange.bought_listing", outcome.quantity(), itemName, amount);
             };
             statusIsError = false;
         } else if (outcome.result() == MarketService.Result.NOT_LISTED) {
@@ -278,6 +294,7 @@ public final class ClientMarketState {
         contracts = null;
         exchange = null;
         exchangeBook = null;
+        exchangeListings = null;
         status = Component.empty();
         statusIsError = false;
         version++;

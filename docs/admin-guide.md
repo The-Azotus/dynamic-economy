@@ -412,7 +412,9 @@ An item is only offered if its contract still pays more than selling those units
 
 Off by default: set `exchange.exchange_enabled = true` to turn it on. The **Exchange** tab lets players trade with each other at their own prices. A player posts a **sell order** (*sell 64 iron at 30 each*) or a **buy order** (*buy 64 iron at 28 each*), and orders for the same item match automatically. The [player guide](player-guide.md#the-exchange-tab) describes it from the player's side.
 
-**What can be traded.** Any item with default components, listed in the catalog or not, so players can trade what the market doesn't buy. The same rule as the market applies: no enchanted, damaged or renamed copies, except data types in `ignored_components`; bought items always come out fresh. Coins never. Items locked for a player ([ProgressiveStages](#progressivestages-hiding-locked-items)) are hidden from them and refused, as on the market.
+**What can be traded.** Any item, listed in the catalog or not, so players can trade what the market doesn't buy. Plain copies (default components, as the market takes them, allowing data types in `ignored_components`) go on the order book, and bought ones always come out fresh. Items with components of their own (enchanted, damaged, renamed, potions, enchanted books and so on) are traded through **listings** instead (below). Coins never, however they're changed. Items locked for a player ([ProgressiveStages](#progressivestages-hiding-locked-items)) are hidden from them and refused, as on the market.
+
+**Listings.** A player lists one stack's worth of one exact item at a fixed price each; other players buy all or part of it at that price, from the Listings view or `/market exchange buylisting`. There's no matching and no buy side. The items are taken from the seller's main inventory when listed; a buyer's units go to their collection box exactly as listed, components and all; the seller is paid less `exchange_tax`, like a sell order. Listings and orders share `max_open_orders`, and are cancelled, expired and closed the same way, their items going back to the owner's box. Shulker boxes, bundles and other containers using vanilla's container data can be listed only when empty, so nothing is passed along unseen (modded backpacks that keep their contents elsewhere aren't caught by this). An item that takes more than 8 KB to send (a long written book, say) is refused; the Listings view sends at most 512 KB of listings at once, in order of item ID, and says when some were left out.
 
 **Matching.** Orders fill best price first, then oldest first, and partly if need be. A trade happens at the price of the order that was already waiting: a buy order bidding 35 against a waiting sell order at 30 pays 30, and the 5 a unit it saved goes straight back to the buyer. A player's own orders never trade with each other.
 
@@ -422,7 +424,7 @@ Off by default: set `exchange.exchange_enabled = true` to turn it on. The **Exch
 
 **Money.** The exchange creates no money: every bit a seller gets was paid by a buyer. The tax (5% by default, rounded up to a whole bit per trade) is destroyed, a money sink. Money held by a player's buy orders, and anything the exchange still owes them, counts toward their place on the leaderboard (not for team accounts, which aren't ranked). `/market admin exchange` shows every open order, what the orders hold, what waits in boxes, the value traded and the tax destroyed.
 
-**Restarts.** Orders, holdings, boxes and owed payments are saved together in one file with the world, so a restart can't split a trade. The bank is saved separately (with Numismatics, by Numismatics), so only a crash between the two saves could leave them out of step, as with every other market and contract payment.
+**Restarts.** Orders, listings, holdings, boxes and owed payments are saved together in one file with the world, so a restart can't split a trade. A listing or boxed item whose mod has been removed is kept in the file exactly as saved, and comes back if the mod does. The bank is saved separately (with Numismatics, by Numismatics), so only a crash between the two saves could leave them out of step, as with every other market and contract payment.
 
 ## Where the money goes
 
@@ -467,7 +469,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `contracts.contract_weight`, `contract_min_size`, `contract_max_size`, `contract_premium` | 1, 16, 64, 0.25 | see [Catalog fields](#catalog-fields) | Defaults for items whose class and entry don't set them. |
 | `exchange.exchange_enabled` | false | true, false | Run the [player exchange](#the-player-exchange). Turning it off greys out the tab (unless the player has items in their box) and closes every open order, returning what it holds. |
 | `exchange.exchange_tax` | 0.05 | 0 – 1 | Fraction of each exchange sale taken from the seller and destroyed, rounded up to a whole bit. |
-| `exchange.max_open_orders` | 10 | 1 – 1000 | How many open orders one player may have at once. |
+| `exchange.max_open_orders` | 10 | 1 – 1000 | How many open orders and listings, together, one player may have at once. |
 | `exchange.order_expiry_days` | 0 | 0 – 3650 | In-game days until an unfilled order expires and returns what it holds, counted like contracts. 0: orders never expire. |
 | `exchange.max_order_size` | 6400 | 1 – 1,000,000 | Largest quantity one order may ask for. `price × quantity` must also fit one bank transaction (2,147,483,647). |
 
@@ -483,9 +485,10 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market contracts`, `/market contracts claim <id>`, `deliver <id> <qty>`, `abandon <id>` | everyone* | The [contract](#contracts) board in chat, and the Contracts tab's buttons. |
 | `/market admin contracts` | 2 | The whole board with holders and progress, and the money contracts have paid and kept. |
 | `/market admin contracts refresh` | 2 | Replaces the board now. Held contracts are settled as if expired. Logged in the audit log. |
-| `/market exchange`, `/market exchange book <item>`, `buy <item> <qty> <price>`, `sell <item> <qty> <price>`, `cancel <id>`, `collect [item]` | everyone* | Your [exchange](#the-player-exchange) orders and box in chat, an item's book, and the Exchange tab's buttons. `price` is per unit. |
-| `/market admin exchange` | 2 | Every open order with its owner, what orders hold, what waits in boxes, the value traded and the tax destroyed. |
-| `/market admin exchange cancel <id>` | 2 | Closes any order, returning what it holds to its owner. Logged in the audit log. |
+| `/market exchange`, `/market exchange book <item>`, `buy <item> <qty> <price>`, `sell <item> <qty> <price>`, `cancel <id>`, `collect [item]` | everyone* | Your [exchange](#the-player-exchange) orders, listings and box in chat, an item's book, and the Exchange tab's buttons. `price` is per unit. |
+| `/market exchange list <qty> <price>`, `listings`, `buylisting <id> <qty>` | everyone* | List the item in the selected hotbar slot; show every listing; buy from one at its listed price. |
+| `/market admin exchange` | 2 | Every open order and listing with its owner, what they hold, what waits in boxes, the value traded and the tax destroyed. |
+| `/market admin exchange cancel <id>` | 2 | Closes any order or listing, returning what it holds to its owner. Logged in the audit log. |
 | `/market admin setstock <item> <qty>` | 2 | Sets an item's stock. Refused for unlimited items. |
 | `/market admin clearstock <item>` | 2 | Empties an item's stock. |
 | `/market admin resetprice <item>`, `all [preview]` or `tag <tag> [preview]` | 2 | Puts price factors back to 1.0. |

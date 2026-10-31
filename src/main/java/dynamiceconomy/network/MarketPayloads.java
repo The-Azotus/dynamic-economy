@@ -18,6 +18,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -517,11 +518,15 @@ public final class MarketPayloads {
     private static final StreamCodec<ByteBuf, ExchangeService.Action> EXCHANGE_ACTION_CODEC =
             ByteBufCodecs.idMapper(i -> ExchangeService.Action.values()[i], ExchangeService.Action::ordinal);
 
-    /** Client to server: send me the exchange (the screen asks when its tab opens), and this item's book if given. */
-    public record ExchangeRequest(Optional<ResourceLocation> book) implements CustomPacketPayload {
+    /**
+     * Client to server: send me the exchange (the screen asks when its tab opens), this item's book if given, and every
+     * listing if {@code listings}. Whatever is asked for is then resent whenever the exchange changes.
+     */
+    public record ExchangeRequest(Optional<ResourceLocation> book, boolean listings) implements CustomPacketPayload {
         public static final Type<ExchangeRequest> TYPE = payloadType("exchange_request");
         public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeRequest> CODEC = StreamCodec.composite(
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), ExchangeRequest::book,
+                ByteBufCodecs.BOOL, ExchangeRequest::listings,
                 ExchangeRequest::new);
 
         @Override
@@ -532,8 +537,9 @@ public final class MarketPayloads {
 
     /**
      * Client to server, from the Exchange tab: post an order for {@code quantity} of {@code item} at {@code price}
-     * each, cancel order {@code orderId}, or take items out of the collection box ({@code item} only, or everything
-     * when it's empty).
+     * each, cancel order or listing {@code orderId}, take items out of the collection box ({@code item} only, parcel
+     * {@code orderId} only, or everything when both are empty), or buy {@code quantity} from listing {@code orderId}
+     * at {@code price} each.
      */
     public record ExchangeAction(ExchangeService.Action action, Optional<ResourceLocation> item, boolean buy, long price, int quantity,
                                  long orderId) implements CustomPacketPayload {
@@ -559,8 +565,90 @@ public final class MarketPayloads {
             return new ExchangeAction(ExchangeService.Action.COLLECT, item, false, 0, 0, 0);
         }
 
+        public static ExchangeAction collectParcel(long parcel) {
+            return new ExchangeAction(ExchangeService.Action.COLLECT, Optional.empty(), false, 0, 0, parcel);
+        }
+
+        public static ExchangeAction buyListing(long listing, int quantity, long price) {
+            return new ExchangeAction(ExchangeService.Action.BUY_LISTING, Optional.empty(), true, price, quantity, listing);
+        }
+
         @Override
         public Type<ExchangeAction> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * Client to server, from the Exchange tab: list {@code quantity} units of the item in main-inventory {@code slot}
+     * at {@code price} each. {@code expected} is the item the player saw there.
+     */
+    public record ListItem(int slot, ItemStack expected, long price, int quantity) implements CustomPacketPayload {
+        public static final Type<ListItem> TYPE = payloadType("exchange_list");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ListItem> CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT, ListItem::slot,
+                ItemStack.OPTIONAL_STREAM_CODEC, ListItem::expected,
+                ByteBufCodecs.VAR_LONG, ListItem::price,
+                ByteBufCodecs.VAR_INT, ListItem::quantity,
+                ListItem::new);
+
+        @Override
+        public Type<ListItem> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * One listing: {@code stack} is one unit exactly as listed. {@code seller} is the seller's name, {@code mine}
+     * whether it's the receiving player's; {@code daysLeft} is -1 when listings don't expire.
+     */
+    public record ListingLine(long id, ItemStack stack, long price, int quantity, int sold, String seller, boolean mine, long daysLeft) {
+        static final StreamCodec<RegistryFriendlyByteBuf, ListingLine> CODEC = StreamCodec.of(
+                (buf, line) -> {
+                    ByteBufCodecs.VAR_LONG.encode(buf, line.id());
+                    ItemStack.STREAM_CODEC.encode(buf, line.stack());
+                    ByteBufCodecs.VAR_LONG.encode(buf, line.price());
+                    ByteBufCodecs.VAR_INT.encode(buf, line.quantity());
+                    ByteBufCodecs.VAR_INT.encode(buf, line.sold());
+                    ByteBufCodecs.STRING_UTF8.encode(buf, line.seller());
+                    buf.writeBoolean(line.mine());
+                    buf.writeLong(line.daysLeft());
+                },
+                buf -> new ListingLine(ByteBufCodecs.VAR_LONG.decode(buf), ItemStack.STREAM_CODEC.decode(buf), ByteBufCodecs.VAR_LONG.decode(buf),
+                        ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf),
+                        buf.readBoolean(), buf.readLong()));
+
+        public int remaining() {
+            return quantity - sold;
+        }
+    }
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, List<ListingLine>> LISTINGS_CODEC = ListingLine.CODEC.apply(ByteBufCodecs.list(65_536));
+
+    /** Items with their own components waiting in the collection box: {@code count} units like {@code stack}. */
+    public record ParcelLine(long id, ItemStack stack, long count) {
+        static final StreamCodec<RegistryFriendlyByteBuf, ParcelLine> CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_LONG, ParcelLine::id,
+                ItemStack.STREAM_CODEC, ParcelLine::stack,
+                ByteBufCodecs.VAR_LONG, ParcelLine::count,
+                ParcelLine::new);
+    }
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, List<ParcelLine>> PARCELS_CODEC = ParcelLine.CODEC.apply(ByteBufCodecs.list(65_536));
+
+    /**
+     * Server to client: every listing the player may see, cheapest first for each item, sent while the Exchange tab
+     * shows listings. {@code more} says some were left out to keep the packet small.
+     */
+    public record ExchangeListings(List<ListingLine> listings, boolean more) implements CustomPacketPayload {
+        public static final Type<ExchangeListings> TYPE = payloadType("exchange_listings");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeListings> CODEC = StreamCodec.composite(
+                LISTINGS_CODEC, ExchangeListings::listings,
+                ByteBufCodecs.BOOL, ExchangeListings::more,
+                ExchangeListings::new);
+
+        @Override
+        public Type<ExchangeListings> type() {
             return TYPE;
         }
     }
@@ -609,28 +697,37 @@ public final class MarketPayloads {
 
     /**
      * Server to client: the exchange as this player sees it: the best prices of every item with orders, their own
-     * open orders and collection box, and the rules (open orders allowed, largest order, tax, expiry in days or 0).
+     * open orders, listings and collection box (plain items and parcels), and the rules (open orders and listings
+     * allowed, largest order, tax, expiry in days or 0).
      */
-    public record Exchange(List<ExchangeService.Summary> summaries, List<OrderLine> orders, List<BoxLine> box, int maxOrders,
-                           int maxOrderSize, double tax, int expiryDays) implements CustomPacketPayload {
+    public record Exchange(List<ExchangeService.Summary> summaries, List<OrderLine> orders, List<ListingLine> listings, List<BoxLine> box,
+                           List<ParcelLine> parcels, int maxOrders, int maxOrderSize, double tax, int expiryDays) implements CustomPacketPayload {
         public static final Type<Exchange> TYPE = payloadType("exchange");
         // Written out by hand: StreamCodec.composite takes at most six fields.
         public static final StreamCodec<RegistryFriendlyByteBuf, Exchange> CODEC = StreamCodec.of(
                 (buf, exchange) -> {
                     SUMMARIES_CODEC.encode(buf, exchange.summaries());
                     ORDERS_CODEC.encode(buf, exchange.orders());
+                    LISTINGS_CODEC.encode(buf, exchange.listings());
                     BOX_CODEC.encode(buf, exchange.box());
+                    PARCELS_CODEC.encode(buf, exchange.parcels());
                     ByteBufCodecs.VAR_INT.encode(buf, exchange.maxOrders());
                     ByteBufCodecs.VAR_INT.encode(buf, exchange.maxOrderSize());
                     buf.writeDouble(exchange.tax());
                     ByteBufCodecs.VAR_INT.encode(buf, exchange.expiryDays());
                 },
-                buf -> new Exchange(SUMMARIES_CODEC.decode(buf), ORDERS_CODEC.decode(buf), BOX_CODEC.decode(buf),
-                        ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), buf.readDouble(), ByteBufCodecs.VAR_INT.decode(buf)));
+                buf -> new Exchange(SUMMARIES_CODEC.decode(buf), ORDERS_CODEC.decode(buf), LISTINGS_CODEC.decode(buf), BOX_CODEC.decode(buf),
+                        PARCELS_CODEC.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), buf.readDouble(),
+                        ByteBufCodecs.VAR_INT.decode(buf)));
 
         /** How many items wait in the box in all. */
         public long boxed() {
-            return box.stream().mapToLong(BoxLine::count).sum();
+            return box.stream().mapToLong(BoxLine::count).sum() + parcels.stream().mapToLong(ParcelLine::count).sum();
+        }
+
+        /** Open orders and listings together, which the limit counts. */
+        public int open() {
+            return orders.size() + listings.size();
         }
 
         @Override

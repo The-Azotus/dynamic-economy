@@ -10,10 +10,16 @@ import dynamiceconomy.coin.Coins;
 import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.data.ExchangeData;
 import dynamiceconomy.data.ExchangeData.Notice;
+import dynamiceconomy.data.ExchangeData.Listing;
 import dynamiceconomy.data.ExchangeData.NoticeKind;
 import dynamiceconomy.data.ExchangeData.Order;
+import dynamiceconomy.data.ExchangeData.Parcel;
 import dynamiceconomy.service.MarketService.Result;
+import io.netty.buffer.Unpooled;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,10 +28,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BundleContents;
+import net.minecraft.world.item.component.ItemContainerContents;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +57,10 @@ import java.util.function.Predicate;
  *       Bought items go to the buyer's collection box.</li>
  *   <li>Cancelling, expiry or turning the exchange off returns exactly what an order still holds: a buy order's money
  *       to its account, a sell order's items to the collection box.</li>
+ *   <li>Items with their own components (enchanted, damaged, renamed and so on) can't go on the book. They're
+ *       <em>listed</em> instead: one stack's worth of one exact item at a fixed price each, which other players buy
+ *       from, all or part, into their collection box. The seller pays the same tax. Listings and orders share
+ *       {@code max_open_orders}, and are cancelled, expired and closed the same way.</li>
  * </ul>
  * The exchange creates no money: every bit paid to a seller was taken from a buyer, and the tax only removes some.
  */
@@ -55,16 +68,23 @@ public final class ExchangeService {
     private ExchangeService() {
     }
 
-    public enum Action { POST, CANCEL, COLLECT }
+    public enum Action { POST, CANCEL, COLLECT, LIST, BUY_LISTING }
+
+    /**
+     * The most bytes one listed item may take to send. Every listing goes to every player browsing them, so an item
+     * carrying a great deal of data (a long written book, say) is refused.
+     */
+    public static final int MAX_LISTING_BYTES = 8192;
 
     /**
      * How an exchange request went.
      *
-     * @param quantity units ordered (posting), returned (cancelling) or taken out of the box (collecting)
+     * @param quantity units ordered (posting), listed, bought from a listing, returned (cancelling) or taken out of the
+     *                 box (collecting)
      * @param filled   units that traded straight away when posting
-     * @param amount   posting: money paid for the units bought or received for those sold, after tax; cancelling: a
-     *                 buy order's money returned
-     * @param orderId  the order left open on the book after posting, or 0 if it filled completely
+     * @param amount   posting: money paid for the units bought or received for those sold, after tax; buying from a
+     *                 listing: what it cost; cancelling: a buy order's money returned
+     * @param orderId  the order left open on the book after posting (0 if it filled completely), or the listing
      */
     public record Outcome(Action action, Result result, ResourceLocation item, int quantity, int filled, long amount, long orderId) {
         static Outcome fail(Action action, Result result, ResourceLocation item) {
@@ -93,6 +113,33 @@ public final class ExchangeService {
     /** Whether an item can be traded on the exchange at all: anything but air and money. */
     public static boolean tradeable(Item item) {
         return item != Items.AIR && !Coins.isCoin(item);
+    }
+
+    /**
+     * Whether a stack can be listed: an item that can be traded, carrying components of its own (plain copies go on the
+     * book), and not a container with anything inside, whose contents a buyer couldn't fully see.
+     */
+    public static boolean listable(ItemStack stack) {
+        if (stack.isEmpty() || !tradeable(stack.getItem()) || CatalogEntry.plain(stack, stack.getItem(), MarketConfig.ignoredComponents())) {
+            return false;
+        }
+        ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
+        if (contents != null && contents.nonEmptyStream().findAny().isPresent()) {
+            return false;
+        }
+        BundleContents bundle = stack.get(DataComponents.BUNDLE_CONTENTS);
+        return bundle == null || bundle.isEmpty();
+    }
+
+    /** How many bytes {@code stack} takes to send. */
+    public static int encodedSize(ItemStack stack, RegistryAccess registries) {
+        RegistryFriendlyByteBuf buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), registries);
+        try {
+            ItemStack.STREAM_CODEC.encode(buf, stack);
+            return buf.readableBytes();
+        } finally {
+            buf.release();
+        }
     }
 
     /** The tax on a sale worth {@code value}: {@code exchange_tax} of it, rounded up to a whole bit. */
@@ -227,18 +274,142 @@ public final class ExchangeService {
         return new Fill(incoming.withFilled(filled), amount);
     }
 
+    // ---- Listings --------------------------------------------------------------------------------------------
+
+    public static Outcome list(ServerPlayer player, int slot, ItemStack expected, long price, int qty) {
+        return list(player, ExchangeData.get(player.server), slot, expected, price, qty, today(player.server));
+    }
+
+    /**
+     * Lists {@code qty} units of the item in main-inventory {@code slot} at {@code price} each. {@code expected} is the
+     * item the player saw there; if the slot now holds something else, nothing is listed. The units are taken from
+     * that slot first, then from other stacks of exactly the same item.
+     */
+    public static Outcome list(ServerPlayer player, ExchangeData data, int slot, ItemStack expected, long price, int qty, long day) {
+        MarketService.requireServerThread(player);
+        NonNullList<ItemStack> items = player.getInventory().items;
+        ItemStack held = slot >= 0 && slot < items.size() ? items.get(slot) : ItemStack.EMPTY;
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey((held.isEmpty() ? expected : held).getItem());
+        if (!MarketConfig.exchangeEnabled()) {
+            return Outcome.fail(Action.LIST, Result.EXCHANGE_CLOSED, id);
+        }
+        if (held.isEmpty() || !ItemStack.isSameItemSameComponents(held, expected)) {
+            return Outcome.fail(Action.LIST, Result.NOT_ENOUGH_ITEMS, id);
+        }
+        if (!listable(held) || MarketVisibility.hidden(player, held.getItem())) {
+            return Outcome.fail(Action.LIST, Result.NOT_LISTED, id);
+        }
+        if (qty <= 0) {
+            return Outcome.fail(Action.LIST, Result.INVALID_QUANTITY, id);
+        }
+        if (price <= 0) {
+            return Outcome.fail(Action.LIST, Result.INVALID_PRICE, id);
+        }
+        // One stack's worth at most, and a total one bank payment can carry.
+        if (qty > held.getMaxStackSize() || MarketService.checkedTotal(price, qty).isEmpty()
+                || encodedSize(held.copyWithCount(1), player.server.registryAccess()) > MAX_LISTING_BYTES) {
+            return Outcome.fail(Action.LIST, Result.TOO_LARGE, id);
+        }
+        if (data.openOrders(player.getUUID()) >= MarketConfig.maxOpenOrders()) {
+            return Outcome.fail(Action.LIST, Result.ORDER_LIMIT, id);
+        }
+        Bank bank = WorldBank.of(player.server);
+        if (bank.activeAccount(player).isEmpty()) {
+            return Outcome.fail(Action.LIST, Result.BANK_UNAVAILABLE, id);
+        }
+        Optional<UUID> team = bank.payingFromTeam(player) ? bank.team(player).map(BankTeam::id) : Optional.empty();
+        ItemStack template = held.copyWithCount(1);
+        Predicate<ItemStack> same = stack -> ItemStack.isSameItemSameComponents(stack, template);
+        if (MarketService.countMatching(items, same) < qty) {
+            return Outcome.fail(Action.LIST, Result.NOT_ENOUGH_ITEMS, id);
+        }
+
+        int fromSlot = Math.min(qty, held.getCount());
+        held.shrink(fromSlot);
+        if (held.isEmpty()) {
+            items.set(slot, ItemStack.EMPTY);
+        }
+        MarketService.removeMatching(items, same, qty - fromSlot);
+        player.getInventory().setChanged();
+        Listing listing = new Listing(data.takeId(), player.getUUID(), team, template, price, qty, 0, day);
+        data.add(listing);
+        return new Outcome(Action.LIST, Result.OK, id, qty, 0, 0, listing.id());
+    }
+
+    public static Outcome buyListing(ServerPlayer player, long id, int qty, long price) {
+        return buyListing(player, ExchangeData.get(player.server), id, qty, price);
+    }
+
+    /**
+     * Buys {@code qty} units of listing {@code id} at {@code price} each, the price the buyer saw. The units go to the
+     * buyer's collection box; the seller is paid less tax.
+     */
+    public static Outcome buyListing(ServerPlayer player, ExchangeData data, long id, int qty, long price) {
+        MarketService.requireServerThread(player);
+        if (!MarketConfig.exchangeEnabled()) {
+            return Outcome.fail(Action.BUY_LISTING, Result.EXCHANGE_CLOSED, none());
+        }
+        Optional<Listing> found = data.findListing(id);
+        if (found.isEmpty()) {
+            return Outcome.fail(Action.BUY_LISTING, Result.ORDER_GONE, none());
+        }
+        Listing listing = found.get();
+        if (MarketVisibility.hidden(player, listing.stack().getItem())) {
+            return Outcome.fail(Action.BUY_LISTING, Result.NOT_LISTED, listing.item());
+        }
+        if (listing.owner().equals(player.getUUID())) {
+            return Outcome.fail(Action.BUY_LISTING, Result.OWN_LISTING, listing.item());
+        }
+        if (qty <= 0) {
+            return Outcome.fail(Action.BUY_LISTING, Result.INVALID_QUANTITY, listing.item());
+        }
+        if (qty > listing.remaining()) {
+            return Outcome.fail(Action.BUY_LISTING, Result.NO_STOCK, listing.item());
+        }
+        if (price != listing.price()) {
+            return Outcome.fail(Action.BUY_LISTING, Result.PRICE_CHANGED, listing.item());
+        }
+        // The listing's whole total fit an int when it was posted, so part of it does too.
+        long value = listing.price() * qty;
+        Optional<Bank.Account> account = WorldBank.of(player.server).activeAccount(player);
+        if (account.isEmpty()) {
+            return Outcome.fail(Action.BUY_LISTING, Result.BANK_UNAVAILABLE, listing.item());
+        }
+        if (!account.get().deduct((int) value)) {
+            return Outcome.fail(Action.BUY_LISTING, Result.NO_FUNDS, listing.item());
+        }
+
+        long tax = tax(value, MarketConfig.exchangeTax());
+        data.update(listing.withSold(listing.sold() + qty));
+        data.count(value, tax);
+        pay(player.server, data, listing.owner(), listing.team(), value - tax);
+        tell(player.server, data, new Notice(listing.owner(), listing.item(), NoticeKind.SOLD, qty, value - tax));
+        data.addParcel(player.getUUID(), listing.stack(), qty);
+        return new Outcome(Action.BUY_LISTING, Result.OK, listing.item(), qty, qty, value, listing.id());
+    }
+
     // ---- Cancelling and expiry -------------------------------------------------------------------------------
 
     public static Outcome cancel(ServerPlayer player, long id) {
         return cancel(player, ExchangeData.get(player.server), id);
     }
 
-    /** Cancels one of the player's open orders, returning what it still holds. */
+    /** Cancels one of the player's open orders or listings, returning what it still holds. */
     public static Outcome cancel(ServerPlayer player, ExchangeData data, long id) {
         MarketService.requireServerThread(player);
         Optional<Order> found = data.find(id);
         if (found.isEmpty()) {
-            return Outcome.fail(Action.CANCEL, Result.ORDER_GONE, none());
+            Optional<Listing> listing = data.findListing(id);
+            if (listing.isEmpty()) {
+                return Outcome.fail(Action.CANCEL, Result.ORDER_GONE, none());
+            }
+            Listing l = listing.get();
+            if (!l.owner().equals(player.getUUID())) {
+                return Outcome.fail(Action.CANCEL, Result.NOT_YOUR_ORDER, l.item());
+            }
+            data.removeListing(l.id());
+            data.addParcel(l.owner(), l.stack(), l.remaining());
+            return new Outcome(Action.CANCEL, Result.OK, l.item(), l.remaining(), 0, 0, l.id());
         }
         Order order = found.get();
         if (!order.owner().equals(player.getUUID())) {
@@ -276,14 +447,23 @@ public final class ExchangeService {
                 order.heldMoney()));
     }
 
-    /** Closes every order posted at least {@code expiryDays} days before {@code day}. Returns how many. */
+    /** Closes a listing whoever owns it, returning its units to the owner's box. The owner is told. */
+    public static void close(MinecraftServer server, ExchangeData data, Listing listing) {
+        data.removeListing(listing.id());
+        data.addParcel(listing.owner(), listing.stack(), listing.remaining());
+        tell(server, data, new Notice(listing.owner(), listing.item(), NoticeKind.RETURNED, listing.remaining(), 0));
+    }
+
+    /** Closes every order and listing posted at least {@code expiryDays} days before {@code day}. Returns how many. */
     public static int expire(MinecraftServer server, ExchangeData data, long day, int expiryDays) {
         if (expiryDays <= 0) {
             return 0;
         }
         List<Order> due = data.orders().stream().filter(o -> day - o.postedDay() >= expiryDays).toList();
         due.forEach(order -> close(server, data, order));
-        return due.size();
+        List<Listing> dueListings = data.listings().stream().filter(l -> day - l.postedDay() >= expiryDays).toList();
+        dueListings.forEach(listing -> close(server, data, listing));
+        return due.size() + dueListings.size();
     }
 
     /**
@@ -295,7 +475,7 @@ public final class ExchangeService {
         if (!data.owed().isEmpty()) {
             payOwed(server, data);
         }
-        if (data.orders().isEmpty()) {
+        if (data.orders().isEmpty() && data.listings().isEmpty()) {
             return false;
         }
         if (!MarketConfig.exchangeEnabled()) {
@@ -305,9 +485,10 @@ public final class ExchangeService {
         return expire(server, data, today(server), MarketConfig.orderExpiryDays()) > 0;
     }
 
-    /** Closes every open order, as when the exchange is turned off. Collection boxes stay. */
+    /** Closes every open order and listing, as when the exchange is turned off. Collection boxes stay. */
     public static void closeAll(MinecraftServer server, ExchangeData data) {
         List.copyOf(data.orders()).forEach(order -> close(server, data, order));
+        List.copyOf(data.listings()).forEach(listing -> close(server, data, listing));
     }
 
     // ---- The collection box ----------------------------------------------------------------------------------
@@ -316,22 +497,51 @@ public final class ExchangeService {
         return collect(player, ExchangeData.get(player.server), only);
     }
 
+    public static Outcome collectParcel(ServerPlayer player, long parcel) {
+        return collectParcel(player, ExchangeData.get(player.server), parcel);
+    }
+
     /**
-     * Moves what fits of the player's box (or of one item in it) into free main-inventory space. The rest stays in
-     * the box. Works with the exchange turned off, so nothing is ever stranded.
+     * Moves what fits of the player's box (all of it, or the plain copies of one item) into free main-inventory
+     * space. The rest stays in the box. Works with the exchange turned off, so nothing is ever stranded.
      */
     public static Outcome collect(ServerPlayer player, ExchangeData data, Optional<ResourceLocation> only) {
+        List<Parcel> parcels = only.isPresent() ? List.of() : data.parcels(player.getUUID());
+        return collect(player, data, only, parcels);
+    }
+
+    /** The same for one parcel of the player's box: items with their own components. */
+    public static Outcome collectParcel(ServerPlayer player, ExchangeData data, long parcel) {
+        List<Parcel> one = data.parcels(player.getUUID()).stream().filter(p -> p.id() == parcel).toList();
+        if (one.isEmpty()) {
+            MarketService.requireServerThread(player);
+            return Outcome.fail(Action.COLLECT, Result.NOT_ENOUGH_ITEMS, none());
+        }
+        return collect(player, data, Optional.of(none()), one);
+    }
+
+    /** Collects the plain items {@code only} names (everything when empty) and the given parcels. */
+    private static Outcome collect(ServerPlayer player, ExchangeData data, Optional<ResourceLocation> only, List<Parcel> parcels) {
         MarketService.requireServerThread(player);
         Map<ResourceLocation, Long> box = new LinkedHashMap<>(data.box(player.getUUID()));
         if (only.isPresent()) {
             box.keySet().retainAll(Set.of(only.get()));
         }
-        ResourceLocation shown = only.orElse(box.isEmpty() ? none() : box.keySet().iterator().next());
-        if (box.isEmpty()) {
+        ResourceLocation shown = !parcels.isEmpty() && box.isEmpty() ? id(parcels.get(0).stack())
+                : only.filter(item -> !item.equals(none())).orElse(box.isEmpty() ? none() : box.keySet().iterator().next());
+        if (box.isEmpty() && parcels.isEmpty()) {
             return Outcome.fail(Action.COLLECT, Result.NOT_ENOUGH_ITEMS, shown);
         }
         NonNullList<ItemStack> items = player.getInventory().items;
         long moved = 0;
+        for (Parcel parcel : List.copyOf(parcels)) {
+            int fits = (int) Math.min(Math.min(parcel.count(), spaceFor(items, parcel.stack())), Integer.MAX_VALUE);
+            if (fits > 0) {
+                insert(items, parcel.stack(), fits);
+                data.takeParcel(player.getUUID(), parcel.id(), fits);
+                moved += fits;
+            }
+        }
         for (Map.Entry<ResourceLocation, Long> entry : box.entrySet()) {
             // An item whose mod was removed stays in the box until it's back.
             Optional<Item> item = BuiltInRegistries.ITEM.getOptional(entry.getKey()).filter(i -> i != Items.AIR);
@@ -350,6 +560,41 @@ public final class ExchangeService {
         }
         player.getInventory().setChanged();
         return new Outcome(Action.COLLECT, Result.OK, shown, (int) Math.min(moved, Integer.MAX_VALUE), 0, 0, 0);
+    }
+
+    /** How many units like {@code like} fit in the main inventory, joining only stacks of exactly the same item. */
+    static long spaceFor(NonNullList<ItemStack> items, ItemStack like) {
+        int maxStack = like.getMaxStackSize();
+        long space = 0;
+        for (ItemStack stack : items) {
+            if (stack.isEmpty()) {
+                space += maxStack;
+            } else if (ItemStack.isSameItemSameComponents(stack, like)) {
+                space += Math.max(0, maxStack - stack.getCount());
+            }
+        }
+        return space;
+    }
+
+    /** Tops up stacks of exactly the same item, then fills empty slots. The caller has checked {@link #spaceFor}. */
+    static void insert(NonNullList<ItemStack> items, ItemStack like, int qty) {
+        int maxStack = like.getMaxStackSize();
+        int remaining = qty;
+        for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
+            ItemStack stack = items.get(slot);
+            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, like) && stack.getCount() < maxStack) {
+                int added = Math.min(remaining, maxStack - stack.getCount());
+                stack.grow(added);
+                remaining -= added;
+            }
+        }
+        for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
+            if (items.get(slot).isEmpty()) {
+                int added = Math.min(remaining, maxStack);
+                items.set(slot, like.copyWithCount(added));
+                remaining -= added;
+            }
+        }
     }
 
     // ---- Paying and telling ----------------------------------------------------------------------------------
@@ -394,7 +639,8 @@ public final class ExchangeService {
         for (Notice notice : data.takeNotices(player.getUUID())) {
             player.sendSystemMessage(message(player.server, notice));
         }
-        long waiting = data.box(player.getUUID()).values().stream().mapToLong(Long::longValue).sum();
+        long waiting = data.box(player.getUUID()).values().stream().mapToLong(Long::longValue).sum()
+                + data.parcels(player.getUUID()).stream().mapToLong(Parcel::count).sum();
         if (waiting > 0) {
             player.sendSystemMessage(Component.translatable("message.dynamic_economy.exchange.box_waiting", waiting));
         }
@@ -463,6 +709,19 @@ public final class ExchangeService {
         return levels;
     }
 
+    /** Every listing {@code player} may see, by item, then cheapest first, then oldest first. */
+    public static List<Listing> visibleListings(ServerPlayer player, ExchangeData data) {
+        return data.listings().stream()
+                .filter(l -> !MarketVisibility.hidden(player, l.stack().getItem()))
+                .sorted(Comparator.comparing((Listing l) -> l.item().toString()).thenComparingLong(Listing::price).thenComparingLong(Listing::id))
+                .toList();
+    }
+
+    /** The player's listings, oldest first. */
+    public static List<Listing> listingsOf(UUID player, ExchangeData data) {
+        return data.listings().stream().filter(l -> l.owner().equals(player)).toList();
+    }
+
     /** The player's open orders, oldest first. */
     public static List<Order> ordersOf(UUID player, ExchangeData data) {
         return data.orders().stream().filter(o -> o.owner().equals(player)).toList();
@@ -476,6 +735,10 @@ public final class ExchangeService {
     private static Predicate<ItemStack> plain(Item item) {
         Set<ResourceLocation> ignored = MarketConfig.ignoredComponents();
         return stack -> CatalogEntry.plain(stack, item, ignored);
+    }
+
+    private static ResourceLocation id(ItemStack stack) {
+        return BuiltInRegistries.ITEM.getKey(stack.getItem());
     }
 
     private static ResourceLocation none() {

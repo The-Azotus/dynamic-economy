@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public final class MarketNetwork {
-    private static final String PROTOCOL_VERSION = "13";
+    private static final String PROTOCOL_VERSION = "14";
 
     private MarketNetwork() {
     }
@@ -78,6 +78,13 @@ public final class MarketNetwork {
             }
         });
 
+        registrar.playToServer(MarketPayloads.ListItem.TYPE, MarketPayloads.ListItem.CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                MarketSync.handleListItem(payload, player);
+            }
+        });
+        registrar.playToClient(MarketPayloads.ExchangeListings.TYPE, MarketPayloads.ExchangeListings.CODEC,
+                (payload, context) -> ClientMarketState.applyExchangeListings(payload));
         registrar.playToClient(MarketPayloads.Exchange.TYPE, MarketPayloads.Exchange.CODEC,
                 (payload, context) -> ClientMarketState.applyExchange(payload));
         registrar.playToClient(MarketPayloads.ExchangeBook.TYPE, MarketPayloads.ExchangeBook.CODEC,
