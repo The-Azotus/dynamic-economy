@@ -5,8 +5,8 @@ NeoForge 1.21.1 mod (NeoForge 21.1.228, Java 21; optional: Create 6.0.10, Numism
 Where to find more (read only when needed):
 - `docs/market-design.md` — background and reasoning. This file overrides it.
 - `docs/admin-guide.md`, `docs/player-guide.md` — every command, catalog field and config option as built.
-- `docs/phase-history.md` — specs for finished Phases 0–14 (Phase 10 includes how `suggest` and the built-in prices work).
-- `docs/roadmap.md` — specs for Phases 16–17.
+- `docs/phase-history.md` — specs for finished Phases 0–15 (Phase 10 includes how `suggest` and the built-in prices work).
+- `docs/roadmap.md` — specs for Phase 17.
 
 ## How to work
 
@@ -18,7 +18,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. **Phase 15 (Contracts) built on branch `phase15`** (from `main` at v0.3.0), 2026-10-30: open questions answered by the user (see Current phase); 143 GameTests pass (142 also without Numismatics and FTB Teams); waiting for the user's approval and in-game checks of the Contracts tab. Then 16 Difficulty preset → 17 Player exchange (optional).
+Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/phase-history.md`). **Phase 16 (Difficulty preset) is next, on branch `phase16`** (from `phase15`): not started; the open questions under Current phase come first. Then 17 Player exchange (optional).
 
 Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
@@ -70,23 +70,18 @@ Fields: `item` (exact ID), `class`, `base_price` (> 0; ≤ 0 is skipped), `marku
 
 Precedence: server config < class < file `defaults` < entry < tag rules (creation order) < per-item in-game edits.
 
-## Current phase: 15 — Contracts
+## Current phase: 16 — Difficulty preset
 
-- A global board, regenerated every **5 in-game days by day count** (sleeping counts). Generated from the catalog using class settings: large orders for common classes, small ones for rare, single items for `unique`. Number of contracts configurable.
-- Flow: a player **claims** a contract, which locks it to them. Claiming takes a **deposit** (fraction of the reward, configurable). They deliver in batches from the **main inventory only**. Delivered items **disappear** (not added to stock).
-- Completion pays the reward and returns the deposit. At expiry, an incomplete contract pays for units delivered and the deposit is lost. A player may abandon, with the same outcome. Max active contracts per player configurable (default 1).
-- Integrity: per-unit reward stays below the lowest buy price the market can reach for that item, so buying from the market to fill a contract never profits. Transaction rules apply (checks before changes, `long` totals, `TOO_LARGE`).
-- New Result values for contract actions (e.g. `CONTRACT_TAKEN`, `CONTRACT_EXPIRED`); list them in the report.
+- Server config `difficulty = EASY | NORMAL | HARD | CUSTOM`. Presets apply **multipliers on top of** catalog and class values: payout, added `sell_fee`, impact, recovery, contract reward. `CUSTOM` exposes each multiplier. `NORMAL` changes nothing.
+- After multipliers, the anti-arbitrage invariant must still hold; invalid combinations are clamped with a warning.
 
-Done when: two players can't both claim one contract; partial and full delivery pay exactly as specified; expiry and refresh happen on the right day, including after sleeping and a restart; buy-from-market-and-deliver never profits (GameTest).
+Done when: each preset changes prices as documented; round-trip arbitrage tests pass under every preset.
 
-Branched as `phase15` from `main` (v0.3.0). The user's answers to the open questions (2026-10-30):
+Branch it as `phase16` from `phase15`. First: read the code, then ask the user these before building (none is decided):
 
-1. **Reward cap:** a payout never reaches what buying the delivered units could ever cost (the lowest buy price: `base × (1 + min_buy_markup)` for unlimited items, `base × (1 + markup)` for fixed-price ones, `base × floor × (1 + markup)` otherwise; none for `can_buy: false`), less 1 bit. An item is offered only if that still beats selling at the normal price. `unique` items: option (a), never offered (`contract_weight: 0` on the class), not a raised floor.
-2. **Defaults:** 8 contracts per board, deposit 20% of the reward (rounded up), reward `base × 1.25` per unit, sizes 64–512 common / 4–16 rare / 1 `unique`; `unlimited_stock` items allowed, `can_sell: false` items excluded.
-3. **Fields:** `contract_weight` (0 opts out), `contract_premium`, and the size as two fields, `contract_min_size` / `contract_max_size` (instead of one `[min, max]` field, so the CSV and `/market admin set` handle them like every other field). Settable at every catalog layer.
-4. **Visibility:** hidden and unclaimable (answers `NOT_LISTED`) when locked; a held contract stays visible and deliverable after its stage is lost.
-5. **Timing:** one shared lifetime: every contract expires when the board is replaced. An offline holder is paid for delivered units and told at next login. Payouts go to the account the deposit came from (team account while the team exists, else the player's own).
+1. **Which values each preset sets** (EASY / HARD multipliers for payout, added `sell_fee`, impact, recovery, contract reward), and whether presets also change `markup`, `floor` or contract deposits.
+2. **Contracts under a preset:** the contract cap (payout below the lowest buy price, less 1 bit) is applied when a payout is made, so a contract-reward multiplier can never break it; but a payout multiplier also moves what selling pays, which decides which items are worth offering. Confirm that is wanted.
+3. **Changing preset on a running world:** do open contracts keep the reward they were offered (still capped), and does `/market admin info` show values before or after the preset?
 
 ## Report format (after every phase)
 

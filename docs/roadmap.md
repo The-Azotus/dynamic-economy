@@ -1,13 +1,6 @@
-# Roadmap (Phases 16–17, not started)
+# Roadmap (Phase 17, not started)
 
 Archived from `CLAUDE.md`. When a phase becomes the current one, move its section back into `CLAUDE.md` under "Current phase".
-
-## Phase 16 — Difficulty preset
-
-- Server config `difficulty = EASY | NORMAL | HARD | CUSTOM`. Presets apply **multipliers on top of** catalog and class values: payout, added `sell_fee`, impact, recovery, contract reward. `CUSTOM` exposes each multiplier. `NORMAL` changes nothing.
-- After multipliers, the anti-arbitrage invariant must still hold; invalid combinations are clamped with a warning.
-
-Done when: each preset changes prices as documented; round-trip arbitrage tests pass under every preset.
 
 ## Phase 17 — Player exchange (optional, config toggle)
 
