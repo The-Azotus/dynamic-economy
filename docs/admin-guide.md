@@ -343,7 +343,7 @@ Prices are whole numbers of **spurs** (Numismatics' bank) or **bits** (the mod's
 
 | Field | Default | What it does |
 | --- | --- | --- |
-| `item` | *required* | The exact item ID, such as `minecraft:iron_ingot`. Enchanted, damaged or renamed copies are never accepted. |
+| `item` | *required* | The exact item ID, such as `minecraft:iron_ingot`. Enchanted, damaged or renamed copies are never accepted (apart from data listed in the `ignored_components` server config). |
 | `class` | none | An [item class](#item-classes) that fills in the fields nothing else sets, such as `rare_resource`. |
 | `base_price` | *required* | What the market pays for one unit at normal supply, in spurs. At least 1; 0 or below means "not priced yet". |
 | `markup` | `0.5` | Added on top when the market sells. `0.5` means buyers pay 150% of base. 0 to 1000. |
@@ -407,6 +407,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | --- | --- | --- | --- |
 | `max_quantity_per_request` | 640 | 1 – 1,000,000 | Largest quantity one buy or sell can move. |
 | `access_mode` | `COMMAND_AND_BLOCK` | `COMMAND_AND_BLOCK`, `BLOCK_ONLY` | How players reach the market; see [Letting players in](#letting-players-in). |
+| `ignored_components` | `["relics:data"]` | data component IDs | Item data that doesn't stop a sale. Some mods add data to every copy a player holds: Relics (and Reliquified Artifacts) adds `relics:data`, a relic's level and rolled stats, so without this no relic could be sold. The data is lost with the sold item; bought items always come fresh and never join a stack carrying such data. |
 | `pricing.sell_impact` | 0.0005 | 0 – 0.5 | Each unit sold multiplies the factor by `1 − sell_impact`. At the default, selling 640 drops a price to about 73%. |
 | `pricing.buy_impact` | 0.0005 | 0 – 0.5 | Each unit bought multiplies the factor by `1 + buy_impact`. Keep it close to `sell_impact`; see [Keeping it fair](#supply-and-demand). |
 | `pricing.recovery` | 0.05 | 0 – 1 | Fraction of the gap back to 1.0 closed at each step. |
@@ -495,3 +496,4 @@ The rest of the file still imports. The first 15 reasons appear in chat, and all
 | `Market file … entry N: … is a coin, and coins can never be listed` | Coins can't be sold to the market; remove the entry. |
 | `FTB Teams is installed but its team API does not match …` | A different FTB Teams version; the mod's own `/bank team` commands are used instead. Built against 2101.1.11. |
 | A player sees "The market is only available at a Market Terminal" | `access_mode` is `BLOCK_ONLY`. |
+| A listed item shows 0 under Have and can't be sold, though the player holds one | Another mod adds data to every copy (as Relics does). Find the data's ID (F3+H shows component counts; `/data get entity @s Inventory` shows the IDs) and add it to `ignored_components`. |

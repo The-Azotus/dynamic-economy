@@ -1,5 +1,7 @@
 package dynamiceconomy.client;
 
+import dynamiceconomy.MarketConfig;
+import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.network.MarketPayloads;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -28,7 +30,7 @@ public final class SellPriceTooltip {
             return; // The market screen shows its own prices.
         }
         MarketPayloads.Row row = ClientMarketState.rows().get(BuiltInRegistries.ITEM.getKey(stack.getItem()));
-        if (row == null || !row.canSell() || !ItemStack.isSameItemSameComponents(stack, new ItemStack(stack.getItem()))) {
+        if (row == null || !row.canSell() || !CatalogEntry.plain(stack, stack.getItem(), MarketConfig.ignoredComponents())) {
             return;
         }
         Component each = PriceFormat.money(PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR));

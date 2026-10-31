@@ -324,20 +324,23 @@ public final class MarketService {
         for (ItemStack stack : items) {
             if (stack.isEmpty()) {
                 space += maxStack;
-            } else if (entry.matches(stack)) {
+            } else if (entry.isFresh(stack)) {
                 space += Math.max(0, maxStack - stack.getCount());
             }
         }
         return space;
     }
 
-    /** Tops up existing stacks first, then fills empty slots. The caller has checked {@link #spaceFor}. */
+    /**
+     * Tops up existing fresh stacks first (never one carrying data the sale check ignores), then fills empty slots.
+     * The caller has checked {@link #spaceFor}.
+     */
     private static void insert(NonNullList<ItemStack> items, CatalogEntry entry, int qty) {
         int maxStack = new ItemStack(entry.item()).getMaxStackSize();
         int remaining = qty;
         for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
             ItemStack stack = items.get(slot);
-            if (!stack.isEmpty() && entry.matches(stack) && stack.getCount() < maxStack) {
+            if (!stack.isEmpty() && entry.isFresh(stack) && stack.getCount() < maxStack) {
                 int added = Math.min(remaining, maxStack - stack.getCount());
                 stack.grow(added);
                 remaining -= added;

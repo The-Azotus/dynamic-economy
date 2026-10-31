@@ -170,6 +170,42 @@ public final class MarketGameTests {
         helper.succeed();
     }
 
+    @GameTest(template = EMPTY)
+    public static void ignoredComponentsDontStopASaleButBoughtItemsComeFresh(GameTestHelper helper) {
+        // Stands in for relics:data (the default), which no mod in the dev runtime adds.
+        ResourceLocation customName = ResourceLocation.withDefaultNamespace("custom_name");
+        ItemStack renamed = new ItemStack(Items.IRON_INGOT, 5);
+        renamed.set(DataComponents.CUSTOM_NAME, Component.literal("Shiny"));
+        CatalogEntry iron = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+        helper.assertTrue(iron.matches(renamed, Set.of(customName)), "an ignored component doesn't count");
+        helper.assertFalse(iron.matches(renamed, Set.of()), "one that isn't ignored does");
+        helper.assertTrue(MarketConfig.ignoredComponents().contains(ResourceLocation.fromNamespaceAndPath("relics", "data")),
+                "relics:data is ignored by default");
+        if (!MarketConfig.SPEC.isLoaded()) {
+            helper.succeed();
+            return;
+        }
+
+        List<? extends String> before = MarketConfig.IGNORED_COMPONENTS.get();
+        MarketConfig.IGNORED_COMPONENTS.set(List.of(customName.toString()));
+        try {
+            Fixture f = new Fixture(helper);
+            f.setStock(Items.IRON_INGOT, 10);
+            f.deposit(100_000);
+            f.give(renamed.copy());
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 2, ANY_PRICE), Result.OK);
+            helper.assertTrue(f.player.getInventory().items.stream().anyMatch(s -> s.has(DataComponents.CUSTOM_NAME) && s.getCount() == 3),
+                    "sold from the renamed stack");
+            f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, 4, ANY_PRICE), Result.OK);
+            helper.assertValueEqual(f.count(Items.IRON_INGOT), 4L, "bought iron arrives fresh, in its own stack");
+            helper.assertTrue(f.player.getInventory().items.stream().anyMatch(s -> s.has(DataComponents.CUSTOM_NAME) && s.getCount() == 3),
+                    "and doesn't join the renamed one");
+        } finally {
+            MarketConfig.IGNORED_COMPONENTS.set(before);
+        }
+        helper.succeed();
+    }
+
     // ---- Rejections: each must change nothing -------------------------------------------------------------------
 
     @GameTest(template = EMPTY)

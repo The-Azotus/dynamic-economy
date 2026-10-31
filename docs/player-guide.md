@@ -107,7 +107,7 @@ Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
 
 ## What the market accepts
 
-- **Only plain items.** Enchanted, damaged or renamed copies don't count. If you hold 10 iron ingots and 5 of them are renamed, you can sell 5.
+- **Only plain items.** Enchanted, damaged or renamed copies don't count. If you hold 10 iron ingots and 5 of them are renamed, you can sell 5. Some mod data is let through by the server (relics' levels, for example); it's lost when you sell, and what you buy always comes fresh.
 - **Only your main inventory** (hotbar and backpack rows). Armour, offhand and modded slots aren't checked.
 - **Only orders that fit.** If you buy more than fits in your inventory, the purchase is refused. Nothing is ever dropped on the ground.
 - **Only items you've unlocked.** On servers with ProgressiveStages, items locked for you don't appear in the market until you reach their stage. Prices are the same for everyone.
