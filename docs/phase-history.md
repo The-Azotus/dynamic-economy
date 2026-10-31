@@ -286,3 +286,12 @@ Branched as `phase15` from `main` (v0.3.0). The user's answers to the open quest
 3. **Fields:** `contract_weight` (0 opts out), `contract_premium`, and the size as two fields, `contract_min_size` / `contract_max_size` (instead of one `[min, max]` field, so the CSV and `/market admin set` handle them like every other field). Settable at every catalog layer.
 4. **Visibility:** hidden and unclaimable (answers `NOT_LISTED`) when locked; a held contract stays visible and deliverable after its stage is lost.
 5. **Timing:** one shared lifetime: every contract expires when the board is replaced. An offline holder is paid for delivered units and told at next login. Payouts go to the account the deposit came from (team account while the team exists, else the player's own).
+
+## Phase 16 — Difficulty preset (dropped)
+
+Dropped by the user on 2026-10-31 before it was started: a difficulty option wasn't needed. The spec, kept for reference:
+
+- Server config `difficulty = EASY | NORMAL | HARD | CUSTOM`. Presets apply **multipliers on top of** catalog and class values: payout, added `sell_fee`, impact, recovery, contract reward. `CUSTOM` exposes each multiplier. `NORMAL` changes nothing.
+- After multipliers, the anti-arbitrage invariant must still hold; invalid combinations are clamped with a warning.
+
+Done when: each preset changes prices as documented; round-trip arbitrage tests pass under every preset.

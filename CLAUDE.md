@@ -6,7 +6,6 @@ Where to find more (read only when needed):
 - `docs/market-design.md` — background and reasoning. This file overrides it.
 - `docs/admin-guide.md`, `docs/player-guide.md` — every command, catalog field and config option as built.
 - `docs/phase-history.md` — specs for finished Phases 0–15 (Phase 10 includes how `suggest` and the built-in prices work).
-- `docs/roadmap.md` — specs for Phase 17.
 
 ## How to work
 
@@ -18,7 +17,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/phase-history.md`). **Phase 16 (Difficulty preset) is next, on branch `phase16`** (from `phase15`): not started; the open questions under Current phase come first. Then 17 Player exchange (optional).
+Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/phase-history.md`). Phase 16 (Difficulty preset) dropped by the user on 2026-10-31. **Phase 17 (Player exchange) is next, on branch `phase17`** (from `phase15`): not started; the open questions under Current phase come first. It is the last planned phase.
 
 Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
@@ -32,6 +31,7 @@ Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (M
 - Market pays `base × s × (1 − sell_fee)`; charges `ceil(base × s × (1 + markup))`. `s` is the per-item supply-and-demand factor.
 - Only items with default components are accepted (no enchanted, damaged or renamed copies). Exception (user, 2026-10-30): data types in the `ignored_components` server config (default `relics:data`, which Relics adds to every held relic) don't stop a sale; bought items still come fresh and never join such a stack.
 - Unlimited-stock items: purchases never raise the price, and the buy price never falls below `base × (1 + min_buy_markup)`, which is always above base.
+- No difficulty presets (user, 2026-10-31: Phase 16 dropped). Admins tune the market through classes, catalog fields and the server config.
 - No per-player quotas. Dumping is limited by price impact and item classes.
 - The market holds no balance: sales create money, purchases destroy it, `sell_fee` reduces what is created.
 - Contracts (user, 2026-10-30): a contract never pays more than buying the delivered units from the market could ever cost, less 1 bit, so only items whose buy price can't fall far (unlimited, fixed-price, `can_buy: false`) are worth offering. Items with `can_sell: false` are never offered; the `unique` class has `contract_weight: 0`.
@@ -70,18 +70,26 @@ Fields: `item` (exact ID), `class`, `base_price` (> 0; ≤ 0 is skipped), `marku
 
 Precedence: server config < class < file `defaults` < entry < tag rules (creation order) < per-item in-game edits.
 
-## Current phase: 16 — Difficulty preset
+## Current phase: 17 — Player exchange (config toggle)
 
-- Server config `difficulty = EASY | NORMAL | HARD | CUSTOM`. Presets apply **multipliers on top of** catalog and class values: payout, added `sell_fee`, impact, recovery, contract reward. `CUSTOM` exposes each multiplier. `NORMAL` changes nothing.
-- After multipliers, the anti-arbitrage invariant must still hold; invalid combinations are clamped with a warning.
+The feature wanted most after the required ones. Players post buy and sell orders at their own prices.
 
-Done when: each preset changes prices as documented; round-trip arbitrage tests pass under every preset.
+- Sell orders move items into escrow; buy orders move money into escrow (`deduct`). Orders match automatically, price-time priority, partial fills.
+- Proceeds and items go to a **collection box** in the Exchange tab (works for offline players; never drop items).
+- Config: `exchange_enabled` (default false), `exchange_tax` (fraction taken from the seller, destroyed: a money sink), max open orders per player, order expiry.
+- v1 trades default-component items only (same rule as the market). Items with components (enchanted gear) are a later step.
+- All transaction rules apply. Cancelling returns escrow exactly.
 
-Branch it as `phase16` from `phase15`. First: read the code, then ask the user these before building (none is decided):
+Done when: matched trades move exactly the right items and money with tax applied; cancelling and expiry return escrow; nothing is lost or duplicated across a restart mid-order; spam-clicking reconciles.
 
-1. **Which values each preset sets** (EASY / HARD multipliers for payout, added `sell_fee`, impact, recovery, contract reward), and whether presets also change `markup`, `floor` or contract deposits.
-2. **Contracts under a preset:** the contract cap (payout below the lowest buy price, less 1 bit) is applied when a payout is made, so a contract-reward multiplier can never break it; but a payout multiplier also moves what selling pays, which decides which items are worth offering. Confirm that is wanted.
-3. **Changing preset on a running world:** do open contracts keep the reward they were offered (still capped), and does `/market admin info` show values before or after the preset?
+Branch it as `phase17` from `phase15`. First: read the code, then ask the user these before building (none is decided):
+
+1. **Which items:** only items listed in the catalog, or any default-component item (so players can trade what the server doesn't buy)? Coins and items locked for a player (Phase 12) excluded?
+2. **Where money goes:** the decisions say all payments go through the bank, so a seller's proceeds and a cancelled buy order's money could go straight to the bank account the order was paid from (team or own, as contracts do), leaving only items in the collection box. Or both in the box, as the spec says?
+3. **Matching price:** a trade fills at the waiting order's price (the usual rule), so a buyer bidding above the lowest ask pays the ask.
+4. **Defaults:** `exchange_tax` (e.g. 0.05), max open orders per player (e.g. 10), order expiry (in-game days by the contracts' day count, or real time), largest order size.
+5. **Screen:** an Exchange tab with an order book per item (best asks and bids, your own orders, collection box); posting from the item's panel in the Market tab too?
+6. **Collection box limits:** unlimited stacks kept with the world, taken out with a button only into free main-inventory space?
 
 ## Report format (after every phase)
 
