@@ -118,6 +118,11 @@ public final class CatalogExport {
         values.put("recovery", o.recovery().map(CatalogColumns::decimal).orElse(""));
         values.put("floor", o.floor().map(CatalogColumns::decimal).orElse(""));
         values.put("ceiling", o.ceiling().map(CatalogColumns::decimal).orElse(""));
+        CatalogEntry.ContractTerms c = entry.contract();
+        values.put("contract_weight", c.weight().map(String::valueOf).orElse(""));
+        values.put("contract_min_size", c.minSize().map(String::valueOf).orElse(""));
+        values.put("contract_max_size", c.maxSize().map(String::valueOf).orElse(""));
+        values.put("contract_premium", c.premium().map(CatalogColumns::decimal).orElse(""));
         row.add(String.valueOf(entry.basePrice()));
         for (String field : CatalogColumns.OPTIONAL_FIELDS.keySet()) {
             row.add(set.isEmpty() || set.containsKey(field) ? values.get(field) : "");

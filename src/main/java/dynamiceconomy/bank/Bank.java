@@ -20,6 +20,17 @@ public interface Bank {
     /** The player's own account, created on first use. Empty if the bank can't be reached. */
     Optional<Account> account(Player player);
 
+    /** The own account of the player {@code player}, online or not, created on first use. Empty if unreachable. */
+    Optional<Account> accountOf(UUID player);
+
+    /**
+     * The account of the team {@code team}, for paying a player's team while they're offline. Empty if this bank has
+     * no team accounts; the caller checks the team still exists.
+     */
+    default Optional<Account> teamAccountOf(UUID team) {
+        return Optional.empty();
+    }
+
     /**
      * The account the player trades and banks with: their team's when they chose it and are in a team, otherwise their
      * own. Only the mod's own bank has team accounts.

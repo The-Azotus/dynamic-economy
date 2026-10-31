@@ -3,7 +3,9 @@ package dynamiceconomy.network;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.bank.BankKind;
 import dynamiceconomy.bank.Denomination;
+import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.service.BankService;
+import dynamiceconomy.service.ContractService;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
@@ -140,23 +142,35 @@ public final class MarketPayloads {
             ByteBufCodecs.VAR_INT, Denomination::value,
             Denomination::new);
 
+    private static final StreamCodec<ByteBuf, BankKind> BANK_KIND_CODEC =
+            ByteBufCodecs.idMapper(i -> BankKind.values()[i], BankKind::ordinal);
+    private static final StreamCodec<ByteBuf, List<Row>> ROWS_CODEC = Row.CODEC.apply(ByteBufCodecs.list());
+    private static final StreamCodec<RegistryFriendlyByteBuf, List<Denomination>> COINS_CODEC =
+            DENOMINATION_CODEC.apply(ByteBufCodecs.list(32));
+
     /**
      * Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes, with
      * the server's order limit so the screen can stop an oversized order before it is sent, whether the leaderboard
-     * tab is turned on, and the world's bank: it names the money unit, its {@code balanceCap} is the largest balance
-     * it shows (a balance at the cap means "at least this much"), and {@code coins} are what the Bank tab moves.
+     * and contracts tabs are turned on, and the world's bank: it names the money unit, its {@code balanceCap} is the
+     * largest balance it shows (a balance at the cap means "at least this much"), and {@code coins} are what the Bank
+     * tab moves.
      */
-    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled, BankKind bank,
+    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled, boolean contractsEnabled, BankKind bank,
                            long balanceCap, List<Denomination> coins) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
-        public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.composite(
-                Row.CODEC.apply(ByteBufCodecs.list()), Snapshot::rows,
-                ByteBufCodecs.VAR_INT, Snapshot::maxQuantity,
-                ByteBufCodecs.BOOL, Snapshot::leaderboardEnabled,
-                ByteBufCodecs.idMapper(i -> BankKind.values()[i], BankKind::ordinal), Snapshot::bank,
-                ByteBufCodecs.VAR_LONG, Snapshot::balanceCap,
-                DENOMINATION_CODEC.apply(ByteBufCodecs.list(32)), Snapshot::coins,
-                Snapshot::new);
+        // Written out by hand: StreamCodec.composite takes at most six fields.
+        public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.of(
+                (buf, snapshot) -> {
+                    ROWS_CODEC.encode(buf, snapshot.rows());
+                    ByteBufCodecs.VAR_INT.encode(buf, snapshot.maxQuantity());
+                    buf.writeBoolean(snapshot.leaderboardEnabled());
+                    buf.writeBoolean(snapshot.contractsEnabled());
+                    BANK_KIND_CODEC.encode(buf, snapshot.bank());
+                    ByteBufCodecs.VAR_LONG.encode(buf, snapshot.balanceCap());
+                    COINS_CODEC.encode(buf, snapshot.coins());
+                },
+                buf -> new Snapshot(ROWS_CODEC.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), buf.readBoolean(), buf.readBoolean(),
+                        BANK_KIND_CODEC.decode(buf), ByteBufCodecs.VAR_LONG.decode(buf), COINS_CODEC.decode(buf)));
 
         @Override
         public Type<Snapshot> type() {
@@ -380,12 +394,108 @@ public final class MarketPayloads {
         }
     }
 
+    /** Client to server: send me the contract board (the screen asks when its tab is opened). */
+    public record ContractsRequest() implements CustomPacketPayload {
+        public static final Type<ContractsRequest> TYPE = payloadType("contracts_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ContractsRequest> CODEC = StreamCodec.unit(new ContractsRequest());
+
+        @Override
+        public Type<ContractsRequest> type() {
+            return TYPE;
+        }
+    }
+
+    private static final StreamCodec<ByteBuf, ContractService.Action> ACTION_CODEC =
+            ByteBufCodecs.idMapper(i -> ContractService.Action.values()[i], ContractService.Action::ordinal);
+    private static final StreamCodec<ByteBuf, MarketService.Result> RESULT_CODEC =
+            ByteBufCodecs.VAR_INT.map(i -> MarketService.Result.values()[i], MarketService.Result::ordinal);
+
+    /** Client to server: claim, deliver {@code quantity} units to, or abandon a contract, from the Contracts tab. */
+    public record ContractRequest(ContractService.Action action, int id, int quantity) implements CustomPacketPayload {
+        public static final Type<ContractRequest> TYPE = payloadType("contract_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ContractRequest> CODEC = StreamCodec.composite(
+                ACTION_CODEC, ContractRequest::action,
+                ByteBufCodecs.VAR_INT, ContractRequest::id,
+                ByteBufCodecs.VAR_INT, ContractRequest::quantity,
+                ContractRequest::new);
+
+        @Override
+        public Type<ContractRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * One contract as the receiving player sees it. {@code reward} is what completing it pays now; {@code holder} is
+     * the name of whoever claimed it ("" if nobody), and {@code mine} whether that's the receiving player.
+     */
+    public record ContractLine(int id, ResourceLocation item, int units, int delivered, long reward, long deposit,
+                               ContractBoard.Status status, boolean mine, String holder) {
+        private static final StreamCodec<ByteBuf, ContractBoard.Status> STATUS_CODEC =
+                ByteBufCodecs.idMapper(i -> ContractBoard.Status.values()[i], ContractBoard.Status::ordinal);
+        static final StreamCodec<ByteBuf, ContractLine> CODEC = StreamCodec.of(
+                (buf, line) -> {
+                    ByteBufCodecs.VAR_INT.encode(buf, line.id());
+                    ResourceLocation.STREAM_CODEC.encode(buf, line.item());
+                    ByteBufCodecs.VAR_INT.encode(buf, line.units());
+                    ByteBufCodecs.VAR_INT.encode(buf, line.delivered());
+                    ByteBufCodecs.VAR_LONG.encode(buf, line.reward());
+                    ByteBufCodecs.VAR_LONG.encode(buf, line.deposit());
+                    STATUS_CODEC.encode(buf, line.status());
+                    buf.writeBoolean(line.mine());
+                    ByteBufCodecs.stringUtf8(16).encode(buf, line.holder());
+                },
+                buf -> new ContractLine(ByteBufCodecs.VAR_INT.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
+                        ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_LONG.decode(buf),
+                        ByteBufCodecs.VAR_LONG.decode(buf), STATUS_CODEC.decode(buf), buf.readBoolean(),
+                        ByteBufCodecs.stringUtf8(16).decode(buf)));
+
+        public int remaining() {
+            return units - delivered;
+        }
+    }
+
+    /**
+     * Server to client: the contract board as this player sees it, how many in-game days until it's replaced, and
+     * how many contracts the player holds out of the most they may.
+     */
+    public record Contracts(List<ContractLine> lines, long daysLeft, int held, int maxHeld) implements CustomPacketPayload {
+        public static final Type<Contracts> TYPE = payloadType("contracts");
+        public static final StreamCodec<RegistryFriendlyByteBuf, Contracts> CODEC = StreamCodec.composite(
+                ContractLine.CODEC.apply(ByteBufCodecs.list(64)), Contracts::lines,
+                ByteBufCodecs.VAR_LONG, Contracts::daysLeft,
+                ByteBufCodecs.VAR_INT, Contracts::held,
+                ByteBufCodecs.VAR_INT, Contracts::maxHeld,
+                Contracts::new);
+
+        @Override
+        public Type<Contracts> type() {
+            return TYPE;
+        }
+    }
+
+    /** Server to client: how this player's last contract request went. */
+    public record ContractOutcome(ContractService.Action action, ResourceLocation item, MarketService.Result result, int quantity,
+                                  long amount) implements CustomPacketPayload {
+        public static final Type<ContractOutcome> TYPE = payloadType("contract_outcome");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ContractOutcome> CODEC = StreamCodec.composite(
+                ACTION_CODEC, ContractOutcome::action,
+                ResourceLocation.STREAM_CODEC, ContractOutcome::item,
+                RESULT_CODEC, ContractOutcome::result,
+                ByteBufCodecs.VAR_INT, ContractOutcome::quantity,
+                ByteBufCodecs.VAR_LONG, ContractOutcome::amount,
+                ContractOutcome::new);
+
+        @Override
+        public Type<ContractOutcome> type() {
+            return TYPE;
+        }
+    }
+
     /** Server to client: the outcome of this player's last trade request. */
     public record TradeOutcome(boolean buy, ResourceLocation item, MarketService.Result result, int quantity, long total)
             implements CustomPacketPayload {
         public static final Type<TradeOutcome> TYPE = payloadType("trade_outcome");
-        private static final StreamCodec<ByteBuf, MarketService.Result> RESULT_CODEC =
-                ByteBufCodecs.VAR_INT.map(i -> MarketService.Result.values()[i], MarketService.Result::ordinal);
         public static final StreamCodec<RegistryFriendlyByteBuf, TradeOutcome> CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, TradeOutcome::buy,
                 ResourceLocation.STREAM_CODEC, TradeOutcome::item,

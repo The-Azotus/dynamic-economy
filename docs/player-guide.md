@@ -13,7 +13,7 @@ Which bank depends on the server. With Create: Numismatics installed, it's your 
 
 The screen fills most of the window, and the list shows as many items as fit. On a wide window the selected item's panel is to the right of the list; on a narrow one it's below it.
 
-Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see [The Bank tab](#the-bank-tab)), **Leaderboard** (the richest players) and **History** (your own trades). **Contracts** is greyed out; it arrives in a later version.
+Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see [The Bank tab](#the-bank-tab)), **Contracts** (delivery orders, see [The Contracts tab](#the-contracts-tab)), **Leaderboard** (the richest players) and **History** (your own trades).
 
 | Part | What it shows |
 | --- | --- |
@@ -96,6 +96,22 @@ Cheap items show decimals, such as *"Market pays 0.99 spurs each"*. Selling a wh
 
 If an item has no such line, the market doesn't buy it. To turn the line off, set `show_sell_price_in_tooltips = false` in `config/dynamic_economy-client.toml`.
 
+## The Contracts tab
+
+The server puts up a **board** of contracts: orders for a number of one item, such as *256 × Oak Log*, each with a reward. Everyone sees the same board, and a new one replaces it every few in-game days (5 by default; nights you sleep through count). The heading says how long the current one has left, and how many contracts you hold out of the most you may (1 by default).
+
+1. **Claim** a contract to lock it to you. This takes a **deposit** (a fifth of the reward by default) from the account you're using. Nobody else can claim it while you hold it.
+2. **Deliver** the items from your main inventory, in as many batches as you like: set the quantity and click **Deliver**. **All** fills in what you hold, up to what's still wanted. Delivered items are used up; they don't go to the market.
+3. The **last unit pays the reward** and returns the deposit.
+
+If the board is replaced before you finish, or you **Abandon** the contract (click twice), you're paid for the units you delivered and the deposit is lost. If that happens while you're offline, the money still goes to your bank and you get a message when you next log in. If you claimed with your team's account, the payment goes back to the team (or to you, if the team has ended).
+
+Each row shows the item and amount, the reward, and **Open**, who holds it, your progress (*120/256*), **Done** or **Abandoned**. Click one to see its reward, the reward per unit, the deposit, progress and how many you have.
+
+A contract always pays less per unit than the market could ever sell you that item for, so buying from the market to fill one loses money. It pays more than selling the same items to the market at their normal price, so if you gather or farm the items yourself, a contract is the better deal. Contracts for items you haven't unlocked (ProgressiveStages) don't show; one you've already claimed stays yours even if you lose the stage.
+
+`/market contracts` lists the board in chat; `/market contracts claim <id>`, `deliver <id> <amount>` and `abandon <id>` do the same as the buttons, where the server allows `/market`.
+
 ## How prices move
 
 - **Selling lowers the price** and **buying raises it**, a little with every item. A big order slides the price as it goes, so 640 items sell for less than 640 × the price shown for one.
@@ -130,6 +146,12 @@ Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
 | *You carry no coins to deposit* | No plain coins of this server's set in your main inventory. |
 | *Not enough money in the bank* | The account you're using can't cover the withdrawal. |
 | *Not enough room in your inventory for the coins* | Make space, or withdraw less. |
+| *Claimed the item contract; X deposit taken* | Done; now deliver. |
+| *Finished the item contract: paid X* | The reward and your deposit are in the bank. |
+| *Someone else has claimed that contract, or it's finished* | Pick another one. |
+| *That contract has expired; the board has been replaced* | The board changed while you had the screen open. |
+| *You already hold as many contracts as you may* | Finish or abandon one first. |
+| *That's more than the contract still wants* | Deliver fewer. |
 
 ## Crafting a terminal
 

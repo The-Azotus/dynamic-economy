@@ -2,9 +2,11 @@ package dynamiceconomy.client;
 
 import dynamiceconomy.bank.CoinMath;
 import dynamiceconomy.bank.Denomination;
+import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.service.BankService;
+import dynamiceconomy.service.ContractService;
 import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.OrderMath;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,6 +42,9 @@ import java.util.Optional;
  *
  * <p>The Bank tab lists the coins the player carries and deposits or withdraws them. Opened from a Bank Card, the
  * screen is bank-only: the other tabs are greyed out.
+ *
+ * <p>The Contracts tab lists the contract board; the selected contract can be claimed, delivered to and abandoned
+ * with the quantity controls and two buttons where Buy and Sell are.
  *
  * <p>The screen sizes itself to the window. On a wide window the selected item's panel sits beside the list; on a
  * narrow one it sits below. The list shows as many rows as fit.
@@ -102,23 +107,21 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private enum Tab {
         MARKET, BANK, CONTRACTS, LEADERBOARD, HISTORY;
 
-        /** Contracts isn't built yet, the server can turn the leaderboard off, and a Bank Card opens only the bank. */
+        /** The server can turn contracts and the leaderboard off, and a Bank Card opens only the bank. */
         boolean available(boolean bankOnly) {
             if (bankOnly) {
                 return this == BANK;
             }
             return switch (this) {
                 case MARKET, BANK, HISTORY -> true;
-                case CONTRACTS -> false;
+                case CONTRACTS -> ClientMarketState.contractsEnabled();
                 case LEADERBOARD -> ClientMarketState.leaderboardEnabled();
             };
         }
 
         /** Why a greyed-out tab can't be opened. */
         Component unavailableReason(boolean bankOnly) {
-            return Component.translatable(bankOnly && this != CONTRACTS ? "screen.dynamic_economy.tab.terminal_only"
-                    : this == LEADERBOARD ? "screen.dynamic_economy.tab.turned_off"
-                    : "screen.dynamic_economy.tab.coming_soon");
+            return Component.translatable(bankOnly ? "screen.dynamic_economy.tab.terminal_only" : "screen.dynamic_economy.tab.turned_off");
         }
 
         Component label() {
@@ -133,8 +136,18 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private Tab tab = Tab.MARKET;
     private Button buyButton;
     private Button sellButton;
+    private Button maxButton;
     /** The quantity and trade controls, hidden on the Bank tab. */
     private final List<AbstractWidget> marketControls = new ArrayList<>();
+    /** Claim or deliver, and abandon: where Buy and Sell are, on the Contracts tab only. */
+    private Button contractButton;
+    private Button abandonButton;
+    /** The selected contract's ID, if any. */
+    @Nullable
+    private Integer selectedContract;
+    /** Abandoning loses the deposit, so it takes a second click; this is the contract the first click was for. */
+    @Nullable
+    private Integer abandonArmed;
     private EditBox withdrawAmount;
     private Button withdrawButton;
     private Button depositButton;
@@ -253,11 +266,19 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 .bounds(x + controlsX + 60, y + controlsY, 16, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.step_hint")))
                 .build()));
-        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.max"), b -> fillMaxBuy())
+        maxButton = addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.max"), b -> fillMaxBuy())
                 .bounds(x + controlsX + 78, y + controlsY, 28, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.max.tooltip")))
-                .build()));
-        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.all"), b -> fillSellAll())
+                .build());
+        marketControls.add(maxButton);
+        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.all"),
+                        b -> {
+                            if (tab == Tab.CONTRACTS) {
+                                fillDeliverAll();
+                            } else {
+                                fillSellAll();
+                            }
+                        })
                 .bounds(x + controlsX + 108, y + controlsY, 24, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.all.tooltip")))
                 .build()));
@@ -298,6 +319,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         marketControls.add(buyButton);
         marketControls.add(sellButton);
+        contractButton = addRenderableWidget(Button.builder(Component.empty(), b -> contractAction())
+                .bounds(buyButton.getX(), buyButton.getY(), buyButton.getWidth(), 18).build());
+        abandonButton = addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.contracts.abandon"), b -> abandon())
+                .bounds(sellButton.getX(), sellButton.getY(), sellButton.getWidth(), 18).build());
         updateListButtons();
 
         seenVersion = -1;
@@ -386,6 +411,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         refreshButtons();
         refreshBankButtons();
+        refreshContractButtons();
         requestHistoryIfStale();
     }
 
@@ -415,7 +441,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         scroll = Mth.clamp(scroll, 0, maxScroll());
     }
 
-    /** Switches tabs, asking the server for the player's trades or the leaderboard when those open. */
+    /** Switches tabs, asking the server for the player's trades, the leaderboard or the contract board when those open. */
     private void selectTab(Tab next) {
         if (!available(next) || next == tab) {
             return;
@@ -426,6 +452,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             PacketDistributor.sendToServer(new MarketPayloads.TradesRequest());
         } else if (tab == Tab.LEADERBOARD) {
             PacketDistributor.sendToServer(new MarketPayloads.LeaderboardRequest());
+        } else if (tab == Tab.CONTRACTS) {
+            PacketDistributor.sendToServer(new MarketPayloads.ContractsRequest());
         }
         updateListButtons();
     }
@@ -440,7 +468,15 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         sortButton.visible = market;
         filterButton.visible = market;
         boolean bank = tab == Tab.BANK;
+        boolean contracts = tab == Tab.CONTRACTS;
         marketControls.forEach(widget -> widget.visible = !bank);
+        if (contractButton != null) {
+            maxButton.visible = !bank && !contracts;
+            buyButton.visible = !bank && !contracts;
+            sellButton.visible = !bank && !contracts;
+            contractButton.visible = contracts;
+            abandonButton.visible = contracts;
+        }
         if (withdrawAmount != null) {
             withdrawAmount.visible = bank;
             withdrawButton.visible = bank;
@@ -618,6 +654,124 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
     }
 
+    // ---- Contracts -------------------------------------------------------------------------------------------
+
+    private static List<MarketPayloads.ContractLine> contractLines() {
+        MarketPayloads.Contracts board = ClientMarketState.contracts();
+        return board == null ? List.of() : board.lines();
+    }
+
+    @Nullable
+    private MarketPayloads.ContractLine selectedContractLine() {
+        if (selectedContract == null) {
+            return null;
+        }
+        for (MarketPayloads.ContractLine line : contractLines()) {
+            if (line.id() == selectedContract) {
+                return line;
+            }
+        }
+        return null;
+    }
+
+    private static boolean deliverable(MarketPayloads.ContractLine line) {
+        return line.mine() && line.status() == ContractBoard.Status.CLAIMED;
+    }
+
+    /** "All" on the Contracts tab: every copy held, up to what the contract still wants and the order limit. */
+    private void fillDeliverAll() {
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null || !deliverable(line)) {
+            return;
+        }
+        int held = ClientMarketState.held(line.item());
+        if (held == 0) {
+            quantityNote = Component.translatable("screen.dynamic_economy.note.none_held");
+            quantityNoteFor = quantityValue();
+            return;
+        }
+        setQuantity(Math.min(Math.min(held, line.remaining()), ClientMarketState.maxQuantity()), Component.empty());
+    }
+
+    /** Client-side hints only; the server re-checks everything and replies with the real outcome. */
+    private void refreshContractButtons() {
+        if (tab != Tab.CONTRACTS) {
+            return;
+        }
+        MarketPayloads.ContractLine line = selectedContractLine();
+        MarketPayloads.Contracts board = ClientMarketState.contracts();
+        if (line == null || board == null) {
+            contractButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.claim"));
+            contractButton.active = false;
+            contractButton.setTooltip(null);
+            abandonButton.active = false;
+            abandonButton.setTooltip(null);
+            abandonArmed = null;
+            return;
+        }
+        if (deliverable(line)) {
+            int qty = quantityValue();
+            contractButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.deliver", PriceFormat.spurs(qty)));
+            Component problem = qty <= 0 ? Component.translatable("screen.dynamic_economy.result.invalid_quantity")
+                    : qty > ClientMarketState.maxQuantity() ? Component.translatable("screen.dynamic_economy.result.too_large")
+                    : qty > line.remaining() ? Component.translatable("screen.dynamic_economy.result.contract_full")
+                    : ClientMarketState.held(line.item()) < qty ? Component.translatable("screen.dynamic_economy.result.not_enough_items")
+                    : null;
+            contractButton.active = problem == null;
+            contractButton.setTooltip(Tooltip.create(problem != null ? problem
+                    : Component.translatable(qty == line.remaining() ? "screen.dynamic_economy.contracts.deliver.finishes"
+                            : "screen.dynamic_economy.contracts.deliver.tooltip", PriceFormat.money(PriceFormat.spurs(line.reward() + line.deposit())))));
+            abandonButton.active = true;
+            abandonButton.setMessage(Component.translatable(Integer.valueOf(line.id()).equals(abandonArmed)
+                    ? "screen.dynamic_economy.contracts.abandon_confirm" : "screen.dynamic_economy.contracts.abandon"));
+            abandonButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.contracts.abandon.tooltip",
+                    PriceFormat.money(PriceFormat.spurs(line.deposit())))));
+            return;
+        }
+        abandonArmed = null;
+        abandonButton.active = false;
+        abandonButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.abandon"));
+        abandonButton.setTooltip(null);
+        contractButton.setMessage(line.status() == ContractBoard.Status.OPEN
+                ? Component.translatable("screen.dynamic_economy.contracts.claim_for", PriceFormat.money(PriceFormat.spurs(line.deposit())))
+                : Component.translatable("screen.dynamic_economy.contracts.claim"));
+        Component problem = line.status() != ContractBoard.Status.OPEN ? Component.translatable("screen.dynamic_economy.result.contract_taken")
+                : board.held() >= board.maxHeld() ? Component.translatable("screen.dynamic_economy.result.contract_limit")
+                : !ClientMarketState.looksAffordable(line.deposit()) ? Component.translatable("screen.dynamic_economy.result.no_funds")
+                : null;
+        contractButton.active = problem == null;
+        contractButton.setTooltip(Tooltip.create(problem != null ? problem
+                : Component.translatable("screen.dynamic_economy.contracts.claim.tooltip", PriceFormat.money(PriceFormat.spurs(line.deposit())))));
+    }
+
+    private void contractAction() {
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null) {
+            return;
+        }
+        if (deliverable(line)) {
+            int qty = quantityValue();
+            if (qty > 0) {
+                PacketDistributor.sendToServer(new MarketPayloads.ContractRequest(ContractService.Action.DELIVER, line.id(), qty));
+            }
+        } else if (line.status() == ContractBoard.Status.OPEN) {
+            PacketDistributor.sendToServer(new MarketPayloads.ContractRequest(ContractService.Action.CLAIM, line.id(), 0));
+        }
+    }
+
+    private void abandon() {
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null || !deliverable(line)) {
+            return;
+        }
+        if (!Integer.valueOf(line.id()).equals(abandonArmed)) {
+            abandonArmed = line.id();
+            return;
+        }
+        abandonArmed = null;
+        PacketDistributor.sendToServer(new MarketPayloads.ContractRequest(ContractService.Action.ABANDON, line.id(), 0));
+    }
+
     // ---- Bank ------------------------------------------------------------------------------------------------
 
     /** The amount typed to withdraw, or 0 if none. Ten digits can exceed one transaction; the server says so. */
@@ -746,6 +900,20 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 refreshButtons();
                 return true;
             }
+            if (index >= 0 && tab == Tab.CONTRACTS) {
+                minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                MarketPayloads.ContractLine line = contractLines().get(index);
+                if (!Integer.valueOf(line.id()).equals(selectedContract)) {
+                    selectedContract = line.id();
+                    abandonArmed = null;
+                    if (deliverable(line)) {
+                        // Start from what can be delivered now.
+                        startDeliveryQuantity(line);
+                    }
+                }
+                setFocused(null);
+                return true;
+            }
             if (index >= 0 && tab == Tab.BANK) {
                 minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 withdrawCoins(ClientMarketState.coins().get(index));
@@ -753,6 +921,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private void startDeliveryQuantity(MarketPayloads.ContractLine line) {
+        int held = ClientMarketState.held(line.item());
+        setQuantity(Math.max(1, Math.min(Math.min(held, line.remaining()), ClientMarketState.maxQuantity())), Component.empty());
     }
 
     @Nullable
@@ -781,6 +954,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             case HISTORY -> trades().size();
             case LEADERBOARD -> leaderboardLines().size();
             case BANK -> ClientMarketState.coins().size();
+            case CONTRACTS -> contractLines().size();
             default -> visible.size();
         };
     }
@@ -849,6 +1023,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             graphics.renderTooltip(font, tooltip(visible.get(index)), Optional.empty(), mouseX, mouseY);
         } else if (index >= 0 && tab == Tab.HISTORY) {
             graphics.renderTooltip(font, Component.translatable("screen.dynamic_economy.trades.row_hint"), mouseX, mouseY);
+        } else if (index >= 0 && tab == Tab.CONTRACTS) {
+            graphics.renderTooltip(font, contractTooltip(contractLines().get(index)), Optional.empty(), mouseX, mouseY);
         } else if (index >= 0 && tab == Tab.BANK) {
             Denomination coin = ClientMarketState.coins().get(index);
             int count = coinsPerClick(coin);
@@ -871,12 +1047,18 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             case HISTORY -> renderTradeList(graphics, x, y, mouseX, mouseY);
             case LEADERBOARD -> renderLeaderboard(graphics, x, y);
             case BANK -> renderCoinList(graphics, x, y, mouseX, mouseY);
+            case CONTRACTS -> renderContractList(graphics, x, y, mouseX, mouseY);
             default -> renderCatalogList(graphics, x, y, mouseX, mouseY);
         }
         renderScrollbar(graphics, x, y);
 
         if (tab == Tab.BANK) {
             renderBankPanel(graphics, x, y);
+            return;
+        }
+        if (tab == Tab.CONTRACTS) {
+            renderContractPanel(graphics, x, y);
+            renderQuantityNote(graphics, x + noteX, y + noteY);
             return;
         }
         MarketPayloads.Row row = selectedRow();
@@ -978,6 +1160,124 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                             ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.leaderboard.none"),
                     x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
         }
+    }
+
+    /** The board: what each contract wants, what it pays, and who holds it; the days left and the player's count above. */
+    private void renderContractList(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
+        MarketPayloads.Contracts board = ClientMarketState.contracts();
+        List<MarketPayloads.ContractLine> lines = contractLines();
+        int listRight = LIST_X + listWidth;
+        int statusRight = listRight - 2;
+        int rewardRight = listRight - 66;
+        if (board != null) {
+            graphics.drawString(font, Component.translatable(board.daysLeft() == 1 ? "screen.dynamic_economy.contracts.title_one"
+                    : "screen.dynamic_economy.contracts.title", board.daysLeft()), x + LIST_X + 4, y + HEADER_Y, TEXT_DIM, false);
+            drawRight(graphics, Component.translatable("screen.dynamic_economy.contracts.held", board.held(), board.maxHeld()),
+                    x + statusRight, y + HEADER_Y, board.held() >= board.maxHeld() ? TEXT_MONEY : TEXT_DIM);
+        }
+        int hovered = rowAt(mouseX, mouseY);
+        for (int i = 0; i < rows && scroll + i < lines.size(); i++) {
+            MarketPayloads.ContractLine line = lines.get(scroll + i);
+            int rowY = y + LIST_Y + i * ROW_HEIGHT;
+            boolean selectedRow = Integer.valueOf(line.id()).equals(selectedContract);
+            int background = selectedRow ? ROW_SELECTED : scroll + i == hovered ? ROW_HOVER : i % 2 == 1 ? ROW_ALT : 0;
+            if (background != 0) {
+                graphics.fill(x + LIST_X, rowY, x + listRight, rowY + ROW_HEIGHT, background);
+            }
+            boolean done = line.status() == ContractBoard.Status.COMPLETED || line.status() == ContractBoard.Status.ABANDONED;
+            graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(line.item())), x + LIST_X + 2, rowY + 1);
+            int textY = rowY + 5;
+            Component what = Component.translatable("screen.dynamic_economy.contracts.wants", PriceFormat.spurs(line.units()),
+                    BuiltInRegistries.ITEM.get(line.item()).getDescription());
+            graphics.drawString(font, font.plainSubstrByWidth(what.getString(), rewardRight - 60 - LIST_X - 22),
+                    x + LIST_X + 22, textY, done ? TEXT_DIM : TEXT, false);
+            drawRight(graphics, PriceFormat.money(PriceFormat.spurs(line.reward())), x + rewardRight, textY, done ? TEXT_DIM : TEXT_MONEY);
+            Component state;
+            int color;
+            switch (line.status()) {
+                case OPEN -> {
+                    state = Component.translatable("screen.dynamic_economy.contracts.open");
+                    color = TEXT_GOOD;
+                }
+                case CLAIMED -> {
+                    state = line.mine()
+                            ? Component.literal(PriceFormat.count(line.delivered()) + "/" + PriceFormat.count(line.units()))
+                            : Component.literal(line.holder());
+                    color = line.mine() ? TEXT_MONEY : TEXT_DIM;
+                }
+                case COMPLETED -> {
+                    state = Component.translatable("screen.dynamic_economy.contracts.done");
+                    color = TEXT_OFF;
+                }
+                default -> {
+                    state = Component.translatable("screen.dynamic_economy.contracts.given_up");
+                    color = TEXT_OFF;
+                }
+            }
+            drawRight(graphics, Component.literal(font.plainSubstrByWidth(state.getString(), 60)), x + statusRight, textY, color);
+        }
+        if (lines.isEmpty()) {
+            graphics.drawCenteredString(font, Component.translatable(board == null
+                            ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.contracts.none"),
+                    x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
+        }
+    }
+
+    /** The selected contract: what it pays, the deposit, progress, and how many the player holds; or how contracts work. */
+    private void renderContractPanel(GuiGraphics graphics, int x, int y) {
+        int left = x + panelX;
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null) {
+            List<net.minecraft.util.FormattedCharSequence> help = font.split(
+                    Component.translatable(wide ? "screen.dynamic_economy.contracts.help" : "screen.dynamic_economy.contracts.select_hint"),
+                    panelWidth);
+            for (int i = 0; i < help.size() && panelY + 4 + i * 10 < controlsY - 10; i++) {
+                graphics.drawString(font, help.get(i), left, y + panelY + 4 + i * 10, TEXT_DIM, false);
+            }
+            return;
+        }
+        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(line.item()));
+        graphics.renderItem(stack, left, y + panelY);
+        int held = ClientMarketState.held(line.item());
+        if (!wide) {
+            Component summary = Component.translatable("screen.dynamic_economy.contracts.summary", stack.getHoverName(),
+                    PriceFormat.money(PriceFormat.spurs(line.reward())), PriceFormat.money(PriceFormat.spurs(line.deposit())),
+                    PriceFormat.count(line.delivered()), PriceFormat.count(line.units()));
+            graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+            return;
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(stack.getHoverName().getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+        int right = left + panelWidth;
+        int top = y + chartY;
+        infoLine(graphics, "contracts.reward", PriceFormat.spurs(line.reward()), TEXT_MONEY, left, right, top);
+        infoLine(graphics, "contracts.per_unit", PriceFormat.decimal(java.math.BigDecimal.valueOf(line.reward())
+                .divide(java.math.BigDecimal.valueOf(line.units()), 2, RoundingMode.FLOOR)), TEXT_MONEY, left, right, top + INFO_LINE_HEIGHT);
+        infoLine(graphics, "contracts.deposit", PriceFormat.spurs(line.deposit()), TEXT, left, right, top + 2 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "contracts.progress", PriceFormat.count(line.delivered()) + "/" + PriceFormat.count(line.units()),
+                line.mine() ? TEXT_MONEY : TEXT, left, right, top + 3 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "col.have", PriceFormat.spurs(held), held > 0 ? TEXT : TEXT_DIM, left, right, top + 4 * INFO_LINE_HEIGHT);
+        Component note = switch (line.status()) {
+            case OPEN -> Component.translatable("screen.dynamic_economy.contracts.note.open");
+            case CLAIMED -> line.mine() ? Component.translatable("screen.dynamic_economy.contracts.note.mine")
+                    : Component.translatable("screen.dynamic_economy.contracts.note.taken", line.holder());
+            case COMPLETED -> Component.translatable("screen.dynamic_economy.contracts.note.done");
+            case ABANDONED -> Component.translatable("screen.dynamic_economy.contracts.note.given_up");
+        };
+        List<net.minecraft.util.FormattedCharSequence> lines = font.split(note, panelWidth);
+        int noteTop = chartY + 5 * INFO_LINE_HEIGHT + 4;
+        for (int i = 0; i < lines.size() && noteTop + i * 10 < controlsY - 9; i++) {
+            graphics.drawString(font, lines.get(i), left, y + noteTop + i * 10, TEXT_DIM, false);
+        }
+    }
+
+    private List<Component> contractTooltip(MarketPayloads.ContractLine line) {
+        List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, new ItemStack(BuiltInRegistries.ITEM.get(line.item()))));
+        lines.add(Component.translatable("screen.dynamic_economy.contracts.tooltip.reward",
+                PriceFormat.money(PriceFormat.spurs(line.reward())), PriceFormat.money(PriceFormat.spurs(line.deposit()))).withColor(TEXT_MONEY));
+        if (line.status() == ContractBoard.Status.CLAIMED && !line.mine()) {
+            lines.add(Component.translatable("screen.dynamic_economy.contracts.note.taken", line.holder()).withColor(TEXT_DIM));
+        }
+        return lines;
     }
 
     /** The bank's coins, largest first: what each is worth and how many the player carries. Clicking one withdraws it. */
@@ -1237,7 +1537,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private boolean isOverChart(double mouseX, double mouseY) {
         double x = mouseX - leftPos - chartX;
         double y = mouseY - topPos - chartY;
-        return tab != Tab.BANK && selectedRow() != null && x >= 0 && x < chartWidth && y >= 0 && y < chartHeight;
+        return tab != Tab.BANK && tab != Tab.CONTRACTS && selectedRow() != null && x >= 0 && x < chartWidth && y >= 0 && y < chartHeight;
     }
 
     private List<Component> chartTooltip(MarketPayloads.Row row) {

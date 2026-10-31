@@ -81,7 +81,7 @@ public final class Leaderboard {
     }
 
     /** An online player's profile, or one the server has seen before (offline players, by their last name). */
-    private static Optional<GameProfile> profile(MinecraftServer server, UUID id) {
+    static Optional<GameProfile> profile(MinecraftServer server, UUID id) {
         ServerPlayer online = server.getPlayerList().getPlayer(id);
         if (online != null) {
             return Optional.of(online.getGameProfile());

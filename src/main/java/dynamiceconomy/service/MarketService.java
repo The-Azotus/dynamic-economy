@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.function.Predicate;
 
 /**
  * The only code that changes market stock or player money. Money moves only through the world's {@link Bank}.
@@ -37,7 +38,17 @@ public final class MarketService {
         /** Quantity was zero or negative. */
         INVALID_QUANTITY,
         /** The world's bank can't be reached: Numismatics' bank with Numismatics missing, or its API changed. */
-        BANK_UNAVAILABLE
+        BANK_UNAVAILABLE,
+        /** Contracts: another player holds it, or it's already done. */
+        CONTRACT_TAKEN,
+        /** Contracts: it's no longer on the board, which was replaced. */
+        CONTRACT_EXPIRED,
+        /** Contracts: the player already holds as many as they may. */
+        CONTRACT_LIMIT,
+        /** Contracts: the player doesn't hold it. */
+        NOT_YOUR_CONTRACT,
+        /** Contracts: more than the units still wanted. */
+        CONTRACT_FULL
     }
 
     /**
@@ -271,14 +282,14 @@ public final class MarketService {
         }
     }
 
-    private static Result checkQuantity(int qty) {
+    static Result checkQuantity(int qty) {
         if (qty <= 0) {
             return Result.INVALID_QUANTITY;
         }
         return qty > MarketConfig.maxQuantityPerRequest() ? Result.TOO_LARGE : Result.OK;
     }
 
-    private static void requireServerThread(ServerPlayer player) {
+    static void requireServerThread(ServerPlayer player) {
         if (!player.server.isSameThread()) {
             throw new IllegalStateException("Market transactions must run on the server thread");
         }
@@ -290,9 +301,13 @@ public final class MarketService {
     }
 
     static long countMatching(NonNullList<ItemStack> items, CatalogEntry entry) {
+        return countMatching(items, entry::matches);
+    }
+
+    static long countMatching(NonNullList<ItemStack> items, Predicate<ItemStack> matches) {
         long count = 0;
         for (ItemStack stack : items) {
-            if (entry.matches(stack)) {
+            if (matches.test(stack)) {
                 count += stack.getCount();
             }
         }
@@ -300,10 +315,15 @@ public final class MarketService {
     }
 
     private static void removeMatching(NonNullList<ItemStack> items, CatalogEntry entry, int qty) {
+        removeMatching(items, entry::matches, qty);
+    }
+
+    /** Removes exactly {@code qty} matching items. The caller has checked {@link #countMatching}. */
+    static void removeMatching(NonNullList<ItemStack> items, Predicate<ItemStack> matches, int qty) {
         int remaining = qty;
         for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
             ItemStack stack = items.get(slot);
-            if (entry.matches(stack)) {
+            if (matches.test(stack)) {
                 int taken = Math.min(remaining, stack.getCount());
                 stack.shrink(taken);
                 if (stack.isEmpty()) {

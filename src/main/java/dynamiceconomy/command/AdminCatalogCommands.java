@@ -13,6 +13,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.CatalogJson;
 import dynamiceconomy.catalog.CatalogOverlay;
@@ -23,7 +24,9 @@ import dynamiceconomy.data.AuditLog;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.ContractPricing;
 import dynamiceconomy.service.MarketDiagnostics;
+import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
 import dynamiceconomy.service.PriceSuggestion;
 import net.minecraft.ChatFormatting;
@@ -85,7 +88,11 @@ final class AdminCatalogCommands {
             decimal("buy_impact", 0, 0.5),
             decimal("recovery", 0, 1),
             decimal("floor", 0.001, 1),
-            decimal("ceiling", 1, 1000));
+            decimal("ceiling", 1, 1000),
+            whole("contract_weight", 0, 1000),
+            whole("contract_min_size", 1, 100_000),
+            whole("contract_max_size", 1, 100_000),
+            decimal("contract_premium", 0, 100));
 
     private static final int PROBLEMS_SHOWN = 5;
 
@@ -103,6 +110,10 @@ final class AdminCatalogCommands {
 
     private static Field decimal(String name, double min, double max) {
         return new Field(name, DoubleArgumentType.doubleArg(min, max), (c, a) -> new JsonPrimitive(DoubleArgumentType.getDouble(c, a)));
+    }
+
+    private static Field whole(String name, int min, int max) {
+        return new Field(name, IntegerArgumentType.integer(min, max), (c, a) -> new JsonPrimitive(IntegerArgumentType.getInteger(c, a)));
     }
 
     private static Field bool(String name) {
@@ -256,7 +267,8 @@ final class AdminCatalogCommands {
 
     /** Catalog fields in the order {@code info} lists them. */
     private static final List<String> INFO_FIELDS = List.of("class", "base_price", "markup", "sell_fee", "can_sell", "can_buy",
-            "unlimited_stock", "start_stock", "dynamic", "min_buy_markup", "sell_impact", "buy_impact", "recovery", "floor", "ceiling");
+            "unlimited_stock", "start_stock", "dynamic", "min_buy_markup", "sell_impact", "buy_impact", "recovery", "floor", "ceiling",
+            "contract_weight", "contract_min_size", "contract_max_size", "contract_premium");
 
     /**
      * For a listed item, every field's value and the layer it comes from, with the lower layers it overrides. For an
@@ -276,6 +288,12 @@ final class AdminCatalogCommands {
             Map<String, List<FieldSource>> sources = MarketCatalog.INSTANCE.sources(item);
             Optional<ItemClasses.ItemClass> itemClass = listed.get().itemClass().flatMap(ItemClasses::get);
             INFO_FIELDS.forEach(field -> lines.add("  " + describeField(field, values, inputs, sources.get(field), itemClass)));
+            MarketStockData market = MarketStockData.get(server);
+            double factor = MarketService.currentFactor(listed.get(), inputs, market, MarketStockData.now(server));
+            lines.add("  Contracts: " + ContractPricing.whyNotOffered(listed.get(), inputs, factor, MarketConfig.depositFraction())
+                    .map(reason -> "never offered: " + reason)
+                    .orElse("can be offered, paying up to " + plain(ContractPricing.unitReward(listed.get()).doubleValue())
+                            + " per unit before the cap"));
         } else {
             lines.add(id + " is not listed");
             lines.add("  Catalog files: " + MarketCatalog.INSTANCE.fileEntry(item).map(AdminCatalogCommands::describe).orElse("not listed"));
@@ -312,6 +330,10 @@ final class AdminCatalogCommands {
             case "floor" -> plain(inputs.floor());
             case "ceiling" -> plain(inputs.ceiling());
             case "min_buy_markup" -> plain(inputs.minBuyMarkup());
+            case "contract_weight" -> String.valueOf(MarketConfig.contractWeight());
+            case "contract_min_size" -> String.valueOf(MarketConfig.contractMinSize());
+            case "contract_max_size" -> String.valueOf(MarketConfig.contractMaxSize());
+            case "contract_premium" -> plain(MarketConfig.contractPremium());
             default -> "?";
         };
         if (layers == null || layers.isEmpty()) {
@@ -319,7 +341,8 @@ final class AdminCatalogCommands {
                 return "%s = %s [class %s]".formatted(field, value, ItemClasses.shortName(itemClass.get().id()));
             }
             String from = switch (field) {
-                case "sell_impact", "buy_impact", "recovery", "floor", "ceiling" -> "server config";
+                case "sell_impact", "buy_impact", "recovery", "floor", "ceiling", "contract_weight", "contract_min_size",
+                     "contract_max_size", "contract_premium" -> "server config";
                 case "min_buy_markup" -> "same as markup";
                 default -> "default";
             };
@@ -358,8 +381,8 @@ final class AdminCatalogCommands {
         // Needs the recipes, which only the running server has, so it's checked here rather than in MarketDiagnostics.
         Map<Item, CatalogEntry> catalog = new LinkedHashMap<>();
         MarketCatalog.INSTANCE.entries().forEach(entry -> catalog.put(entry.item(), entry));
-        for (PriceSuggestion.CraftProfit profit : PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(),
-                server.registryAccess(), catalog)) {
+        List<PriceSuggestion.Path> paths = PriceSuggestion.paths(server.getRecipeManager().getRecipes(), server.registryAccess());
+        for (PriceSuggestion.CraftProfit profit : PriceSuggestion.craftProfits(paths, catalog)) {
             String advice = switch (profit.kind()) {
                 case PRICE_GAP -> "Raise the ingredients' prices, lower this one, or stop the market buying it";
                 case MAY_HIDE_INPUTS -> "This recipe type may take fluids or amounts the check can't see; check it by hand";
@@ -370,6 +393,12 @@ final class AdminCatalogCommands {
                     "%s: buying the ingredients for %s costs %s, and the result sells for %s. %s"
                     .formatted(id(profit.output()), profit.recipe(), plain(profit.buyCost().doubleValue()), plain(profit.sellValue().doubleValue()),
                             advice)));
+        }
+        for (PriceSuggestion.CraftProfit profit : PriceSuggestion.contractCraftProfits(paths, catalog, AdminCatalogCommands::contractUnitValue)) {
+            findings.add(new MarketDiagnostics.Finding(profit.kind() == PriceSuggestion.ProfitKind.PRICE_GAP
+                    ? MarketDiagnostics.Severity.WARNING : MarketDiagnostics.Severity.NOTE,
+                    "%s: buying the ingredients for %s costs %s, and a contract for the result pays %s. Lower its contract_premium, or set its contract_weight to 0"
+                    .formatted(id(profit.output()), profit.recipe(), plain(profit.buyCost().doubleValue()), plain(profit.sellValue().doubleValue()))));
         }
         if (findings.isEmpty()) {
             ctx.getSource().sendSuccess(() -> Component.literal("Market check: nothing to report"), false);
@@ -396,6 +425,17 @@ final class AdminCatalogCommands {
             ctx.getSource().sendSuccess(() -> Component.literal("/market admin diagnose " + (shown + 1) + " for more"), false);
         }
         return findings.size();
+    }
+
+    /** What a contract for the item pays per unit at normal prices, or empty if it's never offered. */
+    private static Optional<java.math.BigDecimal> contractUnitValue(CatalogEntry entry) {
+        if (entry.contract().effectiveWeight() == 0) {
+            return Optional.empty();
+        }
+        int units = entry.contract().effectiveMinSize();
+        return ContractPricing.offer(entry, PriceModel.inputs(entry), 1.0, units, MarketConfig.depositFraction())
+                .map(offer -> java.math.BigDecimal.valueOf(offer.reward()).divide(java.math.BigDecimal.valueOf(units), 4,
+                        java.math.RoundingMode.FLOOR));
     }
 
     // ---- Tag rules --------------------------------------------------------------------------------------------

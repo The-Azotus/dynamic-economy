@@ -31,6 +31,10 @@ public final class ClientMarketState {
     private static MarketPayloads.PlayerState player = emptyPlayer();
     private static int maxQuantity = DEFAULT_MAX_QUANTITY;
     private static boolean leaderboardEnabled = true;
+    private static boolean contractsEnabled = true;
+    /** The contract board, once the screen has asked for it. */
+    @Nullable
+    private static MarketPayloads.Contracts contracts;
     private static BankKind bank = BankKind.OWN;
     private static long balanceCap = Long.MAX_VALUE;
     /** The coins the world's bank moves, largest first. */
@@ -62,6 +66,7 @@ public final class ClientMarketState {
         snapshot.rows().forEach(row -> rows.put(row.item(), row));
         maxQuantity = snapshot.maxQuantity();
         leaderboardEnabled = snapshot.leaderboardEnabled();
+        contractsEnabled = snapshot.contractsEnabled();
         bank = snapshot.bank();
         balanceCap = snapshot.balanceCap();
         coins = List.copyOf(snapshot.coins());
@@ -89,6 +94,42 @@ public final class ClientMarketState {
 
     public static void applyLeaderboard(MarketPayloads.Leaderboard received) {
         leaderboard = received;
+        version++;
+    }
+
+    public static void applyContracts(MarketPayloads.Contracts received) {
+        contracts = received;
+        version++;
+    }
+
+    /** The contract board, or null until it's been received. */
+    @Nullable
+    public static MarketPayloads.Contracts contracts() {
+        return contracts;
+    }
+
+    /** Whether the server offers contracts. */
+    public static boolean contractsEnabled() {
+        return contractsEnabled;
+    }
+
+    public static void applyContractOutcome(MarketPayloads.ContractOutcome outcome) {
+        DynamicEconomy.LOGGER.debug("Contract outcome: {}", outcome);
+        Component itemName = BuiltInRegistries.ITEM.get(outcome.item()).getDescription();
+        Component amount = PriceFormat.money(PriceFormat.spurs(outcome.amount()));
+        if (outcome.result() == MarketService.Result.OK) {
+            status = switch (outcome.action()) {
+                case CLAIM -> Component.translatable("screen.dynamic_economy.contracts.claimed", itemName, amount);
+                case DELIVER -> outcome.amount() > 0
+                        ? Component.translatable("screen.dynamic_economy.contracts.completed", itemName, amount)
+                        : Component.translatable("screen.dynamic_economy.contracts.delivered", outcome.quantity(), itemName);
+                case ABANDON -> Component.translatable("screen.dynamic_economy.contracts.abandoned", itemName, amount);
+            };
+            statusIsError = false;
+        } else {
+            status = Component.translatable("screen.dynamic_economy.result." + outcome.result().name().toLowerCase(Locale.ROOT));
+            statusIsError = true;
+        }
         version++;
     }
 
@@ -170,6 +211,7 @@ public final class ClientMarketState {
         lastRequest = null;
         trades = null;
         leaderboard = null;
+        contracts = null;
         status = Component.empty();
         statusIsError = false;
         version++;
@@ -181,6 +223,7 @@ public final class ClientMarketState {
         rows.clear();
         maxQuantity = DEFAULT_MAX_QUANTITY;
         leaderboardEnabled = true;
+        contractsEnabled = true;
         bank = BankKind.OWN;
         balanceCap = Long.MAX_VALUE;
         coins = List.of();

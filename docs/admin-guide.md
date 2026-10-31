@@ -232,6 +232,8 @@ The mod ships these classes. The values are starting points, not balanced number
 | `rare_loot` | Found, not made: music discs, enchanted books, totems | normal | 1.5 | 0.02 | 0.01 | 0.1 – 8 |
 | `unique` | One-of-a-kind: nether stars, dragon eggs | normal | 2.0 | 0.08 | 0.005 | 0.1 – 6 |
 
+They also set [contract](#contracts) sizes: 64–512 units for `common_resource` and `farmable`, 32–256 for `common_processed`, 4–16 for `rare_resource` and `rare_processed`, 2–8 for `rare_loot`. `unique` has `contract_weight: 0`, so its items are never offered.
+
 "Impact per unit" is both `sell_impact` and `buy_impact`. For a sense of scale, at the default 1-minute recovery step:
 
 - Selling 1,000 cobblestone lowers its sell price to about 82%, and it's back to normal within about half an hour.
@@ -304,7 +306,7 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 | Level | Means | Examples |
 | --- | --- | --- |
 | **Error** | Something was left out of the market. | A catalog entry skipped (unknown item, bad value); an in-game edit that can't be applied. |
-| **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that sells for more than its ingredients cost to buy; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
+| **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that sells for more than its ingredients cost to buy, or whose contract pays more; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
 | **Note** | Possibly deliberate; worth a look. | Unlimited items that can be sold (farms can sell them forever); items listed but neither buyable nor sellable; tag rules covering more than 64 items; unpriced template entries; saved data for items that no longer exist. |
 
 **Removed mods.** When you remove a mod, the market keeps its items' saved stock, prices, history and edits. `/market admin prune` lists those items, and `/market admin prune confirm` deletes their data. The overall money counts are kept. A backup of stock, prices and edits is taken automatically first (see [Backups](#backups-and-restoring)).
@@ -316,7 +318,7 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 Every admin change to the market is logged to `<world>/dynamic_economy/audit.log`, one JSON line each. Each line records when, who (player name and UUID, or `Server` for the console), the action, its target, the result, and the old and new values where that makes sense. Logged actions:
 
 - catalog edits and tag-rule changes, including ones refused for breaking a rule
-- `setstock`, `clearstock`, `resetprice`, `reload`, `export`, `import` (with the files written), `prune` (with the items removed), `backup` and `restore`
+- `setstock`, `clearstock`, `resetprice`, `reload`, `export`, `import` (with the files written), `prune` (with the items removed), `backup`, `restore` and `contracts refresh`
 
 Previews and read-only commands (`info`, `diagnose`, `stats`) aren't logged.
 
@@ -359,6 +361,9 @@ Prices are whole numbers of **spurs** (Numismatics' bank) or **bits** (the mod's
 | `recovery` | server config | How quickly the price returns to base. |
 | `floor` | server config | The lowest the price factor can fall, 0.001 to 1. |
 | `ceiling` | server config | The highest the price factor can rise, 1 to 1000. |
+| `contract_weight` | server config (1) | How likely the item is to be picked for a [contract](#contracts), relative to others. 0 never offers it. 0 to 1000. |
+| `contract_min_size`, `contract_max_size` | server config (16, 64) | Fewest and most units one contract asks for, 1 to 100,000. If both are set on one entry, min must not be above max. Sizes from 64 up are rounded to multiples of 16. |
+| `contract_premium` | server config (0.25) | A contract offers `base_price × (1 + contract_premium)` per unit, capped as described in [Contracts](#contracts). 0 to 100. |
 
 ## Supply and demand
 
@@ -381,6 +386,27 @@ Unlimited items charge `base_price × max(s × (1 + markup), 1 + min_buy_markup)
 - don't set `buy_impact` far below `sell_impact`. Otherwise a player can sell a large amount, crashing the price, and buy the same items back at the bottom for less than they were paid. For example, the default settings with `buy_impact = 0` let 3,000 iron be sold and bought back at a profit.
 
 Equal impacts, as in the default config, are safe.
+
+## Contracts
+
+The **Contracts** tab shows a board of delivery orders shared by every player: *deliver 256 oak logs for 2,560*. A player claims one (paying a deposit), delivers the items from their main inventory in batches, and is paid the reward with the deposit back when the last unit arrives. Delivered items leave the game; they never join market stock. The [player guide](player-guide.md#the-contracts-tab) describes it from the player's side.
+
+**The board.** A new board replaces the old one every `refresh_days` in-game days (5 by default), at multiples of 5 in the day count. Sleeping counts. Setting the time backwards (including `/time set day`, which resets the day number) doesn't move the count back, so it can't replace a board early or keep one far past its day. With `doDaylightCycle` off, days never pass; use `/market admin contracts refresh`. The board offers `board_size` contracts (8), each for a different item, picked at random in proportion to each item's `contract_weight`.
+
+**Ending.** Every contract on a board expires when it's replaced. A held contract that hasn't been finished then pays for the units delivered, and the deposit is kept; abandoning does the same. Payments go to the account the deposit came from (a team's while that team exists), whether the player is online or not, and an offline player is told at their next login. If the bank can't be reached at that moment, the payment is kept and paid once it can. Turning `contracts_enabled` off settles held contracts the same way but returns the deposits.
+
+**Rewards can't be gamed.** A contract offers `base_price × (1 + contract_premium)` per unit (1.25 × base by default). What it actually pays is always at least 1 below what buying the delivered units from the market could ever cost, so nobody profits by buying from the market to deliver, even with items bought long ago at the lowest price. The lowest an item can ever be bought for is:
+
+- unlimited items: `base × (1 + min_buy_markup)`, 1.5 × base with the defaults
+- fixed-price items (`dynamic: false`): `base × (1 + markup)`
+- other items: `base × floor × (1 + markup)`, which is about a third of base with the built-in classes
+- items the market doesn't sell (`can_buy: false`): no limit
+
+An item is only offered if its contract still pays more than selling those units to the market at the normal price. In practice that means unlimited items, fixed-price items and items the market doesn't sell; with the built-in classes, finite items' prices can fall too far. Items the market doesn't buy (`can_sell: false`) are never offered: most were switched off because they could be crafted at a profit, and a contract would pay for them again. The payout is worked out again when it's made, never above what was offered, so it stays safe if you change the item meanwhile.
+
+`/market admin info <item>` says whether an item can be offered, and if not, why. `/market admin diagnose` warns about recipes whose ingredients cost less to buy than a contract for the result pays. To control what's offered, use the `contract_*` [catalog fields](#catalog-fields), in classes, catalog files, tag rules or `/market admin set`: `contract_weight 0` keeps an item off the board, a higher weight makes it more common.
+
+**Money.** Completed and partly delivered contracts create money, like sales; kept deposits remove it. `/market admin contracts` shows the board, each contract's holder and progress, and the lifetime totals.
 
 ## Where the money goes
 
@@ -417,6 +443,12 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `leaderboard.leaderboard_enabled` | true | true, false | Show the Leaderboard tab. When off, the tab is greyed out and no balances are sent to anyone. |
 | `leaderboard.leaderboard_size` | 10 | 1 – 100 | How many players the leaderboard lists. |
 | `leaderboard.leaderboard_exclude_operators` | false | true, false | Leave operators off the leaderboard, for servers where admins hold test money. |
+| `contracts.contracts_enabled` | true | true, false | Offer [contracts](#contracts). Turning it off greys out the tab and settles held contracts, returning their deposits. |
+| `contracts.board_size` | 8 | 1 – 64 | Contracts on each board (fewer if not enough items qualify). |
+| `contracts.refresh_days` | 5 | 1 – 365 | In-game days between boards. Every contract expires when its board is replaced. |
+| `contracts.deposit_fraction` | 0.2 | 0 – 1 | The deposit, as a fraction of the reward, rounded up. |
+| `contracts.max_active_contracts` | 1 | 1 – 64 | How many contracts one player may hold at once. |
+| `contracts.contract_weight`, `contract_min_size`, `contract_max_size`, `contract_premium` | 1, 16, 64, 0.25 | see [Catalog fields](#catalog-fields) | Defaults for items whose class and entry don't set them. |
 
 **The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows. Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
 
@@ -427,6 +459,9 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market` | everyone* | Opens the market. |
 | `/market stock [item]`, `/market price <item>` | everyone* | Shows stock, or an item's prices and price factor. |
 | `/market sell <item> <qty>`, `/market buy <item> <qty>` | everyone* | Trades without the screen, at whatever the price is when the command runs. Unlike the screen, there's no "price changed, confirm again" step. Use `BLOCK_ONLY` if you don't want players trading this way. |
+| `/market contracts`, `/market contracts claim <id>`, `deliver <id> <qty>`, `abandon <id>` | everyone* | The [contract](#contracts) board in chat, and the Contracts tab's buttons. |
+| `/market admin contracts` | 2 | The whole board with holders and progress, and the money contracts have paid and kept. |
+| `/market admin contracts refresh` | 2 | Replaces the board now. Held contracts are settled as if expired. Logged in the audit log. |
 | `/market admin setstock <item> <qty>` | 2 | Sets an item's stock. Refused for unlimited items. |
 | `/market admin clearstock <item>` | 2 | Empties an item's stock. |
 | `/market admin resetprice <item>`, `all [preview]` or `tag <tag> [preview]` | 2 | Puts price factors back to 1.0. |
@@ -461,6 +496,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `class` | Yes | An [item class](#item-classes), such as `rare_resource`. Blank means none. |
 | `unlimited_stock`, `markup`, `min_buy_markup`, `sell_fee`, `can_sell`, `can_buy`, `start_stock`, `dynamic` | Yes | Blank means "use the class's value, or else the default". |
 | `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling` | Yes | Per-item overrides; blank means "use the class's value, or else the server config". |
+| `contract_weight`, `contract_min_size`, `contract_max_size`, `contract_premium` | Yes | [Contract](#contracts) settings; blank means "use the class's value, or else the server config". |
 
 The importer is forgiving about how the file was saved:
 

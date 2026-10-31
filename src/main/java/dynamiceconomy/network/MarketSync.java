@@ -8,10 +8,12 @@ import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankTeam;
 import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.bank.WorldBank;
+import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.service.BankService;
+import dynamiceconomy.service.ContractService;
 import dynamiceconomy.service.Leaderboard;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketVisibility;
@@ -259,6 +261,52 @@ public final class MarketSync {
         PacketDistributor.sendToPlayer(player, new MarketPayloads.Leaderboard(lines, view.ownRank(), view.ranked()));
     }
 
+    static void handleContractsRequest(ServerPlayer player) {
+        if (player.containerMenu instanceof MarketMenu menu && menu.stillValid(player) && !menu.bankOnly()) {
+            sendContracts(player);
+        }
+    }
+
+    /** Claim, deliver or abandon from the Contracts tab of an open market screen (not a Bank Card's). */
+    static void handleContractRequest(MarketPayloads.ContractRequest request, ServerPlayer player) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player) || menu.bankOnly()) {
+            return;
+        }
+        ContractService.Outcome outcome = switch (request.action()) {
+            case CLAIM -> ContractService.claim(player, request.id());
+            case DELIVER -> ContractService.deliver(player, request.id(), request.quantity());
+            case ABANDON -> ContractService.abandon(player, request.id());
+        };
+        PacketDistributor.sendToPlayer(player, new MarketPayloads.ContractOutcome(outcome.action(), outcome.item(),
+                outcome.result(), outcome.quantity(), outcome.amount()));
+        if (outcome.ok()) {
+            broadcastContracts(player.server);
+        } else {
+            sendContracts(player);
+        }
+        sendPlayerState(player);
+    }
+
+    /** After the board changed: everyone with a market screen open gets it as they see it. */
+    public static void broadcastContracts(MinecraftServer server) {
+        viewers(server).stream().filter(p -> !((MarketMenu) p.containerMenu).bankOnly()).forEach(MarketSync::sendContracts);
+    }
+
+    public static void sendContracts(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, contractsFor(player));
+    }
+
+    /** The board as {@code player} sees it. */
+    public static MarketPayloads.Contracts contractsFor(ServerPlayer player) {
+        ContractBoard board = ContractBoard.get(player.server);
+        List<MarketPayloads.ContractLine> lines = ContractService.view(player, board).stream()
+                .map(view -> new MarketPayloads.ContractLine(view.contract().id(), view.contract().item(), view.contract().units(),
+                        view.contract().delivered(), view.reward(), view.contract().deposit(), view.contract().status(), view.mine(),
+                        view.holderName()))
+                .toList();
+        return new MarketPayloads.Contracts(lines, board.daysLeft(), board.claimedBy(player.getUUID()), MarketConfig.maxActiveContracts());
+    }
+
     static void handleHistoryRequest(MarketPayloads.HistoryRequest request, ServerPlayer player) {
         if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
             return;
@@ -287,7 +335,7 @@ public final class MarketSync {
         }
         Bank bank = WorldBank.of(server);
         return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest(), MarketConfig.leaderboardEnabled(),
-                bank.kind(), bank.displayCap(), bank.coins());
+                MarketConfig.contractsEnabled(), bank.kind(), bank.displayCap(), bank.coins());
     }
 
     private static Optional<MarketPayloads.Row> row(MinecraftServer server, Item item) {

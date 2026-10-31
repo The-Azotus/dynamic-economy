@@ -17,11 +17,13 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketNetwork;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.ContractService;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
@@ -34,6 +36,7 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -82,6 +85,15 @@ public final class DynamicEconomy {
             if (recoveryStep) {
                 // After the sync, so players are sent the step that brought each item back to 1.0.
                 MarketService.pruneRecovered(event.getServer());
+            }
+            if (ContractService.tick(event.getServer())) {
+                MarketSync.broadcastContracts(event.getServer());
+            }
+        });
+        // How a held contract ended while its holder was away.
+        NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
+            if (event.getEntity() instanceof ServerPlayer player) {
+                ContractService.loggedIn(player);
             }
         });
 

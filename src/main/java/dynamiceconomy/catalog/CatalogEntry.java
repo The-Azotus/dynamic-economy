@@ -2,6 +2,7 @@ package dynamiceconomy.catalog;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dynamiceconomy.MarketConfig;
 import net.minecraft.core.component.DataComponentType;
@@ -28,12 +29,68 @@ import java.util.Set;
  *                       {@code markup}
  * @param overrides      per-item replacements for the server config's pricing defaults
  * @param itemClass      the item class whose values filled the fields no catalog layer set, if any
+ * @param contract       per-item replacements for the server config's contract defaults
  */
 public record CatalogEntry(Item item, ResourceLocation itemId, int basePrice, double markup, long startStock,
                            boolean canSell, boolean canBuy, boolean unlimitedStock, double sellFee, boolean dynamic,
-                           Optional<Double> minBuyMarkup, Overrides overrides, Optional<ResourceLocation> itemClass) {
+                           Optional<Double> minBuyMarkup, Overrides overrides, Optional<ResourceLocation> itemClass,
+                           ContractTerms contract) {
 
     public static final double DEFAULT_MARKUP = 0.5;
+
+    /** An entry using the server config's contract settings. */
+    public CatalogEntry(Item item, ResourceLocation itemId, int basePrice, double markup, long startStock,
+                        boolean canSell, boolean canBuy, boolean unlimitedStock, double sellFee, boolean dynamic,
+                        Optional<Double> minBuyMarkup, Overrides overrides, Optional<ResourceLocation> itemClass) {
+        this(item, itemId, basePrice, markup, startStock, canSell, canBuy, unlimitedStock, sellFee, dynamic, minBuyMarkup,
+                overrides, itemClass, ContractTerms.NONE);
+    }
+
+    /**
+     * How the item appears on the contract board; empty means "use the server config". Read with its own codec,
+     * beside {@link Raw}, since one record codec holds at most 16 fields.
+     *
+     * @param weight  how likely the item is to be picked, relative to others; 0 keeps it off the board
+     * @param minSize fewest units one contract asks for
+     * @param maxSize most units one contract asks for
+     * @param premium the reward per unit is {@code base × (1 + premium)}, capped below the lowest buy price
+     */
+    public record ContractTerms(Optional<Integer> weight, Optional<Integer> minSize, Optional<Integer> maxSize,
+                                Optional<Double> premium) {
+        public static final ContractTerms NONE = new ContractTerms(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+        static final MapCodec<ContractTerms> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                Codec.intRange(0, 1000).optionalFieldOf("contract_weight").forGetter(ContractTerms::weight),
+                Codec.intRange(1, 100_000).optionalFieldOf("contract_min_size").forGetter(ContractTerms::minSize),
+                Codec.intRange(1, 100_000).optionalFieldOf("contract_max_size").forGetter(ContractTerms::maxSize),
+                Codec.doubleRange(0, 100).optionalFieldOf("contract_premium").forGetter(ContractTerms::premium)
+        ).apply(i, ContractTerms::new));
+
+        public int effectiveWeight() {
+            return weight.orElse(MarketConfig.contractWeight());
+        }
+
+        public int effectiveMinSize() {
+            return minSize.orElse(MarketConfig.contractMinSize());
+        }
+
+        /** Never below {@link #effectiveMinSize()}, so a size can always be picked. */
+        public int effectiveMaxSize() {
+            return Math.max(effectiveMinSize(), maxSize.orElse(MarketConfig.contractMaxSize()));
+        }
+
+        public double effectivePremium() {
+            return premium.orElse(MarketConfig.contractPremium());
+        }
+
+        /** Checks rules that span fields. Each field's range is checked by the codec. */
+        DataResult<ContractTerms> validate() {
+            if (minSize.isPresent() && maxSize.isPresent() && minSize.get() > maxSize.get()) {
+                return DataResult.error(() -> "contract_min_size (" + minSize.get() + ") must not be above contract_max_size ("
+                        + maxSize.get() + ")");
+            }
+            return DataResult.success(this);
+        }
+    }
 
     /** Pricing settings an entry may override; empty means "use the server config". */
     public record Overrides(Optional<Double> sellImpact, Optional<Double> buyImpact, Optional<Double> recovery,
@@ -45,13 +102,19 @@ public record CatalogEntry(Item item, ResourceLocation itemId, int basePrice, do
     /** A copy with a different unlimited flag. */
     public CatalogEntry withUnlimitedStock(boolean unlimited) {
         return new CatalogEntry(item, itemId, basePrice, markup, startStock, canSell, canBuy, unlimited, sellFee,
-                dynamic, minBuyMarkup, overrides, itemClass);
+                dynamic, minBuyMarkup, overrides, itemClass, contract);
     }
 
     /** A copy with different supply/demand settings. */
     public CatalogEntry withPricing(double sellFee, boolean dynamic, Optional<Double> minBuyMarkup, Overrides overrides) {
         return new CatalogEntry(item, itemId, basePrice, markup, startStock, canSell, canBuy, unlimitedStock, sellFee,
-                dynamic, minBuyMarkup, overrides, itemClass);
+                dynamic, minBuyMarkup, overrides, itemClass, contract);
+    }
+
+    /** A copy with different contract settings. */
+    public CatalogEntry withContract(ContractTerms terms) {
+        return new CatalogEntry(item, itemId, basePrice, markup, startStock, canSell, canBuy, unlimitedStock, sellFee,
+                dynamic, minBuyMarkup, overrides, itemClass, terms);
     }
 
     /** The JSON shape, before the item ID is resolved against the registry. */

@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -633,10 +634,27 @@ public final class PriceSuggestion {
     }
 
     public static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog) {
+        return craftProfits(paths, catalog, output -> output.canSell()
+                ? Optional.of(PriceModel.exactUnitSellPrice(PriceModel.inputs(output), 1.0)) : Optional.empty());
+    }
+
+    /**
+     * As {@link #craftProfits}, but for contracts: recipes whose ingredients cost less to buy than a contract for the
+     * output pays. {@code contractValue} is what a contract pays per unit, or empty for an item never offered.
+     */
+    public static List<CraftProfit> contractCraftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog,
+                                                         Function<CatalogEntry, Optional<BigDecimal>> contractValue) {
+        return craftProfits(paths, catalog, contractValue);
+    }
+
+    /** Recipes whose ingredients cost less to buy than one unit of the output is worth, by {@code value}. */
+    private static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog,
+                                                  Function<CatalogEntry, Optional<BigDecimal>> value) {
         List<CraftProfit> profits = new ArrayList<>();
         for (Path path : paths) {
             CatalogEntry output = catalog.get(path.output());
-            if (output == null || !output.canSell()) {
+            Optional<BigDecimal> unitValue = output == null ? Optional.empty() : value.apply(output);
+            if (unitValue.isEmpty()) {
                 continue;
             }
             BigDecimal cost = BigDecimal.ZERO;
@@ -674,7 +692,7 @@ public final class PriceSuggestion {
             if (path.burnsFuel() && coal != null && coal.canBuy()) {
                 cost = cost.add(PriceModel.exactUnitBuyPrice(PriceModel.inputs(coal), 1.0).divide(BigDecimal.valueOf(ITEMS_PER_COAL), MATH));
             }
-            BigDecimal sell = PriceModel.exactUnitSellPrice(PriceModel.inputs(output), 1.0).multiply(BigDecimal.valueOf(path.count()));
+            BigDecimal sell = unitValue.get().multiply(BigDecimal.valueOf(path.count()));
             if (sell.compareTo(cost) > 0) {
                 ProfitKind kind = multiplies ? ProfitKind.MULTIPLIES_INPUT : path.complete() ? ProfitKind.PRICE_GAP : ProfitKind.MAY_HIDE_INPUTS;
                 profits.add(new CraftProfit(path.output(), path.recipe(), sell, cost, kind));
