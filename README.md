@@ -34,7 +34,7 @@ Install the mod on the **server and every client**. Clients need it for the mark
 
 **Admins:**
 
-1. Install the mod and start the server. The market starts empty. To try it out first, `/datapack enable "mod/dynamic_economy:example_catalog"` lists five example items at placeholder prices; `/datapack disable` with the same name takes them off again.
+1. Install the mod and start the server. Built-in prices for vanilla and many popular mods are on by default (each mod's file loads only if that mod is installed); your own files, imports and edits always override them. To start from an empty market instead, `/datapack disable "mod/dynamic_economy:default_prices"`.
 2. Check the bank: a new world uses Numismatics' bank when Numismatics is installed, otherwise the mod's own. `/market admin bank` says which, and can switch it.
 3. Price your pack. From the server console, run `/market admin export`, fill in `base_price` in the exported `items.csv`, then run `/market admin import "<path to the csv>"`.
 4. Tune it in game. For example, `/market admin setprice minecraft:diamond 300` prices one item, and `/market admin tag minecraft:logs setprice 4` prices every log.
@@ -46,7 +46,7 @@ The [admin guide](docs/admin-guide.md) covers every command, catalog field and s
 
 Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests. Create, Numismatics and FTB Teams are optional: add `-PwithoutMods=numismatics` to run without Numismatics, `-PwithoutMods=create` to run without both Create and Numismatics (Numismatics needs Create), or `-PwithoutMods=ftbteams` to run without FTB Teams; combine them with commas. Each such run uses its own test world, since a world remembers which bank it uses.
 
-Released versions are tagged in git (for example `v0.2.0`).
+Released versions are tagged in git (for example `v0.3.0`).
 
 ## Licence
 
