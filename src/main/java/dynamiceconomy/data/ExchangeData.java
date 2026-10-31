@@ -216,6 +216,25 @@ public final class ExchangeData extends SavedData {
         setDirty();
     }
 
+    /**
+     * The money the exchange holds for each player's own account: what their open buy orders hold plus what they're
+     * owed. Money for team accounts isn't included, as team accounts aren't ranked.
+     */
+    public Map<UUID, Long> heldForPlayers() {
+        Map<UUID, Long> held = new LinkedHashMap<>();
+        for (Order order : orders) {
+            if (order.team().isEmpty() && order.heldMoney() > 0) {
+                held.merge(order.owner(), order.heldMoney(), Long::sum);
+            }
+        }
+        for (Payout payout : owed) {
+            if (payout.team().isEmpty()) {
+                held.merge(payout.player(), payout.amount(), Long::sum);
+            }
+        }
+        return held;
+    }
+
     // ---- Money counts ----------------------------------------------------------------------------------------
 
     /** Adds one trade to the counts: its value, and the tax taken from it (money destroyed). */

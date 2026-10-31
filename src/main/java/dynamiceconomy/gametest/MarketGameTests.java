@@ -93,6 +93,7 @@ import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Server-side market tests. Each test runs synchronously inside one tick, so tests sharing the global stock and
@@ -2957,6 +2958,38 @@ public final class MarketGameTests {
             f.account().deduct(f.balance());
             banker.ifPresent(account -> account.deduct(Math.toIntExact(account.balance())));
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void leaderboardCountsMoneyTheExchangeHolds(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture buyer = new Fixture(helper);
+            Fixture seller = new Fixture(helper);
+            UUID id = buyer.player.getUUID();
+            buyer.deposit(100);
+            seller.give(new ItemStack(Items.COBBLESTONE, 5));
+            Function<UUID, Optional<GameProfile>> known = uuid -> uuid.equals(id)
+                    ? Optional.of(buyer.player.getGameProfile()) : Optional.empty();
+
+            long bid = posted(helper, buyer, data, Items.COBBLESTONE, true, 5, 10).orderId();
+            posted(helper, seller, data, Items.COBBLESTONE, false, 50, 5);
+            data.owe(new ExchangeData.Payout(id, Optional.empty(), 7));
+            data.owe(new ExchangeData.Payout(id, Optional.of(UUID.randomUUID()), 1000));
+            helper.assertValueEqual(data.heldForPlayers(), Map.of(id, 57L),
+                    "the bid's 50 and the 7 owed; not a sell order's items nor money for a team");
+
+            Map<UUID, Long> bank = Map.of(id, (long) buyer.balance());
+            List<Leaderboard.Entry> ranked = Leaderboard.rank(Leaderboard.withExchange(bank, data.heldForPlayers()), known, p -> false);
+            helper.assertValueEqual(ranked.get(0).balance(), 50L + 57L, "the bank's 50 plus what the exchange holds");
+
+            helper.assertValueEqual(ExchangeService.cancel(buyer.player, data, bid).result(), Result.OK, "cancel the bid");
+            data.owed().forEach(data::paidOwed);
+            bank = Map.of(id, (long) buyer.balance());
+            ranked = Leaderboard.rank(Leaderboard.withExchange(bank, data.heldForPlayers()), known, p -> false);
+            helper.assertValueEqual(ranked.get(0).balance(), 100L, "the same money, now all in the bank");
+        });
         helper.succeed();
     }
 

@@ -420,7 +420,7 @@ Off by default: set `exchange.exchange_enabled = true` to turn it on. The **Exch
 
 **The collection box** keeps any number of items with the world for as long as the player likes. Taking items out only fills free main-inventory space; whatever doesn't fit stays. It stays open while the exchange is off, so nothing is ever stranded.
 
-**Money.** The exchange creates no money: every bit a seller gets was paid by a buyer. The tax (5% by default, rounded up to a whole bit per trade) is destroyed, a money sink. Money held by buy orders isn't in anyone's balance, so it doesn't count on the leaderboard until the order fills or is cancelled. `/market admin exchange` shows every open order, what the orders hold, what waits in boxes, the value traded and the tax destroyed.
+**Money.** The exchange creates no money: every bit a seller gets was paid by a buyer. The tax (5% by default, rounded up to a whole bit per trade) is destroyed, a money sink. Money held by a player's buy orders, and anything the exchange still owes them, counts toward their place on the leaderboard (not for team accounts, which aren't ranked). `/market admin exchange` shows every open order, what the orders hold, what waits in boxes, the value traded and the tax destroyed.
 
 **Restarts.** Orders, holdings, boxes and owed payments are saved together in one file with the world, so a restart can't split a trade. The bank is saved separately (with Numismatics, by Numismatics), so only a crash between the two saves could leave them out of step, as with every other market and contract payment.
 
@@ -471,7 +471,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `exchange.order_expiry_days` | 0 | 0 – 3650 | In-game days until an unfilled order expires and returns what it holds, counted like contracts. 0: orders never expire. |
 | `exchange.max_order_size` | 6400 | 1 – 1,000,000 | Largest quantity one order may ask for. `price × quantity` must also fit one bank transaction (2,147,483,647). |
 
-**The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows. Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
+**The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows, plus the money the [exchange](#the-player-exchange) holds for them: what their open buy orders hold and anything it still owes them. Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
 
 ## All commands
 
