@@ -35,6 +35,11 @@ public final class MarketConfig {
     public static final ModConfigSpec.IntValue CONTRACT_MIN_SIZE;
     public static final ModConfigSpec.IntValue CONTRACT_MAX_SIZE;
     public static final ModConfigSpec.DoubleValue CONTRACT_PREMIUM;
+    public static final ModConfigSpec.BooleanValue EXCHANGE_ENABLED;
+    public static final ModConfigSpec.DoubleValue EXCHANGE_TAX;
+    public static final ModConfigSpec.IntValue MAX_OPEN_ORDERS;
+    public static final ModConfigSpec.IntValue ORDER_EXPIRY_DAYS;
+    public static final ModConfigSpec.IntValue MAX_ORDER_SIZE;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -130,6 +135,30 @@ public final class MarketConfig {
                 .comment("The reward per unit is base price x (1 + contract_premium), but never as much as the lowest price",
                         "the market could sell the item for. Items where that leaves too little to beat selling aren't offered.")
                 .defineInRange("contract_premium", 0.25, 0.0, 100.0);
+        builder.pop();
+
+        builder.comment("The Exchange tab: players post buy and sell orders at their own prices, and orders for the same item",
+                "match automatically, best price first, then oldest first. A trade fills at the price of the order that was",
+                "waiting. A sell order holds its items and a buy order its money until it fills, is cancelled or expires.",
+                "Money always goes to the bank account the order was paid from; bought items, and the items of a cancelled",
+                "or expired sell order, wait in the player's collection box.").push("exchange");
+        EXCHANGE_ENABLED = builder
+                .comment("Run the exchange. Turning it off cancels every open order and returns what it held; collection boxes",
+                        "stay open so players can take their items.")
+                .define("exchange_enabled", false);
+        EXCHANGE_TAX = builder
+                .comment("Fraction of each sale taken from the seller and destroyed (a money sink), rounded up to a whole bit.")
+                .defineInRange("exchange_tax", 0.05, 0.0, 1.0);
+        MAX_OPEN_ORDERS = builder
+                .comment("How many open orders one player may have at once.")
+                .defineInRange("max_open_orders", 10, 1, 1000);
+        ORDER_EXPIRY_DAYS = builder
+                .comment("In-game days until an unfilled order expires and returns what it holds, counted like contracts",
+                        "(sleeping counts; setting the time backwards doesn't). 0 means orders never expire.")
+                .defineInRange("order_expiry_days", 0, 0, 3650);
+        MAX_ORDER_SIZE = builder
+                .comment("Largest quantity one order may ask for.")
+                .defineInRange("max_order_size", 6400, 1, 1_000_000);
         builder.pop();
         SPEC = builder.build();
     }
@@ -231,5 +260,25 @@ public final class MarketConfig {
 
     public static double contractPremium() {
         return SPEC.isLoaded() ? CONTRACT_PREMIUM.get() : CONTRACT_PREMIUM.getDefault();
+    }
+
+    public static boolean exchangeEnabled() {
+        return SPEC.isLoaded() ? EXCHANGE_ENABLED.get() : EXCHANGE_ENABLED.getDefault();
+    }
+
+    public static double exchangeTax() {
+        return SPEC.isLoaded() ? EXCHANGE_TAX.get() : EXCHANGE_TAX.getDefault();
+    }
+
+    public static int maxOpenOrders() {
+        return SPEC.isLoaded() ? MAX_OPEN_ORDERS.get() : MAX_OPEN_ORDERS.getDefault();
+    }
+
+    public static int orderExpiryDays() {
+        return SPEC.isLoaded() ? ORDER_EXPIRY_DAYS.get() : ORDER_EXPIRY_DAYS.getDefault();
+    }
+
+    public static int maxOrderSize() {
+        return SPEC.isLoaded() ? MAX_ORDER_SIZE.get() : MAX_ORDER_SIZE.getDefault();
     }
 }

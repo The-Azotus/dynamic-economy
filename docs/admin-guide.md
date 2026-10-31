@@ -318,7 +318,7 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 Every admin change to the market is logged to `<world>/dynamic_economy/audit.log`, one JSON line each. Each line records when, who (player name and UUID, or `Server` for the console), the action, its target, the result, and the old and new values where that makes sense. Logged actions:
 
 - catalog edits and tag-rule changes, including ones refused for breaking a rule
-- `setstock`, `clearstock`, `resetprice`, `reload`, `export`, `import` (with the files written), `prune` (with the items removed), `backup`, `restore` and `contracts refresh`
+- `setstock`, `clearstock`, `resetprice`, `reload`, `export`, `import` (with the files written), `prune` (with the items removed), `backup`, `restore`, `contracts refresh` and `exchange cancel`
 
 Previews and read-only commands (`info`, `diagnose`, `stats`) aren't logged.
 
@@ -408,6 +408,22 @@ An item is only offered if its contract still pays more than selling those units
 
 **Money.** Completed and partly delivered contracts create money, like sales; kept deposits remove it. `/market admin contracts` shows the board, each contract's holder and progress, and the lifetime totals.
 
+## The player exchange
+
+Off by default: set `exchange.exchange_enabled = true` to turn it on. The **Exchange** tab lets players trade with each other at their own prices. A player posts a **sell order** (*sell 64 iron at 30 each*) or a **buy order** (*buy 64 iron at 28 each*), and orders for the same item match automatically. The [player guide](player-guide.md#the-exchange-tab) describes it from the player's side.
+
+**What can be traded.** Any item with default components, listed in the catalog or not, so players can trade what the market doesn't buy. The same rule as the market applies: no enchanted, damaged or renamed copies, except data types in `ignored_components`; bought items always come out fresh. Coins never. Items locked for a player ([ProgressiveStages](#progressivestages-hiding-locked-items)) are hidden from them and refused, as on the market.
+
+**Matching.** Orders fill best price first, then oldest first, and partly if need be. A trade happens at the price of the order that was already waiting: a buy order bidding 35 against a waiting sell order at 30 pays 30, and the 5 a unit it saved goes straight back to the buyer. A player's own orders never trade with each other.
+
+**What an order holds.** Posting a sell order takes its items out of the main inventory; posting a buy order takes `price × quantity` from the account the player trades with (their team's, if they chose it). That's held until the order fills, is cancelled or expires. A seller is paid into the account their order came from, less `exchange_tax`; bought items go to the buyer's **collection box**. Cancelling, expiry, `/market admin exchange cancel` or turning the exchange off returns exactly what an order still holds: a buy order's money to its account (a team's while that team exists), a sell order's items to the owner's box. All of this works for offline players, who are told at their next login. If the bank can't be reached at that moment, the payment is kept and paid once it can.
+
+**The collection box** keeps any number of items with the world for as long as the player likes. Taking items out only fills free main-inventory space; whatever doesn't fit stays. It stays open while the exchange is off, so nothing is ever stranded.
+
+**Money.** The exchange creates no money: every bit a seller gets was paid by a buyer. The tax (5% by default, rounded up to a whole bit per trade) is destroyed, a money sink. Money held by buy orders isn't in anyone's balance, so it doesn't count on the leaderboard until the order fills or is cancelled. `/market admin exchange` shows every open order, what the orders hold, what waits in boxes, the value traded and the tax destroyed.
+
+**Restarts.** Orders, holdings, boxes and owed payments are saved together in one file with the world, so a restart can't split a trade. The bank is saved separately (with Numismatics, by Numismatics), so only a crash between the two saves could leave them out of step, as with every other market and contract payment.
+
 ## Where the money goes
 
 The market has **no balance of its own**. It's a source and a sink, not a bank:
@@ -449,6 +465,11 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `contracts.deposit_fraction` | 0.2 | 0 – 1 | The deposit, as a fraction of the reward, rounded up. |
 | `contracts.max_active_contracts` | 1 | 1 – 64 | How many contracts one player may hold at once. |
 | `contracts.contract_weight`, `contract_min_size`, `contract_max_size`, `contract_premium` | 1, 16, 64, 0.25 | see [Catalog fields](#catalog-fields) | Defaults for items whose class and entry don't set them. |
+| `exchange.exchange_enabled` | false | true, false | Run the [player exchange](#the-player-exchange). Turning it off greys out the tab (unless the player has items in their box) and closes every open order, returning what it holds. |
+| `exchange.exchange_tax` | 0.05 | 0 – 1 | Fraction of each exchange sale taken from the seller and destroyed, rounded up to a whole bit. |
+| `exchange.max_open_orders` | 10 | 1 – 1000 | How many open orders one player may have at once. |
+| `exchange.order_expiry_days` | 0 | 0 – 3650 | In-game days until an unfilled order expires and returns what it holds, counted like contracts. 0: orders never expire. |
+| `exchange.max_order_size` | 6400 | 1 – 1,000,000 | Largest quantity one order may ask for. `price × quantity` must also fit one bank transaction (2,147,483,647). |
 
 **The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows. Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
 
@@ -462,6 +483,9 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market contracts`, `/market contracts claim <id>`, `deliver <id> <qty>`, `abandon <id>` | everyone* | The [contract](#contracts) board in chat, and the Contracts tab's buttons. |
 | `/market admin contracts` | 2 | The whole board with holders and progress, and the money contracts have paid and kept. |
 | `/market admin contracts refresh` | 2 | Replaces the board now. Held contracts are settled as if expired. Logged in the audit log. |
+| `/market exchange`, `/market exchange book <item>`, `buy <item> <qty> <price>`, `sell <item> <qty> <price>`, `cancel <id>`, `collect [item]` | everyone* | Your [exchange](#the-player-exchange) orders and box in chat, an item's book, and the Exchange tab's buttons. `price` is per unit. |
+| `/market admin exchange` | 2 | Every open order with its owner, what orders hold, what waits in boxes, the value traded and the tax destroyed. |
+| `/market admin exchange cancel <id>` | 2 | Closes any order, returning what it holds to its owner. Logged in the audit log. |
 | `/market admin setstock <item> <qty>` | 2 | Sets an item's stock. Refused for unlimited items. |
 | `/market admin clearstock <item>` | 2 | Empties an item's stock. |
 | `/market admin resetprice <item>`, `all [preview]` or `tag <tag> [preview]` | 2 | Puts price factors back to 1.0. |

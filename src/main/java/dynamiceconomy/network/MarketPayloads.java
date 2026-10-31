@@ -6,6 +6,7 @@ import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.service.BankService;
 import dynamiceconomy.service.ContractService;
+import dynamiceconomy.service.ExchangeService;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
@@ -151,12 +152,12 @@ public final class MarketPayloads {
     /**
      * Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes, with
      * the server's order limit so the screen can stop an oversized order before it is sent, whether the leaderboard
-     * and contracts tabs are turned on, and the world's bank: it names the money unit, its {@code balanceCap} is the
-     * largest balance it shows (a balance at the cap means "at least this much"), and {@code coins} are what the Bank
-     * tab moves.
+     * contracts and exchange tabs are turned on, and the world's bank: it names the money unit, its {@code balanceCap} is
+     * the largest balance it shows (a balance at the cap means "at least this much"), and {@code coins} are what the
+     * Bank tab moves.
      */
-    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled, boolean contractsEnabled, BankKind bank,
-                           long balanceCap, List<Denomination> coins) implements CustomPacketPayload {
+    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled, boolean contractsEnabled,
+                           boolean exchangeEnabled, BankKind bank, long balanceCap, List<Denomination> coins) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
         // Written out by hand: StreamCodec.composite takes at most six fields.
         public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.of(
@@ -165,12 +166,13 @@ public final class MarketPayloads {
                     ByteBufCodecs.VAR_INT.encode(buf, snapshot.maxQuantity());
                     buf.writeBoolean(snapshot.leaderboardEnabled());
                     buf.writeBoolean(snapshot.contractsEnabled());
+                    buf.writeBoolean(snapshot.exchangeEnabled());
                     BANK_KIND_CODEC.encode(buf, snapshot.bank());
                     ByteBufCodecs.VAR_LONG.encode(buf, snapshot.balanceCap());
                     COINS_CODEC.encode(buf, snapshot.coins());
                 },
                 buf -> new Snapshot(ROWS_CODEC.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), buf.readBoolean(), buf.readBoolean(),
-                        BANK_KIND_CODEC.decode(buf), ByteBufCodecs.VAR_LONG.decode(buf), COINS_CODEC.decode(buf)));
+                        buf.readBoolean(), BANK_KIND_CODEC.decode(buf), ByteBufCodecs.VAR_LONG.decode(buf), COINS_CODEC.decode(buf)));
 
         @Override
         public Type<Snapshot> type() {
@@ -192,9 +194,9 @@ public final class MarketPayloads {
     }
 
     /**
-     * Server to client: the balance of the account this player uses, how many tradeable copies of each listed item (and
-     * plain coins of the bank's set) they hold, and how much room their main inventory has (empty slots, plus the space
-     * left in stacks of each of those). {@code team} is their team's name ("" if none) and {@code usingTeam} whether
+     * Server to client: the balance of the account this player uses, how many tradeable copies of each item (and plain
+     * coins of the bank's set) they hold, and how much room their main inventory has (empty slots, plus the space left
+     * in stacks of each of those). Tradeable means plain enough for the market or the exchange, listed or not. {@code team} is their team's name ("" if none) and {@code usingTeam} whether
      * the balance is the team's. The client cannot
      * work this out itself: vanilla does not sync the inventory while a slotless menu is open.
      */
@@ -506,6 +508,176 @@ public final class MarketPayloads {
 
         @Override
         public Type<TradeOutcome> type() {
+            return TYPE;
+        }
+    }
+
+    // ---- Exchange ----------------------------------------------------------------------------------------------
+
+    private static final StreamCodec<ByteBuf, ExchangeService.Action> EXCHANGE_ACTION_CODEC =
+            ByteBufCodecs.idMapper(i -> ExchangeService.Action.values()[i], ExchangeService.Action::ordinal);
+
+    /** Client to server: send me the exchange (the screen asks when its tab opens), and this item's book if given. */
+    public record ExchangeRequest(Optional<ResourceLocation> book) implements CustomPacketPayload {
+        public static final Type<ExchangeRequest> TYPE = payloadType("exchange_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeRequest> CODEC = StreamCodec.composite(
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), ExchangeRequest::book,
+                ExchangeRequest::new);
+
+        @Override
+        public Type<ExchangeRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * Client to server, from the Exchange tab: post an order for {@code quantity} of {@code item} at {@code price}
+     * each, cancel order {@code orderId}, or take items out of the collection box ({@code item} only, or everything
+     * when it's empty).
+     */
+    public record ExchangeAction(ExchangeService.Action action, Optional<ResourceLocation> item, boolean buy, long price, int quantity,
+                                 long orderId) implements CustomPacketPayload {
+        public static final Type<ExchangeAction> TYPE = payloadType("exchange_action");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeAction> CODEC = StreamCodec.composite(
+                EXCHANGE_ACTION_CODEC, ExchangeAction::action,
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC), ExchangeAction::item,
+                ByteBufCodecs.BOOL, ExchangeAction::buy,
+                ByteBufCodecs.VAR_LONG, ExchangeAction::price,
+                ByteBufCodecs.VAR_INT, ExchangeAction::quantity,
+                ByteBufCodecs.VAR_LONG, ExchangeAction::orderId,
+                ExchangeAction::new);
+
+        public static ExchangeAction post(ResourceLocation item, boolean buy, long price, int quantity) {
+            return new ExchangeAction(ExchangeService.Action.POST, Optional.of(item), buy, price, quantity, 0);
+        }
+
+        public static ExchangeAction cancel(long orderId) {
+            return new ExchangeAction(ExchangeService.Action.CANCEL, Optional.empty(), false, 0, 0, orderId);
+        }
+
+        public static ExchangeAction collect(Optional<ResourceLocation> item) {
+            return new ExchangeAction(ExchangeService.Action.COLLECT, item, false, 0, 0, 0);
+        }
+
+        @Override
+        public Type<ExchangeAction> type() {
+            return TYPE;
+        }
+    }
+
+    private static final StreamCodec<ByteBuf, ExchangeService.Summary> SUMMARY_CODEC = StreamCodec.composite(
+            ResourceLocation.STREAM_CODEC, ExchangeService.Summary::item,
+            ByteBufCodecs.VAR_LONG, ExchangeService.Summary::bestAsk,
+            ByteBufCodecs.VAR_LONG, ExchangeService.Summary::askUnits,
+            ByteBufCodecs.VAR_LONG, ExchangeService.Summary::bestBid,
+            ByteBufCodecs.VAR_LONG, ExchangeService.Summary::bidUnits,
+            ExchangeService.Summary::new);
+    private static final StreamCodec<ByteBuf, List<ExchangeService.Summary>> SUMMARIES_CODEC = SUMMARY_CODEC.apply(ByteBufCodecs.list(65_536));
+
+    /** One of the receiving player's open orders. {@code daysLeft} is -1 when orders don't expire. */
+    public record OrderLine(long id, ResourceLocation item, boolean buy, long price, int quantity, int filled, long daysLeft) {
+        static final StreamCodec<ByteBuf, OrderLine> CODEC = StreamCodec.of(
+                (buf, line) -> {
+                    ByteBufCodecs.VAR_LONG.encode(buf, line.id());
+                    ResourceLocation.STREAM_CODEC.encode(buf, line.item());
+                    buf.writeBoolean(line.buy());
+                    ByteBufCodecs.VAR_LONG.encode(buf, line.price());
+                    ByteBufCodecs.VAR_INT.encode(buf, line.quantity());
+                    ByteBufCodecs.VAR_INT.encode(buf, line.filled());
+                    buf.writeLong(line.daysLeft());
+                },
+                buf -> new OrderLine(ByteBufCodecs.VAR_LONG.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf), buf.readBoolean(),
+                        ByteBufCodecs.VAR_LONG.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
+                        buf.readLong()));
+
+        public int remaining() {
+            return quantity - filled;
+        }
+    }
+
+    private static final StreamCodec<ByteBuf, List<OrderLine>> ORDERS_CODEC = OrderLine.CODEC.apply(ByteBufCodecs.list(1000));
+
+    /** Items waiting in the collection box. */
+    public record BoxLine(ResourceLocation item, long count) {
+        static final StreamCodec<ByteBuf, BoxLine> CODEC = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC, BoxLine::item,
+                ByteBufCodecs.VAR_LONG, BoxLine::count,
+                BoxLine::new);
+    }
+
+    private static final StreamCodec<ByteBuf, List<BoxLine>> BOX_CODEC = BoxLine.CODEC.apply(ByteBufCodecs.list(65_536));
+
+    /**
+     * Server to client: the exchange as this player sees it: the best prices of every item with orders, their own
+     * open orders and collection box, and the rules (open orders allowed, largest order, tax, expiry in days or 0).
+     */
+    public record Exchange(List<ExchangeService.Summary> summaries, List<OrderLine> orders, List<BoxLine> box, int maxOrders,
+                           int maxOrderSize, double tax, int expiryDays) implements CustomPacketPayload {
+        public static final Type<Exchange> TYPE = payloadType("exchange");
+        // Written out by hand: StreamCodec.composite takes at most six fields.
+        public static final StreamCodec<RegistryFriendlyByteBuf, Exchange> CODEC = StreamCodec.of(
+                (buf, exchange) -> {
+                    SUMMARIES_CODEC.encode(buf, exchange.summaries());
+                    ORDERS_CODEC.encode(buf, exchange.orders());
+                    BOX_CODEC.encode(buf, exchange.box());
+                    ByteBufCodecs.VAR_INT.encode(buf, exchange.maxOrders());
+                    ByteBufCodecs.VAR_INT.encode(buf, exchange.maxOrderSize());
+                    buf.writeDouble(exchange.tax());
+                    ByteBufCodecs.VAR_INT.encode(buf, exchange.expiryDays());
+                },
+                buf -> new Exchange(SUMMARIES_CODEC.decode(buf), ORDERS_CODEC.decode(buf), BOX_CODEC.decode(buf),
+                        ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), buf.readDouble(), ByteBufCodecs.VAR_INT.decode(buf)));
+
+        /** How many items wait in the box in all. */
+        public long boxed() {
+            return box.stream().mapToLong(BoxLine::count).sum();
+        }
+
+        @Override
+        public Type<Exchange> type() {
+            return TYPE;
+        }
+    }
+
+    private static final StreamCodec<ByteBuf, ExchangeService.Level> LEVEL_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_LONG, ExchangeService.Level::price,
+            ByteBufCodecs.VAR_LONG, ExchangeService.Level::quantity,
+            ByteBufCodecs.VAR_LONG, ExchangeService.Level::mine,
+            ExchangeService.Level::new);
+
+    /** Server to client: one item's book, best prices first, sent when the screen asks and whenever it changes. */
+    public record ExchangeBook(ResourceLocation item, List<ExchangeService.Level> asks, List<ExchangeService.Level> bids)
+            implements CustomPacketPayload {
+        /** The most prices sent for each side. */
+        public static final int DEPTH = 8;
+        public static final Type<ExchangeBook> TYPE = payloadType("exchange_book");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeBook> CODEC = StreamCodec.composite(
+                ResourceLocation.STREAM_CODEC, ExchangeBook::item,
+                LEVEL_CODEC.apply(ByteBufCodecs.list(DEPTH)), ExchangeBook::asks,
+                LEVEL_CODEC.apply(ByteBufCodecs.list(DEPTH)), ExchangeBook::bids,
+                ExchangeBook::new);
+
+        @Override
+        public Type<ExchangeBook> type() {
+            return TYPE;
+        }
+    }
+
+    /** Server to client: how this player's last exchange request went; see {@link ExchangeService.Outcome}. */
+    public record ExchangeOutcome(ExchangeService.Action action, ResourceLocation item, MarketService.Result result, int quantity,
+                                  int filled, long amount) implements CustomPacketPayload {
+        public static final Type<ExchangeOutcome> TYPE = payloadType("exchange_outcome");
+        public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeOutcome> CODEC = StreamCodec.composite(
+                EXCHANGE_ACTION_CODEC, ExchangeOutcome::action,
+                ResourceLocation.STREAM_CODEC, ExchangeOutcome::item,
+                RESULT_CODEC, ExchangeOutcome::result,
+                ByteBufCodecs.VAR_INT, ExchangeOutcome::quantity,
+                ByteBufCodecs.VAR_INT, ExchangeOutcome::filled,
+                ByteBufCodecs.VAR_LONG, ExchangeOutcome::amount,
+                ExchangeOutcome::new);
+
+        @Override
+        public Type<ExchangeOutcome> type() {
             return TYPE;
         }
     }

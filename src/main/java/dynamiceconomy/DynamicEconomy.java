@@ -18,6 +18,7 @@ import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketNetwork;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.ContractService;
+import dynamiceconomy.service.ExchangeService;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
 import net.minecraft.network.chat.Component;
@@ -89,11 +90,15 @@ public final class DynamicEconomy {
             if (ContractService.tick(event.getServer())) {
                 MarketSync.broadcastContracts(event.getServer());
             }
+            if (ExchangeService.tick(event.getServer())) {
+                MarketSync.broadcastExchange(event.getServer());
+            }
         });
-        // How a held contract ended while its holder was away.
+        // How a held contract or an exchange order ended while its owner was away.
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
             if (event.getEntity() instanceof ServerPlayer player) {
                 ContractService.loggedIn(player);
+                ExchangeService.loggedIn(player);
             }
         });
 

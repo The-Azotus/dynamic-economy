@@ -97,6 +97,7 @@ public final class MarketCommand {
                         .then(Commands.argument("item", ItemArgument.item(context))
                                 .executes(MarketCommand::showPrice)))
                 .then(ContractCommands.player())
+                .then(ExchangeCommands.player(context))
                 .then(withAdminEdits(Commands.literal("admin"), context)
                         .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                         .then(Commands.literal("setstock")
@@ -157,6 +158,7 @@ public final class MarketCommand {
         AdminRecoveryCommands.addTo(admin);
         AdminBankCommands.addTo(admin);
         ContractCommands.addTo(admin);
+        ExchangeCommands.addTo(admin);
         return admin;
     }
 

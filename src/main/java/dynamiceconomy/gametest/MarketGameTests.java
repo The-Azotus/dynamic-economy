@@ -20,6 +20,7 @@ import dynamiceconomy.coin.Coin;
 import dynamiceconomy.coin.Coins;
 import dynamiceconomy.data.AuditLog;
 import dynamiceconomy.data.ContractBoard;
+import dynamiceconomy.data.ExchangeData;
 import dynamiceconomy.data.MarketBackup;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.TradeHistory;
@@ -40,6 +41,7 @@ import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.ContractPricing;
 import dynamiceconomy.service.ContractService;
+import dynamiceconomy.service.ExchangeService;
 import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketListing;
 import dynamiceconomy.service.BankService;
@@ -2240,6 +2242,9 @@ public final class MarketGameTests {
                 expected.put(entry.itemId(), (int) count);
             }
         }
+        // Unlisted items count too (since Phase 17), for the exchange.
+        helper.assertTrue(MarketCatalog.INSTANCE.get(Items.STONE).isEmpty(), "stone isn't listed in the test catalog");
+        expected.put(key(Items.STONE), 12);
         MarketPayloads.PlayerState state = MarketSync.playerState(f.player);
         helper.assertValueEqual(state.held(), expected, "one pass over the inventory counts the same");
         helper.assertValueEqual(expected.get(key(Items.DIAMOND)), 3, "the renamed diamonds don't count");
@@ -4079,6 +4084,446 @@ public final class MarketGameTests {
         DynamicEconomy.LOGGER.info("GameTest skipped: it needs {}, which isn't installed", mod);
         helper.succeed();
         return true;
+    }
+
+    // ---- Exchange -----------------------------------------------------------------------------------------------
+
+    /**
+     * Runs {@code body} with the exchange on, a 5% tax, 10 open orders each, no expiry and orders of up to 6,400, then
+     * puts the config back. Tests use exchanges of their own ({@code new ExchangeData()}), never the world's.
+     */
+    private static void withExchange(Runnable body) {
+        boolean enabled = MarketConfig.EXCHANGE_ENABLED.get();
+        double tax = MarketConfig.EXCHANGE_TAX.get();
+        int orders = MarketConfig.MAX_OPEN_ORDERS.get();
+        int expiry = MarketConfig.ORDER_EXPIRY_DAYS.get();
+        int size = MarketConfig.MAX_ORDER_SIZE.get();
+        MarketConfig.EXCHANGE_ENABLED.set(true);
+        MarketConfig.EXCHANGE_TAX.set(0.05);
+        MarketConfig.MAX_OPEN_ORDERS.set(10);
+        MarketConfig.ORDER_EXPIRY_DAYS.set(0);
+        MarketConfig.MAX_ORDER_SIZE.set(6400);
+        try {
+            body.run();
+        } finally {
+            MarketConfig.EXCHANGE_ENABLED.set(enabled);
+            MarketConfig.EXCHANGE_TAX.set(tax);
+            MarketConfig.MAX_OPEN_ORDERS.set(orders);
+            MarketConfig.ORDER_EXPIRY_DAYS.set(expiry);
+            MarketConfig.MAX_ORDER_SIZE.set(size);
+        }
+    }
+
+    private static ExchangeService.Outcome post(Fixture f, ExchangeData data, Item item, boolean buy, long price, int qty) {
+        return ExchangeService.post(f.player, data, item, buy, price, qty, 0);
+    }
+
+    private static ExchangeService.Outcome posted(GameTestHelper helper, Fixture f, ExchangeData data, Item item, boolean buy, long price, int qty) {
+        ExchangeService.Outcome outcome = post(f, data, item, buy, price, qty);
+        helper.assertValueEqual(outcome.result(), Result.OK, "posting " + (buy ? "buy " : "sell ") + qty + " × " + id(item) + " at " + price);
+        return outcome;
+    }
+
+    private static long boxed(ExchangeData data, Fixture f, Item item) {
+        return data.box(f.player.getUUID()).getOrDefault(id(item), 0L);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void exchangeTradesAtTheWaitingOrdersPriceLessTax(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture buyer = new Fixture(helper);
+            seller.give(new ItemStack(Items.COBBLESTONE, 10));
+            buyer.deposit(100);
+
+            ExchangeService.Outcome ask = posted(helper, seller, data, Items.COBBLESTONE, false, 5, 10);
+            helper.assertValueEqual(ask.filled(), 0, "nothing to trade with yet");
+            helper.assertValueEqual(seller.count(Items.COBBLESTONE), 0L, "the order holds the items");
+            helper.assertValueEqual(data.find(ask.orderId()).orElseThrow().remaining(), 10, "the order waits on the book");
+
+            ExchangeService.Outcome bid = posted(helper, buyer, data, Items.COBBLESTONE, true, 7, 4);
+            helper.assertValueEqual(bid.filled(), 4, "all four traded at once");
+            helper.assertValueEqual(bid.amount(), 20L, "at the waiting seller's price, 5 each");
+            helper.assertValueEqual(bid.orderId(), 0L, "nothing left to wait");
+            helper.assertValueEqual(buyer.balance(), 80, "the buyer paid 20; the 8 bid above the ask came straight back");
+            helper.assertValueEqual(boxed(data, buyer, Items.COBBLESTONE), 4L, "bought units wait in the box");
+            helper.assertValueEqual(buyer.count(Items.COBBLESTONE), 0L, "not in the inventory until collected");
+            helper.assertValueEqual(seller.balance(), 19, "the seller got 20 less the 5% tax, rounded up to 1");
+            helper.assertValueEqual(data.find(ask.orderId()).orElseThrow().remaining(), 6, "six still for sale");
+            helper.assertValueEqual(data.taxCollected(), 1L, "tax destroyed");
+            helper.assertValueEqual(data.volume(), 20L, "value traded");
+            // Test players aren't online, so the seller is told at their next login.
+            helper.assertValueEqual(data.takeNotices(seller.player.getUUID()),
+                    List.of(new ExchangeData.Notice(seller.player.getUUID(), id(Items.COBBLESTONE), ExchangeData.NoticeKind.SOLD, 4, 19)),
+                    "the seller's notice");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void exchangeFillsBestPriceFirstThenOldestFirst(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture dear = new Fixture(helper);
+            Fixture early = new Fixture(helper);
+            Fixture late = new Fixture(helper);
+            Fixture buyer = new Fixture(helper);
+            for (Fixture seller : List.of(dear, early, late)) {
+                seller.give(new ItemStack(Items.COBBLESTONE, 5));
+            }
+            buyer.deposit(1000);
+            long dearOrder = posted(helper, dear, data, Items.COBBLESTONE, false, 6, 5).orderId();
+            long earlyOrder = posted(helper, early, data, Items.COBBLESTONE, false, 5, 5).orderId();
+            long lateOrder = posted(helper, late, data, Items.COBBLESTONE, false, 5, 5).orderId();
+
+            // 12 units: 5 from each seller at 5 (the earlier first), then 2 at 6.
+            ExchangeService.Outcome bid = posted(helper, buyer, data, Items.COBBLESTONE, true, 6, 12);
+            helper.assertValueEqual(bid.filled(), 12, "all twelve traded");
+            helper.assertValueEqual(bid.amount(), 62L, "25 + 25 + 12");
+            helper.assertValueEqual(buyer.balance(), 1000 - 62, "the buyer paid what they traded at, not their bid");
+            helper.assertValueEqual(early.balance(), 23, "25 less a tax of 1.25, rounded up to 2");
+            helper.assertValueEqual(late.balance(), 23, "the same");
+            helper.assertValueEqual(dear.balance(), 11, "12 less a tax of 0.6, rounded up to 1");
+            helper.assertTrue(data.find(earlyOrder).isEmpty() && data.find(lateOrder).isEmpty(), "both cheaper orders are gone");
+            helper.assertValueEqual(data.find(dearOrder).orElseThrow().remaining(), 3, "three left at 6");
+            helper.assertValueEqual(boxed(data, buyer, Items.COBBLESTONE), 12L, "the buyer's box");
+
+            // Time priority on its own: two bids at one price, a seller fills the older first.
+            Fixture first = new Fixture(helper);
+            Fixture second = new Fixture(helper);
+            Fixture seller = new Fixture(helper);
+            first.deposit(100);
+            second.deposit(100);
+            seller.give(new ItemStack(Items.OAK_LOG, 3));
+            posted(helper, first, data, Items.OAK_LOG, true, 4, 2);
+            long secondOrder = posted(helper, second, data, Items.OAK_LOG, true, 4, 2).orderId();
+            posted(helper, seller, data, Items.OAK_LOG, false, 4, 3);
+            helper.assertValueEqual(boxed(data, first, Items.OAK_LOG), 2L, "the older bid filled completely");
+            helper.assertValueEqual(boxed(data, second, Items.OAK_LOG), 1L, "the newer one got the last unit");
+            helper.assertValueEqual(data.find(secondOrder).orElseThrow().remaining(), 1, "and still wants one");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void anIncomingSellOrderGetsTheHigherWaitingBid(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture buyer = new Fixture(helper);
+            Fixture seller = new Fixture(helper);
+            buyer.deposit(100);
+            seller.give(new ItemStack(Items.COBBLESTONE, 10));
+            long bidOrder = posted(helper, buyer, data, Items.COBBLESTONE, true, 8, 10).orderId();
+            helper.assertValueEqual(buyer.balance(), 20, "the bid holds 80");
+
+            ExchangeService.Outcome ask = posted(helper, seller, data, Items.COBBLESTONE, false, 5, 10);
+            helper.assertValueEqual(ask.filled(), 10, "it traded at once");
+            helper.assertValueEqual(ask.amount(), 76L, "at the bid's 8 each: 80 less 4 tax");
+            helper.assertValueEqual(seller.balance(), 76, "paid into the seller's bank");
+            helper.assertValueEqual(buyer.balance(), 20, "the buyer's held money paid for it");
+            helper.assertValueEqual(boxed(data, buyer, Items.COBBLESTONE), 10L, "the buyer's box");
+            helper.assertTrue(data.find(bidOrder).isEmpty(), "the bid is filled");
+            helper.assertTrue(data.orders().isEmpty(), "nothing waits");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void cancellingReturnsExactlyWhatTheOrderHolds(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture buyer = new Fixture(helper);
+            Fixture seller = new Fixture(helper);
+            Fixture other = new Fixture(helper);
+            buyer.deposit(100);
+            seller.give(new ItemStack(Items.COBBLESTONE, 14));
+            long bidOrder = posted(helper, buyer, data, Items.COBBLESTONE, true, 5, 10).orderId();
+            posted(helper, seller, data, Items.COBBLESTONE, false, 5, 4);
+            helper.assertValueEqual(buyer.balance(), 50, "the bid held 50; 20 of it paid for four");
+
+            helper.assertValueEqual(ExchangeService.cancel(other.player, data, bidOrder).result(), Result.NOT_YOUR_ORDER, "someone else's order");
+            ExchangeService.Outcome cancelled = ExchangeService.cancel(buyer.player, data, bidOrder);
+            helper.assertValueEqual(cancelled.result(), Result.OK, "cancelling");
+            helper.assertValueEqual(cancelled.amount(), 30L, "the 6 units still wanted held 30");
+            helper.assertValueEqual(buyer.balance(), 80, "100 less the 20 the four cost");
+            helper.assertValueEqual(ExchangeService.cancel(buyer.player, data, bidOrder).result(), Result.ORDER_GONE, "cancelling twice");
+            helper.assertValueEqual(buyer.balance(), 80, "the second cancel returned nothing");
+
+            long askOrder = posted(helper, seller, data, Items.COBBLESTONE, false, 9, 10).orderId();
+            helper.assertValueEqual(seller.count(Items.COBBLESTONE), 0L, "all ten held");
+            ExchangeService.Outcome returned = ExchangeService.cancel(seller.player, data, askOrder);
+            helper.assertValueEqual(returned.quantity(), 10, "ten returned");
+            helper.assertValueEqual(boxed(data, seller, Items.COBBLESTONE), 10L, "to the collection box");
+            helper.assertTrue(data.orders().isEmpty(), "no orders left");
+        });
+        helper.succeed();
+    }
+
+    /** A post that must be refused and change nothing: balance, main inventory, the book or any box. */
+    private static void assertPostRejected(GameTestHelper helper, Fixture f, ExchangeData data, Result expected,
+                                           java.util.function.Supplier<ExchangeService.Outcome> post) {
+        List<ItemStack> before = new ArrayList<>();
+        f.player.getInventory().items.forEach(s -> before.add(s.copy()));
+        int balance = f.balance();
+        List<ExchangeData.Order> orders = List.copyOf(data.orders());
+        Map<UUID, Map<ResourceLocation, Long>> boxes = Map.copyOf(data.boxes());
+        helper.assertValueEqual(post.get().result(), expected, "post result");
+        helper.assertValueEqual(f.balance(), balance, "balance after " + expected);
+        helper.assertValueEqual(List.copyOf(data.orders()), orders, "orders after " + expected);
+        helper.assertValueEqual(Map.copyOf(data.boxes()), boxes, "boxes after " + expected);
+        NonNullList<ItemStack> after = f.player.getInventory().items;
+        for (int slot = 0; slot < after.size(); slot++) {
+            helper.assertTrue(ItemStack.matches(after.get(slot), before.get(slot)), "inventory slot " + slot + " changed after " + expected);
+        }
+    }
+
+    @GameTest(template = EMPTY)
+    public static void rejectedExchangeOrdersChangeNothing(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture f = new Fixture(helper);
+            f.deposit(100);
+            f.give(new ItemStack(Items.COBBLESTONE, 4));
+            ItemStack renamed = new ItemStack(Items.COBBLESTONE, 1);
+            renamed.set(DataComponents.CUSTOM_NAME, Component.literal("Special"));
+            f.give(renamed);
+
+            MarketConfig.EXCHANGE_ENABLED.set(false);
+            assertPostRejected(helper, f, data, Result.EXCHANGE_CLOSED, () -> post(f, data, Items.COBBLESTONE, true, 1, 1));
+            MarketConfig.EXCHANGE_ENABLED.set(true);
+            assertPostRejected(helper, f, data, Result.NOT_LISTED, () -> post(f, data, Coins.item(Coin.BIT), false, 1, 1));
+            assertPostRejected(helper, f, data, Result.NOT_LISTED, () -> post(f, data, Items.AIR, true, 1, 1));
+            assertPostRejected(helper, f, data, Result.INVALID_QUANTITY, () -> post(f, data, Items.COBBLESTONE, true, 1, 0));
+            assertPostRejected(helper, f, data, Result.INVALID_PRICE, () -> post(f, data, Items.COBBLESTONE, true, 0, 1));
+            assertPostRejected(helper, f, data, Result.TOO_LARGE, () -> post(f, data, Items.COBBLESTONE, true, 1, 6401));
+            assertPostRejected(helper, f, data, Result.TOO_LARGE, () -> post(f, data, Items.COBBLESTONE, true, Integer.MAX_VALUE, 2));
+            assertPostRejected(helper, f, data, Result.NO_FUNDS, () -> post(f, data, Items.COBBLESTONE, true, 11, 10));
+            // The renamed copy doesn't count.
+            assertPostRejected(helper, f, data, Result.NOT_ENOUGH_ITEMS, () -> post(f, data, Items.COBBLESTONE, false, 1, 5));
+
+            MarketVisibility.setTestLocks((player, item) -> player == f.player && item == Items.COBBLESTONE);
+            try {
+                assertPostRejected(helper, f, data, Result.NOT_LISTED, () -> post(f, data, Items.COBBLESTONE, false, 1, 1));
+            } finally {
+                MarketVisibility.setTestLocks(null);
+            }
+
+            MarketConfig.MAX_OPEN_ORDERS.set(2);
+            posted(helper, f, data, Items.OAK_LOG, true, 1, 1);
+            posted(helper, f, data, Items.OAK_LOG, true, 1, 1);
+            assertPostRejected(helper, f, data, Result.ORDER_LIMIT, () -> post(f, data, Items.OAK_LOG, true, 1, 1));
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void aPlayersOwnOrdersNeverTradeWithEachOther(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture f = new Fixture(helper);
+            Fixture other = new Fixture(helper);
+            f.deposit(100);
+            f.give(new ItemStack(Items.COBBLESTONE, 10));
+            other.deposit(100);
+            long ask = posted(helper, f, data, Items.COBBLESTONE, false, 5, 10).orderId();
+            ExchangeService.Outcome bid = posted(helper, f, data, Items.COBBLESTONE, true, 6, 10);
+            helper.assertValueEqual(bid.filled(), 0, "no trade with their own ask");
+            helper.assertValueEqual(data.taxCollected(), 0L, "so no tax");
+            helper.assertValueEqual(f.balance(), 40, "the bid holds 60");
+
+            // Anyone else can still buy from that ask.
+            posted(helper, other, data, Items.COBBLESTONE, true, 5, 3);
+            helper.assertValueEqual(data.find(ask).orElseThrow().remaining(), 7, "three sold to the other player");
+            helper.assertValueEqual(f.balance(), 40 + 15 - 1, "paid 15 less tax");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void unlistedItemsCanBeTraded(GameTestHelper helper) {
+        withExchange(() -> {
+            helper.assertTrue(MarketCatalog.INSTANCE.get(Items.SPONGE).isEmpty(), "sponge isn't listed in the test catalog");
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture buyer = new Fixture(helper);
+            seller.give(new ItemStack(Items.SPONGE, 2));
+            buyer.deposit(10);
+            posted(helper, seller, data, Items.SPONGE, false, 3, 2);
+            helper.assertValueEqual(posted(helper, buyer, data, Items.SPONGE, true, 3, 2).filled(), 2, "traded");
+            helper.assertValueEqual(boxed(data, buyer, Items.SPONGE), 2L, "the sponges wait in the box");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void lockedItemsAreHiddenOnTheExchange(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture locked = new Fixture(helper);
+            seller.give(new ItemStack(Items.COBBLESTONE, 5));
+            posted(helper, seller, data, Items.COBBLESTONE, false, 5, 5);
+            MarketVisibility.setTestLocks((player, item) -> player == locked.player && item == Items.COBBLESTONE);
+            try {
+                helper.assertTrue(ExchangeService.summaries(locked.player, data).isEmpty(), "the locked player sees no cobblestone");
+                ExchangeService.Book book = ExchangeService.book(locked.player, data, id(Items.COBBLESTONE), 8);
+                helper.assertTrue(book.asks().isEmpty() && book.bids().isEmpty(), "nor its book");
+                helper.assertValueEqual(ExchangeService.summaries(seller.player, data).size(), 1, "others still see it");
+            } finally {
+                MarketVisibility.setTestLocks(null);
+            }
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void collectingMovesOnlyWhatFits(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture f = new Fixture(helper);
+            helper.assertValueEqual(ExchangeService.collect(f.player, data, Optional.empty()).result(), Result.NOT_ENOUGH_ITEMS, "an empty box");
+            data.addToBox(f.player.getUUID(), id(Items.COBBLESTONE), 100);
+            for (int slot = 0; slot < 35; slot++) {
+                f.give(new ItemStack(Items.DIRT, 64));
+            }
+
+            ExchangeService.Outcome first = ExchangeService.collect(f.player, data, Optional.empty());
+            helper.assertValueEqual(first.result(), Result.OK, "the free slot");
+            helper.assertValueEqual(first.quantity(), 64, "one stack fits");
+            helper.assertValueEqual(f.count(Items.COBBLESTONE), 64L, "in the inventory");
+            helper.assertValueEqual(boxed(data, f, Items.COBBLESTONE), 36L, "the rest stays");
+            helper.assertValueEqual(ExchangeService.collect(f.player, data, Optional.empty()).result(), Result.NO_SPACE, "no room left");
+            helper.assertValueEqual(boxed(data, f, Items.COBBLESTONE), 36L, "still there");
+
+            f.clearInventory();
+            ExchangeService.Outcome rest = ExchangeService.collect(f.player, data, Optional.of(id(Items.COBBLESTONE)));
+            helper.assertValueEqual(rest.quantity(), 36, "the rest");
+            helper.assertTrue(data.box(f.player.getUUID()).isEmpty(), "the box is empty");
+            helper.assertTrue(data.boxes().isEmpty(), "and forgotten");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void expiryAndClosingReturnWhatOrdersHold(GameTestHelper helper) {
+        withExchange(() -> {
+            net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+            ExchangeData data = new ExchangeData();
+            Fixture buyer = new Fixture(helper);
+            Fixture seller = new Fixture(helper);
+            buyer.deposit(100);
+            seller.give(new ItemStack(Items.COBBLESTONE, 4));
+            ExchangeService.post(buyer.player, data, Items.COBBLESTONE, true, 3, 5, 0);
+            ExchangeService.post(seller.player, data, Items.COBBLESTONE, false, 9, 4, 1);
+            helper.assertValueEqual(buyer.balance(), 85, "the bid holds 15");
+
+            helper.assertValueEqual(ExchangeService.expire(server, data, 100, 0), 0, "0 days means never");
+            helper.assertValueEqual(ExchangeService.expire(server, data, 2, 3), 0, "nothing is 3 days old on day 2");
+            helper.assertValueEqual(ExchangeService.expire(server, data, 3, 3), 1, "the bid expires on day 3");
+            helper.assertValueEqual(buyer.balance(), 100, "its money is back");
+            helper.assertValueEqual(ExchangeService.expire(server, data, 4, 3), 1, "the ask on day 4");
+            helper.assertValueEqual(boxed(data, seller, Items.COBBLESTONE), 4L, "its items wait in the box");
+            helper.assertValueEqual(data.takeNotices(buyer.player.getUUID()).size(), 1, "the buyer is told");
+            helper.assertValueEqual(data.takeNotices(seller.player.getUUID()).size(), 1, "and the seller");
+
+            // Turning the exchange off closes everything the same way.
+            ExchangeService.post(buyer.player, data, Items.OAK_LOG, true, 2, 10, 5);
+            ExchangeService.collect(seller.player, data, Optional.empty());
+            ExchangeService.post(seller.player, data, Items.COBBLESTONE, false, 9, 4, 5);
+            ExchangeService.closeAll(server, data);
+            helper.assertTrue(data.orders().isEmpty(), "every order closed");
+            helper.assertValueEqual(buyer.balance(), 100, "money back");
+            helper.assertValueEqual(boxed(data, seller, Items.COBBLESTONE), 4L, "items in the box");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void theExchangeSurvivesARestartMidOrder(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture buyer = new Fixture(helper);
+            Fixture bidder = new Fixture(helper);
+            seller.give(new ItemStack(Items.COBBLESTONE, 13));
+            buyer.deposit(100);
+            bidder.deposit(100);
+            posted(helper, seller, data, Items.COBBLESTONE, false, 5, 10);
+            posted(helper, buyer, data, Items.COBBLESTONE, true, 7, 4);
+            long bid = posted(helper, bidder, data, Items.COBBLESTONE, true, 4, 3).orderId();
+
+            ExchangeData restarted = ExchangeData.fromTag(data.save(new CompoundTag(), helper.getLevel().registryAccess()),
+                    helper.getLevel().registryAccess());
+            helper.assertValueEqual(restarted.orders(), data.orders(), "orders");
+            helper.assertValueEqual(restarted.boxes(), data.boxes(), "boxes");
+            helper.assertValueEqual(restarted.taxCollected(), data.taxCollected(), "tax");
+            helper.assertValueEqual(restarted.volume(), data.volume(), "volume");
+            helper.assertValueEqual(restarted.takeNotices(seller.player.getUUID()), data.takeNotices(seller.player.getUUID()), "notices");
+
+            // Trading carries on where it stopped, and new orders never reuse an ID.
+            ExchangeService.Outcome more = posted(helper, seller, restarted, Items.COBBLESTONE, false, 4, 3);
+            helper.assertValueEqual(more.filled(), 3, "the waiting bid is still there");
+            helper.assertTrue(restarted.find(bid).isEmpty(), "and now filled");
+            helper.assertValueEqual(restarted.box(bidder.player.getUUID()), Map.of(id(Items.COBBLESTONE), 3L), "the bidder's box");
+            long next = restarted.takeId();
+            helper.assertTrue(data.orders().stream().allMatch(o -> o.id() < next), "IDs keep counting up");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY, timeoutTicks = 200)
+    public static void hundredsOfRandomExchangeRequestsReconcile(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            List<Fixture> players = List.of(new Fixture(helper), new Fixture(helper), new Fixture(helper));
+            List<Item> items = List.of(Items.COBBLESTONE, Items.OAK_LOG);
+            for (Fixture f : players) {
+                f.deposit(1000);
+                f.give(new ItemStack(Items.COBBLESTONE, 64));
+                f.give(new ItemStack(Items.OAK_LOG, 64));
+            }
+            java.util.Random random = new java.util.Random(17);
+            for (int step = 0; step < 400; step++) {
+                Fixture f = players.get(random.nextInt(players.size()));
+                Item item = items.get(random.nextInt(items.size()));
+                switch (random.nextInt(5)) {
+                    case 0, 1, 2 -> post(f, data, item, random.nextBoolean(), 1 + random.nextInt(10), 1 + random.nextInt(20));
+                    case 3 -> {
+                        List<ExchangeData.Order> mine = ExchangeService.ordersOf(f.player.getUUID(), data);
+                        if (!mine.isEmpty()) {
+                            ExchangeService.cancel(f.player, data, mine.get(random.nextInt(mine.size())).id());
+                        }
+                    }
+                    default -> ExchangeService.collect(f.player, data, Optional.empty());
+                }
+                assertExchangeReconciles(helper, data, players, items, "step " + step);
+            }
+            helper.assertTrue(data.volume() > 0, "some trades happened");
+            for (Fixture f : players) {
+                ExchangeService.ordersOf(f.player.getUUID(), data).forEach(o -> ExchangeService.cancel(f.player, data, o.id()));
+                ExchangeService.collect(f.player, data, Optional.empty());
+            }
+            assertExchangeReconciles(helper, data, players, items, "after cancelling everything");
+            helper.assertTrue(data.orders().isEmpty(), "no orders left");
+        });
+        helper.succeed();
+    }
+
+    /**
+     * Money: balances, plus what buy orders hold, plus the tax destroyed, is what the players started with. Items:
+     * inventories, plus what sell orders hold, plus collection boxes, is what they started with.
+     */
+    private static void assertExchangeReconciles(GameTestHelper helper, ExchangeData data, List<Fixture> players, List<Item> items, String when) {
+        long money = players.stream().mapToLong(Fixture::balance).sum();
+        long held = data.orders().stream().mapToLong(ExchangeData.Order::heldMoney).sum();
+        helper.assertValueEqual(money + held + data.taxCollected(), 1000L * players.size(), "money at " + when);
+        for (Item item : items) {
+            long carried = players.stream().mapToLong(f -> f.count(item)).sum();
+            long selling = data.orders().stream().filter(o -> !o.buy() && o.item().equals(id(item))).mapToLong(ExchangeData.Order::remaining).sum();
+            long boxes = players.stream().mapToLong(f -> boxed(data, f, item)).sum();
+            helper.assertValueEqual(carried + selling + boxes, 64L * players.size(), id(item) + " at " + when);
+        }
     }
 
     // ---- Fixture ------------------------------------------------------------------------------------------------

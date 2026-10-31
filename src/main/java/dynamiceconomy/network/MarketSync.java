@@ -9,11 +9,13 @@ import dynamiceconomy.bank.BankTeam;
 import dynamiceconomy.bank.Denomination;
 import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.data.ContractBoard;
+import dynamiceconomy.data.ExchangeData;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.service.BankService;
 import dynamiceconomy.service.ContractService;
+import dynamiceconomy.service.ExchangeService;
 import dynamiceconomy.service.Leaderboard;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketVisibility;
@@ -52,6 +54,8 @@ public final class MarketSync {
     /** Fewest ticks between one player's leaderboard requests, since each one reads every bank account. */
     private static final int LEADERBOARD_COOLDOWN_TICKS = 20;
     private static final Map<UUID, Integer> lastLeaderboardRequest = new HashMap<>();
+    /** The item whose exchange book each viewer last asked for, resent to them whenever the exchange changes. */
+    private static final Map<UUID, ResourceLocation> watchedBooks = new HashMap<>();
 
     private MarketSync() {
     }
@@ -68,6 +72,10 @@ public final class MarketSync {
         lastSentState.remove(player.getUUID());
         sendCatalog(player);
         sendPlayerState(player);
+        watchedBooks.remove(player.getUUID());
+        if (exchangeVisible(player)) {
+            sendExchange(player);
+        }
     }
 
     /** After a catalog reload: prices or listings may have changed for everyone. */
@@ -175,6 +183,7 @@ public final class MarketSync {
         List<ServerPlayer> viewers = viewers(server);
         lastSentState.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         lastLeaderboardRequest.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
+        watchedBooks.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         viewers.forEach(MarketSync::sendPlayerState);
     }
 
@@ -307,6 +316,86 @@ public final class MarketSync {
         return new MarketPayloads.Contracts(lines, board.daysLeft(), board.claimedBy(player.getUUID()), MarketConfig.maxActiveContracts());
     }
 
+    /**
+     * The Exchange tab's state, and an item's book if asked for, which is then resent whenever the exchange changes.
+     * Works with the exchange turned off while the player has items waiting in their box.
+     */
+    static void handleExchangeRequest(MarketPayloads.ExchangeRequest request, ServerPlayer player) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player) || menu.bankOnly()) {
+            return;
+        }
+        request.book().ifPresentOrElse(item -> watchedBooks.put(player.getUUID(), item), () -> watchedBooks.remove(player.getUUID()));
+        sendExchange(player);
+        sendBook(player);
+    }
+
+    /** Post, cancel or collect from the Exchange tab of an open market screen (not a Bank Card's). */
+    static void handleExchangeAction(MarketPayloads.ExchangeAction request, ServerPlayer player) {
+        if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player) || menu.bankOnly()) {
+            return;
+        }
+        ExchangeService.Outcome outcome = switch (request.action()) {
+            case POST -> request.item().flatMap(BuiltInRegistries.ITEM::getOptional)
+                    .map(item -> ExchangeService.post(player, item, request.buy(), request.price(), request.quantity()))
+                    .orElse(new ExchangeService.Outcome(ExchangeService.Action.POST, MarketService.Result.NOT_LISTED,
+                            BuiltInRegistries.ITEM.getDefaultKey(), 0, 0, 0, 0));
+            case CANCEL -> ExchangeService.cancel(player, request.orderId());
+            case COLLECT -> ExchangeService.collect(player, request.item());
+        };
+        PacketDistributor.sendToPlayer(player, new MarketPayloads.ExchangeOutcome(outcome.action(), outcome.item(), outcome.result(),
+                outcome.quantity(), outcome.filled(), outcome.amount()));
+        if (outcome.ok() && outcome.action() != ExchangeService.Action.COLLECT) {
+            broadcastExchange(player.server);
+        } else {
+            sendExchange(player);
+            sendBook(player);
+        }
+        sendPlayerState(player);
+    }
+
+    /** After the exchange changed: everyone with a market screen open gets it, and the book they're looking at. */
+    public static void broadcastExchange(MinecraftServer server) {
+        for (ServerPlayer player : viewers(server)) {
+            if (!((MarketMenu) player.containerMenu).bankOnly() && exchangeVisible(player)) {
+                sendExchange(player);
+                sendBook(player);
+            }
+        }
+    }
+
+    /** Whether the player can use the Exchange tab: while it's on, or while they have items waiting in their box. */
+    private static boolean exchangeVisible(ServerPlayer player) {
+        return MarketConfig.exchangeEnabled() || !ExchangeData.get(player.server).box(player.getUUID()).isEmpty();
+    }
+
+    public static void sendExchange(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, exchangeFor(player));
+    }
+
+    private static void sendBook(ServerPlayer player) {
+        ResourceLocation item = watchedBooks.get(player.getUUID());
+        if (item != null) {
+            ExchangeService.Book book = ExchangeService.book(player, ExchangeData.get(player.server), item, MarketPayloads.ExchangeBook.DEPTH);
+            PacketDistributor.sendToPlayer(player, new MarketPayloads.ExchangeBook(book.item(), book.asks(), book.bids()));
+        }
+    }
+
+    /** The exchange as {@code player} sees it. */
+    public static MarketPayloads.Exchange exchangeFor(ServerPlayer player) {
+        ExchangeData data = ExchangeData.get(player.server);
+        int expiry = MarketConfig.orderExpiryDays();
+        long today = ExchangeService.today(player.server);
+        List<MarketPayloads.OrderLine> orders = ExchangeService.ordersOf(player.getUUID(), data).stream()
+                .map(o -> new MarketPayloads.OrderLine(o.id(), o.item(), o.buy(), o.price(), o.quantity(), o.filled(),
+                        expiry > 0 ? Math.max(0, o.postedDay() + expiry - today) : -1))
+                .toList();
+        List<MarketPayloads.BoxLine> box = data.box(player.getUUID()).entrySet().stream()
+                .map(e -> new MarketPayloads.BoxLine(e.getKey(), e.getValue()))
+                .toList();
+        return new MarketPayloads.Exchange(ExchangeService.summaries(player, data), orders, box, MarketConfig.maxOpenOrders(),
+                MarketConfig.maxOrderSize(), MarketConfig.exchangeTax(), expiry);
+    }
+
     static void handleHistoryRequest(MarketPayloads.HistoryRequest request, ServerPlayer player) {
         if (!(player.containerMenu instanceof MarketMenu menu) || !menu.stillValid(player)) {
             return;
@@ -335,7 +424,7 @@ public final class MarketSync {
         }
         Bank bank = WorldBank.of(server);
         return new MarketPayloads.Snapshot(rows, MarketConfig.maxQuantityPerRequest(), MarketConfig.leaderboardEnabled(),
-                MarketConfig.contractsEnabled(), bank.kind(), bank.displayCap(), bank.coins());
+                MarketConfig.contractsEnabled(), MarketConfig.exchangeEnabled(), bank.kind(), bank.displayCap(), bank.coins());
     }
 
     private static Optional<MarketPayloads.Row> row(MinecraftServer server, Item item) {
@@ -344,9 +433,9 @@ public final class MarketSync {
     }
 
     /**
-     * The player's balance and main inventory as the market sees it: sellable copies of each listed item, empty slots,
-     * and the room left in stacks of each listed item, counted exactly as {@code MarketService} counts space for a
-     * purchase. One pass over the inventory, so the cost doesn't grow with the size of the catalog.
+     * The player's balance and main inventory as the market and exchange see it: tradeable copies of each item, listed
+     * or not, empty slots, and the room left in stacks of each of those. One pass over the inventory, so the cost
+     * doesn't grow with the size of the catalog.
      */
     public static MarketPayloads.PlayerState playerState(ServerPlayer player) {
         Bank bank = WorldBank.of(player.server);
@@ -355,17 +444,20 @@ public final class MarketSync {
         List<Denomination> coins = bank.coins();
         Map<ResourceLocation, Integer> held = new HashMap<>();
         Map<ResourceLocation, Integer> stackRoom = new HashMap<>();
+        Set<ResourceLocation> ignored = MarketConfig.ignoredComponents();
         int emptySlots = 0;
         for (ItemStack stack : player.getInventory().items) {
             if (stack.isEmpty()) {
                 emptySlots++;
                 continue;
             }
-            MarketCatalog.INSTANCE.get(stack.getItem()).filter(entry -> entry.matches(stack)).ifPresent(entry -> {
-                held.merge(entry.itemId(), stack.getCount(), Integer::sum);
-                stackRoom.merge(entry.itemId(), Math.max(0, stack.getMaxStackSize() - stack.getCount()), Integer::sum);
-            });
-            // Coins are never listed, so their ids can't clash with a listed item's.
+            Item item = stack.getItem();
+            if (ExchangeService.tradeable(item) && CatalogEntry.plain(stack, item, ignored)) {
+                ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+                held.merge(id, stack.getCount(), Integer::sum);
+                stackRoom.merge(id, Math.max(0, stack.getMaxStackSize() - stack.getCount()), Integer::sum);
+            }
+            // Coins are never tradeable, so their ids can't clash with an item counted above.
             for (Denomination coin : coins) {
                 if (BankService.isPlain(stack, coin)) {
                     ResourceLocation id = BuiltInRegistries.ITEM.getKey(coin.item());

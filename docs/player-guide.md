@@ -13,7 +13,7 @@ Which bank depends on the server. With Create: Numismatics installed, it's your 
 
 The screen fills most of the window, and the list shows as many items as fit. On a wide window the selected item's panel is to the right of the list; on a narrow one it's below it.
 
-Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see [The Bank tab](#the-bank-tab)), **Contracts** (delivery orders, see [The Contracts tab](#the-contracts-tab)), **Leaderboard** (the richest players) and **History** (your own trades).
+Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see [The Bank tab](#the-bank-tab)), **Contracts** (delivery orders, see [The Contracts tab](#the-contracts-tab)), **Exchange** (trading with other players, see [The Exchange tab](#the-exchange-tab)), **Leaderboard** (the richest players) and **History** (your own trades).
 
 | Part | What it shows |
 | --- | --- |
@@ -112,6 +112,25 @@ A contract always pays less per unit than the market could ever sell you that it
 
 `/market contracts` lists the board in chat; `/market contracts claim <id>`, `deliver <id> <amount>` and `abandon <id>` do the same as the buttons, where the server allows `/market`.
 
+## The Exchange tab
+
+Where the server turns it on, the **Exchange** tab lets you trade with other players at prices you choose. The button at the top of the toolbar switches the list between **Items**, **My orders** and your **Box**.
+
+**Items** lists the items that have orders, then the items you carry, with the cheapest seller's price (**Ask**), the highest buyer's price (**Bid**) and how many you have. Type in the search box to find any item at all, listed on the market or not. The ⇄ button on the Market tab's item panel opens the selected item here.
+
+Click an item to see its **book**: what sellers ask above the line (cheapest nearest the line), what buyers bid below it (highest nearest), and how many units at each price. Your own share is marked with a *. Click a price to copy it into the **Price each** box. Then set a quantity and press:
+
+- **Buy N for X**: holds X from the account you're using until the order fills. It buys straight away from any seller asking your price or less, cheapest first, and pays *their* price; whatever you saved comes straight back. The rest waits on the book for sellers.
+- **Sell N for X**: takes N from your main inventory (no enchanted, damaged or renamed copies) and holds them. It sells straight away to any buyer bidding your price or more, highest first, at *their* price. The rest waits on the book for buyers.
+
+When a sale goes through, the money goes to your bank less the exchange tax (5% by default, rounded up to a whole bit); the button's tooltip shows what you'd get. Items you buy go to your **collection box**. You're paid and your box fills even while you're offline; you get a message when you next log in. Your own orders never trade with each other. You may have up to 10 open orders by default.
+
+**My orders** lists your open orders with their price and how much has filled. Click one, then **Cancel order** to get back what it still holds: a buy order's money to your bank, a sell order's items to your box. If the server makes orders expire, the panel shows the days left; an expired order is returned the same way.
+
+**Box** lists what waits for you. Click a line to take that item out, or **Take all**. Only what fits in your free inventory space moves; the rest stays as long as you like.
+
+`/market exchange` lists your orders and box in chat; `/market exchange book <item>`, `buy <item> <amount> <price>`, `sell <item> <amount> <price>`, `cancel <id>` and `collect [item]` do the same as the screen, where the server allows `/market`.
+
 ## How prices move
 
 - **Selling lowers the price** and **buying raises it**, a little with every item. A big order slides the price as it goes, so 640 items sell for less than 640 × the price shown for one.
@@ -152,6 +171,13 @@ Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
 | *That contract has expired; the board has been replaced* | The board changed while you had the screen open. |
 | *You already hold as many contracts as you may* | Finish or abandon one first. |
 | *That's more than the contract still wants* | Deliver fewer. |
+| *Posted an order for N item* | Nothing matched yet; it waits on the book. See it under **My orders**. |
+| *All N item traded at once for X* | Done; bought items are in your box, sale money in your bank. |
+| *The exchange is turned off on this server* | Ask an admin. Your box still works. |
+| *You already have as many open orders as you may* | Cancel one, or wait for one to fill. |
+| *That order is no longer open* | It filled or was cancelled while you had the screen open. |
+| *That item can't be traded on the exchange* | Coins can't be, and neither can items you haven't unlocked. |
+| *Enter a price of at least 1* | Type a price each in the Price box. |
 
 ## Crafting a terminal
 
