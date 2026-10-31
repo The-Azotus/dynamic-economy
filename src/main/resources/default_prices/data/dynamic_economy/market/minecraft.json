@@ -1872,11 +1872,6 @@
       "class": "rare_processed"
     },
     {
-      "item": "minecraft:enchanted_book",
-      "base_price": 4,
-      "class": "common_processed"
-    },
-    {
       "item": "minecraft:enchanted_golden_apple",
       "base_price": 4096,
       "class": "rare_loot"
@@ -2177,11 +2172,6 @@
       "item": "minecraft:glowstone_dust",
       "base_price": 8,
       "class": "common_processed"
-    },
-    {
-      "item": "minecraft:goat_horn",
-      "base_price": 64,
-      "class": "rare_loot"
     },
     {
       "item": "minecraft:gold_block",
