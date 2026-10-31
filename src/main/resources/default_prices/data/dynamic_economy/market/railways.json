@@ -1,0 +1,1958 @@
+{
+  "required_mods": [
+    "railways"
+  ],
+  "entries": [
+    {
+      "item": "railways:benchcart",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:big_buffer",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:black_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:black_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_conductor_cap",
+      "base_price": 120,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:black_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:black_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:blue_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:blue_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:brown_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:brown_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_conductor_cap",
+      "base_price": 120,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:brown_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:brown_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:brown_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:brown_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:buffer",
+      "base_price": 204,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:conductor_vent",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:conductor_whistle",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:copycat_headstock_link_and_pin",
+      "base_price": 53,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:cyan_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:cyan_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:cyan_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:fuel_tank",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:gray_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:gray_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_conductor_cap",
+      "base_price": 120,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:gray_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:gray_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:gray_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:green_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_conductor_cap",
+      "base_price": 120,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:green_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:green_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:handcar",
+      "base_price": 168,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:jukeboxcart",
+      "base_price": 626,
+      "class": "rare_processed"
+    },
+    {
+      "item": "railways:light_blue_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:light_blue_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_blue_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:light_gray_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:light_gray_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:light_gray_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:lime_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:lime_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:link_and_pin",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:magenta_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:magenta_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:orange_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:orange_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:orange_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:pink_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:pink_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:pink_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:pink_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:portable_fuel_interface",
+      "base_price": 49,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:purple_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:purple_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:purple_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:purple_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:purple_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:red_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:red_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:red_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:remote_lens",
+      "base_price": 171,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:semaphore",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:small_buffer",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:smokestack_caboosestyle",
+      "base_price": 68,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:smokestack_coalburner",
+      "base_price": 239,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:smokestack_diesel",
+      "base_price": 213,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:smokestack_long",
+      "base_price": 33,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:smokestack_oilburner",
+      "base_price": 169,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:smokestack_streamlined",
+      "base_price": 99,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:smokestack_woodburner",
+      "base_price": 139,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_acacia",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_acacia_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_acacia_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_bamboo",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_bamboo_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_bamboo_wide",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_birch",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_birch_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_birch_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_blackstone_wide",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_cherry",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_cherry_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_cherry_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_coupler",
+      "base_price": 69,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_create_andesite_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_create_andesite_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_crimson_wide",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_dark_oak",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_dark_oak_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_dark_oak_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_ender",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_ender_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_ender_wide",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_jungle",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_jungle_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_jungle_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_mangrove",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_mangrove_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_mangrove_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_monorail",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_oak",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_oak_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_oak_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_phantom",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_phantom_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_phantom_wide",
+      "base_price": 38,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_spruce",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_spruce_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_spruce_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_stripped_bamboo",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_stripped_bamboo_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_stripped_bamboo_wide",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_switch_andesite",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_switch_brass",
+      "base_price": 138,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_tieless",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_tieless_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_tieless_wide",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_canopy",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_canopy_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_canopy_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_darkwood",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_darkwood_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_darkwood_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_mangrove",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_mangrove_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_mangrove_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_minewood",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_minewood_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_minewood_wide",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_sortingwood",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_sortingwood_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_sortingwood_wide",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_timewood",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_timewood_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_timewood_wide",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_transwood",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_transwood_narrow",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_transwood_wide",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_twilight_oak",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_twilight_oak_narrow",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_twilightforest_twilight_oak_wide",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:track_warped_wide",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:white_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:white_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:white_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:white_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:white_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:white_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:wooden_headstock_link_and_pin",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:yellow_brass_wrapped_locometal",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:yellow_brass_wrapped_locometal_boiler",
+      "base_price": 119,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_conductor_cap",
+      "base_price": 119,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:yellow_copper_wrapped_locometal",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "railways:yellow_copper_wrapped_locometal_boiler",
+      "base_price": 118,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_flat_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_flat_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_iron_wrapped_locometal",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_iron_wrapped_locometal_boiler",
+      "base_price": 125,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_locometal_boiler",
+      "base_price": 116,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_locometal_pillar",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_locometal_smokebox",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_plated_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_riveted_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "railways:yellow_slashed_locometal",
+      "base_price": 39,
+      "class": "common_processed",
+      "can_sell": false
+    }
+  ]
+}

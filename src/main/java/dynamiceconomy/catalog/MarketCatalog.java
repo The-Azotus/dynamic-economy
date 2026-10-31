@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.coin.Coins;
 import dynamiceconomy.data.MarketOverrides;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.FileToIdConverter;
@@ -18,6 +19,7 @@ import net.minecraft.util.profiling.InactiveProfiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.neoforged.fml.ModList;
 
 import java.io.Reader;
 import java.util.ArrayList;
@@ -39,17 +41,21 @@ import java.util.Optional;
  * higher-priority datapack wins, as with any datapack override; within one pack, the file whose ID sorts last wins.
  * The loader also records where each field of each entry came from, and keeps its problems for
  * {@code /market admin diagnose}.
+ * <p>
+ * The same pass reads the item classes ({@link ItemClasses}) from {@code data/<namespace>/market_classes/*.json}, and
+ * uses them before decoding any entry.
  */
 public final class MarketCatalog extends SimplePreparableReloadListener<MarketCatalog.Prepared> {
     public static final MarketCatalog INSTANCE = new MarketCatalog();
     private static final FileToIdConverter FILES = FileToIdConverter.json("market");
+    private static final FileToIdConverter CLASS_FILES = FileToIdConverter.json("market_classes");
 
     /** One market file as read from a pack. Higher {@code packOrder} means higher priority. */
     public record SourceFile(ResourceLocation id, int packOrder, String packId, JsonElement json) {
     }
 
-    /** The files read off the main thread, and the ones that couldn't be read. */
-    public record Prepared(List<SourceFile> files, List<Problem> unreadable) {
+    /** The files read off the main thread, and the ones that couldn't be read. Class files are keyed by class ID. */
+    public record Prepared(List<SourceFile> files, Map<ResourceLocation, JsonElement> classFiles, List<Problem> unreadable) {
     }
 
     /** Something the loader noticed. {@code skipped} means an entry or file was left out; otherwise it's a warning. */
@@ -167,19 +173,34 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
                         e.getMessage())));
             }
         }
-        return new Prepared(found, unreadable);
+        // Only the highest-priority pack's copy of each class file is listed, so a pack replaces a whole class.
+        Map<ResourceLocation, JsonElement> classFiles = new LinkedHashMap<>();
+        for (Map.Entry<ResourceLocation, Resource> file : CLASS_FILES.listMatchingResources(resourceManager).entrySet()) {
+            ResourceLocation id = CLASS_FILES.fileToId(file.getKey());
+            try (Reader reader = file.getValue().openAsReader()) {
+                classFiles.put(id, JsonParser.parseReader(reader));
+            } catch (Exception e) {
+                DynamicEconomy.LOGGER.error("Market class {} could not be read; skipped", id, e);
+                unreadable.add(new Problem(true, "Market class %s could not be read: %s".formatted(id, e.getMessage())));
+            }
+        }
+        return new Prepared(found, classFiles, unreadable);
     }
 
     @Override
     protected void apply(Prepared prepared, ResourceManager resourceManager, ProfilerFiller profiler) {
+        ItemClasses.Loaded classes = ItemClasses.parse(prepared.classFiles());
+        ItemClasses.use(classes);
         Loaded loaded = load(prepared.files());
         List<Problem> allProblems = new ArrayList<>(prepared.unreadable());
+        allProblems.addAll(classes.problems());
         allProblems.addAll(loaded.problems());
         files = new Loaded(loaded.entries(), loaded.sources(), List.copyOf(allProblems), loaded.unpriced());
         // Tags are bound only after every reload listener has run, so tag rules here may still see the old tags.
         // Build quietly; DynamicEconomy.catalogReloaded rebuilds and reports once tags are current.
         rebuild(false);
-        DynamicEconomy.LOGGER.info("Loaded {} market catalog entries from {} files", entries.size(), prepared.files().size());
+        DynamicEconomy.LOGGER.info("Loaded {} market catalog entries from {} files, and {} item classes", entries.size(),
+                prepared.files().size(), classes.classes().size());
     }
 
     /** Parses files that all come from one pack, keyed by file ID. Pure: logs problems but changes no state. */
@@ -214,9 +235,23 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
 
     /**
      * Decodes one entry, already merged with its file's defaults, using exactly the loader's rules. The importer uses
-     * this too, so a CSV row is accepted only if the same entry would load from a catalog file.
+     * this too, so a CSV row is accepted only if the same entry would load from a catalog file. If the entry names a
+     * class, the class fills every field the entry doesn't set.
      */
     public static DataResult<CatalogEntry> decode(JsonObject entry) {
+        if (!entry.has("class")) {
+            return decodeWithoutClass(entry, Optional.empty());
+        }
+        DataResult<ItemClasses.ItemClass> itemClass = ItemClasses.lookup(entry.get("class"));
+        if (itemClass.error().isPresent()) {
+            return DataResult.error(itemClass.error().get().messageSupplier());
+        }
+        ItemClasses.ItemClass found = itemClass.result().orElseThrow();
+        return decodeWithoutClass(CatalogJson.merge(found.values(), entry), Optional.of(found.id()));
+    }
+
+    /** Decodes an entry whose class values, if any, are already merged in. */
+    static DataResult<CatalogEntry> decodeWithoutClass(JsonObject entry, Optional<ResourceLocation> itemClass) {
         DataResult<CatalogEntry.Raw> raw = CatalogEntry.Raw.CODEC.parse(JsonOps.INSTANCE, entry);
         if (raw.error().isPresent()) {
             return DataResult.error(raw.error().get().messageSupplier());
@@ -226,7 +261,10 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         if (item.isEmpty() || item.get() == Items.AIR) {
             return DataResult.error(() -> "unknown item " + value.item());
         }
-        DataResult<CatalogEntry> resolved = value.resolve(item.get());
+        if (Coins.isCoin(item.get())) {
+            return DataResult.error(() -> value.item() + " is a coin, and coins can never be listed: selling one would create money");
+        }
+        DataResult<CatalogEntry> resolved = value.resolve(item.get(), itemClass);
         // Strict: never accept a partial result, e.g. an out-of-range optional field replaced by its default.
         return resolved.error().isPresent() ? DataResult.error(resolved.error().get().messageSupplier()) : resolved;
     }
@@ -245,6 +283,26 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         if (!(file.json() instanceof JsonObject obj) || !obj.has("entries") || !obj.get("entries").isJsonArray()) {
             skipped(problems, "Market file %s must be an object with an \"entries\" array; skipped".formatted(fileId));
             return 0;
+        }
+        if (obj.has("required_mods")) {
+            List<String> required = new ArrayList<>();
+            if (obj.get("required_mods") instanceof com.google.gson.JsonArray array) {
+                for (JsonElement mod : array) {
+                    if (mod.isJsonPrimitive() && mod.getAsJsonPrimitive().isString()) {
+                        required.add(mod.getAsString());
+                    }
+                }
+            }
+            if (!(obj.get("required_mods") instanceof com.google.gson.JsonArray array) || required.size() != array.size()) {
+                skipped(problems, "Market file %s: \"required_mods\" must be a list of mod IDs; file skipped".formatted(fileId));
+                return 0;
+            }
+            // A price file for a mod that isn't installed is expected, not a mistake: skip it quietly.
+            Optional<String> missing = required.stream().filter(mod -> !ModList.get().isLoaded(mod)).findFirst();
+            if (missing.isPresent()) {
+                DynamicEconomy.LOGGER.debug("Market file {} skipped: mod {} isn't installed", fileId, missing.get());
+                return 0;
+            }
         }
         JsonObject defaults = new JsonObject();
         if (obj.has("defaults")) {

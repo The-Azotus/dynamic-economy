@@ -1,0 +1,173 @@
+{
+  "required_mods": [
+    "createaddition"
+  ],
+  "entries": [
+    {
+      "item": "createaddition:alternator",
+      "base_price": 318,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:barbed_wire",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:biomass",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:biomass_pellet",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:biomass_pellet_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "createaddition:brass_rod",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:cake_base",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:cake_base_baked",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:capacitor",
+      "base_price": 38,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:chocolate_cake",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:connector",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:copper_rod",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:copper_spool",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:diamond_grit_sandpaper",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "createaddition:electric_motor",
+      "base_price": 201,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:electrum_amulet",
+      "base_price": 632,
+      "class": "rare_processed"
+    },
+    {
+      "item": "createaddition:electrum_rod",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:electrum_spool",
+      "base_price": 33,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:festive_spool",
+      "base_price": 33,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:gold_rod",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:gold_spool",
+      "base_price": 109,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:gold_wire",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:honey_cake",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:iron_wire",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:large_connector",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:modular_accumulator",
+      "base_price": 110,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:portable_energy_interface",
+      "base_price": 69,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:redstone_relay",
+      "base_price": 146,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:rolling_mill",
+      "base_price": 91,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:small_light_connector",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:spool",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:tesla_coil",
+      "base_price": 317,
+      "class": "common_processed"
+    },
+    {
+      "item": "createaddition:zinc_sheet",
+      "base_price": 17,
+      "class": "common_processed"
+    }
+  ]
+}

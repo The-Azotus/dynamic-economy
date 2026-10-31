@@ -1,0 +1,1054 @@
+{
+  "required_mods": [
+    "supplementaries"
+  ],
+  "entries": [
+    {
+      "item": "supplementaries:altimeter",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:antique_ink",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:ars_nouveau/cannon_boat_archwood",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:ash",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "supplementaries:ash_brick",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:ash_bricks",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "supplementaries:ash_bricks_slab",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:ash_bricks_stairs",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:ash_bricks_wall",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bamboo_spikes",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:barnacles",
+      "base_price": 2,
+      "class": "common_resource"
+    },
+    {
+      "item": "supplementaries:bellows",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_aspen",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_blue_enchanted",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_cika",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_ebony",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_fir",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_florus",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_green_enchanted",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_holly",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_ironwood",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_jacaranda",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_mahogany",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_rainbow_eucalyptus",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_sakura",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_skyris",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_spirit",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_white_mangrove",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_witch_hazel",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:biomeswevegone/cannon_boat_zelkova",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:blackboard",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:blackstone_lamp",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:blackstone_tile",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:blackstone_tile_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:blackstone_tile_wall",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bomb",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bubble_blower",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_black",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_blue",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_brown",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_cyan",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_gray",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_green",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_light_blue",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_light_gray",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_lime",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_magenta",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_orange",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_pink",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_purple",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_red",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_white",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:bunting_yellow",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cage",
+      "base_price": 134,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_black",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_blue",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_brown",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_cyan",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_gray",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_green",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_light_blue",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_light_gray",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_lime",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_magenta",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_orange",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_pink",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_purple",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_red",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_white",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:candle_holder_yellow",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon",
+      "base_price": 200,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon_boat_acacia",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon_boat_birch",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon_boat_cherry",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon_boat_dark_oak",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon_boat_jungle",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon_boat_oak",
+      "base_price": 208,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "supplementaries:cannon_boat_spruce",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cannon_raft_bamboo",
+      "base_price": 211,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "supplementaries:cannonball",
+      "base_price": 99,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:checker_block",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:clock_block",
+      "base_price": 233,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:cog_block",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:crank",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:crystal_display",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:daub",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:daub_brace",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:daub_cross_brace",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:daub_frame",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:deepslate_lamp",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:dispenser_minecart",
+      "base_price": 75,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "supplementaries:dragon_banner_pattern",
+      "base_price": 4505,
+      "class": "rare_processed"
+    },
+    {
+      "item": "supplementaries:end_stone_lamp",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:enderman_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "supplementaries:faucet",
+      "base_price": 141,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:feather_block",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "supplementaries:fine_wood",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:fine_wood_slab",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:fine_wood_stairs",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:fire_pit",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_black",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_blue",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_brown",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_cyan",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_gray",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_green",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_light_blue",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_light_gray",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_lime",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_magenta",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_orange",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_pink",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_purple",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_red",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_white",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flag_yellow",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flax_seeds",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "supplementaries:flint_block",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "supplementaries:flower_box",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:flute",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:goblet",
+      "base_price": 47,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:gold_bars",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:gold_door",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:gold_gate",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:gold_trapdoor",
+      "base_price": 211,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:gravel_bricks",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:grouper",
+      "base_price": 279,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:hat_stand",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:hourglass",
+      "base_price": 116,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:iron_gate",
+      "base_price": 40,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:item_shelf",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:jar",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:jar_boat",
+      "base_price": 23,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:key",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:lapis_bricks",
+      "base_price": 35,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "supplementaries:lapis_bricks_slab",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:lapis_bricks_stairs",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:lapis_bricks_wall",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:lock_block",
+      "base_price": 157,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:lumisene_bottle",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:lumisene_bucket",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:lunch_basket",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:music_disc_heave_ho",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "supplementaries:netherite_door",
+      "base_price": 856,
+      "class": "rare_processed"
+    },
+    {
+      "item": "supplementaries:netherite_trapdoor",
+      "base_price": 962,
+      "class": "rare_processed"
+    },
+    {
+      "item": "supplementaries:notice_board",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:pancake",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:pedestal",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:pignata",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:planter",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:present",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:pulley_block",
+      "base_price": 45,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:redstone_illuminator",
+      "base_price": 72,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_baobab",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_blackwood",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_cypress",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_dead",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_eucalyptus",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_joshua",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_kapok",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_larch",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_magnolia",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_maple",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_palm",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_pine",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_redwood",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_socotra",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_willow",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:regions_unexplored/cannon_boat_wisteria",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:relayer",
+      "base_price": 63,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:sconce",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:sconce_lever",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:sconce_soul",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:slice_map",
+      "base_price": 200,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:slidy_block",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:slingshot",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:speaker_block",
+      "base_price": 117,
+      "class": "rare_processed"
+    },
+    {
+      "item": "supplementaries:spider_head",
+      "base_price": 128,
+      "class": "rare_loot"
+    },
+    {
+      "item": "supplementaries:spring_launcher",
+      "base_price": 289,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:statue",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:stone_lamp",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:stone_tile",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:stone_tile_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:stone_tile_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:stone_tile_wall",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:timber_brace",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:timber_cross_brace",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:timber_frame",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:trapped_present",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:turn_table",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_canopy",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_dark",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_mangrove",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_mining",
+      "base_price": 215,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_sorting",
+      "base_price": 215,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_time",
+      "base_price": 215,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_transformation",
+      "base_price": 215,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/cannon_boat_twilight_oak",
+      "base_price": 208,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/way_sign_mining",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/way_sign_sorting",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/way_sign_time",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:twilightforest/way_sign_transformation",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:way_sign_bamboo",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:wicker_fence",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:wild_flax",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "supplementaries:wind_vane",
+      "base_price": 129,
+      "class": "common_processed"
+    },
+    {
+      "item": "supplementaries:wrench",
+      "base_price": 35,
+      "class": "common_processed"
+    }
+  ]
+}

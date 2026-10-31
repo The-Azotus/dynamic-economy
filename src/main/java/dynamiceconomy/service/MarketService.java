@@ -3,7 +3,8 @@ package dynamiceconomy.service;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
-import dynamiceconomy.compat.NumismaticsBridge;
+import dynamiceconomy.bank.Bank;
+import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.data.TradeHistory;
 import net.minecraft.core.NonNullList;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import java.util.OptionalLong;
 
 /**
- * The only code that changes market stock or player money.
+ * The only code that changes market stock or player money. Money moves only through the world's {@link Bank}.
  * <p>
  * Every check runs before anything changes, and once the first change is made no remaining step can fail. That holds
  * because everything runs on the server thread, so nothing else can touch the inventory, stock or bank in between.
@@ -35,7 +36,7 @@ public final class MarketService {
         TOO_LARGE,
         /** Quantity was zero or negative. */
         INVALID_QUANTITY,
-        /** The Numismatics bank API is missing or changed. */
+        /** The world's bank can't be reached: Numismatics' bank with Numismatics missing, or its API changed. */
         BANK_UNAVAILABLE
     }
 
@@ -99,7 +100,8 @@ public final class MarketService {
     public static TradeResult trySell(ServerPlayer player, Item item, int qty, OptionalLong expectedTotal) {
         requireServerThread(player);
         Optional<CatalogEntry> listing = MarketCatalog.INSTANCE.get(item);
-        if (listing.isEmpty()) {
+        // A locked item answers exactly as an unlisted one, so the reply doesn't reveal it.
+        if (listing.isEmpty() || MarketVisibility.hidden(player, item)) {
             return TradeResult.fail(Result.NOT_LISTED);
         }
         CatalogEntry entry = listing.get();
@@ -129,7 +131,7 @@ public final class MarketService {
         if (countMatching(items, entry) < qty) {
             return new TradeResult(Result.NOT_ENOUGH_ITEMS, 0, unitPrice, order.total());
         }
-        Optional<NumismaticsBridge.Account> account = NumismaticsBridge.account(player);
+        Optional<Bank.Account> account = WorldBank.of(player.server).activeAccount(player);
         if (account.isEmpty()) {
             return TradeResult.fail(Result.BANK_UNAVAILABLE);
         }
@@ -157,7 +159,8 @@ public final class MarketService {
     public static TradeResult tryBuy(ServerPlayer player, Item item, int qty, OptionalLong expectedTotal) {
         requireServerThread(player);
         Optional<CatalogEntry> listing = MarketCatalog.INSTANCE.get(item);
-        if (listing.isEmpty()) {
+        // A locked item answers exactly as an unlisted one, so the reply doesn't reveal it.
+        if (listing.isEmpty() || MarketVisibility.hidden(player, item)) {
             return TradeResult.fail(Result.NOT_LISTED);
         }
         CatalogEntry entry = listing.get();
@@ -190,7 +193,7 @@ public final class MarketService {
         if (spaceFor(items, entry) < qty) {
             return new TradeResult(Result.NO_SPACE, 0, unitPrice, order.total());
         }
-        Optional<NumismaticsBridge.Account> account = NumismaticsBridge.account(player);
+        Optional<Bank.Account> account = WorldBank.of(player.server).activeAccount(player);
         if (account.isEmpty()) {
             return TradeResult.fail(Result.BANK_UNAVAILABLE);
         }
@@ -321,20 +324,23 @@ public final class MarketService {
         for (ItemStack stack : items) {
             if (stack.isEmpty()) {
                 space += maxStack;
-            } else if (entry.matches(stack)) {
+            } else if (entry.isFresh(stack)) {
                 space += Math.max(0, maxStack - stack.getCount());
             }
         }
         return space;
     }
 
-    /** Tops up existing stacks first, then fills empty slots. The caller has checked {@link #spaceFor}. */
+    /**
+     * Tops up existing fresh stacks first (never one carrying data the sale check ignores), then fills empty slots.
+     * The caller has checked {@link #spaceFor}.
+     */
     private static void insert(NonNullList<ItemStack> items, CatalogEntry entry, int qty) {
         int maxStack = new ItemStack(entry.item()).getMaxStackSize();
         int remaining = qty;
         for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
             ItemStack stack = items.get(slot);
-            if (!stack.isEmpty() && entry.matches(stack) && stack.getCount() < maxStack) {
+            if (!stack.isEmpty() && entry.isFresh(stack) && stack.getCount() < maxStack) {
                 int added = Math.min(remaining, maxStack - stack.getCount());
                 stack.grow(added);
                 remaining -= added;

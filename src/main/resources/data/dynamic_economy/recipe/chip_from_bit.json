@@ -1,0 +1,34 @@
+{
+  "type": "dynamic_economy:coin_exchange",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "dynamic_economy:bit"
+    },
+    {
+      "item": "dynamic_economy:bit"
+    },
+    {
+      "item": "dynamic_economy:bit"
+    },
+    {
+      "item": "dynamic_economy:bit"
+    },
+    {
+      "item": "dynamic_economy:bit"
+    },
+    {
+      "item": "dynamic_economy:bit"
+    },
+    {
+      "item": "dynamic_economy:bit"
+    },
+    {
+      "item": "dynamic_economy:bit"
+    }
+  ],
+  "result": {
+    "id": "dynamic_economy:chip",
+    "count": 1
+  }
+}

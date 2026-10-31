@@ -1,0 +1,466 @@
+{
+  "required_mods": [
+    "projecte"
+  ],
+  "entries": [
+    {
+      "item": "projecte:aeternalis_fuel",
+      "base_price": 563,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:aeternalis_fuel_block",
+      "base_price": 5068,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:alchemical_chest",
+      "base_price": 657,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:alchemical_coal",
+      "base_price": 35,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:alchemical_coal_block",
+      "base_price": 316,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:black_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:blue_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:body_stone",
+      "base_price": 64213,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:brown_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:catalytic_lens",
+      "base_price": 90512,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:collector_mk1",
+      "base_price": 5291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:collector_mk2",
+      "base_price": 15111,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:collector_mk3",
+      "base_price": 47460,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:condenser_mk1",
+      "base_price": 2945,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:condenser_mk2",
+      "base_price": 669774,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:cyan_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dark_matter",
+      "base_price": 9574,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dark_matter_block",
+      "base_price": 38297,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:destruction_catalyst",
+      "base_price": 891,
+      "class": "common_processed"
+    },
+    {
+      "item": "projecte:divining_rod_1",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "projecte:divining_rod_2",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "projecte:divining_rod_3",
+      "base_price": 127,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_axe",
+      "base_price": 29849,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_boots",
+      "base_price": 38297,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_chestplate",
+      "base_price": 76595,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_furnace",
+      "base_price": 306389,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_hammer",
+      "base_price": 20838,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_helmet",
+      "base_price": 47872,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_hoe",
+      "base_price": 20275,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_leggings",
+      "base_price": 67020,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_pedestal",
+      "base_price": 319897,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_pick",
+      "base_price": 29849,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_shears",
+      "base_price": 10137,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_shovel",
+      "base_price": 10700,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:dm_sword",
+      "base_price": 19712,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:gem_of_eternal_density",
+      "base_price": 21982,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:gray_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:green_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:high_covalence_dust",
+      "base_price": 14,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:hyperkinetic_lens",
+      "base_price": 22600,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:interdiction_torch",
+      "base_price": 1739,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:klein_star_drei",
+      "base_price": 27033,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:klein_star_ein",
+      "base_price": 1689,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:klein_star_omega",
+      "base_price": 1730150,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:klein_star_sphere",
+      "base_price": 432537,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:klein_star_vier",
+      "base_price": 108134,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:klein_star_zwei",
+      "base_price": 6758,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:life_stone",
+      "base_price": 128480,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:light_blue_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:light_gray_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:lime_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:magenta_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:medium_covalence_dust",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "projecte:mercurial_eye",
+      "base_price": 32723,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:mind_stone",
+      "base_price": 64240,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:mobius_fuel",
+      "base_price": 140,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:mobius_fuel_block",
+      "base_price": 1267,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:nova_cataclysm",
+      "base_price": 318,
+      "class": "common_processed"
+    },
+    {
+      "item": "projecte:nova_catalyst",
+      "base_price": 72,
+      "class": "common_processed"
+    },
+    {
+      "item": "projecte:orange_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:philosophers_stone",
+      "base_price": 642,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:pink_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:purple_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:red_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:red_matter",
+      "base_price": 32102,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:red_matter_block",
+      "base_price": 128409,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "projecte:relay_mk1",
+      "base_price": 5132,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:relay_mk2",
+      "base_price": 14768,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:relay_mk3",
+      "base_price": 46932,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:repair_talisman",
+      "base_price": 34,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_axe",
+      "base_price": 135731,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_boots",
+      "base_price": 166707,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_chestplate",
+      "base_price": 333414,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_furnace",
+      "base_price": 691618,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_hammer",
+      "base_price": 104192,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_helmet",
+      "base_price": 208384,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_hoe",
+      "base_price": 94054,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_katar",
+      "base_price": 516454,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_leggings",
+      "base_price": 291737,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_morning_star",
+      "base_price": 484915,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_pick",
+      "base_price": 135731,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_shears",
+      "base_price": 42240,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_shovel",
+      "base_price": 52377,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:rm_sword",
+      "base_price": 83916,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:soul_stone",
+      "base_price": 64266,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:transmutation_table",
+      "base_price": 39,
+      "class": "common_processed"
+    },
+    {
+      "item": "projecte:transmutation_tablet",
+      "base_price": 153234,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:watch_of_flowing_time",
+      "base_price": 38607,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:white_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    },
+    {
+      "item": "projecte:yellow_alchemical_bag",
+      "base_price": 722,
+      "class": "rare_processed"
+    }
+  ]
+}

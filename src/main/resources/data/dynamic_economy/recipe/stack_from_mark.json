@@ -1,0 +1,13 @@
+{
+  "type": "dynamic_economy:coin_exchange",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "dynamic_economy:mark"
+    }
+  ],
+  "result": {
+    "id": "dynamic_economy:stack",
+    "count": 8
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Crops and mob drops that automated farms produce endlessly. Always in stock, but selling in bulk pushes the price down fast.",
+  "unlimited_stock": true,
+  "markup": 0.5,
+  "sell_impact": 0.001,
+  "buy_impact": 0.001,
+  "recovery": 0.05,
+  "floor": 0.1,
+  "ceiling": 2.0
+}

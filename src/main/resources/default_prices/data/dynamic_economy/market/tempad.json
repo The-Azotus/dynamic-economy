@@ -1,0 +1,107 @@
+{
+  "required_mods": [
+    "tempad"
+  ],
+  "entries": [
+    {
+      "item": "tempad:card_wallet",
+      "base_price": 68,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:chronomark",
+      "base_price": 1297,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:chronometer",
+      "base_price": 2341,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:chronon_battery",
+      "base_price": 1314,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:chronon_cell",
+      "base_price": 189,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:chronon_generator",
+      "base_price": 484,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:knowledge_projector",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:knowledge_repository_upgrade",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:location_broadcaster",
+      "base_price": 305,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:location_card",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:metronome",
+      "base_price": 5101,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:new_location_upgrade",
+      "base_price": 18099,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:player_teleport_upgrade",
+      "base_price": 382,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:screening_device",
+      "base_price": 680,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:tempad",
+      "base_price": 2274,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:time_steel",
+      "base_price": 393,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:time_twister",
+      "base_price": 2191,
+      "class": "rare_processed"
+    },
+    {
+      "item": "tempad:timedoor_marker",
+      "base_price": 565,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:timedoor_projector",
+      "base_price": 1194,
+      "class": "common_processed"
+    },
+    {
+      "item": "tempad:workstation",
+      "base_price": 853,
+      "class": "rare_processed"
+    }
+  ]
+}

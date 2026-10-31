@@ -1,0 +1,1648 @@
+{
+  "required_mods": [
+    "mekanism"
+  ],
+  "entries": [
+    {
+      "item": "mekanism:advanced_bin",
+      "base_price": 167,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_chemical_tank",
+      "base_price": 369,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_combining_factory",
+      "base_price": 4093,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:advanced_compressing_factory",
+      "base_price": 728,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_control_circuit",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_energy_cube",
+      "base_price": 1306,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_enriching_factory",
+      "base_price": 725,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_fluid_tank",
+      "base_price": 404,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_induction_cell",
+      "base_price": 9013,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_induction_provider",
+      "base_price": 5053,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_infusing_factory",
+      "base_price": 655,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_injecting_factory",
+      "base_price": 4641,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:advanced_logistical_transporter",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_mechanical_pipe",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_pressurized_tube",
+      "base_price": 5,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_purifying_factory",
+      "base_price": 971,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_sawing_factory",
+      "base_price": 791,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_smelting_factory",
+      "base_price": 659,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_thermodynamic_conductor",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_tier_installer",
+      "base_price": 247,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:advanced_universal_cable",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:alloy_atomic",
+      "base_price": 1147,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:alloy_infused",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:alloy_reinforced",
+      "base_price": 583,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:antiprotonic_nucleosynthesizer",
+      "base_price": 16044,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:atomic_disassembler",
+      "base_price": 2032,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:basic_bin",
+      "base_price": 69,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_chemical_tank",
+      "base_price": 167,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_combining_factory",
+      "base_price": 3847,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:basic_compressing_factory",
+      "base_price": 482,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_control_circuit",
+      "base_price": 41,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_energy_cube",
+      "base_price": 681,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_enriching_factory",
+      "base_price": 479,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_fluid_tank",
+      "base_price": 184,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_induction_cell",
+      "base_price": 1684,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_induction_provider",
+      "base_price": 883,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_infusing_factory",
+      "base_price": 409,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_injecting_factory",
+      "base_price": 4395,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:basic_logistical_transporter",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_mechanical_pipe",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_pressurized_tube",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_purifying_factory",
+      "base_price": 725,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_sawing_factory",
+      "base_price": 545,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_smelting_factory",
+      "base_price": 413,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_thermodynamic_conductor",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_tier_installer",
+      "base_price": 199,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:basic_universal_cable",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:block_bronze",
+      "base_price": 44,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:block_fluorite",
+      "base_price": 79,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:block_osmium",
+      "base_price": 277,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:block_refined_glowstone",
+      "base_price": 79,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:block_refined_obsidian",
+      "base_price": 5078,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:block_salt",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:block_tin",
+      "base_price": 158,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:boiler_casing",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:boiler_valve",
+      "base_price": 65,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:canteen",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:cardboard_box",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:chargepad",
+      "base_price": 270,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:chemical_crystallizer",
+      "base_price": 4718,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:chemical_dissolution_chamber",
+      "base_price": 5035,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:chemical_infuser",
+      "base_price": 580,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:chemical_injection_chamber",
+      "base_price": 4197,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:chemical_oxidizer",
+      "base_price": 451,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:chemical_washer",
+      "base_price": 5052,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:clump_copper",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:clump_gold",
+      "base_price": 21,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:clump_iron",
+      "base_price": 12,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:clump_lead",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:clump_osmium",
+      "base_price": 22,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:clump_tin",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:clump_uranium",
+      "base_price": 25,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:combiner",
+      "base_price": 3649,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:configuration_card",
+      "base_price": 121,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:configurator",
+      "base_price": 112,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crafting_formula",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:crystal_copper",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:crystal_gold",
+      "base_price": 38,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:crystal_iron",
+      "base_price": 26,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:crystal_lead",
+      "base_price": 16,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:crystal_osmium",
+      "base_price": 22,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:crystal_tin",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:crystal_uranium",
+      "base_price": 52,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:deepslate_fluorite_ore",
+      "base_price": 124,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:deepslate_osmium_ore",
+      "base_price": 177,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:deepslate_tin_ore",
+      "base_price": 106,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:dictionary",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:digital_miner",
+      "base_price": 12193,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:dimensional_stabilizer",
+      "base_price": 11981,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:dirty_dust_copper",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dirty_dust_gold",
+      "base_price": 26,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dirty_dust_iron",
+      "base_price": 15,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dirty_dust_lead",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dirty_dust_osmium",
+      "base_price": 22,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dirty_dust_tin",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dirty_dust_uranium",
+      "base_price": 31,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dirty_netherite_scrap",
+      "base_price": 750,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:diversion_transporter",
+      "base_price": 50,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:dosimeter",
+      "base_price": 99,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:dust_bronze",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dust_charcoal",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dust_diamond",
+      "base_price": 563,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:dust_emerald",
+      "base_price": 105,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:dust_fluorite",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:dust_lithium",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:dust_osmium",
+      "base_price": 21,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dust_quartz",
+      "base_price": 3,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:dust_refined_obsidian",
+      "base_price": 564,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:dust_tin",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:dynamic_tank",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:dynamic_valve",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:electric_bow",
+      "base_price": 284,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:electric_pump",
+      "base_price": 223,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:electrolytic_core",
+      "base_price": 147,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:electrolytic_separator",
+      "base_price": 349,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:elite_bin",
+      "base_price": 1954,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_chemical_tank",
+      "base_price": 2824,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_combining_factory",
+      "base_price": 7763,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_compressing_factory",
+      "base_price": 4398,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_control_circuit",
+      "base_price": 616,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_energy_cube",
+      "base_price": 4227,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_enriching_factory",
+      "base_price": 4395,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_fluid_tank",
+      "base_price": 2877,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_induction_cell",
+      "base_price": 41249,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_induction_provider",
+      "base_price": 26905,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_infusing_factory",
+      "base_price": 4325,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_injecting_factory",
+      "base_price": 8311,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_logistical_transporter",
+      "base_price": 83,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_mechanical_pipe",
+      "base_price": 79,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_pressurized_tube",
+      "base_price": 78,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_purifying_factory",
+      "base_price": 4641,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_sawing_factory",
+      "base_price": 4461,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_smelting_factory",
+      "base_price": 4329,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_thermodynamic_conductor",
+      "base_price": 79,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_tier_installer",
+      "base_price": 3671,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:elite_universal_cable",
+      "base_price": 79,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:energized_smelter",
+      "base_price": 215,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:energy_tablet",
+      "base_price": 242,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:enriched_carbon",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:enriched_diamond",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:enriched_iron",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:enriched_redstone",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:enriched_refined_obsidian",
+      "base_price": 564,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:enriched_tin",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:enrichment_chamber",
+      "base_price": 281,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:flamethrower",
+      "base_price": 336,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:fluidic_plenisher",
+      "base_price": 412,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:fluorite_gem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:fluorite_ore",
+      "base_price": 124,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:formulaic_assemblicator",
+      "base_price": 438,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:free_runners",
+      "base_price": 607,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:free_runners_armored",
+      "base_price": 1841,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:fuelwood_heater",
+      "base_price": 197,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:gauge_dropper",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:geiger_counter",
+      "base_price": 129,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hazmat_boots",
+      "base_price": 88,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hazmat_gown",
+      "base_price": 176,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hazmat_mask",
+      "base_price": 110,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hazmat_pants",
+      "base_price": 154,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hdpe_elytra",
+      "base_price": 11371,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:hdpe_pellet",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hdpe_rod",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hdpe_sheet",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:hdpe_stick",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:induction_casing",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:induction_port",
+      "base_price": 450,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:industrial_alarm",
+      "base_price": 294,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_bronze",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:ingot_lead",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_osmium",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_refined_glowstone",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:ingot_refined_obsidian",
+      "base_price": 564,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:ingot_tin",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:ingot_uranium",
+      "base_price": 64,
+      "class": "rare_resource"
+    },
+    {
+      "item": "mekanism:isotopic_centrifuge",
+      "base_price": 2659,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:jetpack",
+      "base_price": 283,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:jetpack_armored",
+      "base_price": 1517,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:laser",
+      "base_price": 2879,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:laser_amplifier",
+      "base_price": 1320,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:laser_tractor_beam",
+      "base_price": 1429,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:logistical_sorter",
+      "base_price": 343,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:meka_tool",
+      "base_price": 6779,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:mekasuit_bodyarmor",
+      "base_price": 9916,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:mekasuit_boots",
+      "base_price": 7663,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:mekasuit_helmet",
+      "base_price": 8227,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:mekasuit_pants",
+      "base_price": 9353,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:metallurgic_infuser",
+      "base_price": 211,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:modification_station",
+      "base_price": 2784,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_attack_amplification_unit",
+      "base_price": 232,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_base",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_blasting_unit",
+      "base_price": 5547,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_charge_distribution_unit",
+      "base_price": 4103,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_color_modulation_unit",
+      "base_price": 10865,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_dosimeter_unit",
+      "base_price": 260,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_electrolytic_breathing_unit",
+      "base_price": 309,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_elytra_unit",
+      "base_price": 18815,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_energy_unit",
+      "base_price": 1846,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_excavation_escalation_unit",
+      "base_price": 268,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_farming_unit",
+      "base_price": 233,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_fortune_unit",
+      "base_price": 12270,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_geiger_unit",
+      "base_price": 291,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_gravitational_modulating_unit",
+      "base_price": 279417,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_gyroscopic_stabilization_unit",
+      "base_price": 1807,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_hydraulic_propulsion_unit",
+      "base_price": 3144,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_hydrostatic_repulsor_unit",
+      "base_price": 3246,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_inhalation_purification_unit",
+      "base_price": 3127,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_jetpack_unit",
+      "base_price": 3503,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_laser_dissipation_unit",
+      "base_price": 1482,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_locomotive_boosting_unit",
+      "base_price": 6480,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_magnetic_attraction_unit",
+      "base_price": 3298,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_motorized_servo_unit",
+      "base_price": 2709,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_nutritional_injection_unit",
+      "base_price": 3291,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_radiation_shielding_unit",
+      "base_price": 359,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_shearing_unit",
+      "base_price": 232,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:module_silk_touch_unit",
+      "base_price": 5515,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_soul_surfer_unit",
+      "base_price": 3546,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_teleportation_unit",
+      "base_price": 21253,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_vein_mining_unit",
+      "base_price": 6000,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:module_vision_enhancement_unit",
+      "base_price": 3325,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:network_reader",
+      "base_price": 294,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:nugget_osmium",
+      "base_price": 3,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:nugget_refined_obsidian",
+      "base_price": 62,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:nugget_tin",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:nutritional_liquifier",
+      "base_price": 212,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:oredictionificator",
+      "base_price": 180,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:osmium_compressor",
+      "base_price": 284,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:osmium_ore",
+      "base_price": 177,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:painting_machine",
+      "base_price": 269,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:pellet_antimatter",
+      "base_price": 4096,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:pellet_plutonium",
+      "base_price": 256,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:pellet_polonium",
+      "base_price": 256,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:personal_barrel",
+      "base_price": 108,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:personal_chest",
+      "base_price": 110,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:pigment_extractor",
+      "base_price": 212,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:pigment_mixer",
+      "base_price": 3682,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:portable_qio_dashboard",
+      "base_price": 8374,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:portable_teleporter",
+      "base_price": 3671,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:precision_sawmill",
+      "base_price": 347,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:pressure_disperser",
+      "base_price": 116,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:pressurized_reaction_chamber",
+      "base_price": 753,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:purification_chamber",
+      "base_price": 527,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:qio_dashboard",
+      "base_price": 3298,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_drive_array",
+      "base_price": 14922,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_drive_base",
+      "base_price": 4844,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_drive_hyper_dense",
+      "base_price": 23608,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_drive_supermassive",
+      "base_price": 388995,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_drive_time_dilating",
+      "base_price": 95840,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_exporter",
+      "base_price": 4453,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_importer",
+      "base_price": 4456,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:qio_redstone_adapter",
+      "base_price": 5628,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:quantum_entangloporter",
+      "base_price": 10016,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:radioactive_waste_barrel",
+      "base_price": 131,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:raw_lead",
+      "base_price": 16,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:raw_osmium",
+      "base_price": 20,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:raw_tin",
+      "base_price": 12,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:raw_uranium",
+      "base_price": 48,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:reprocessed_fissile_fragment",
+      "base_price": 70,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:resistive_heater",
+      "base_price": 428,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:restrictive_transporter",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:robit",
+      "base_price": 2879,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:rotary_condensentrator",
+      "base_price": 686,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:salt",
+      "base_price": 1,
+      "class": "common_resource"
+    },
+    {
+      "item": "mekanism:scuba_mask",
+      "base_price": 78,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:scuba_tank",
+      "base_price": 281,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:security_desk",
+      "base_price": 1655,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:seismic_reader",
+      "base_price": 327,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:seismic_vibrator",
+      "base_price": 263,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:shard_copper",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:shard_gold",
+      "base_price": 16,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:shard_iron",
+      "base_price": 9,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:shard_lead",
+      "base_price": 6,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:shard_osmium",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:shard_tin",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:shard_uranium",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "mekanism:solar_neutron_activator",
+      "base_price": 2509,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:sps_casing",
+      "base_price": 1460,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:sps_port",
+      "base_price": 7023,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:steel_casing",
+      "base_price": 83,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:structural_glass",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:substrate",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:supercharged_coil",
+      "base_price": 6111,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:superheating_element",
+      "base_price": 162,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:teleportation_core",
+      "base_price": 3104,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:teleporter",
+      "base_price": 3604,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:teleporter_frame",
+      "base_price": 502,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:thermal_evaporation_block",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:thermal_evaporation_controller",
+      "base_price": 180,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:thermal_evaporation_valve",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:tin_ore",
+      "base_price": 106,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "mekanism:ultimate_bin",
+      "base_price": 5435,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_chemical_tank",
+      "base_price": 7537,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_combining_factory",
+      "base_price": 15839,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_compressing_factory",
+      "base_price": 12474,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_control_circuit",
+      "base_price": 1180,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_energy_cube",
+      "base_price": 10427,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_enriching_factory",
+      "base_price": 12471,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_fluid_tank",
+      "base_price": 7607,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_induction_cell",
+      "base_price": 176393,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_induction_provider",
+      "base_price": 122770,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_infusing_factory",
+      "base_price": 12401,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_injecting_factory",
+      "base_price": 16387,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_logistical_transporter",
+      "base_price": 226,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_mechanical_pipe",
+      "base_price": 222,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_pressurized_tube",
+      "base_price": 221,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_purifying_factory",
+      "base_price": 12717,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_sawing_factory",
+      "base_price": 12537,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_smelting_factory",
+      "base_price": 12405,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_thermodynamic_conductor",
+      "base_price": 222,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_tier_installer",
+      "base_price": 8077,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:ultimate_universal_cable",
+      "base_price": 222,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:upgrade_anchor",
+      "base_price": 607,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mekanism:upgrade_chemical",
+      "base_price": 56,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:upgrade_energy",
+      "base_price": 44,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:upgrade_filter",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:upgrade_muffling",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:upgrade_speed",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "mekanism:yellow_cake_uranium",
+      "base_price": 35,
+      "class": "rare_processed"
+    }
+  ]
+}

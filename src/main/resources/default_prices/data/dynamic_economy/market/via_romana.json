@@ -1,0 +1,12 @@
+{
+  "required_mods": [
+    "via_romana"
+  ],
+  "entries": [
+    {
+      "item": "via_romana:charting_map",
+      "base_price": 160,
+      "class": "common_processed"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "required_mods": [
+    "ae2wtlib"
+  ],
+  "entries": [
+    {
+      "item": "ae2wtlib:magnet_card",
+      "base_price": 2533,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ae2wtlib:quantum_bridge_card",
+      "base_price": 5206,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ae2wtlib:wireless_pattern_access_terminal",
+      "base_price": 1903,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ae2wtlib:wireless_pattern_encoding_terminal",
+      "base_price": 1820,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ae2wtlib:wireless_universal_terminal",
+      "base_price": 3077,
+      "class": "rare_processed"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "description": "Common items made from common resources (planks, glass, iron ingots). Gentle price moves, quick recovery.",
+  "markup": 0.4,
+  "sell_impact": 0.0005,
+  "buy_impact": 0.0005,
+  "recovery": 0.08,
+  "floor": 0.25,
+  "ceiling": 3.0
+}

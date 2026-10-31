@@ -1,23 +1,29 @@
 package dynamiceconomy.network;
 
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.bank.BankKind;
+import dynamiceconomy.bank.Denomination;
+import dynamiceconomy.service.BankService;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.PriceModel;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.OptionalLong;
 
-/** Every packet the market sends. Prices and totals are in spurs. */
+/** Every packet the market sends. Prices, totals and balances are in bits (= spurs). */
 public final class MarketPayloads {
     private MarketPayloads() {
     }
@@ -129,15 +135,27 @@ public final class MarketPayloads {
         }
     }
 
+    private static final StreamCodec<RegistryFriendlyByteBuf, Denomination> DENOMINATION_CODEC = StreamCodec.composite(
+            ByteBufCodecs.registry(Registries.ITEM), Denomination::item,
+            ByteBufCodecs.VAR_INT, Denomination::value,
+            Denomination::new);
+
     /**
      * Server to client: the whole catalog, sent on joining, when the screen opens and after the catalog changes, with
-     * the server's order limit so the screen can stop an oversized order before it is sent.
+     * the server's order limit so the screen can stop an oversized order before it is sent, whether the leaderboard
+     * tab is turned on, and the world's bank: it names the money unit, its {@code balanceCap} is the largest balance
+     * it shows (a balance at the cap means "at least this much"), and {@code coins} are what the Bank tab moves.
      */
-    public record Snapshot(List<Row> rows, int maxQuantity) implements CustomPacketPayload {
+    public record Snapshot(List<Row> rows, int maxQuantity, boolean leaderboardEnabled, BankKind bank,
+                           long balanceCap, List<Denomination> coins) implements CustomPacketPayload {
         public static final Type<Snapshot> TYPE = payloadType("snapshot");
         public static final StreamCodec<RegistryFriendlyByteBuf, Snapshot> CODEC = StreamCodec.composite(
                 Row.CODEC.apply(ByteBufCodecs.list()), Snapshot::rows,
                 ByteBufCodecs.VAR_INT, Snapshot::maxQuantity,
+                ByteBufCodecs.BOOL, Snapshot::leaderboardEnabled,
+                ByteBufCodecs.idMapper(i -> BankKind.values()[i], BankKind::ordinal), Snapshot::bank,
+                ByteBufCodecs.VAR_LONG, Snapshot::balanceCap,
+                DENOMINATION_CODEC.apply(ByteBufCodecs.list(32)), Snapshot::coins,
                 Snapshot::new);
 
         @Override
@@ -160,18 +178,22 @@ public final class MarketPayloads {
     }
 
     /**
-     * Server to client: this player's balance, how many tradeable copies of each listed item they hold, and how much
-     * room their main inventory has (empty slots, plus the space left in stacks of each held item). The client cannot
+     * Server to client: the balance of the account this player uses, how many tradeable copies of each listed item (and
+     * plain coins of the bank's set) they hold, and how much room their main inventory has (empty slots, plus the space
+     * left in stacks of each of those). {@code team} is their team's name ("" if none) and {@code usingTeam} whether
+     * the balance is the team's. The client cannot
      * work this out itself: vanilla does not sync the inventory while a slotless menu is open.
      */
-    public record PlayerState(int balance, Map<ResourceLocation, Integer> held, int emptySlots,
-                              Map<ResourceLocation, Integer> stackRoom) implements CustomPacketPayload {
+    public record PlayerState(long balance, Map<ResourceLocation, Integer> held, int emptySlots,
+                              Map<ResourceLocation, Integer> stackRoom, String team, boolean usingTeam) implements CustomPacketPayload {
         public static final Type<PlayerState> TYPE = payloadType("player_state");
         public static final StreamCodec<RegistryFriendlyByteBuf, PlayerState> CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT, PlayerState::balance,
+                ByteBufCodecs.VAR_LONG, PlayerState::balance,
                 ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::held,
                 ByteBufCodecs.VAR_INT, PlayerState::emptySlots,
                 ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT), PlayerState::stackRoom,
+                ByteBufCodecs.stringUtf8(64), PlayerState::team,
+                ByteBufCodecs.BOOL, PlayerState::usingTeam,
                 PlayerState::new);
 
         /** Room for {@code item}, counted the way the server's purchase check counts it. */
@@ -181,6 +203,57 @@ public final class MarketPayloads {
 
         @Override
         public Type<PlayerState> type() {
+            return TYPE;
+        }
+    }
+
+    /**
+     * Client to server: from the Bank tab, deposit every coin in the main inventory, or withdraw
+     * {@code amount} as the fewest coins, or, with {@code coin}, {@code amount} of exactly that coin.
+     */
+    public record BankRequest(boolean deposit, long amount, Optional<Item> coin) implements CustomPacketPayload {
+        public static final Type<BankRequest> TYPE = payloadType("bank_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, BankRequest> CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL, BankRequest::deposit,
+                ByteBufCodecs.VAR_LONG, BankRequest::amount,
+                ByteBufCodecs.optional(ByteBufCodecs.registry(Registries.ITEM)), BankRequest::coin,
+                BankRequest::new);
+
+        /** Withdraws {@code count} of exactly this coin, instead of an amount as the fewest coins. */
+        public static BankRequest withdrawCoins(Item coin, int count) {
+            return new BankRequest(false, count, Optional.of(coin));
+        }
+
+        @Override
+        public Type<BankRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: from the Bank tab, use the team's account ({@code team}) or the player's own. */
+    public record PayFromRequest(boolean team) implements CustomPacketPayload {
+        public static final Type<PayFromRequest> TYPE = payloadType("pay_from_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, PayFromRequest> CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL, PayFromRequest::team,
+                PayFromRequest::new);
+
+        @Override
+        public Type<PayFromRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /** Server to client: how a bank request went, and the amount moved. */
+    public record BankOutcome(boolean deposit, BankService.Result result, long amount) implements CustomPacketPayload {
+        public static final Type<BankOutcome> TYPE = payloadType("bank_outcome");
+        public static final StreamCodec<RegistryFriendlyByteBuf, BankOutcome> CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL, BankOutcome::deposit,
+                ByteBufCodecs.idMapper(i -> BankService.Result.values()[i], BankService.Result::ordinal), BankOutcome::result,
+                ByteBufCodecs.VAR_LONG, BankOutcome::amount,
+                BankOutcome::new);
+
+        @Override
+        public Type<BankOutcome> type() {
             return TYPE;
         }
     }
@@ -217,6 +290,44 @@ public final class MarketPayloads {
 
         @Override
         public Type<Trades> type() {
+            return TYPE;
+        }
+    }
+
+    /** Client to server: send me the leaderboard (the screen asks when its tab is opened). */
+    public record LeaderboardRequest() implements CustomPacketPayload {
+        public static final Type<LeaderboardRequest> TYPE = payloadType("leaderboard_request");
+        public static final StreamCodec<RegistryFriendlyByteBuf, LeaderboardRequest> CODEC = StreamCodec.unit(new LeaderboardRequest());
+
+        @Override
+        public Type<LeaderboardRequest> type() {
+            return TYPE;
+        }
+    }
+
+    /** One leaderboard line: the player's name, their balance, and whether it's the player receiving it. */
+    public record LeaderboardLine(String name, long balance, boolean you) {
+        static final StreamCodec<ByteBuf, LeaderboardLine> CODEC = StreamCodec.composite(
+                ByteBufCodecs.stringUtf8(16), LeaderboardLine::name,
+                ByteBufCodecs.VAR_LONG, LeaderboardLine::balance,
+                ByteBufCodecs.BOOL, LeaderboardLine::you,
+                LeaderboardLine::new);
+    }
+
+    /**
+     * Server to client: the richest players, richest first, and the receiving player's own rank (0 when they aren't
+     * ranked) out of {@code ranked} players with money.
+     */
+    public record Leaderboard(List<LeaderboardLine> lines, int ownRank, int ranked) implements CustomPacketPayload {
+        public static final Type<Leaderboard> TYPE = payloadType("leaderboard");
+        public static final StreamCodec<RegistryFriendlyByteBuf, Leaderboard> CODEC = StreamCodec.composite(
+                LeaderboardLine.CODEC.apply(ByteBufCodecs.list(100)), Leaderboard::lines,
+                ByteBufCodecs.VAR_INT, Leaderboard::ownRank,
+                ByteBufCodecs.VAR_INT, Leaderboard::ranked,
+                Leaderboard::new);
+
+        @Override
+        public Type<Leaderboard> type() {
             return TYPE;
         }
     }

@@ -1,0 +1,252 @@
+{
+  "required_mods": [
+    "create_new_age"
+  ],
+  "entries": [
+    {
+      "item": "create_new_age:advanced_energiser",
+      "base_price": 195,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:advanced_motor",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:advanced_motor_extension",
+      "base_price": 1805,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create_new_age:advanced_solar_heating_plate",
+      "base_price": 156,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:basic_energiser",
+      "base_price": 37,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:basic_motor",
+      "base_price": 400,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:basic_motor_extension",
+      "base_price": 641,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:basic_solar_heating_plate",
+      "base_price": 156,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:blank_circuit",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:carbon_brushes",
+      "base_price": 31,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:copper_circuit",
+      "base_price": 14,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:copper_wire",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:copper_wire_block",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create_new_age:electrical_connector",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:fluxuated_magnetite",
+      "base_price": 1135,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create_new_age:generator_coil",
+      "base_price": 93,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:heat_pipe",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:heat_pump",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:heater",
+      "base_price": 195,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:lamp_post",
+      "base_price": 4,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:layered_magnet",
+      "base_price": 92,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:magnetite_block",
+      "base_price": 340,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:netherite_magnet",
+      "base_price": 2909,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create_new_age:nuclear_fuel",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_diamond",
+      "base_price": 563,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_diamond_wire",
+      "base_price": 281,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_diamond_wire_block",
+      "base_price": 1126,
+      "class": "rare_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create_new_age:overcharged_gold",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_golden_sheet",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_golden_wire",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_golden_wire_block",
+      "base_price": 52,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create_new_age:overcharged_iron",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_iron_sheet",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_iron_wire",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:overcharged_iron_wire_block",
+      "base_price": 35,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "create_new_age:radioactive_thorium",
+      "base_price": 21,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:reactor_casing",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:reactor_fuel_acceptor",
+      "base_price": 115,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:reactor_glass",
+      "base_price": 54,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:reactor_heat_vent",
+      "base_price": 30,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:reactor_rod",
+      "base_price": 345,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:redstone_magnet",
+      "base_price": 59,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:reinforced_energiser",
+      "base_price": 2536,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create_new_age:reinforced_motor",
+      "base_price": 2102,
+      "class": "rare_processed"
+    },
+    {
+      "item": "create_new_age:stirling_engine",
+      "base_price": 93,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:street_light",
+      "base_price": 42,
+      "class": "common_processed"
+    },
+    {
+      "item": "create_new_age:thorium",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "create_new_age:thorium_ore",
+      "base_price": 2,
+      "class": "common_resource",
+      "can_buy": false
+    }
+  ]
+}

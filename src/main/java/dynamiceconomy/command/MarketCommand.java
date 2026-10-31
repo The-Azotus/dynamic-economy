@@ -9,8 +9,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dynamiceconomy.DynamicEconomy;
+import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.MarketAccess;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.service.PriceSuggestion;
 import dynamiceconomy.catalog.CatalogOverlay;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.data.AuditLog;
@@ -23,6 +25,7 @@ import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.MarketVisibility;
 import dynamiceconomy.service.PriceModel;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -131,6 +134,13 @@ public final class MarketCommand {
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
                                                 BuiltInRegistries.ITEM.keySet().stream().map(ResourceLocation::getNamespace).distinct(), builder))
                                         .executes(ctx -> export(ctx, Optional.of(StringArgumentType.getString(ctx, "modid"))))))
+                        .then(Commands.literal("suggest")
+                                .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
+                                .executes(ctx -> suggest(ctx, Optional.empty()))
+                                .then(Commands.argument("modid", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(
+                                                BuiltInRegistries.ITEM.keySet().stream().map(ResourceLocation::getNamespace).distinct(), builder))
+                                        .executes(ctx -> suggest(ctx, Optional.of(StringArgumentType.getString(ctx, "modid"))))))
                         .then(Commands.literal("import")
                                 .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
                                 .then(Commands.argument("path", StringArgumentType.string())
@@ -144,6 +154,7 @@ public final class MarketCommand {
                                                                              CommandBuildContext context) {
         AdminCatalogCommands.addTo(admin, context);
         AdminRecoveryCommands.addTo(admin);
+        AdminBankCommands.addTo(admin);
         return admin;
     }
 
@@ -153,6 +164,11 @@ public final class MarketCommand {
 
     private static ResourceLocation id(Item item) {
         return BuiltInRegistries.ITEM.getKey(item);
+    }
+
+    /** Whether the command was run by a player who can't see this item; the console sees everything. */
+    private static boolean hiddenFrom(CommandSourceStack source, Item item) {
+        return source.getPlayer() != null && MarketVisibility.hidden(source.getPlayer(), item);
     }
 
     private static int open(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
@@ -180,8 +196,10 @@ public final class MarketCommand {
             String stock = describeStock(ctx.getSource().getServer(), item);
             String verb = selling ? "Sold" : "Bought";
             String direction = selling ? "received" : "paid";
-            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d spurs (first unit %d); you %s %d spurs. Market stock: %s"
-                    .formatted(verb, result.quantity(), id(item), result.total(), result.unitPrice(), direction, result.total(), stock)), false);
+            String unit = unit(ctx.getSource());
+            ctx.getSource().sendSuccess(() -> Component.literal("%s %d × %s for %d %s (first unit %d); you %s %d %s. Market stock: %s"
+                    .formatted(verb, result.quantity(), id(item), result.total(), unit, result.unitPrice(), direction,
+                            result.total(), unit, stock)), false);
             return result.quantity();
         }
         ctx.getSource().sendFailure(Component.literal("%s failed: %s".formatted(selling ? "Sell" : "Buy", result.result())));
@@ -193,15 +211,24 @@ public final class MarketCommand {
             ctx.getSource().sendFailure(Component.literal("The market catalog is empty"));
             return 0;
         }
+        int shown = 0;
         for (CatalogEntry entry : MarketCatalog.INSTANCE.entries()) {
+            if (hiddenFrom(ctx.getSource(), entry.item())) {
+                continue;
+            }
             String stock = describeStock(ctx.getSource().getServer(), entry.item());
             ctx.getSource().sendSuccess(() -> Component.literal("%s: %s".formatted(entry.itemId(), stock)), false);
+            shown++;
         }
-        return MarketCatalog.INSTANCE.entries().size();
+        return shown;
     }
 
     private static int showStock(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
+        if (hiddenFrom(ctx.getSource(), item)) {
+            ctx.getSource().sendSuccess(() -> Component.literal("%s: 0 (not listed)".formatted(id(item))), false);
+            return 1;
+        }
         String stock = describeStock(ctx.getSource().getServer(), item);
         String listed = MarketCatalog.INSTANCE.get(item).isPresent() ? "" : " (not listed)";
         ctx.getSource().sendSuccess(() -> Component.literal("%s: %s%s".formatted(id(item), stock, listed)), false);
@@ -211,13 +238,14 @@ public final class MarketCommand {
     private static int showPrice(CommandContext<CommandSourceStack> ctx) {
         Item item = item(ctx);
         Optional<MarketService.Quote> quote = MarketService.quote(ctx.getSource().getServer(), item);
-        if (quote.isEmpty()) {
+        if (quote.isEmpty() || hiddenFrom(ctx.getSource(), item)) {
             ctx.getSource().sendFailure(Component.literal(id(item) + " is not listed"));
             return 0;
         }
         MarketService.Quote q = quote.get();
-        String sell = q.entry().canSell() ? q.sellPrice() + " spurs" : "disabled";
-        String buy = q.entry().canBuy() ? q.buyPrice() + " spurs" : "disabled";
+        String unit = unit(ctx.getSource());
+        String sell = q.entry().canSell() ? q.sellPrice() + " " + unit : "disabled";
+        String buy = q.entry().canBuy() ? q.buyPrice() + " " + unit : "disabled";
         String stock = describeStock(ctx.getSource().getServer(), item);
         String factor = q.entry().dynamic() ? "%.4f".formatted(q.factor()) : "fixed";
         ctx.getSource().sendSuccess(() -> Component.literal("%s — market pays %s, market charges %s, stock %s, price factor %s"
@@ -396,11 +424,17 @@ public final class MarketCommand {
 
     private static void describeTotals(CommandSourceStack source, String title, MarketStockData.Totals totals) {
         long net = totals.netCreated();
+        String unit = unit(source);
         List.of(title + ":",
-                "  Paid to sellers: %,d spurs for %,d items (new money)".formatted(totals.paidOut(), totals.unitsSold()),
-                "  Paid by buyers: %,d spurs for %,d items (removed from the economy)".formatted(totals.collected(), totals.unitsBought()),
-                "  Net: %s%,d spurs %s".formatted(net >= 0 ? "+" : "", net, net >= 0 ? "added to the economy" : "removed from the economy"))
+                "  Paid to sellers: %,d %s for %,d items (new money)".formatted(totals.paidOut(), unit, totals.unitsSold()),
+                "  Paid by buyers: %,d %s for %,d items (removed from the economy)".formatted(totals.collected(), unit, totals.unitsBought()),
+                "  Net: %s%,d %s %s".formatted(net >= 0 ? "+" : "", net, unit, net >= 0 ? "added to the economy" : "removed from the economy"))
                 .forEach(line -> source.sendSuccess(() -> Component.literal(line), false));
+    }
+
+    /** The world's money unit: spurs with Numismatics' bank, bits with the mod's own. */
+    static String unit(CommandSourceStack source) {
+        return WorldBank.kind(source.getServer()).unit();
     }
 
     /** {@code config/dynamic_economy/}: the only folder export writes to and import reads from. */
@@ -414,7 +448,8 @@ public final class MarketCommand {
             return 0;
         }
         try {
-            CatalogExport.Result result = CatalogExport.export(configRoot().resolve("exports"), modId, MarketCatalog.INSTANCE.entries());
+            CatalogExport.Result result = CatalogExport.export(configRoot().resolve("exports"), modId, MarketCatalog.INSTANCE.entries(),
+                    MarketCatalog.INSTANCE::sources);
             String folder = "config/" + DynamicEconomy.MOD_ID + "/exports/" + result.folder().getFileName();
             AuditLog.record(ctx.getSource(), "export", modId.orElse("all mods"), "ok: %d items to %s".formatted(result.total(), folder), null, null);
             ctx.getSource().sendSuccess(() -> Component.literal(
@@ -426,6 +461,199 @@ public final class MarketCommand {
             ctx.getSource().sendFailure(Component.literal("Export failed: " + e.getMessage()));
             return 0;
         }
+    }
+
+    /**
+     * Prices unlisted items from their recipes, using the live catalog as the known prices, and writes the result as
+     * a CSV that can be reviewed and imported. Changes nothing in the market.
+     */
+    private static int suggest(CommandContext<CommandSourceStack> ctx, Optional<String> modId) {
+        if (modId.isPresent() && BuiltInRegistries.ITEM.keySet().stream().noneMatch(id -> id.getNamespace().equals(modId.get()))) {
+            ctx.getSource().sendFailure(Component.literal("No items are registered by a mod called \"%s\"".formatted(modId.get())));
+            return 0;
+        }
+        MinecraftServer server = ctx.getSource().getServer();
+        Map<Item, CatalogEntry> catalog = new java.util.LinkedHashMap<>();
+        MarketCatalog.INSTANCE.entries().forEach(entry -> catalog.put(entry.item(), entry));
+        PriceSuggestion.Result result = PriceSuggestion.suggest(server.getRecipeManager().getRecipes(), server.registryAccess(), catalog);
+        try {
+            CatalogExport.SuggestionResult written = CatalogExport.exportSuggestions(configRoot().resolve("exports"), modId,
+                    catalog.values(), MarketCatalog.INSTANCE::sources, result);
+            // Listed prices that recipes can beat are written alongside, since the recipes are already loaded.
+            List<PriceSuggestion.Path> paths = PriceSuggestion.paths(server.getRecipeManager().getRecipes(), server.registryAccess());
+            List<PriceSuggestion.CraftProfit> profits = PriceSuggestion.craftProfits(paths, catalog);
+            Map<Item, CatalogEntry> market = withSuggestions(catalog, result);
+            List<PriceSuggestion.ChainProfit> chains = PriceSuggestion.chainProfits(paths, market);
+            java.nio.file.Files.write(written.folder().resolve("chain_profits.txt"), chainLines(chains, catalog));
+            java.nio.file.Files.write(written.folder().resolve("chain_details.txt"), chainDetails(chains, result, catalog, market));
+            List<String> profitLines = new ArrayList<>(List.of(
+                    "Listed items whose ingredients can be bought for less than the item sells for (at normal prices)."));
+            Map<PriceSuggestion.ProfitKind, String> headings = Map.of(
+                    PriceSuggestion.ProfitKind.PRICE_GAP,
+                    "Price gaps: raise the ingredients' prices, lower the item's, or set can_sell false on it.",
+                    PriceSuggestion.ProfitKind.MAY_HIDE_INPUTS,
+                    "Check by hand: these recipe types may take fluids, extra items or ingredient amounts the check can't see.",
+                    PriceSuggestion.ProfitKind.MULTIPLIES_INPUT,
+                    "Recipes that make more of their own ingredient: no price stops these; sell impact limits what they earn.");
+            for (PriceSuggestion.ProfitKind kind : PriceSuggestion.ProfitKind.values()) {
+                List<PriceSuggestion.CraftProfit> ofKind = profits.stream().filter(p -> p.kind() == kind).toList();
+                if (ofKind.isEmpty()) {
+                    continue;
+                }
+                profitLines.add("");
+                profitLines.add(headings.get(kind));
+                ofKind.forEach(p -> profitLines.add("%s via %s: ingredients cost %s, result sells for %s".formatted(
+                        BuiltInRegistries.ITEM.getKey(p.output()), p.recipe(), p.buyCost().setScale(2, java.math.RoundingMode.HALF_UP),
+                        p.sellValue().setScale(2, java.math.RoundingMode.HALF_UP))));
+            }
+            java.nio.file.Files.write(written.folder().resolve("craft_profits.txt"), profitLines);
+            List<String> skippedLines = new ArrayList<>(List.of("Recipes suggest couldn't use, by recipe type and reason."));
+            result.unusable().entrySet().stream().sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .forEach(e -> skippedLines.add(e.getValue() + " " + e.getKey()));
+            java.nio.file.Files.write(written.folder().resolve("skipped_recipes.txt"), skippedLines);
+            String file = "config/" + DynamicEconomy.MOD_ID + "/exports/" + written.folder().getFileName() + "/suggested.csv";
+            AuditLog.record(ctx.getSource(), "suggest", modId.orElse("all mods"), "ok: %d suggested to %s".formatted(written.suggested(), file),
+                    null, null);
+            List<String> lines = new ArrayList<>();
+            lines.add("Wrote " + file + ". Nothing on the market changed.");
+            lines.add("  %d already listed, %d priced from recipes (%d of them worth under 1 spur, left blank; %d from recipe types worth checking)"
+                    .formatted(written.listed(), written.suggested(), written.underOneSpur(), written.toReview()));
+            lines.add("  %d made only from unpriced items, %d with no usable recipe (these need hand-set prices)"
+                    .formatted(written.unpricedInputs(), written.noRecipe()));
+            if (written.leftOut() > 0) {
+                lines.add("  %d decorative variants (%s) left out of the market".formatted(written.leftOut(),
+                        String.join(", ", new java.util.TreeSet<>(PriceSuggestion.LEFT_OUT_MODS))));
+            }
+            if (result.premium() < PriceSuggestion.PREMIUM) {
+                lines.add("  Processing premium lowered to %s to stay at or below the smallest markup in the catalog"
+                        .formatted(java.math.BigDecimal.valueOf(result.premium()).stripTrailingZeros().toPlainString()));
+            }
+            if (!result.unusable().isEmpty()) {
+                lines.add("  Recipes skipped: " + result.unusable().entrySet().stream()
+                        .sorted(Map.Entry.<String, Integer>comparingByValue().reversed()).limit(5)
+                        .map(e -> e.getValue() + " " + e.getKey()).collect(java.util.stream.Collectors.joining(", "))
+                        + (result.unusable().size() > 5 ? ", ... (all in skipped_recipes.txt)" : ""));
+            }
+            if (!result.settled()) {
+                lines.add("  Warning: some prices kept falling through a recipe loop; check the log");
+            }
+            Map<PriceSuggestion.ProfitKind, Long> byKind = profits.stream()
+                    .collect(java.util.stream.Collectors.groupingBy(PriceSuggestion.CraftProfit::kind, java.util.stream.Collectors.counting()));
+            lines.add(profits.isEmpty() ? "  No listed item can be crafted from bought ingredients at a profit"
+                    : ("  %d recipe(s) turn bought ingredients into a profit (%d price gaps, %d to check by hand, %d that multiply"
+                    + " their own ingredient): see craft_profits.txt in the same folder").formatted(profits.size(),
+                    byKind.getOrDefault(PriceSuggestion.ProfitKind.PRICE_GAP, 0L),
+                    byKind.getOrDefault(PriceSuggestion.ProfitKind.MAY_HIDE_INPUTS, 0L),
+                    byKind.getOrDefault(PriceSuggestion.ProfitKind.MULTIPLIES_INPUT, 0L)));
+            long listedChains = chains.stream().filter(c -> catalog.containsKey(c.item())).count();
+            lines.add(chains.isEmpty() ? "  No item can be bought and processed through several recipes at a profit"
+                    : "  %d item(s) can be bought and processed into more than they cost (%d listed, %d suggested): see chain_profits.txt"
+                    .formatted(chains.size(), listedChains, chains.size() - listedChains));
+            lines.forEach(line -> ctx.getSource().sendSuccess(() -> Component.literal(line), true));
+            return written.suggested();
+        } catch (IOException e) {
+            DynamicEconomy.LOGGER.error("Market price suggestion failed", e);
+            ctx.getSource().sendFailure(Component.literal("Suggest failed: " + e.getMessage()));
+            return 0;
+        }
+    }
+
+    /** The catalog plus every priced suggestion, as the market would list them if the suggestions were imported. */
+    private static Map<Item, CatalogEntry> withSuggestions(Map<Item, CatalogEntry> catalog, PriceSuggestion.Result result) {
+        Map<Item, CatalogEntry> market = new java.util.HashMap<>(catalog);
+        result.suggestions().values().forEach(s -> s.basePrice()
+                .flatMap(price -> PriceSuggestion.asEntry(s.item(), price, s.itemClass()))
+                .ifPresent(entry -> market.put(s.item(), entry)));
+        return market;
+    }
+
+    private static final int CHAIN_STEPS_SHOWN = 3;
+
+    private static List<String> chainLines(List<PriceSuggestion.ChainProfit> chains, Map<Item, CatalogEntry> catalog) {
+        List<String> lines = new ArrayList<>(List.of(
+                "Items that can be bought and processed through one or more recipes into more than they cost, with the",
+                "suggested prices imported. Usually the first item is priced too low for what it processes into: raise it,",
+                "or stop the market selling it (can_buy false). A chain marked 'check' uses a recipe type that may hide inputs."));
+        for (boolean listed : new boolean[]{true, false}) {
+            List<PriceSuggestion.ChainProfit> group = chains.stream().filter(c -> catalog.containsKey(c.item()) == listed).toList();
+            if (group.isEmpty()) {
+                continue;
+            }
+            lines.add("");
+            lines.add(listed ? "Listed items (fix these first; suggested items below often follow from them):" : "Suggested items:");
+            for (PriceSuggestion.ChainProfit c : group) {
+                // Long chains are shortened to their first steps and the item sold at the end.
+                StringBuilder chain = new StringBuilder();
+                List<PriceSuggestion.Path> steps = c.steps();
+                for (int i = 0; i < steps.size(); i++) {
+                    if (i == CHAIN_STEPS_SHOWN && steps.size() > CHAIN_STEPS_SHOWN + 1) {
+                        chain.append(" -> ... (").append(steps.size() - CHAIN_STEPS_SHOWN - 1).append(" more)");
+                        i = steps.size() - 1;
+                    }
+                    chain.append(" -> ").append(BuiltInRegistries.ITEM.getKey(steps.get(i).output()))
+                            .append(" (").append(steps.get(i).recipe()).append(')');
+                }
+                lines.add("%s%s costs %s, processes into %s:%s".formatted(c.complete() ? "" : "[check] ",
+                        BuiltInRegistries.ITEM.getKey(c.item()), c.buyCost().setScale(2, java.math.RoundingMode.HALF_UP),
+                        c.value().setScale(2, java.math.RoundingMode.HALF_UP), chain));
+            }
+        }
+        return lines;
+    }
+
+    private static final int DETAILS_SHOWN = 25;
+
+    /**
+     * Every step, with its amounts and each output's price, of the most-raised suggestions, the most profitable chains
+     * and every complete chain from a listed item: the step that makes more than it takes is the one to fix.
+     */
+    private static List<String> chainDetails(List<PriceSuggestion.ChainProfit> chains, PriceSuggestion.Result result,
+                                             Map<Item, CatalogEntry> catalog, Map<Item, CatalogEntry> market) {
+        List<String> lines = new ArrayList<>(List.of("Full recipe chains behind the largest raises and chain profits, step by step."));
+        lines.add("");
+        lines.add("Suggestions raised furthest above their recipe cost:");
+        result.suggestions().values().stream().filter(PriceSuggestion.Suggestion::raised)
+                .sorted(java.util.Comparator.comparing((PriceSuggestion.Suggestion s) -> java.math.BigDecimal.valueOf(s.basePrice().orElse(0))
+                        .divide(s.cost().max(new java.math.BigDecimal("0.01")), java.math.MathContext.DECIMAL64)).reversed())
+                .limit(DETAILS_SHOWN).forEach(s -> {
+                    lines.add("%s: recipe cost %s, raised to %d".formatted(BuiltInRegistries.ITEM.getKey(s.item()),
+                            s.cost().setScale(2, java.math.RoundingMode.HALF_UP), s.basePrice().orElse(0)));
+                    s.raisedVia().forEach(step -> lines.add(stepLine(step, market)));
+                });
+        for (boolean complete : new boolean[]{true, false}) {
+            lines.add("");
+            lines.add(complete ? "Most profitable complete chains:" : "Most profitable chains marked 'check':");
+            chains.stream().filter(c -> c.complete() == complete).limit(DETAILS_SHOWN).forEach(c -> {
+                lines.add("%s: costs %s, processes into %s".formatted(BuiltInRegistries.ITEM.getKey(c.item()),
+                        c.buyCost().setScale(2, java.math.RoundingMode.HALF_UP), c.value().setScale(2, java.math.RoundingMode.HALF_UP)));
+                c.steps().forEach(step -> lines.add(stepLine(step, market)));
+            });
+        }
+        lines.add("");
+        lines.add("Every complete chain from a listed item:");
+        chains.stream().filter(c -> c.complete() && catalog.containsKey(c.item())).forEach(c -> {
+            lines.add("%s: costs %s, processes into %s".formatted(BuiltInRegistries.ITEM.getKey(c.item()),
+                    c.buyCost().setScale(2, java.math.RoundingMode.HALF_UP), c.value().setScale(2, java.math.RoundingMode.HALF_UP)));
+            c.steps().forEach(step -> lines.add(stepLine(step, market)));
+        });
+        return lines;
+    }
+
+    /** {@code  recipe [type]: 9 x a|b + 1 x c -> 1 x d (price 5)}, showing at most three options per slot. */
+    private static String stepLine(PriceSuggestion.Path step, Map<Item, CatalogEntry> market) {
+        String inputs = step.slots().stream().map(slot -> {
+            String options = slot.options().stream().limit(3).map(i -> BuiltInRegistries.ITEM.getKey(i).toString())
+                    .collect(java.util.stream.Collectors.joining("|")) + (slot.options().size() > 3 ? "|..." : "");
+            return amount(slot.amount()) + " x " + options;
+        }).collect(java.util.stream.Collectors.joining(" + "));
+        CatalogEntry out = market.get(step.output());
+        return "    %s [%s]: %s -> %s x %s%s%s".formatted(step.recipe(), step.type(), inputs, amount(step.count()),
+                BuiltInRegistries.ITEM.getKey(step.output()), out == null ? "" : " (price " + out.basePrice() + ")",
+                step.complete() ? "" : " (check)");
+    }
+
+    private static String amount(double amount) {
+        return java.math.BigDecimal.valueOf(amount).setScale(3, java.math.RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
     private static final int REJECTIONS_SHOWN = 15;

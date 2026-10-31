@@ -1,0 +1,132 @@
+{
+  "required_mods": [
+    "mob_grinding_utils"
+  ],
+  "entries": [
+    {
+      "item": "mob_grinding_utils:absorption_hopper",
+      "base_price": 87,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:absorption_upgrade",
+      "base_price": 155,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:dragon_muffler",
+      "base_price": 72124,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mob_grinding_utils:ender_inhibitor_on",
+      "base_price": 134,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:entity_conveyor",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:fan",
+      "base_price": 244,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:fan_upgrade_height",
+      "base_price": 147,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:fan_upgrade_speed",
+      "base_price": 160,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:fan_upgrade_width",
+      "base_price": 147,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:jumbo_tank",
+      "base_price": 748,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:mob_swab",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:saw",
+      "base_price": 3308,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mob_grinding_utils:saw_upgrade_arthropod",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:saw_upgrade_beheading",
+      "base_price": 891,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:saw_upgrade_fire",
+      "base_price": 156,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:saw_upgrade_looting",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:saw_upgrade_sharpness",
+      "base_price": 295,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:saw_upgrade_smite",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:spikes",
+      "base_price": 530,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:tank",
+      "base_price": 151,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:tank_sink",
+      "base_price": 283,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:tinted_glass",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:wither_muffler",
+      "base_price": 2288,
+      "class": "rare_processed"
+    },
+    {
+      "item": "mob_grinding_utils:xp_tap",
+      "base_price": 110,
+      "class": "common_processed"
+    },
+    {
+      "item": "mob_grinding_utils:xpsolidifier",
+      "base_price": 289,
+      "class": "common_processed"
+    }
+  ]
+}

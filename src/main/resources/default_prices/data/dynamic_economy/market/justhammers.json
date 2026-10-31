@@ -1,0 +1,152 @@
+{
+  "required_mods": [
+    "justhammers"
+  ],
+  "entries": [
+    {
+      "item": "justhammers:destructor_core",
+      "base_price": 21685,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:diamond_destructor_hammer",
+      "base_price": 36893,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:diamond_hammer",
+      "base_price": 1691,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:diamond_impact_hammer",
+      "base_price": 18479,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:diamond_reinforced_hammer",
+      "base_price": 20023,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:diamond_reinforced_impact_hammer",
+      "base_price": 26161,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:gold_destructor_hammer",
+      "base_price": 23112,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:gold_hammer",
+      "base_price": 160,
+      "class": "common_processed"
+    },
+    {
+      "item": "justhammers:gold_impact_hammer",
+      "base_price": 4698,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:gold_reinforced_hammer",
+      "base_price": 6242,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:gold_reinforced_impact_hammer",
+      "base_price": 12380,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:impact_core",
+      "base_price": 3271,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:iron_destructor_hammer",
+      "base_price": 22637,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:iron_hammer",
+      "base_price": 107,
+      "class": "common_processed"
+    },
+    {
+      "item": "justhammers:iron_impact_hammer",
+      "base_price": 4223,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:iron_reinforced_hammer",
+      "base_price": 5767,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:iron_reinforced_impact_hammer",
+      "base_price": 11905,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:netherite_destructor_hammer",
+      "base_price": 43387,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:netherite_hammer",
+      "base_price": 2413,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:netherite_impact_hammer",
+      "base_price": 24973,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:netherite_reinforced_hammer",
+      "base_price": 26518,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:netherite_reinforced_impact_hammer",
+      "base_price": 32656,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:reinforced_core",
+      "base_price": 4815,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:reinforced_impact_core",
+      "base_price": 10953,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:stone_destructor_hammer",
+      "base_price": 21693,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:stone_hammer",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "justhammers:stone_impact_hammer",
+      "base_price": 3279,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:stone_reinforced_hammer",
+      "base_price": 4823,
+      "class": "rare_processed"
+    },
+    {
+      "item": "justhammers:stone_reinforced_impact_hammer",
+      "base_price": 10961,
+      "class": "rare_processed"
+    }
+  ]
+}

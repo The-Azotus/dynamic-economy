@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./build/**)",
+      "Read(./.gradle/**)",
+      "Read(./run/**)",
+      "Read(./run-client2/**)",
+      "Read(./run-gametest/world/**)",
+      "Read(./run-gametest/crash-reports/**)"
+    ]
+  }
+}

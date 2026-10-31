@@ -125,7 +125,7 @@ public final class CatalogImport {
             JsonObject meta = new JsonObject();
             JsonObject packInfo = new JsonObject();
             packInfo.addProperty("pack_format", PACK_FORMAT);
-            packInfo.addProperty("description", "Market catalog imported by Numismatics: Dynamic Economy");
+            packInfo.addProperty("description", "Market catalog imported by Dynamic-Economy");
             meta.add("pack", packInfo);
             Files.writeString(mcmeta, CatalogExport.GSON.toJson(meta), StandardCharsets.UTF_8);
         }
@@ -205,6 +205,7 @@ public final class CatalogImport {
                     return name + " \"" + text + "\" is too large";
                 }
             }
+            case TEXT -> json.addProperty(name, text);
             case DECIMAL -> {
                 // Spreadsheets in some locales write a decimal comma: accept "0,5" as 0.5.
                 String normalized = text.indexOf('.') < 0 && text.chars().filter(c -> c == ',').count() == 1

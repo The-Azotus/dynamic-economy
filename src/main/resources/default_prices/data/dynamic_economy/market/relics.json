@@ -1,0 +1,112 @@
+{
+  "required_mods": [
+    "relics"
+  ],
+  "entries": [
+    {
+      "item": "relics:chef_hat",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:chorus_staff",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:cut_glass_boot",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:experience_disperser",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:ghostly_mantle",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:glitchy_mantle",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:golden_tooth",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:hunting_belt",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:jellyfish_necklace",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:kinetic_belt",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:leafy_mantle",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:midnight_mantle",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:pet_bone",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:piglin_mask",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:reflective_necklace",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:rider_flute",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:ring_of_the_seven_deadly_sins",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:roller_skate",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:shield_of_retaliation",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:sphere_of_self_sacrifice",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "relics:springy_boot",
+      "base_price": 512,
+      "class": "rare_loot"
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 package dynamiceconomy;
 
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Server config ({@code config/dynamic_economy-server.toml}, loaded when a server starts). The pricing values are
@@ -11,12 +16,16 @@ public final class MarketConfig {
     public static final ModConfigSpec SPEC;
     public static final ModConfigSpec.IntValue MAX_QUANTITY_PER_REQUEST;
     public static final ModConfigSpec.EnumValue<AccessMode> ACCESS_MODE;
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> IGNORED_COMPONENTS;
     public static final ModConfigSpec.DoubleValue SELL_IMPACT;
     public static final ModConfigSpec.DoubleValue BUY_IMPACT;
     public static final ModConfigSpec.DoubleValue RECOVERY;
     public static final ModConfigSpec.IntValue INTERVAL_TICKS;
     public static final ModConfigSpec.DoubleValue FLOOR;
     public static final ModConfigSpec.DoubleValue CEILING;
+    public static final ModConfigSpec.BooleanValue LEADERBOARD_ENABLED;
+    public static final ModConfigSpec.IntValue LEADERBOARD_SIZE;
+    public static final ModConfigSpec.BooleanValue LEADERBOARD_EXCLUDE_OPERATORS;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -29,6 +38,14 @@ public final class MarketConfig {
                         "BLOCK_ONLY: only a Market Terminal. Players without operator permission (level 2) can't use",
                         "any /market command; operators and the console always can.")
                 .defineEnum("access_mode", AccessMode.COMMAND_AND_BLOCK);
+        IGNORED_COMPONENTS = builder
+                .comment("Item data the market ignores when deciding whether a copy is plain enough to sell. The market",
+                        "only buys items as they come fresh (not enchanted, damaged or renamed), but some mods add data to",
+                        "every copy a player holds: Relics (and Reliquified Artifacts) adds relics:data, its levels and",
+                        "rolled stats, as soon as a relic is in an inventory. Data listed here doesn't stop a sale; it is",
+                        "lost with the item, and bought items always come fresh. List data component IDs.")
+                .defineListAllowEmpty("ignored_components", List.of("relics:data"),
+                        () -> "relics:data", id -> id instanceof String s && ResourceLocation.tryParse(s) != null);
 
         builder.comment("Supply and demand. Each item has a price factor s, starting at 1.0. These are defaults;",
                 "catalog entries may override them (except interval_ticks).").push("pricing");
@@ -55,6 +72,18 @@ public final class MarketConfig {
                 .comment("Highest s can rise to from buying.")
                 .defineInRange("ceiling", 5.0, 1.0, 1000.0);
         builder.pop();
+
+        builder.comment("The Leaderboard tab: the richest players by Numismatics bank balance.").push("leaderboard");
+        LEADERBOARD_ENABLED = builder
+                .comment("Show the Leaderboard tab. When false the tab is greyed out and no balances are sent.")
+                .define("leaderboard_enabled", true);
+        LEADERBOARD_SIZE = builder
+                .comment("How many players the leaderboard lists.")
+                .defineInRange("leaderboard_size", 10, 1, 100);
+        LEADERBOARD_EXCLUDE_OPERATORS = builder
+                .comment("Leave operators off the leaderboard, for servers where admins hold test money.")
+                .define("leaderboard_exclude_operators", false);
+        builder.pop();
         SPEC = builder.build();
     }
 
@@ -68,6 +97,18 @@ public final class MarketConfig {
     }
 
     // A server config only loads when a server starts, so each getter falls back to the default before then.
+
+    /** {@link #IGNORED_COMPONENTS} as IDs. Clients get the server's value: NeoForge syncs server configs. */
+    public static Set<ResourceLocation> ignoredComponents() {
+        Set<ResourceLocation> ids = new HashSet<>();
+        for (String id : SPEC.isLoaded() ? IGNORED_COMPONENTS.get() : IGNORED_COMPONENTS.getDefault()) {
+            ResourceLocation parsed = ResourceLocation.tryParse(id);
+            if (parsed != null) {
+                ids.add(parsed);
+            }
+        }
+        return ids;
+    }
 
     public static int maxQuantityPerRequest() {
         return SPEC.isLoaded() ? MAX_QUANTITY_PER_REQUEST.get() : MAX_QUANTITY_PER_REQUEST.getDefault();
@@ -95,5 +136,17 @@ public final class MarketConfig {
 
     public static double ceiling() {
         return SPEC.isLoaded() ? CEILING.get() : CEILING.getDefault();
+    }
+
+    public static boolean leaderboardEnabled() {
+        return SPEC.isLoaded() ? LEADERBOARD_ENABLED.get() : LEADERBOARD_ENABLED.getDefault();
+    }
+
+    public static int leaderboardSize() {
+        return SPEC.isLoaded() ? LEADERBOARD_SIZE.get() : LEADERBOARD_SIZE.getDefault();
+    }
+
+    public static boolean leaderboardExcludeOperators() {
+        return SPEC.isLoaded() ? LEADERBOARD_EXCLUDE_OPERATORS.get() : LEADERBOARD_EXCLUDE_OPERATORS.getDefault();
     }
 }

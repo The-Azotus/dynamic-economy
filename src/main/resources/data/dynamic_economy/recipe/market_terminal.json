@@ -1,17 +1,15 @@
 {
+  "neoforge:conditions": [{ "type": "neoforge:mod_loaded", "modid": "numismatics" }],
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "pattern": [
-    "GCG",
-    "EBE",
-    "GRG"
+    "SSS",
+    "SCS",
+    "SSS"
   ],
   "key": {
-    "G": { "item": "minecraft:gold_ingot" },
-    "C": { "item": "numismatics:cog" },
-    "E": { "item": "create:electron_tube" },
-    "B": { "item": "create:brass_casing" },
-    "R": { "item": "minecraft:redstone" }
+    "S": { "item": "numismatics:spur" },
+    "C": { "item": "minecraft:crafting_table" }
   },
   "result": { "id": "dynamic_economy:market_terminal", "count": 1 }
 }

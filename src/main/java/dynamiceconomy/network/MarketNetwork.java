@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public final class MarketNetwork {
-    private static final String PROTOCOL_VERSION = "7";
+    private static final String PROTOCOL_VERSION = "11";
 
     private MarketNetwork() {
     }
@@ -24,6 +24,18 @@ public final class MarketNetwork {
             }
         });
 
+        registrar.playToServer(MarketPayloads.BankRequest.TYPE, MarketPayloads.BankRequest.CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                MarketSync.handleBankRequest(payload, player);
+            }
+        });
+
+        registrar.playToServer(MarketPayloads.PayFromRequest.TYPE, MarketPayloads.PayFromRequest.CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                MarketSync.handlePayFromRequest(payload, player);
+            }
+        });
+
         registrar.playToServer(MarketPayloads.HistoryRequest.TYPE, MarketPayloads.HistoryRequest.CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 MarketSync.handleHistoryRequest(payload, player);
@@ -36,6 +48,14 @@ public final class MarketNetwork {
             }
         });
 
+        registrar.playToServer(MarketPayloads.LeaderboardRequest.TYPE, MarketPayloads.LeaderboardRequest.CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                MarketSync.handleLeaderboardRequest(player);
+            }
+        });
+
+        registrar.playToClient(MarketPayloads.Leaderboard.TYPE, MarketPayloads.Leaderboard.CODEC,
+                (payload, context) -> ClientMarketState.applyLeaderboard(payload));
         registrar.playToClient(MarketPayloads.History.TYPE, MarketPayloads.History.CODEC,
                 (payload, context) -> ClientMarketState.applyHistory(payload));
         registrar.playToClient(MarketPayloads.Trades.TYPE, MarketPayloads.Trades.CODEC,
@@ -46,6 +66,8 @@ public final class MarketNetwork {
                 (payload, context) -> payload.rows().forEach(ClientMarketState::applyRow));
         registrar.playToClient(MarketPayloads.PlayerState.TYPE, MarketPayloads.PlayerState.CODEC,
                 (payload, context) -> ClientMarketState.applyPlayerState(payload));
+        registrar.playToClient(MarketPayloads.BankOutcome.TYPE, MarketPayloads.BankOutcome.CODEC,
+                (payload, context) -> ClientMarketState.applyBankOutcome(payload));
         registrar.playToClient(MarketPayloads.TradeOutcome.TYPE, MarketPayloads.TradeOutcome.CODEC,
                 (payload, context) -> ClientMarketState.applyOutcome(payload));
     }

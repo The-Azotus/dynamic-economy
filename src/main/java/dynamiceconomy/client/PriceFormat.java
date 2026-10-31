@@ -1,5 +1,8 @@
 package dynamiceconomy.client;
 
+import dynamiceconomy.bank.BankKind;
+import net.minecraft.network.chat.Component;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
@@ -10,6 +13,12 @@ final class PriceFormat {
     private static final BigDecimal THOUSAND = BigDecimal.valueOf(1000);
 
     private PriceFormat() {
+    }
+
+    /** An amount of money with the world's unit: "1,234 spurs" with Numismatics' bank, "1,234 bits" with ours. */
+    static Component money(String amount) {
+        return Component.translatable(ClientMarketState.bank() == BankKind.OWN
+                ? "money.dynamic_economy.bits" : "money.dynamic_economy.spurs", amount);
     }
 
     static String spurs(long spurs) {

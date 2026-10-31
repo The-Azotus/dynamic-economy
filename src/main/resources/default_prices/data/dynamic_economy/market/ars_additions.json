@@ -1,0 +1,267 @@
+{
+  "required_mods": [
+    "ars_additions"
+  ],
+  "entries": [
+    {
+      "item": "ars_additions:advanced_dominion_wand",
+      "base_price": 211,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:archwood_chain",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:archwood_lantern",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:archwood_magelight_lantern",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:cracked_polished_sourcestone",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:cracked_polished_sourcestone_large_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:cracked_polished_sourcestone_small_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:cracked_polished_sourcestone_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:cracked_sourcestone",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:cracked_sourcestone_large_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:cracked_sourcestone_small_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:cracked_sourcestone_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:dispel_protection_charm",
+      "base_price": 231,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_additions:ender_mask_charm",
+      "base_price": 12,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:ender_source_jar",
+      "base_price": 171,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:fall_prevention_charm",
+      "base_price": 38,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:golden_chain",
+      "base_price": 57,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:golden_charm",
+      "base_price": 1269,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:golden_lantern",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:golden_magelight_lantern",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:handy_haversack",
+      "base_price": 112,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:magebloom_carpet",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:magelight_lantern",
+      "base_price": 159,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:night_vision_charm",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:polished_sourcestone_button",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:polished_sourcestone_chain",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:polished_sourcestone_door",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:polished_sourcestone_lantern",
+      "base_price": 19,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:polished_sourcestone_magelight_lantern",
+      "base_price": 27,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:polished_sourcestone_trapdoor",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:polished_sourcestone_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:powdered_snow_walk_charm",
+      "base_price": 73,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:ritual_locate_structure",
+      "base_price": 389,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:sonic_boom_protection_charm",
+      "base_price": 51,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:soul_magelight_lantern",
+      "base_price": 22,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:sourcestone_button",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:sourcestone_chain",
+      "base_price": 7,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:sourcestone_door",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:sourcestone_lantern",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:sourcestone_magelight_lantern",
+      "base_price": 27,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:sourcestone_trapdoor",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:sourcestone_wall",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_additions:undying_charm",
+      "base_price": 2315,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_additions:void_protection_charm",
+      "base_price": 188,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:water_breathing_charm",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:wayfinder",
+      "base_price": 220,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_additions:wither_protection_charm",
+      "base_price": 2436,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_additions:xp_jar",
+      "base_price": 41,
+      "class": "common_processed"
+    }
+  ]
+}

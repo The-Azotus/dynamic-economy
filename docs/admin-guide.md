@@ -1,16 +1,18 @@
 # Admin guide
 
-This guide is for server admins running the Numismatics: Dynamic Economy market. It covers:
+This guide is for server admins running the Dynamic-Economy market. It covers:
 
 - how players reach the market
+- which bank the world uses (Numismatics' or the mod's own), coins, team accounts, and switching banks
 - how to price items, from a spreadsheet, catalog files or in-game commands
+- item classes, which give groups of items shared pricing behaviour
 - how prices move, every catalog field and config option, and every command
 
 For what players see, read the [player guide](player-guide.md).
 
 ## How the market works
 
-The market is owned by the server. Players sell items to it and buy items from it, and all money moves through their Numismatics bank accounts. Every player sees the same prices and the same stock.
+The market is owned by the server. Players sell items to it and buy items from it, and all money moves through their bank accounts (see [Banks and coins](#banks-and-coins)). Every player sees the same prices and the same stock.
 
 - **Stock.** Items players sell go into one shared stock, and players buy from that stock. Items marked *unlimited* are always in stock instead.
 - **Prices.** Each item has a base price. The market pays a little less than the going rate and charges a markup on top.
@@ -23,6 +25,37 @@ The market is owned by the server. Players sell items to it and buy items from i
 3. **Item edits**: in-game changes to one item.
 
 A higher layer only changes the fields it sets. Pricing one item by hand always beats a tag rule. In-game edits are saved with the world and never touch stock or current prices.
+
+## Banks and coins
+
+Every payment, both ways, goes through the player's bank account; the market never pays out or takes coins. Coins only move in and out of the bank in the market screen's **Bank** tab.
+
+**Which bank.** A world uses one of two banks:
+
+- **Numismatics' bank**, when Create: Numismatics is installed. Money is in spurs, and the Bank tab moves Numismatics' coins.
+- **The mod's own bank**, without Numismatics. Money is in bits, saved with the world (`data/dynamic_economy_bank.dat`), and the Bank tab moves the mod's own coins, Bit to Omega. Balances have no practical limit; Numismatics shows at most 1,073,741,823.
+
+1 bit = 1 spur, so prices and catalog files mean the same under either bank.
+
+The world picks its bank on its first start with this version and remembers it: a world that already had a market (from 0.2.x, which needed Numismatics), or a new world with Numismatics installed, uses Numismatics' bank. Anything else uses the mod's own. **Adding or removing Numismatics never moves money on its own.** If a world uses Numismatics' bank and Numismatics is removed, the market refuses every trade and the log says why. Put Numismatics back, or switch banks.
+
+**Switching banks.** `/market admin bank` says which bank the world uses. `/market admin bank switch <own|numismatics>` shows what a switch would do, and `... confirm` does it:
+
+- Every player's balance moves to the same player's account in the other bank, Numismatics' hidden overflow above its display limit included.
+- Numismatics' bank has no team accounts, so moving to it first pays each team account to the team's owner. A team account whose team no longer exists stays in the mod's bank until you switch back.
+- **Coins don't move.** Coins of the old set that players still carry, or that sit in chests, stop counting: the Bank tab no longer takes them. The preview counts what online players carry; have players deposit first.
+- Every balance is written to the [audit log](#audit-log) before anything moves.
+- Players see the new coins in the creative menu after rejoining.
+
+Switching needs Numismatics installed in both directions, since its accounts are read or written.
+
+**The mod's coins** are always registered, so none vanish if Numismatics is added later. While Numismatics' bank is in use they're hidden from the creative menu and can't be crafted; recipe viewers such as JEI may still list them. Each is worth 8 of the one before: Bit 1, Chip 8, Stack 64, Mark 512, Crown 4,096, Sun 32,768, Divine 262,144, Omega 2,097,152 bits. Numismatics also has a Crown and a Sun, worth 512 and 4,096 spurs; only one set is in use on a server.
+
+**Coins can never be listed in the market**, ours or Numismatics': selling one would create money from nothing. A catalog file, spreadsheet row, item edit or tag rule that lists one is refused with a warning.
+
+**Recipes.** The Market Terminal takes 8 spurs around a crafting table with Numismatics installed, or 8 Bits without it. The Bank Card, which opens just the Bank tab from anywhere, takes a paper, a gold ingot and a Chip, or a Numismatics Bevel when Numismatics is installed. Replace them with a datapack or KubeJS like any recipe.
+
+**Team accounts** (the mod's own bank only). Players in a team share one account; each member chooses in the Bank tab whether they use it or their own. Every member can use it. With FTB Teams installed, a team is an FTB Teams party. When a party is deleted, its balance goes to its owner. Without FTB Teams, players use `/bank team create | invite | join | leave | kick` (see the [player guide](player-guide.md#the-bank-tab)). The last member to leave gets what's left. Team accounts never appear on the leaderboard.
 
 ## Letting players in
 
@@ -43,12 +76,25 @@ The setting takes effect as soon as you save the file, with no restart. A player
 **Terminals** are craftable:
 
 ```
-Gold ingot     Numismatics cog   Gold ingot
-Electron tube  Brass casing      Electron tube
-Gold ingot     Redstone          Gold ingot
+Spur  Spur            Spur
+Spur  Crafting table  Spur
+Spur  Spur            Spur
 ```
 
-To change or remove the recipe, override `data/dynamic_economy/recipe/market_terminal.json` in a datapack. To hand them out yourself, use `/give @p dynamic_economy:market_terminal`. A pickaxe picks them up again.
+To change or remove the recipe, override `data/dynamic_economy/recipe/market_terminal.json` in a datapack. To hand them out yourself, use `/give @p dynamic_economy:market_terminal`. Terminals are wooden tables: they break by hand, faster with an axe, and always drop themselves.
+
+### ProgressiveStages: hiding locked items
+
+With [ProgressiveStages](https://modrinth.com/mod/progressivestages) 3.1.1 or a later 3.x installed, an item locked for a player is hidden from that player in the market. Nothing needs setting up: the market uses the item locks you already defined in ProgressiveStages.
+
+- **Hidden means hidden.** The item isn't in the player's list or search, its market price isn't shown in their tooltips, and `/market price` and `/market stock` act as if it isn't listed.
+- **Enforced by the server.** Buying or selling a locked item is refused as *"That item is not on the market"*, the same answer as for an unlisted item, so the reply doesn't reveal it.
+- **Prices are shared.** Everyone trades at the same price and from the same stock. A locked item still moves in price when others trade it.
+- **Updates live.** When a player gains or loses a stage, their market updates on the next tick, even with the screen open. Team stages update every member.
+- **Locked means a missing stage.** Creative mode, ProgressiveStages' per-category enforcement switches and structure-only locks don't change what the market shows.
+- **Console and admins.** `/market admin` commands and the server console see every item.
+
+The log says `ProgressiveStages found: items locked for a player are hidden from them in the market` at startup. If a future ProgressiveStages version changes the lock API, the log shows an error and the market stops hiding items instead of breaking. Without ProgressiveStages, nothing changes.
 
 ## Pricing items
 
@@ -60,7 +106,13 @@ There are three ways to price items, and you can mix them:
 | [Catalog files](#catalog-files) | Keeping prices in a datapack you version or share. |
 | [In-game commands](#editing-prices-in-game) | Quick changes, and whole tags such as "all logs". |
 
-The market starts empty. The mod includes a small **example catalog**: cobblestone and oak log (unlimited stock), iron, diamond and nether star, at placeholder prices. It's a datapack that is **off** until you enable it:
+**Built-in prices.** The mod ships prices for vanilla and a set of popular mods in a datapack that is **on** by default. It has one price file per mod, and each file loads only if its mod is installed, so it works in any modpack. It sits below every other datapack, so your own catalog files, imports and edits always override it. To run your own prices from scratch, turn it off with `/datapack disable "mod/dynamic_economy:default_prices"`.
+
+The built-in prices cover raw materials: ores, logs, crops, mob drops and loot. Run [`/market admin suggest`](#suggesting-prices-from-recipes) to price the crafted items in your pack from them. The scale is roughly: cobblestone 1 spur, a log 8, an iron ingot 32, a diamond 512, a nether star 16,384.
+
+The market buys ore-stage items (raw ores and raw ore blocks, crushed ores, Mekanism crystals, shards, clumps and dirty dusts, metal dusts, Spectrum pure metals) but doesn't sell them (`can_buy: false`). Ore processing in mods such as Mekanism turns one raw ore into up to three ingots, so selling raw ore would let players buy it, process it and sell the ingots at a profit. Players who want metal buy ingots. Ores themselves (the blocks) aren't listed: placing one and mining it with Fortune multiplies it.
+
+The mod also includes a small **example catalog**: cobblestone and oak log (unlimited stock), iron, diamond and nether star, at placeholder prices. It's a datapack that is **off** until you enable it:
 
 - `/datapack enable "mod/dynamic_economy:example_catalog"` turns it on; `/datapack disable "mod/dynamic_economy:example_catalog"` turns it off.
 - Its file, `data/dynamic_economy/market/example_catalog.json`, is a handy starting point for your own catalog.
@@ -70,7 +122,7 @@ The market starts empty. The mod includes a small **example catalog**: cobblesto
 ### Pricing from a spreadsheet
 
 1. Run `/market admin export` from the server console or as a level-4 operator. It writes a folder like `config/dynamic_economy/exports/2026-10-23_09-30-00/` containing:
-   - `items.csv`: every item in the game, one row each. Listed items have their current values filled in, in-game edits included.
+   - `items.csv`: every item in the game, one row each. Listed items have the values their catalog files, tag rules and in-game edits set. A value that comes from the item's [class](#item-classes) or a built-in default is left blank, so importing the sheet later doesn't pin it: change the `class` column and the class's values follow.
    - `templates/<modid>.json`: one catalog file per mod, listing only unlisted items, each at `base_price: 0`.
 2. Open `items.csv` in a spreadsheet. Fill in `base_price` for anything you want on the market, and change any other column you like. Leave `base_price` blank for items you don't want.
 3. Save it somewhere inside `config/dynamic_economy/`. Either CSV encoding works, UTF-8 or Excel's default.
@@ -84,6 +136,46 @@ Put the path in quotes, since it contains slashes. To export one mod only, use `
 Items that also have an in-game edit keep that edit, because edits beat catalog files. The import lists any such items; use `/market admin revert <item>` to let the imported value through.
 
 The [spreadsheet format](#spreadsheet-format) section has the details on columns and what the importer accepts.
+
+### Suggesting prices from recipes
+
+In a big modpack, you only need to price the raw materials (ores, logs, crops, mob drops, loot) yourself. The market can work out the rest from the game's recipes:
+
+1. Price the raw materials, by any of the ways above.
+2. Run `/market admin suggest` (or `/market admin suggest <modid>` for one mod) from the console or as a level-4 operator. It writes `suggested.csv` to a new folder in `config/dynamic_economy/exports/`. Nothing on the market changes.
+3. Review the file in a spreadsheet, then import it like any other CSV.
+
+For each unlisted item, `suggest` finds its cheapest recipe and adds up its ingredients. For each ingredient slot it takes the cheapest priced item that fits, subtracts anything the recipe gives back (the empty bucket from a milk bucket), adds fuel for furnace recipes, divides by how many the recipe makes, and adds 10% for processing. It repeats until nothing gets cheaper, so long crafting chains are priced from the bottom up. The 10% is added once, to the finished cost, however many steps the chain has: added at every step it would outgrow the markup, and buying an early item, processing it many times and selling the result would profit. Last, each suggestion is raised, if needed, to what the item can be processed into, divided by its markup. A cheap route to an item (an ore-processing chain that multiplies, say) would otherwise let players buy it for less than what it crafts into, such as 9 nuggets for less than an ingot. Such items are noted in `suggested.csv` with the item they process into. A raise stops at what the item costs to make from bought ingredients, or it would sell for more than that (coarse dirt made for 1.10 raised to 2); an item worth more than that profits at any price, so it keeps its price and shows up in `chain_profits.txt`. Raised prices then count as the least those items cost and everything is priced and raised once more, so steel made from iron dust is priced from the dust's raised price, not its cheap ore-processing cost. Items worth under 1 spur stay unpriced: rounded up to 1, they would sell for more than they cost to make. An input a machine uses up only some of the time (a quarry drill) counts one run's output, not the many runs it lasts, and a tool the crafting grid hands back (a knife) isn't credited with what it helps make. The raise follows at most 3 recipes, enough for the conversions it's for; `chain_profits.txt` follows at most 6. A pack has many accepted generators (quarries, ProjectE's philosopher's stone, ore rebuilt from dust), and a long enough chain through them multiplies without bound. It reads every recipe type that lists its items, including modded machines such as Create's presses and mills. Create's machine recipes are read more closely: their chance outputs count at their average, and a sequenced assembly counts its starting item plus what every step adds, once per loop, with its output at the recipe's success chance. Modern Industrialization, Immersive Engineering, Mekanism and Oritech keep their machine recipes' inputs, amounts or outputs outside the usual place, so `suggest` reads them directly, leaving out catalysts the machine never uses up (such as Immersive Engineering's press molds). Only a machine's main output is priced; byproducts aren't subtracted, which errs towards a higher price. Energy and machine fuel aren't priced, and recipes that use up fluids or Mekanism chemicals are marked for review. So are Oritech's particle collider, whose real cost is energy on an endgame scale (it turns netherrack into netherite scrap), Modern Industrialization's quarry, which mines blocks rather than processing its drill, Mekanism's sawmill, which makes more wood than it takes, and Create's haunting, which turns sand into soul sand for free: they're treated as generators, so they only price items nothing else makes. Every recipe type `suggest` couldn't use is listed, with the reason, in `skipped_recipes.txt` next to `suggested.csv`. Recipe types that may hide some of their inputs (see the craft-profit groups below) only price items that no fully listed recipe makes, so a ritual that leaves its main ingredient out can't undercut the ordinary recipe. What they price can still make a fully listed recipe that uses it cheaper. The item's suggested class is `rare_processed` if its rare ingredients are worth at least half its cost, or at least as much as the cheapest rare item in the catalog; otherwise `common_processed`. A trace of rare material deep in a long chain doesn't make a cheap item rare.
+
+Prices are rounded down and the 10% is less than any built-in markup, so buying the ingredients from the market, crafting and selling the result never pays. If your catalog gives any item a markup (or `min_buy_markup`) below 10%, `suggest` uses that smaller figure instead and says so in its reply.
+
+Items from Chipped and Rechiseled (decorative block variants, thousands each) are left out of the market: `suggest` never prices them and leaves them out of `suggested.csv`. You can still list one by hand.
+
+`suggested.csv` has the same columns as `items.csv`, with the suggested `base_price` and `class` filled in, plus these columns for reference (the importer ignores them):
+
+| Column | Meaning |
+| --- | --- |
+| `price_source` | `catalog` (already listed), `suggested`, or blank (no price could be worked out) |
+| `exact_cost` | The worked-out cost before rounding down |
+| `recipe`, `recipe_type` | The recipe the price came from |
+| `depth` | How many crafting steps from a priced item |
+| `note` | Anything worth checking; see below |
+
+`/market admin diagnose` also reads the recipes, and warns about any listed item whose ingredients can be bought from the market for less than the item sells for. A player could buy the ingredients, craft and sell at a profit forever. The fix is to raise the ingredients' prices, lower the item's, or set `can_sell` false on it. `suggest` writes the same list to `craft_profits.txt`, in three groups:
+
+- **Price gaps** (warnings): fix them as above.
+- **Check by hand** (notes): recipe types that may take fluids, extra items or ingredient amounts the check can't see, such as Spectrum's fusion shrine. These are often false alarms.
+- **Recipes that make more of their own ingredient** (notes), such as a machine turning 1 cobblestone into 2: no price can stop these, since any price makes 2 worth more than 1. They're generators, and sell impact limits what they earn.
+
+`suggest` also writes `chain_profits.txt`, a check that follows several recipes in a row, as if every suggestion had been imported. It lists items that can be bought and processed into more than they cost, with the chain of recipes, for example a stone that crushes into ore which smelts into an ingot. The first item in a chain is usually priced too low for what it processes into: raise it, or set `can_buy` false so the market doesn't sell it. Listed items come first; suggested items often follow from them and clear when the listed item is fixed. Chains marked `[check]` include a recipe type that may hide inputs; complete chains are looked for first, so a bigger `[check]` chain can't hide a real one. `chain_details.txt` lists every step, with its amounts, of the suggestions raised furthest above their recipe cost and of the most profitable chains; a recipe read with the wrong amounts shows up there as a step that makes more than it takes.
+
+Notes to look out for:
+
+- **Worth under 1 spur:** prices are whole spurs, so these are left blank. Most such items (sticks, buttons) don't need to be on the market.
+- **This recipe type may leave out fluids or ingredient amounts:** some machines take fluids, or keep amounts where the market can't see them, so the cost may be too low.
+- **Converts back into …:** the item and its ingredient turn into each other, like iron blocks and ingots. If both are listed, a player whose ingots have dropped in price can craft blocks and sell those at full price instead. List only one form, or set `can_sell` false on the other.
+- **Price kept falling through a recipe loop:** a set of recipes makes the item out of less than itself, so the suggestion is too low. Price it by hand. This should be rare: an item is never priced from ingredients that were themselves priced from it, so a loop such as one plank sawn into a door and the door sawn back into two planks is cut where it closes. The loop itself still works in game, so consider removing one of its recipes.
+- **No recipe makes it** and **every recipe for it needs an unpriced item:** price these by hand if they should be listed, then run `suggest` again.
 
 ### Catalog files
 
@@ -103,11 +195,69 @@ Catalog files live in any datapack at `data/<namespace>/market/<name>.json`:
 
 - `entries` is required: the items to list.
 - `defaults` is optional. Its fields apply to every entry in that file unless the entry sets the field itself. It can't contain `item`.
+- `required_mods` is optional: a list of mod IDs, such as `["create"]`. If any of them isn't installed, the whole file is skipped without a warning. Use it for a price file that belongs to one mod.
 - **Duplicates:** if two files list the same item, the higher-priority datapack wins. Within one datapack, the file whose name sorts last wins, and the log warns about it.
 - **Reloading:** after editing files, run `/market admin reload` to reload just the market, or `/reload` to reload all datapacks (use `/reload` after adding a new datapack).
 - **Bad entries are skipped, not fatal.** An unknown item, an out-of-range value or a missing field skips only that entry, with a log warning naming the file and entry. Entries with `base_price` 0 or below are skipped with one summary warning, so a half-filled template is safe to load.
 
 You can also start from a file in `templates/` from an export.
+
+### Item classes
+
+A class is a named set of catalog settings shared by a group of items, so similar items behave alike without repeating the same numbers on every entry. Give an entry a class with `"class"`:
+
+```json
+{
+  "entries": [
+    { "item": "minecraft:cobblestone", "base_price": 1,    "class": "common_resource" },
+    { "item": "minecraft:diamond",     "base_price": 256,  "class": "rare_resource" },
+    { "item": "minecraft:nether_star", "base_price": 8192, "class": "unique", "can_sell": false }
+  ]
+}
+```
+
+A class fills in only the fields that nothing else sets. From weakest to strongest: server config, class, the file's `defaults`, the entry itself, tag rules, in-game edits. In the example, the nether star keeps its own `can_sell: false` and takes everything else from `unique`. `class` itself can be set at any of those levels, for example once in a file's `defaults`, or for a whole tag with `/market admin tag <tag> set class rare_resource`.
+
+Classes are the main protection against someone finding a way to get a lot of a valuable item. Rare classes move their price a lot per unit sold and recover slowly, so dumping a big pile pays far less than its base price. There are no per-player limits: the price does the limiting.
+
+The mod ships these classes. The values are starting points, not balanced numbers:
+
+| Class | For | Stock | Markup | Impact per unit | Recovery per step | Floor – ceiling |
+| --- | --- | --- | --- | --- | --- | --- |
+| `common_resource` | Raw materials gathered in bulk: stone, logs, sand | unlimited | 0.5 | 0.0002 | 0.1 | 0.3 – 2 |
+| `common_processed` | Common items made from those: planks, glass, ingots | normal | 0.4 | 0.0005 | 0.08 | 0.25 – 3 |
+| `farmable` | Crops and mob drops that farms produce endlessly | unlimited | 0.5 | 0.001 | 0.05 | 0.1 – 2 |
+| `rare_resource` | Scarce raw materials: diamonds, ancient debris | normal | 1.0 | 0.005 | 0.02 | 0.15 – 5 |
+| `rare_processed` | Valuable made items: netherite, precision mechanisms | normal | 1.0 | 0.003 | 0.03 | 0.15 – 5 |
+| `rare_loot` | Found, not made: music discs, enchanted books, totems | normal | 1.5 | 0.02 | 0.01 | 0.1 – 8 |
+| `unique` | One-of-a-kind: nether stars, dragon eggs | normal | 2.0 | 0.08 | 0.005 | 0.1 – 6 |
+
+"Impact per unit" is both `sell_impact` and `buy_impact`. For a sense of scale, at the default 1-minute recovery step:
+
+- Selling 1,000 cobblestone lowers its sell price to about 82%, and it's back to normal within about half an hour.
+- Selling 100 diamonds lowers theirs to about 61%, and it takes about 35 minutes to recover even half the drop.
+- Selling 10 nether stars lowers theirs to about 43%, and half the drop takes over 2 hours to come back.
+
+See [Supply and demand](#supply-and-demand) for the formulas.
+
+**Making your own.** A class is a file in any datapack at `data/<namespace>/market_classes/<name>.json`. It may set any catalog field except `item`, `base_price` and `class`, plus an optional `description`:
+
+```json
+{
+  "description": "Create machine parts",
+  "markup": 0.6,
+  "sell_impact": 0.002,
+  "buy_impact": 0.002,
+  "recovery": 0.04
+}
+```
+
+Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file at the same path, such as `data/dynamic_economy/market_classes/rare_resource.json`, in your own datapack. It replaces the whole class.
+
+- **Checks:** class values must pass the same rules as catalog entries. A class with a bad value is skipped, and so is every entry naming it. Unknown fields in a class file are ignored with a warning. All of these show in `/market admin diagnose`.
+- **Reloading:** `/market admin reload` re-reads classes along with the catalog files, and every member is repriced. Stock and price factors are never touched.
+- **Keeping it fair:** keep `sell_impact` and `buy_impact` equal, and below `markup`. Even equal impacts, if large, can let a player sell a batch and buy it back for less; `/market admin diagnose` warns about any item where that's possible. All the built-in classes pass.
+- `/market admin classes` lists every class, its values and how many listed items use it.
 
 ### Editing prices in game
 
@@ -116,12 +266,12 @@ These commands need operator level 2. Items can be typed with tab completion, su
 | Command | What it does |
 | --- | --- |
 | `/market admin setprice <item> <price>` | Sets the base price. Also lists an item that isn't on the market yet. |
-| `/market admin set <item> <field> <value>` | Sets any [catalog field](#catalog-fields), such as `set minecraft:diamond markup 0.25` or `set minecraft:dirt can_buy false`. |
+| `/market admin set <item> <field> <value>` | Sets any [catalog field](#catalog-fields), such as `set minecraft:diamond markup 0.25`, `set minecraft:dirt can_buy false` or `set minecraft:diamond class rare_loot`. |
 | `/market admin unset <item> <field>` | Drops one of your edits, so the catalog files decide that field again. |
 | `/market admin remove <item>` | Takes the item off the market. Its stock is kept for if you list it again. |
 | `/market admin revert <item>` | Drops all your edits for the item, back to what the catalog files and tag rules say. |
 | `/market admin clearstock <item>` | Empties the item's stock; it stays listed. |
-| `/market admin info <item>` | For a listed item, every field's value and where it comes from: a catalog file (and whether from the entry itself or the file's `defaults`), a tag rule, your edit, the server config, or the built-in default. It also shows any lower-layer values a field overrides. For an unlisted item, it shows what each layer says. |
+| `/market admin info <item>` | For a listed item, every field's value and where it comes from: a catalog file (and whether from the entry itself or the file's `defaults`), a tag rule, your edit, the item's class, the server config, or the built-in default. It also shows any lower-layer values a field overrides. For an unlisted item, it shows what each layer says. |
 
 For example, `info minecraft:oak_log` might show `base_price = 9 [item edit; overrides 4 from tag rule #minecraft:logs, then 2 from file dynamic_economy:example_catalog]` and `markup = 0.5 [file dynamic_economy:example_catalog defaults]`.
 
@@ -154,7 +304,7 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 | Level | Means | Examples |
 | --- | --- | --- |
 | **Error** | Something was left out of the market. | A catalog entry skipped (unknown item, bad value); an in-game edit that can't be applied. |
-| **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
+| **Warning** | Very likely a mistake. | A round trip that makes a profit; an item that sells for more than its ingredients cost to buy; an item that can be bought but never sold, with 0 stock, so it can never be bought; an item stuck at its price floor or ceiling; a tag rule matching no items; an edit that sets the same value as the layer below it. |
 | **Note** | Possibly deliberate; worth a look. | Unlimited items that can be sold (farms can sell them forever); items listed but neither buyable nor sellable; tag rules covering more than 64 items; unpriced template entries; saved data for items that no longer exist. |
 
 **Removed mods.** When you remove a mod, the market keeps its items' saved stock, prices, history and edits. `/market admin prune` lists those items, and `/market admin prune confirm` deletes their data. The overall money counts are kept. A backup of stock, prices and edits is taken automatically first (see [Backups](#backups-and-restoring)).
@@ -189,11 +339,12 @@ Automatic backups (taken before a restore or a prune) are kept up to the newest 
 
 ## Catalog fields
 
-Prices are whole numbers of **spurs**, the smallest Numismatics coin (1 bevel = 8 spurs, 1 sprocket = 16, 1 cog = 64, 1 crown = 512, 1 sun = 4096). These fields are used in catalog files, spreadsheet columns and `/market admin set`.
+Prices are whole numbers of **spurs** (Numismatics' bank) or **bits** (the mod's own); 1 bit = 1 spur, so a price file means the same under either bank. See [Banks and coins](#banks-and-coins) for the coins. These fields are used in catalog files, spreadsheet columns and `/market admin set`.
 
 | Field | Default | What it does |
 | --- | --- | --- |
-| `item` | *required* | The exact item ID, such as `minecraft:iron_ingot`. Enchanted, damaged or renamed copies are never accepted. |
+| `item` | *required* | The exact item ID, such as `minecraft:iron_ingot`. Enchanted, damaged or renamed copies are never accepted (apart from data listed in the `ignored_components` server config). |
+| `class` | none | An [item class](#item-classes) that fills in the fields nothing else sets, such as `rare_resource`. |
 | `base_price` | *required* | What the market pays for one unit at normal supply, in spurs. At least 1; 0 or below means "not priced yet". |
 | `markup` | `0.5` | Added on top when the market sells. `0.5` means buyers pay 150% of base. 0 to 1000. |
 | `sell_fee` | `0.0` | Fraction kept back from what the market pays, such as `0.1` for 10%. Nobody receives it; it's a money sink. 0 to 0.99. |
@@ -256,12 +407,18 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | --- | --- | --- | --- |
 | `max_quantity_per_request` | 640 | 1 – 1,000,000 | Largest quantity one buy or sell can move. |
 | `access_mode` | `COMMAND_AND_BLOCK` | `COMMAND_AND_BLOCK`, `BLOCK_ONLY` | How players reach the market; see [Letting players in](#letting-players-in). |
+| `ignored_components` | `["relics:data"]` | data component IDs | Item data that doesn't stop a sale. Some mods add data to every copy a player holds: Relics (and Reliquified Artifacts) adds `relics:data`, a relic's level and rolled stats, so without this no relic could be sold. The data is lost with the sold item; bought items always come fresh and never join a stack carrying such data. |
 | `pricing.sell_impact` | 0.0005 | 0 – 0.5 | Each unit sold multiplies the factor by `1 − sell_impact`. At the default, selling 640 drops a price to about 73%. |
 | `pricing.buy_impact` | 0.0005 | 0 – 0.5 | Each unit bought multiplies the factor by `1 + buy_impact`. Keep it close to `sell_impact`; see [Keeping it fair](#supply-and-demand). |
 | `pricing.recovery` | 0.05 | 0 – 1 | Fraction of the gap back to 1.0 closed at each step. |
 | `pricing.interval_ticks` | 1200 | 1 – 1,728,000 | Game ticks between recovery steps. 20 ticks is 1 second. |
 | `pricing.floor` | 0.2 | 0.001 – 1 | Lowest factor selling can reach. |
 | `pricing.ceiling` | 5.0 | 1 – 1000 | Highest factor buying can reach. |
+| `leaderboard.leaderboard_enabled` | true | true, false | Show the Leaderboard tab. When off, the tab is greyed out and no balances are sent to anyone. |
+| `leaderboard.leaderboard_size` | 10 | 1 – 100 | How many players the leaderboard lists. |
+| `leaderboard.leaderboard_exclude_operators` | false | true, false | Leave operators off the leaderboard, for servers where admins hold test money. |
+
+**The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows. Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
 
 ## All commands
 
@@ -280,10 +437,15 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin restore <name> <stock\|prices\|edits\|all> [confirm]` | 2 | Shows what restoring would change, then restores with `confirm`. |
 | `/market admin audit [page]` | 2 | The latest admin actions from the [audit log](#audit-log). |
 | `/market admin tag <tag> ...`, `/market admin tags` | 2 | Tag rules; see [Tag rules](#tag-rules-pricing-many-items-at-once). |
+| `/market admin classes` | 2 | Lists the [item classes](#item-classes), their values and how many listed items use each. |
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
 | `/market admin import "<path>" [preview]` | 4 | Imports a priced CSV. The path is relative to `config/dynamic_economy/`. |
+| `/market admin bank` | 2 | Which bank the world uses and what its accounts hold. |
+| `/market admin bank switch <own\|numismatics> [confirm]` | 2 | Shows, then does, a move of every balance to the other bank; see [Banks and coins](#banks-and-coins). |
+| `/bank team ...` | everyone | The mod's own teams, for team accounts; see the [player guide](player-guide.md#the-bank-tab). Off with Numismatics' bank; with FTB Teams only the info line (`/bank team`) works, since parties are the teams. |
+| `/market admin suggest [modid]` | 4 | Works out prices for unlisted items from their recipes and writes `suggested.csv`; see [Suggesting prices from recipes](#suggesting-prices-from-recipes). |
 
 \* Operators only when `access_mode` is `BLOCK_ONLY`. Permission 4 means the server console or a level-4 operator, since those commands read and write files on the server.
 
@@ -296,8 +458,9 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `item_id` | Yes, required | The item to list. |
 | `mod_id`, `display_name`, `max_stack_size`, `in_catalog` | No | For your reference while pricing. |
 | `base_price` | Yes, required | Whole number, 1 or more. Blank means "don't import this row". |
-| `unlimited_stock`, `markup`, `min_buy_markup`, `sell_fee`, `can_sell`, `can_buy`, `start_stock`, `dynamic` | Yes | Blank means "use the default". |
-| `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling` | Yes | Per-item overrides; blank means "use the server config". |
+| `class` | Yes | An [item class](#item-classes), such as `rare_resource`. Blank means none. |
+| `unlimited_stock`, `markup`, `min_buy_markup`, `sell_fee`, `can_sell`, `can_buy`, `start_stock`, `dynamic` | Yes | Blank means "use the class's value, or else the default". |
+| `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling` | Yes | Per-item overrides; blank means "use the class's value, or else the server config". |
 
 The importer is forgiving about how the file was saved:
 
@@ -328,5 +491,9 @@ The rest of the file still imports. The first 15 reasons appear in chat, and all
 | `Market admin edit not applied: …` | A saved in-game edit no longer fits, for example because a catalog file changed. Check `/market admin info <item>`. |
 | `Market item …: a round trip may make a profit` | The item's impacts, markup and fee allow a profit from buying then selling back, or selling then buying back; see [Supply and demand](#supply-and-demand). |
 | The market is empty after upgrading | The example items are now an optional datapack; see [Pricing items](#pricing-items). |
-| `Numismatics bank API not found; the market will refuse all trades` | The installed Numismatics version isn't compatible. This mod was built against 1.1.0. |
+| `This world uses Numismatics' bank, but Numismatics isn't installed or its bank API doesn't match this mod; the market will refuse all trades` | Install Numismatics 1.1.x again, or move the world to the mod's own bank with `/market admin bank switch own` (which needs Numismatics installed to read the balances). |
+| `This world will use …` | Logged once, when a world first records its bank. |
+| `Market file … entry N: … is a coin, and coins can never be listed` | Coins can't be sold to the market; remove the entry. |
+| `FTB Teams is installed but its team API does not match …` | A different FTB Teams version; the mod's own `/bank team` commands are used instead. Built against 2101.1.11. |
 | A player sees "The market is only available at a Market Terminal" | `access_mode` is `BLOCK_ONLY`. |
+| A listed item shows 0 under Have and can't be sold, though the player holds one | Another mod adds data to every copy (as Relics does). Find the data's ID (F3+H shows component counts; `/data get entity @s Inventory` shows the IDs) and add it to `ignored_components`. |

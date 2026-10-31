@@ -11,11 +11,13 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.CatalogJson;
 import dynamiceconomy.catalog.CatalogOverlay;
 import dynamiceconomy.catalog.FieldSource;
+import dynamiceconomy.catalog.ItemClasses;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.data.AuditLog;
 import dynamiceconomy.data.MarketOverrides;
@@ -23,6 +25,7 @@ import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.MarketDiagnostics;
 import dynamiceconomy.service.PriceModel;
+import dynamiceconomy.service.PriceSuggestion;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -55,11 +58,20 @@ import java.util.stream.Collectors;
  * breaks a catalog rule, the edit is undone and the reason shown.
  */
 final class AdminCatalogCommands {
-    /** A catalog field that can be set by command, with its argument type and how to read it as JSON. */
-    private record Field(String name, ArgumentType<?> type, BiFunction<CommandContext<CommandSourceStack>, String, JsonElement> read) {
+    /**
+     * A catalog field that can be set by command, with its argument type, how to read it as JSON and, optionally,
+     * what to suggest.
+     */
+    private record Field(String name, ArgumentType<?> type, BiFunction<CommandContext<CommandSourceStack>, String, JsonElement> read,
+                         SuggestionProvider<CommandSourceStack> suggestions) {
+        Field(String name, ArgumentType<?> type, BiFunction<CommandContext<CommandSourceStack>, String, JsonElement> read) {
+            this(name, type, read, null);
+        }
     }
 
     private static final List<Field> FIELDS = List.of(
+            new Field("class", ResourceLocationArgument.id(), (c, a) -> new JsonPrimitive(typed(c, a)),
+                    (c, builder) -> SharedSuggestionProvider.suggest(ItemClasses.all().keySet().stream().map(ItemClasses::shortName), builder)),
             new Field("base_price", IntegerArgumentType.integer(1), (c, a) -> new JsonPrimitive(IntegerArgumentType.getInteger(c, a))),
             decimal("markup", 0, 1000),
             decimal("sell_fee", 0, 0.99),
@@ -78,6 +90,15 @@ final class AdminCatalogCommands {
     private static final int PROBLEMS_SHOWN = 5;
 
     private AdminCatalogCommands() {
+    }
+
+    /**
+     * An argument exactly as typed. A class name without a namespace means this mod's class, but the ID argument would
+     * read {@code rare_resource} as {@code minecraft:rare_resource}.
+     */
+    private static String typed(CommandContext<CommandSourceStack> ctx, String argument) {
+        return ctx.getNodes().stream().filter(node -> node.getNode().getName().equals(argument)).findFirst()
+                .map(node -> node.getRange().get(ctx.getInput())).orElseThrow();
     }
 
     private static Field decimal(String name, double min, double max) {
@@ -125,6 +146,7 @@ final class AdminCatalogCommands {
         tag.then(Commands.literal("info").executes(AdminCatalogCommands::tagInfo));
         admin.then(Commands.literal("tag").then(tag));
         admin.then(Commands.literal("tags").executes(AdminCatalogCommands::listTags));
+        admin.then(Commands.literal("classes").executes(AdminCatalogCommands::listClasses));
         admin.then(Commands.literal("diagnose").executes(ctx -> diagnose(ctx, 1))
                 .then(Commands.argument("page", IntegerArgumentType.integer(1))
                         .executes(ctx -> diagnose(ctx, IntegerArgumentType.getInteger(ctx, "page")))));
@@ -149,6 +171,9 @@ final class AdminCatalogCommands {
         for (Field field : FIELDS) {
             var value = Commands.argument("value", field.type())
                     .executes(ctx -> edit.run(ctx, field.name(), field.read().apply(ctx, "value"), false));
+            if (field.suggestions() != null) {
+                value.suggests(field.suggestions());
+            }
             if (withPreview) {
                 value.then(Commands.literal("preview")
                         .executes(ctx -> edit.run(ctx, field.name(), field.read().apply(ctx, "value"), true)));
@@ -230,7 +255,7 @@ final class AdminCatalogCommands {
     }
 
     /** Catalog fields in the order {@code info} lists them. */
-    private static final List<String> INFO_FIELDS = List.of("base_price", "markup", "sell_fee", "can_sell", "can_buy",
+    private static final List<String> INFO_FIELDS = List.of("class", "base_price", "markup", "sell_fee", "can_sell", "can_buy",
             "unlimited_stock", "start_stock", "dynamic", "min_buy_markup", "sell_impact", "buy_impact", "recovery", "floor", "ceiling");
 
     /**
@@ -249,7 +274,8 @@ final class AdminCatalogCommands {
             JsonObject values = CatalogJson.toJson(listed.get());
             PriceModel.Inputs inputs = PriceModel.inputs(listed.get());
             Map<String, List<FieldSource>> sources = MarketCatalog.INSTANCE.sources(item);
-            INFO_FIELDS.forEach(field -> lines.add("  " + describeField(field, values, inputs, sources.get(field))));
+            Optional<ItemClasses.ItemClass> itemClass = listed.get().itemClass().flatMap(ItemClasses::get);
+            INFO_FIELDS.forEach(field -> lines.add("  " + describeField(field, values, inputs, sources.get(field), itemClass)));
         } else {
             lines.add(id + " is not listed");
             lines.add("  Catalog files: " + MarketCatalog.INSTANCE.fileEntry(item).map(AdminCatalogCommands::describe).orElse("not listed"));
@@ -270,11 +296,16 @@ final class AdminCatalogCommands {
     }
 
     /**
-     * {@code markup = 0.75 [item edit; overrides 0.5 from file a:ores defaults]}. A field nothing sets shows its
-     * built-in default, the server config value, or (for min_buy_markup) the markup it follows.
+     * {@code markup = 0.75 [item edit; overrides 0.5 from file a:ores defaults]}. A field no layer sets shows the value
+     * from the item's class, its built-in default, the server config value, or (for min_buy_markup) the markup it
+     * follows.
      */
-    static String describeField(String field, JsonObject values, PriceModel.Inputs inputs, List<FieldSource> layers) {
-        String value = values.has(field) ? show(values.get(field)) : switch (field) {
+    static String describeField(String field, JsonObject values, PriceModel.Inputs inputs, List<FieldSource> layers,
+                                Optional<ItemClasses.ItemClass> itemClass) {
+        String value = field.equals("class") && values.has(field)
+                ? ItemClasses.parseId(values.get(field).getAsString()).map(ItemClasses::shortName).orElse("?")
+                : values.has(field) ? show(values.get(field)) : switch (field) {
+            case "class" -> "none";
             case "sell_impact" -> plain(inputs.sellImpact());
             case "buy_impact" -> plain(inputs.buyImpact());
             case "recovery" -> plain(inputs.recovery());
@@ -284,6 +315,9 @@ final class AdminCatalogCommands {
             default -> "?";
         };
         if (layers == null || layers.isEmpty()) {
+            if (itemClass.isPresent() && itemClass.get().sets(field)) {
+                return "%s = %s [class %s]".formatted(field, value, ItemClasses.shortName(itemClass.get().id()));
+            }
             String from = switch (field) {
                 case "sell_impact", "buy_impact", "recovery", "floor", "ceiling" -> "server config";
                 case "min_buy_markup" -> "same as markup";
@@ -317,10 +351,26 @@ final class AdminCatalogCommands {
 
     private static int diagnose(CommandContext<CommandSourceStack> ctx, int page) {
         MinecraftServer server = ctx.getSource().getServer();
-        List<MarketDiagnostics.Finding> findings = MarketDiagnostics.run(MarketCatalog.INSTANCE.files(),
+        List<MarketDiagnostics.Finding> findings = new ArrayList<>(MarketDiagnostics.run(MarketCatalog.INSTANCE.files(),
                 MarketCatalog.INSTANCE.entries(), MarketCatalog.INSTANCE::sources, MarketCatalog.INSTANCE.problems(),
                 MarketOverrides.get(server).snapshot(), MarketStockData.get(server), MarketStockData.now(server),
-                CatalogOverlay::registryTag);
+                CatalogOverlay::registryTag));
+        // Needs the recipes, which only the running server has, so it's checked here rather than in MarketDiagnostics.
+        Map<Item, CatalogEntry> catalog = new LinkedHashMap<>();
+        MarketCatalog.INSTANCE.entries().forEach(entry -> catalog.put(entry.item(), entry));
+        for (PriceSuggestion.CraftProfit profit : PriceSuggestion.craftProfits(server.getRecipeManager().getRecipes(),
+                server.registryAccess(), catalog)) {
+            String advice = switch (profit.kind()) {
+                case PRICE_GAP -> "Raise the ingredients' prices, lower this one, or stop the market buying it";
+                case MAY_HIDE_INPUTS -> "This recipe type may take fluids or amounts the check can't see; check it by hand";
+                case MULTIPLIES_INPUT -> "The recipe makes more of its own ingredient, so no price stops it; sell impact limits what it earns";
+            };
+            findings.add(new MarketDiagnostics.Finding(profit.kind() == PriceSuggestion.ProfitKind.PRICE_GAP
+                    ? MarketDiagnostics.Severity.WARNING : MarketDiagnostics.Severity.NOTE,
+                    "%s: buying the ingredients for %s costs %s, and the result sells for %s. %s"
+                    .formatted(id(profit.output()), profit.recipe(), plain(profit.buyCost().doubleValue()), plain(profit.sellValue().doubleValue()),
+                            advice)));
+        }
         if (findings.isEmpty()) {
             ctx.getSource().sendSuccess(() -> Component.literal("Market check: nothing to report"), false);
             return 0;
@@ -439,7 +489,7 @@ final class AdminCatalogCommands {
             CatalogEntry now = MarketCatalog.INSTANCE.get(item).orElse(null);
             CatalogEntry next = after.entries().get(item);
             if (now == null && next != null) {
-                added.add(id(item) + ": listed at " + next.basePrice() + " spurs");
+                added.add(id(item) + ": listed at " + next.basePrice() + " " + MarketCommand.unit(ctx.getSource()));
             } else if (now != null && next == null) {
                 taken.add(id(item) + ": taken off the market");
             } else if (now != null && !now.equals(next)) {
@@ -508,6 +558,29 @@ final class AdminCatalogCommands {
             ctx.getSource().sendSuccess(() -> Component.literal("  #%s (%d items): %s".formatted(rule.tag(), count, rule.patch())), false);
         }
         return rules.size();
+    }
+
+    // ---- Item classes -----------------------------------------------------------------------------------------
+
+    private static int listClasses(CommandContext<CommandSourceStack> ctx) {
+        Map<ResourceLocation, ItemClasses.ItemClass> classes = ItemClasses.all();
+        if (classes.isEmpty()) {
+            ctx.getSource().sendSuccess(() -> Component.literal("No item classes are loaded"), false);
+            return 0;
+        }
+        Map<ResourceLocation, Long> members = MarketCatalog.INSTANCE.entries().stream()
+                .filter(entry -> entry.itemClass().isPresent())
+                .collect(Collectors.groupingBy(entry -> entry.itemClass().get(), Collectors.counting()));
+        ctx.getSource().sendSuccess(() -> Component.literal(
+                "Item classes. Each fills the fields an item's catalog entry, tag rules and edits leave unset:"), false);
+        for (ItemClasses.ItemClass itemClass : classes.values()) {
+            long count = members.getOrDefault(itemClass.id(), 0L);
+            String about = itemClass.description().isEmpty() ? "" : " - " + itemClass.description();
+            ctx.getSource().sendSuccess(() -> Component.literal("  %s (%d listed)%s".formatted(ItemClasses.shortName(itemClass.id()),
+                    count, about)), false);
+            ctx.getSource().sendSuccess(() -> Component.literal("    " + itemClass.values()).withStyle(ChatFormatting.GRAY), false);
+        }
+        return classes.size();
     }
 
     // ---- Applying an edit -------------------------------------------------------------------------------------

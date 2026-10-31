@@ -1,0 +1,9 @@
+{
+  "description": "Valuable crafted or processed items (netherite ingots, precision mechanisms). Volatile, slow to recover.",
+  "markup": 1.0,
+  "sell_impact": 0.003,
+  "buy_impact": 0.003,
+  "recovery": 0.03,
+  "floor": 0.15,
+  "ceiling": 5.0
+}

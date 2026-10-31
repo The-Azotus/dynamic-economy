@@ -1,0 +1,1497 @@
+{
+  "required_mods": [
+    "ars_nouveau"
+  ],
+  "entries": [
+    {
+      "item": "ars_nouveau:abjuration_essence",
+      "base_price": 127,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:agronomic_sourcelink",
+      "base_price": 125,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:air_essence",
+      "base_price": 29,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:alchemical_sourcelink",
+      "base_price": 161,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:alchemists_crown",
+      "base_price": 267,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:allow_scroll",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:alteration_table",
+      "base_price": 24,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:amplify_arrow",
+      "base_price": 601,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:amulet_of_mana_boost",
+      "base_price": 1752,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:amulet_of_mana_regen",
+      "base_price": 1285,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:annotated_codex",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:apprentice_spell_book",
+      "base_price": 2117,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:arcane_core",
+      "base_price": 127,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:arcane_pedestal",
+      "base_price": 17,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:arcane_platform",
+      "base_price": 17,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:arcanist_boots",
+      "base_price": 145,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:arcanist_hood",
+      "base_price": 180,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:arcanist_leggings",
+      "base_price": 250,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:arcanist_robes",
+      "base_price": 286,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archmage_spell_book",
+      "base_price": 23272,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_boat",
+      "base_price": 7,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_button",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_chest",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_door",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_fence",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_fence_gate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_grate",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_hanging_sign",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_planks",
+      "base_price": 1,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:archwood_pressure_plate",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_sconce",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_sign",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_stairs",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:archwood_trapdoor",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ars_stencil",
+      "base_price": 127,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:basic_spell_turret",
+      "base_price": 345,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:bastion_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:battlemage_boots",
+      "base_price": 2257,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:battlemage_hood",
+      "base_price": 2820,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:battlemage_leggings",
+      "base_price": 3946,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:battlemage_robes",
+      "base_price": 4510,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:belt_of_levitation",
+      "base_price": 278,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:belt_of_unstable_gifts",
+      "base_price": 138,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:blank_parchment",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:blank_thread",
+      "base_price": 6,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:blue_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:blue_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:blue_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:blue_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:blue_sbed",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:bombegranate_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:brazier_relay",
+      "base_price": 944,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:deny_scroll",
+      "base_price": 10,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:dominion_wand",
+      "base_price": 71,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:dowsing_rod",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:drygmy_charm",
+      "base_price": 56,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:drygmy_shard",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:dull_trinket",
+      "base_price": 18,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:earth_essence",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:enchanters_eye",
+      "base_price": 228,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:enchanters_fishing_rod",
+      "base_price": 1025,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:enchanters_gauntlet",
+      "base_price": 1591,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:enchanters_mirror",
+      "base_price": 651,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:enchanters_shield",
+      "base_price": 1064,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:enchanters_sword",
+      "base_price": 2711,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:enchanting_apparatus",
+      "base_price": 673,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:falseweave",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:fire_essence",
+      "base_price": 60,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:frostaya_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:ghostweave",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_alternating",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_alternating_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_alternating_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_basketweave",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_basketweave_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_basketweave_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_large_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_large_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_large_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_mosaic",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_mosaic_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_mosaic_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_small_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_small_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gilded_sourcestone_small_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:gold_grate",
+      "base_price": 105,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:green_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:green_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:green_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:green_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:green_sbed",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:imbuement_chamber",
+      "base_price": 114,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:item_detector",
+      "base_price": 47,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:jar_of_light",
+      "base_price": 304,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:jump_ring",
+      "base_price": 110,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:lingering_flask_cannon",
+      "base_price": 332,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:magebloom",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:magebloom_block",
+      "base_price": 4,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:magebloom_crop",
+      "base_price": 36,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:magebloom_fiber",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:magelight_torch",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:manipulation_essence",
+      "base_price": 244,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:mendosteen_pod",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:mimic_scroll",
+      "base_price": 20,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:mob_jar",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:mundane_belt",
+      "base_price": 31,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:music_disc_aria_biblio",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "ars_nouveau:music_disc_firel_the_wild_hunt",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "ars_nouveau:music_disc_thistle_the_sound_of_glass",
+      "base_price": 256,
+      "class": "rare_loot"
+    },
+    {
+      "item": "ars_nouveau:mycelial_sourcelink",
+      "base_price": 128,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:novice_spell_book",
+      "base_price": 326,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:orange_sbed",
+      "base_price": 11,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:pierce_arrow",
+      "base_price": 56,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:polished_sconce",
+      "base_price": 13,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:potion_diffuser",
+      "base_price": 191,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:potion_flask",
+      "base_price": 765,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:potion_flask_amplify",
+      "base_price": 1783,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:potion_flask_extend_time",
+      "base_price": 2719,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:potion_jar",
+      "base_price": 135,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:potion_melder",
+      "base_price": 1481,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:purple_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:purple_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:purple_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:purple_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:purple_sbed",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:red_archwood_leaves",
+      "base_price": 1,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:red_archwood_log",
+      "base_price": 8,
+      "class": "common_resource"
+    },
+    {
+      "item": "ars_nouveau:red_archwood_sapling",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:red_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:red_sbed",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:redstone_relay",
+      "base_price": 374,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:relay",
+      "base_price": 352,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:relay_collector",
+      "base_price": 375,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:relay_deposit",
+      "base_price": 472,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:relay_splitter",
+      "base_price": 400,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:relay_warp",
+      "base_price": 514,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:repository",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:repository_controller",
+      "base_price": 36,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ring_of_greater_discount",
+      "base_price": 4709,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:ring_of_lesser_discount",
+      "base_price": 2369,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:ring_of_potential",
+      "base_price": 28,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_animal_summon",
+      "base_price": 140,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_awakening",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_binding",
+      "base_price": 79,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_brazier",
+      "base_price": 211,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_burrowing",
+      "base_price": 195,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_challenge",
+      "base_price": 132,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_cloudshaping",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_conjure_island_desert",
+      "base_price": 56,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_conjure_island_plains",
+      "base_price": 56,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_containment",
+      "base_price": 256,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_disintegration",
+      "base_price": 341,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_fertility",
+      "base_price": 459,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_flight",
+      "base_price": 1155,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_flowering",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_forestation",
+      "base_price": 59,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_gravity",
+      "base_price": 255,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_harvest",
+      "base_price": 126,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_moonfall",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_overgrowth",
+      "base_price": 114,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_restoration",
+      "base_price": 562,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_scrying",
+      "base_price": 92,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_sunrise",
+      "base_price": 9,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_warping",
+      "base_price": 88,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:ritual_wilden_summon",
+      "base_price": 140,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:rotating_spell_turret",
+      "base_price": 345,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:runic_chalk",
+      "base_price": 245,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sconce",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:scribes_table",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:scryers_crystal",
+      "base_price": 52,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:scryers_oculus",
+      "base_price": 700,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:shapers_focus",
+      "base_price": 935,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:sky_block",
+      "base_price": 34,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_alternating",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_alternating_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_alternating_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_basketweave",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_basketweave_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_basketweave_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_large_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_large_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_large_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_mosaic",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_mosaic_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_mosaic_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_small_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_small_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_gilded_sourcestone_small_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_alternating",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_alternating_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_alternating_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_basketweave",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_basketweave_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_basketweave_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_grate",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_large_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_large_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_large_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_mosaic",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_mosaic_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_mosaic_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_small_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_small_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_small_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:smooth_sourcestone_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sorcerer_boots",
+      "base_price": 215,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sorcerer_hood",
+      "base_price": 268,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sorcerer_leggings",
+      "base_price": 374,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sorcerer_robes",
+      "base_price": 426,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:source_berry_pie",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:source_berry_roll",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:source_gem",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:source_gem_block",
+      "base_price": 35,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:source_jar",
+      "base_price": 8,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:source_lamp",
+      "base_price": 72,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourceberry_bush",
+      "base_price": 2,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:sourcestone",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_alternating",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:sourcestone_alternating_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_alternating_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_basketweave",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:sourcestone_basketweave_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_basketweave_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_grate",
+      "base_price": 55,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_large_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:sourcestone_large_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_large_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_mosaic",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:sourcestone_mosaic_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_mosaic_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_sconce",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_small_bricks",
+      "base_price": 2,
+      "class": "common_processed",
+      "can_sell": false
+    },
+    {
+      "item": "ars_nouveau:sourcestone_small_bricks_slab",
+      "base_price": 1,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_small_bricks_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:sourcestone_stairs",
+      "base_price": 2,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:spell_bow",
+      "base_price": 760,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:spell_crossbow",
+      "base_price": 812,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:spell_prism",
+      "base_price": 230,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:spell_sensor",
+      "base_price": 35,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:spell_turret",
+      "base_price": 451,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:splash_flask_cannon",
+      "base_price": 204,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:split_arrow",
+      "base_price": 56,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:stable_warp_scroll",
+      "base_price": 185,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:starbuncle_shades",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:storage_lectern",
+      "base_price": 46,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:stripped_blue_archwood_log",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:stripped_blue_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:stripped_green_archwood_log",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:stripped_green_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:stripped_purple_archwood_log",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:stripped_purple_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:stripped_red_archwood_log",
+      "base_price": 8,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:stripped_red_archwood_wood",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_buy": false
+    },
+    {
+      "item": "ars_nouveau:summon_focus",
+      "base_price": 704,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_amethyst_golem",
+      "base_price": 19,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_drygmy",
+      "base_price": 187,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_feather",
+      "base_price": 269,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_gliding",
+      "base_price": 9076,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_heights",
+      "base_price": 82,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_high_step",
+      "base_price": 94,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_immolation",
+      "base_price": 183,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_kindling",
+      "base_price": 77,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_life_drain",
+      "base_price": 335,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_magic_capacity",
+      "base_price": 26,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_repairing",
+      "base_price": 663,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_undying",
+      "base_price": 2549,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_warding",
+      "base_price": 15,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_whirlisprig",
+      "base_price": 578,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:thread_wixie",
+      "base_price": 357,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:timer_spell_turret",
+      "base_price": 567,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:vitalic_sourcelink",
+      "base_price": 124,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:void_prism",
+      "base_price": 265,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:wand",
+      "base_price": 423,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:warp_scroll",
+      "base_price": 79,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:whirlisprig_charm",
+      "base_price": 638,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:whirlisprig_flower",
+      "base_price": 4,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:whirlisprig_shards",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:wilden_horn",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:wilden_spike",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:wilden_tribute",
+      "base_price": 512,
+      "class": "rare_loot"
+    },
+    {
+      "item": "ars_nouveau:wilden_wing",
+      "base_price": 16,
+      "class": "farmable"
+    },
+    {
+      "item": "ars_nouveau:wixie_charm",
+      "base_price": 169,
+      "class": "rare_processed"
+    },
+    {
+      "item": "ars_nouveau:wixie_hat",
+      "base_price": 61,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:wixie_shards",
+      "base_price": 16,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:worn_notebook",
+      "base_price": 13,
+      "class": "common_processed"
+    },
+    {
+      "item": "ars_nouveau:yellow_sbed",
+      "base_price": 11,
+      "class": "common_processed",
+      "can_sell": false
+    }
+  ]
+}

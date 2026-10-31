@@ -1,8 +1,384 @@
 {
-  "parent": "minecraft:block/orientable",
+  "parent": "minecraft:block/block",
   "textures": {
-    "top": "dynamic_economy:block/market_terminal_top",
-    "front": "dynamic_economy:block/market_terminal_front",
-    "side": "dynamic_economy:block/market_terminal_side"
-  }
+    "particle": "minecraft:block/spruce_planks",
+    "planks": "minecraft:block/spruce_planks",
+    "leg": "minecraft:block/stripped_spruce_log",
+    "coins": "dynamic_economy:block/market_terminal_coins_side",
+    "coins_top": "dynamic_economy:block/market_terminal_coins_top"
+  },
+  "elements": [
+    {
+      "__comment": "table top",
+      "from": [0, 12, 0],
+      "to": [16, 14, 16],
+      "faces": {
+        "north": {
+          "texture": "#planks",
+          "cullface": "north"
+        },
+        "east": {
+          "texture": "#planks",
+          "cullface": "east"
+        },
+        "south": {
+          "texture": "#planks",
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#planks",
+          "cullface": "west"
+        },
+        "up": {
+          "texture": "#planks"
+        },
+        "down": {
+          "texture": "#planks"
+        }
+      }
+    },
+    {
+      "__comment": "leg",
+      "from": [1, 0, 1],
+      "to": [3, 12, 3],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "__comment": "leg",
+      "from": [13, 0, 1],
+      "to": [15, 12, 3],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "__comment": "leg",
+      "from": [1, 0, 13],
+      "to": [3, 12, 15],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "__comment": "leg",
+      "from": [13, 0, 13],
+      "to": [15, 12, 15],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "__comment": "rail",
+      "from": [3, 10, 1.5],
+      "to": [13, 12, 2.5],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg"
+        }
+      }
+    },
+    {
+      "__comment": "rail",
+      "from": [3, 10, 13.5],
+      "to": [13, 12, 14.5],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg"
+        }
+      }
+    },
+    {
+      "__comment": "rail",
+      "from": [1.5, 10, 3],
+      "to": [2.5, 12, 13],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg"
+        }
+      }
+    },
+    {
+      "__comment": "rail",
+      "from": [13.5, 10, 3],
+      "to": [14.5, 12, 13],
+      "faces": {
+        "north": {
+          "texture": "#leg"
+        },
+        "east": {
+          "texture": "#leg"
+        },
+        "south": {
+          "texture": "#leg"
+        },
+        "west": {
+          "texture": "#leg"
+        },
+        "down": {
+          "texture": "#leg"
+        }
+      }
+    },
+    {
+      "__comment": "tall stack",
+      "from": [3, 14, 3],
+      "to": [6, 18, 6],
+      "faces": {
+        "north": {
+          "texture": "#coins"
+        },
+        "east": {
+          "texture": "#coins"
+        },
+        "south": {
+          "texture": "#coins"
+        },
+        "west": {
+          "texture": "#coins"
+        },
+        "up": {
+          "texture": "#coins_top",
+          "uv": [5, 5, 11, 11]
+        }
+      }
+    },
+    {
+      "__comment": "short stack",
+      "from": [7, 14, 3.5],
+      "to": [10, 16, 6.5],
+      "faces": {
+        "north": {
+          "texture": "#coins"
+        },
+        "east": {
+          "texture": "#coins"
+        },
+        "south": {
+          "texture": "#coins"
+        },
+        "west": {
+          "texture": "#coins"
+        },
+        "up": {
+          "texture": "#coins_top",
+          "uv": [5, 5, 11, 11],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "__comment": "stack",
+      "from": [10, 14, 9],
+      "to": [13, 17, 12],
+      "faces": {
+        "north": {
+          "texture": "#coins"
+        },
+        "east": {
+          "texture": "#coins"
+        },
+        "south": {
+          "texture": "#coins"
+        },
+        "west": {
+          "texture": "#coins"
+        },
+        "up": {
+          "texture": "#coins_top",
+          "uv": [5, 5, 11, 11]
+        }
+      }
+    },
+    {
+      "__comment": "spread pile",
+      "from": [3.5, 14, 9.5],
+      "to": [8, 15, 13],
+      "faces": {
+        "north": {
+          "texture": "#coins"
+        },
+        "east": {
+          "texture": "#coins"
+        },
+        "south": {
+          "texture": "#coins"
+        },
+        "west": {
+          "texture": "#coins"
+        },
+        "up": {
+          "texture": "#coins_top",
+          "uv": [5, 5, 11, 11]
+        }
+      }
+    },
+    {
+      "__comment": "spread pile top",
+      "from": [4.5, 15, 10.5],
+      "to": [7, 16, 12],
+      "faces": {
+        "north": {
+          "texture": "#coins"
+        },
+        "east": {
+          "texture": "#coins"
+        },
+        "south": {
+          "texture": "#coins"
+        },
+        "west": {
+          "texture": "#coins"
+        },
+        "up": {
+          "texture": "#coins_top",
+          "uv": [5, 5, 11, 11],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "__comment": "loose coin",
+      "from": [11.5, 14, 3.5],
+      "to": [13.5, 14.5, 5.5],
+      "faces": {
+        "north": {
+          "texture": "#coins"
+        },
+        "east": {
+          "texture": "#coins"
+        },
+        "south": {
+          "texture": "#coins"
+        },
+        "west": {
+          "texture": "#coins"
+        },
+        "up": {
+          "texture": "#coins_top",
+          "uv": [5, 5, 11, 11]
+        }
+      }
+    },
+    {
+      "__comment": "loose coin",
+      "from": [8.5, 14, 12.5],
+      "to": [10.5, 14.5, 14.5],
+      "faces": {
+        "north": {
+          "texture": "#coins"
+        },
+        "east": {
+          "texture": "#coins"
+        },
+        "south": {
+          "texture": "#coins"
+        },
+        "west": {
+          "texture": "#coins"
+        },
+        "up": {
+          "texture": "#coins_top",
+          "uv": [5, 5, 11, 11]
+        }
+      }
+    }
+  ]
 }

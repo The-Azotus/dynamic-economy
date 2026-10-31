@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:gold_ingot"
+    },
+    {
+      "item": "dynamic_economy:chip"
+    }
+  ],
+  "result": {
+    "id": "dynamic_economy:bank_card",
+    "count": 1
+  }
+}
