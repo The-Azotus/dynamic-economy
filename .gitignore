@@ -41,6 +41,7 @@ repo/
 run-gametest/
 run-gametest-without-*/
 run-client2/
+run-mptest/
 
 ### Phase 10 pricing inputs (large exports) ###
 pricing-work/
