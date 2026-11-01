@@ -3,6 +3,7 @@ package dynamiceconomy.service;
 import com.mojang.authlib.GameProfile;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.bank.WorldBank;
+import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.data.ExchangeData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +21,7 @@ import java.util.function.Predicate;
 
 /**
  * The richest players by balance in the world's bank, plus the money the exchange holds for them (open buy orders and
- * owed payments). Only personal accounts of known players count: shared accounts (Numismatics' Blaze Bankers), team
+ * owed payments) and contract payouts owed to them. Only personal accounts of known players count: shared accounts (Numismatics' Blaze Bankers), team
  * accounts and accounts with no player profile never appear, nor do empty accounts. Bank balances are what the bank
  * displays. Server thread only: it reads the bank.
  */
@@ -51,8 +52,8 @@ public final class Leaderboard {
         Predicate<GameProfile> excluded = MarketConfig.leaderboardExcludeOperators()
                 ? profile -> server.getPlayerList().isOp(profile)
                 : profile -> false;
-        List<Entry> ranked = rank(withExchange(WorldBank.of(server).playerBalances(), ExchangeData.get(server).heldForPlayers()),
-                profiles, excluded);
+        List<Entry> ranked = rank(withHeld(WorldBank.of(server).playerBalances(), ExchangeData.get(server).heldForPlayers(),
+                ContractBoard.get(server).owed().forPlayers()), profiles, excluded);
         int ownRank = 0;
         for (int i = 0; i < ranked.size(); i++) {
             if (ranked.get(i).id().equals(viewer.getUUID())) {
@@ -64,10 +65,13 @@ public final class Leaderboard {
                 ownRank, ranked.size());
     }
 
-    /** Bank balances with the exchange's held money added, by player. */
-    public static Map<UUID, Long> withExchange(Map<UUID, Long> balances, Map<UUID, Long> held) {
+    /** Bank balances with money held for players elsewhere (the exchange, owed payouts) added, by player. */
+    @SafeVarargs
+    public static Map<UUID, Long> withHeld(Map<UUID, Long> balances, Map<UUID, Long>... held) {
         Map<UUID, Long> total = new HashMap<>(balances);
-        held.forEach((id, amount) -> total.merge(id, amount, Long::sum));
+        for (Map<UUID, Long> more : held) {
+            more.forEach((id, amount) -> total.merge(id, amount, Long::sum));
+        }
         return total;
     }
 

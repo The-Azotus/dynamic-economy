@@ -29,7 +29,7 @@ Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see 
 
 The sort and filter you pick stay the same the next time you open the market, until you quit the game.
 
-The **Leaderboard** tab lists the server's richest players by bank balance (plus money held in their open exchange buy orders), with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker or team accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
+The **Leaderboard** tab lists the server's richest players by bank balance (plus money held in their open exchange buy orders, and exchange or contract money still owed to them), with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker or team accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
 
 The **History** tab lists your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the Market tab with that item selected. Only you see your trades.
 
@@ -125,7 +125,7 @@ Click an item to see its **book**: what sellers ask above the line (cheapest nea
 
 When a sale goes through, the money goes to your bank less the exchange tax (5% by default, rounded up to a whole bit); the button's tooltip shows what you'd get. Items you buy go to your **collection box**. You're paid and your box fills even while you're offline; you get a message when you next log in. Your own orders never trade with each other. You may have up to 10 open orders by default.
 
-**Listings** are for items the book can't take: enchanted, damaged, renamed and other one-of-a-kind items (potions, enchanted books, tipped arrows too). A seller puts up one stack's worth of one exact item at a fixed price each, and buyers take it at that price; nothing is matched or haggled. The list shows each listing's price and how many are left, with a * on your own. Hover over one, or click it, to see the item in full: enchantments, durability, name. Set how many you want and press **Buy N for X**: the money is taken now and the items go to your **collection box**, exactly as listed.
+**Listings** are for items the book can't take: enchanted, damaged, renamed and other one-of-a-kind items (potions, enchanted books, tipped arrows, levelled relics too). Only fresh copies go on the book, exactly as the market sells them. A seller puts up one stack's worth of one exact item at a fixed price each, and buyers take it at that price; nothing is matched or haggled. The list shows each listing's price and how many are left, with a * on your own. Hover over one, or click it, to see the item in full: enchantments, durability, name. Set how many you want and press **Buy N for X**: the money is taken now and the items go to your **collection box**, exactly as listed.
 
 **List an item** shows what in your main inventory can be listed. Click one, set a **Price each** and how many (up to one stack; **All** fills in what you have, up to a stack), and press **List N for X**. The items are taken from your inventory and held until bought. Each sale is paid into your bank less the exchange tax, as with sell orders; the note under the quantity shows the tax if all of it sells. Containers such as shulker boxes and bundles can be listed only when empty. Listings count toward your open orders.
 
@@ -180,7 +180,7 @@ Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
 | *The exchange is turned off on this server* | Ask an admin. Your box still works. |
 | *You already have as many open orders as you may* | Cancel one, or wait for one to fill. |
 | *That order is no longer open* | It filled or was cancelled while you had the screen open. |
-| *That item can't be traded on the exchange* | Coins can't be, and neither can items you haven't unlocked. Plain items go on the book, not in a listing; full shulker boxes and bundles can't be listed. |
+| *That item can't be traded on the exchange* | Coins can't be, and neither can items you haven't unlocked. Fresh items go on the book, not in a listing; full shulker boxes and bundles can't be listed. |
 | *That's your own listing* | Cancel it under **My orders** instead. |
 | *Enter a price of at least 1* | Type a price each in the Price box. |
 

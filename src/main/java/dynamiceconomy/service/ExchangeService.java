@@ -1,11 +1,9 @@
 package dynamiceconomy.service;
 
-import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankTeam;
 import dynamiceconomy.bank.WorldBank;
-import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.coin.Coins;
 import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.data.ExchangeData;
@@ -57,8 +55,9 @@ import java.util.function.Predicate;
  *       Bought items go to the buyer's collection box.</li>
  *   <li>Cancelling, expiry or turning the exchange off returns exactly what an order still holds: a buy order's money
  *       to its account, a sell order's items to the collection box.</li>
- *   <li>Items with their own components (enchanted, damaged, renamed and so on) can't go on the book. They're
- *       <em>listed</em> instead: one stack's worth of one exact item at a fixed price each, which other players buy
+ *   <li>Only fresh copies go on the book, exactly as the market hands them out. Items with any components of their
+ *       own (enchanted, damaged, renamed, a levelled relic and so on, even data the market's sale check ignores)
+ *       are <em>listed</em> instead, so they reach the buyer exactly as they were: one stack's worth of one exact item at a fixed price each, which other players buy
  *       from, all or part, into their collection box. The seller pays the same tax. Listings and orders share
  *       {@code max_open_orders}, and are cancelled, expired and closed the same way.</li>
  * </ul>
@@ -123,11 +122,11 @@ public final class ExchangeService {
     }
 
     /**
-     * Whether a stack can be listed: an item that can be traded, carrying components of its own (plain copies go on the
+     * Whether a stack can be listed: an item that can be traded, carrying components of its own (fresh copies go on the
      * book), and not a container with anything inside, whose contents a buyer couldn't fully see.
      */
     public static boolean listable(ItemStack stack) {
-        if (stack.isEmpty() || !tradeable(stack.getItem()) || CatalogEntry.plain(stack, stack.getItem(), MarketConfig.ignoredComponents())) {
+        if (stack.isEmpty() || !tradeable(stack.getItem()) || fresh(stack.getItem()).test(stack)) {
             return false;
         }
         ItemContainerContents contents = stack.get(DataComponents.CONTAINER);
@@ -204,7 +203,7 @@ public final class ExchangeService {
         }
         Optional<UUID> team = bank.payingFromTeam(player) ? bank.team(player).map(BankTeam::id) : Optional.empty();
         NonNullList<ItemStack> items = player.getInventory().items;
-        Predicate<ItemStack> matches = plain(item);
+        Predicate<ItemStack> matches = fresh(item);
         if (buy) {
             // The deduction is itself the funds check: it changes nothing when it returns false.
             if (!account.get().deduct((int) total.getAsLong())) {
@@ -425,7 +424,7 @@ public final class ExchangeService {
         }
         Optional<Bank.Account> account = Optional.empty();
         if (order.buy()) {
-            account = ContractService.payee(player.server, order.owner(), order.team());
+            account = PayoutService.payee(player.server, order.owner(), order.team());
             if (account.isEmpty()) {
                 return Outcome.fail(Action.CANCEL, Result.BANK_UNAVAILABLE, order.item());
             }
@@ -482,7 +481,7 @@ public final class ExchangeService {
     public static boolean tick(MinecraftServer server) {
         ExchangeData data = ExchangeData.get(server);
         if (!data.owed().isEmpty()) {
-            payOwed(server, data);
+            PayoutService.payOwed(server, data.owed());
         }
         if (data.orders().isEmpty() && data.listings().isEmpty()) {
             return false;
@@ -491,7 +490,17 @@ public final class ExchangeService {
             closeAll(server, data);
             return true;
         }
-        return expire(server, data, today(server), MarketConfig.orderExpiryDays()) > 0;
+        int expiryDays = MarketConfig.orderExpiryDays();
+        if (expiryDays <= 0) {
+            return false;
+        }
+        // Nothing posted since the last check can be due before the day count moves, so check once per day (and
+        // again if the expiry setting changes).
+        long day = today(server);
+        if (!data.expiryCheckDue(day, expiryDays)) {
+            return false;
+        }
+        return expire(server, data, day, expiryDays) > 0;
     }
 
     /** Closes every open order and listing, as when the exchange is turned off. Collection boxes stay. */
@@ -544,9 +553,9 @@ public final class ExchangeService {
         NonNullList<ItemStack> items = player.getInventory().items;
         long moved = 0;
         for (Parcel parcel : List.copyOf(parcels)) {
-            int fits = (int) Math.min(Math.min(parcel.count(), spaceFor(items, parcel.stack())), Integer.MAX_VALUE);
+            int fits = (int) Math.min(Math.min(parcel.count(), MarketService.spaceFor(items, parcel.stack())), Integer.MAX_VALUE);
             if (fits > 0) {
-                insert(items, parcel.stack(), fits);
+                MarketService.insert(items, parcel.stack(), fits);
                 data.takeParcel(player.getUUID(), parcel.id(), fits);
                 moved += fits;
             }
@@ -571,65 +580,11 @@ public final class ExchangeService {
         return new Outcome(Action.COLLECT, Result.OK, shown, (int) Math.min(moved, Integer.MAX_VALUE), 0, 0, 0);
     }
 
-    /** How many units like {@code like} fit in the main inventory, joining only stacks of exactly the same item. */
-    static long spaceFor(NonNullList<ItemStack> items, ItemStack like) {
-        int maxStack = like.getMaxStackSize();
-        long space = 0;
-        for (ItemStack stack : items) {
-            if (stack.isEmpty()) {
-                space += maxStack;
-            } else if (ItemStack.isSameItemSameComponents(stack, like)) {
-                space += Math.max(0, maxStack - stack.getCount());
-            }
-        }
-        return space;
-    }
-
-    /** Tops up stacks of exactly the same item, then fills empty slots. The caller has checked {@link #spaceFor}. */
-    static void insert(NonNullList<ItemStack> items, ItemStack like, int qty) {
-        int maxStack = like.getMaxStackSize();
-        int remaining = qty;
-        for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
-            ItemStack stack = items.get(slot);
-            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, like) && stack.getCount() < maxStack) {
-                int added = Math.min(remaining, maxStack - stack.getCount());
-                stack.grow(added);
-                remaining -= added;
-            }
-        }
-        for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
-            if (items.get(slot).isEmpty()) {
-                int added = Math.min(remaining, maxStack);
-                items.set(slot, like.copyWithCount(added));
-                remaining -= added;
-            }
-        }
-    }
-
     // ---- Paying and telling ----------------------------------------------------------------------------------
 
     /** Pays into the account an order's money goes to, or records it as owed if the bank can't be reached. */
     private static void pay(MinecraftServer server, ExchangeData data, UUID player, Optional<UUID> team, long amount) {
-        if (amount <= 0) {
-            return;
-        }
-        Optional<Bank.Account> account = ContractService.payee(server, player, team);
-        if (account.isPresent()) {
-            account.get().deposit((int) amount);
-        } else {
-            DynamicEconomy.LOGGER.warn("Exchange payment of {} to {} is owed: the bank can't be reached", amount, player);
-            data.owe(new ExchangeData.Payout(player, team, amount));
-        }
-    }
-
-    private static void payOwed(MinecraftServer server, ExchangeData data) {
-        for (ExchangeData.Payout payout : data.owed()) {
-            Optional<Bank.Account> account = ContractService.payee(server, payout.player(), payout.team());
-            if (account.isPresent()) {
-                account.get().deposit((int) payout.amount());
-                data.paidOwed(payout);
-            }
-        }
+        PayoutService.pay(server, data.owed(), "Exchange payment", player, team, amount);
     }
 
     /** Tells an order's owner what happened to it: in chat if they're online, otherwise when they next log in. */
@@ -665,17 +620,13 @@ public final class ExchangeService {
                 ? BuiltInRegistries.ITEM.get(notice.item()).getDescription()
                 : Component.literal(notice.name());
         return switch (notice.kind()) {
-            case SOLD -> Component.translatable("message.dynamic_economy.exchange.sold", notice.quantity(), item, money(server, notice.amount()));
-            case BOUGHT -> Component.translatable("message.dynamic_economy.exchange.bought", notice.quantity(), item, money(server, notice.amount()));
-            case RETURNED -> notice.amount() > 0
-                    ? Component.translatable("message.dynamic_economy.exchange.returned_money", item, money(server, notice.amount()))
+            case SOLD -> Component.translatable("message.dynamic_economy.exchange.sold", notice.quantity(), item, PayoutService.money(server, notice.amount()));
+            case BOUGHT -> Component.translatable("message.dynamic_economy.exchange.bought", notice.quantity(), item, PayoutService.money(server, notice.amount()));
+            case RETURNED -> notice.quantity() == 0
+                    ? Component.translatable("message.dynamic_economy.exchange.returned_money", item, PayoutService.money(server, notice.amount()))
                     : Component.translatable("message.dynamic_economy.exchange.returned_items", notice.quantity(), item);
             case LISTING_RETURNED -> Component.translatable("message.dynamic_economy.exchange.returned_listing", notice.quantity(), item);
         };
-    }
-
-    private static Component money(MinecraftServer server, long amount) {
-        return Component.translatable("money.dynamic_economy." + WorldBank.kind(server).unit(), String.format("%,d", amount));
     }
 
     // ---- Viewing ---------------------------------------------------------------------------------------------
@@ -726,11 +677,15 @@ public final class ExchangeService {
         return levels;
     }
 
-    /** Every listing {@code player} may see, by item, then cheapest first, then oldest first. */
+    /** The order listings are browsed in: by item, then cheapest first, then oldest first. */
+    public static final Comparator<Listing> BROWSING_ORDER =
+            Comparator.comparing((Listing l) -> l.item().toString()).thenComparingLong(Listing::price).thenComparingLong(Listing::id);
+
+    /** Every listing {@code player} may see, in {@link #BROWSING_ORDER}. */
     public static List<Listing> visibleListings(ServerPlayer player, ExchangeData data) {
         return data.listings().stream()
                 .filter(l -> !MarketVisibility.hidden(player, l.stack().getItem()))
-                .sorted(Comparator.comparing((Listing l) -> l.item().toString()).thenComparingLong(Listing::price).thenComparingLong(Listing::id))
+                .sorted(BROWSING_ORDER)
                 .toList();
     }
 
@@ -748,10 +703,13 @@ public final class ExchangeService {
         return BuiltInRegistries.ITEM.getOptional(item).map(i -> MarketVisibility.hidden(player, i)).orElse(true);
     }
 
-    /** Matches plain copies of {@code item}: no changed components but those the server config ignores. */
-    private static Predicate<ItemStack> plain(Item item) {
-        Set<ResourceLocation> ignored = MarketConfig.ignoredComponents();
-        return stack -> CatalogEntry.plain(stack, item, ignored);
+    /**
+     * Matches fresh copies of {@code item}, exactly as the market hands them out: the only kind a book order holds, as
+     * it keeps just the item ID. {@code ignored_components} doesn't apply, so no data is ever lost on the book.
+     */
+    public static Predicate<ItemStack> fresh(Item item) {
+        ItemStack like = new ItemStack(item);
+        return stack -> ItemStack.isSameItemSameComponents(stack, like);
     }
 
     private static ResourceLocation id(ItemStack stack) {

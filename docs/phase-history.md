@@ -312,7 +312,7 @@ Done when: matched trades move exactly the right items and money with tax applie
 
 Branch: `phase17` (from `phase15`). Decided by the user on 2026-10-31:
 
-1. **Items:** any default-component item, listed in the catalog or not (same `ignored_components` rule). Coins never. Items locked for a player (Phase 12) are hidden from them and rejected as `NOT_LISTED`.
+1. **Items:** any default-component item, listed in the catalog or not (same `ignored_components` rule; changed by the user on 2026-11-01: the book takes only fresh copies, and items carrying ignored data such as levelled relics are listed instead, so their data is never lost). Coins never. Items locked for a player (Phase 12) are hidden from them and rejected as `NOT_LISTED`.
 2. **Money:** a seller's proceeds (less tax) and returned buy escrow go straight to the bank account the order was paid from (team or own, as contracts do; owed if the bank can't be reached). Only items go to the collection box.
 3. **Matching price:** a trade fills at the waiting order's price; a bid above the best ask pays the ask and keeps the difference.
 4. **Defaults:** `exchange_tax` 0.05, max 10 open orders per player, order expiry in in-game days by the contracts' day count with default 0 (= never), largest order 6,400 units.

@@ -387,11 +387,18 @@ public final class MarketSync {
 
     /** After the exchange changed: everyone with a market screen open gets it, and the book they're looking at. */
     public static void broadcastExchange(MinecraftServer server) {
+        // Measured and sorted once for every viewer, only if someone is browsing listings.
+        List<SizedListing> listings = null;
         for (ServerPlayer player : viewers(server)) {
             if (!((MarketMenu) player.containerMenu).bankOnly() && exchangeVisible(player)) {
                 sendExchange(player);
                 sendBook(player);
-                sendListings(player);
+                if (watchingListings.contains(player.getUUID())) {
+                    if (listings == null) {
+                        listings = sizedListings(server);
+                    }
+                    sendListings(player, listings);
+                }
             }
         }
     }
@@ -413,24 +420,42 @@ public final class MarketSync {
         }
     }
 
+    /** A listing and how many bytes its item takes to send. */
+    private record SizedListing(ExchangeData.Listing listing, int bytes) {
+    }
+
+    /** Every listing, in browsing order, measured. */
+    private static List<SizedListing> sizedListings(MinecraftServer server) {
+        return ExchangeData.get(server).listings().stream()
+                .sorted(ExchangeService.BROWSING_ORDER)
+                .map(l -> new SizedListing(l, ExchangeService.encodedSize(l.stack(), server.registryAccess())))
+                .toList();
+    }
+
     /** Every listing the player may see, if they're browsing them, up to {@link #LISTINGS_BUDGET_BYTES}. */
     private static void sendListings(ServerPlayer player) {
-        if (!watchingListings.contains(player.getUUID())) {
-            return;
+        if (watchingListings.contains(player.getUUID())) {
+            sendListings(player, sizedListings(player.server));
         }
-        ExchangeData data = ExchangeData.get(player.server);
+    }
+
+    /** The listings of {@code all} the player may see, up to {@link #LISTINGS_BUDGET_BYTES}. */
+    private static void sendListings(ServerPlayer player, List<SizedListing> all) {
         int expiry = MarketConfig.orderExpiryDays();
         long today = ExchangeService.today(player.server);
         List<MarketPayloads.ListingLine> lines = new ArrayList<>();
         int bytes = 0;
         boolean more = false;
-        for (ExchangeData.Listing listing : ExchangeService.visibleListings(player, data)) {
-            bytes += ExchangeService.encodedSize(listing.stack(), player.server.registryAccess()) + 64;
+        for (SizedListing sized : all) {
+            if (MarketVisibility.hidden(player, sized.listing().stack().getItem())) {
+                continue;
+            }
+            bytes += sized.bytes() + 64;
             if (bytes > LISTINGS_BUDGET_BYTES) {
                 more = true;
                 break;
             }
-            lines.add(listingLine(player, listing, expiry, today));
+            lines.add(listingLine(player, sized.listing(), expiry, today));
         }
         PacketDistributor.sendToPlayer(player, new MarketPayloads.ExchangeListings(lines, more));
     }

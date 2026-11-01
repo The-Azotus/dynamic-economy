@@ -553,7 +553,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         List<ResourceLocation> others = new ArrayList<>();
         if (query.isEmpty()) {
-            ClientMarketState.heldItems().stream().filter(id -> !withOrders.contains(id)).forEach(others::add);
+            ClientMarketState.heldItems().stream().filter(id -> !withOrders.contains(id) && freshHeld(id) > 0).forEach(others::add);
         } else {
             withOrders.removeIf(id -> !matches(id, query));
             for (ResourceLocation id : BuiltInRegistries.ITEM.keySet()) {
@@ -1018,6 +1018,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         return minecraft.player.getInventory().items.get(slot);
     }
 
+    /** How many fresh copies of {@code item} the main inventory holds: what a sell order on the book can take. */
+    private int freshHeld(ResourceLocation item) {
+        return heldLike(new ItemStack(BuiltInRegistries.ITEM.get(item)));
+    }
+
     /** How many units of exactly {@code like} the main inventory holds. */
     private int heldLike(ItemStack like) {
         int count = 0;
@@ -1112,7 +1117,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (exchangeSelected == null) {
             return;
         }
-        int held = ClientMarketState.held(exchangeSelected);
+        int held = freshHeld(exchangeSelected);
         if (held == 0) {
             quantityNote = Component.translatable("screen.dynamic_economy.note.none_held");
             quantityNoteFor = quantityValue();
@@ -1138,7 +1143,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             problem = "order_limit";
         } else if (buy && !ClientMarketState.looksAffordable(MarketService.checkedTotal(each, qty).getAsLong())) {
             problem = "no_funds";
-        } else if (!buy && exchangeSelected != null && ClientMarketState.held(exchangeSelected) < qty) {
+        } else if (!buy && exchangeSelected != null && freshHeld(exchangeSelected) < qty) {
             problem = "not_enough_items";
         } else {
             return null;
@@ -1982,7 +1987,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                     boolean bids = s != null && s.bestBid() > 0;
                     drawRight(graphics, Component.literal(asks ? PriceFormat.compact(s.bestAsk()) : "-"), x + colBuy, textY, asks ? TEXT_MONEY : TEXT_DIM);
                     drawRight(graphics, Component.literal(bids ? PriceFormat.compact(s.bestBid()) : "-"), x + colSell, textY, bids ? TEXT_GOOD : TEXT_DIM);
-                    int held = ClientMarketState.held(item);
+                    int held = freshHeld(item);
                     drawRight(graphics, Component.literal(PriceFormat.count(held)), x + colHave, textY, held > 0 ? TEXT : TEXT_DIM);
                 }
                 case LISTINGS -> {
@@ -2206,7 +2211,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         graphics.drawString(font, font.plainSubstrByWidth(displayName(exchangeSelected), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
         renderBook(graphics, left, y + chartY, y + priceY - 13, mouseX, mouseY);
-        int held = ClientMarketState.held(exchangeSelected);
+        int held = freshHeld(exchangeSelected);
         infoLine(graphics, "col.have", PriceFormat.spurs(held), held > 0 ? TEXT : TEXT_DIM, left, left + panelWidth, y + priceY - 12);
         graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.price"), left, y + priceY + 3, TEXT_DIM, false);
 

@@ -394,7 +394,7 @@ final class AdminCatalogCommands {
                     .formatted(id(profit.output()), profit.recipe(), plain(profit.buyCost().doubleValue()), plain(profit.sellValue().doubleValue()),
                             advice)));
         }
-        for (PriceSuggestion.CraftProfit profit : PriceSuggestion.contractCraftProfits(paths, catalog, AdminCatalogCommands::contractUnitValue)) {
+        for (PriceSuggestion.CraftProfit profit : PriceSuggestion.craftProfits(paths, catalog, AdminCatalogCommands::contractUnitValue)) {
             findings.add(new MarketDiagnostics.Finding(profit.kind() == PriceSuggestion.ProfitKind.PRICE_GAP
                     ? MarketDiagnostics.Severity.WARNING : MarketDiagnostics.Severity.NOTE,
                     "%s: buying the ingredients for %s costs %s, and a contract for the result pays %s. Lower its contract_premium, or set its contract_weight to 0"

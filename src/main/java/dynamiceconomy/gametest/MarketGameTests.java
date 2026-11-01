@@ -23,6 +23,7 @@ import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.data.ExchangeData;
 import dynamiceconomy.data.MarketBackup;
 import dynamiceconomy.data.MarketOverrides;
+import dynamiceconomy.data.OwedPayouts;
 import dynamiceconomy.data.TradeHistory;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.catalog.CatalogEntry;
@@ -2976,21 +2977,63 @@ public final class MarketGameTests {
 
             long bid = posted(helper, buyer, data, Items.COBBLESTONE, true, 5, 10).orderId();
             posted(helper, seller, data, Items.COBBLESTONE, false, 50, 5);
-            data.owe(new ExchangeData.Payout(id, Optional.empty(), 7));
-            data.owe(new ExchangeData.Payout(id, Optional.of(UUID.randomUUID()), 1000));
+            data.owed().owe(new OwedPayouts.Payout(id, Optional.empty(), 7));
+            data.owed().owe(new OwedPayouts.Payout(id, Optional.of(UUID.randomUUID()), 1000));
             helper.assertValueEqual(data.heldForPlayers(), Map.of(id, 57L),
                     "the bid's 50 and the 7 owed; not a sell order's items nor money for a team");
 
             Map<UUID, Long> bank = Map.of(id, (long) buyer.balance());
-            List<Leaderboard.Entry> ranked = Leaderboard.rank(Leaderboard.withExchange(bank, data.heldForPlayers()), known, p -> false);
+            List<Leaderboard.Entry> ranked = Leaderboard.rank(Leaderboard.withHeld(bank, data.heldForPlayers()), known, p -> false);
             helper.assertValueEqual(ranked.get(0).balance(), 50L + 57L, "the bank's 50 plus what the exchange holds");
 
             helper.assertValueEqual(ExchangeService.cancel(buyer.player, data, bid).result(), Result.OK, "cancel the bid");
-            data.owed().forEach(data::paidOwed);
+            data.owed().list().forEach(data.owed()::paid);
             bank = Map.of(id, (long) buyer.balance());
-            ranked = Leaderboard.rank(Leaderboard.withExchange(bank, data.heldForPlayers()), known, p -> false);
+            ranked = Leaderboard.rank(Leaderboard.withHeld(bank, data.heldForPlayers()), known, p -> false);
             helper.assertValueEqual(ranked.get(0).balance(), 100L, "the same money, now all in the bank");
         });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void leaderboardCountsOwedContractPayouts(GameTestHelper helper) {
+        ContractBoard board = new ContractBoard();
+        UUID id = UUID.randomUUID();
+        board.owed().owe(new OwedPayouts.Payout(id, Optional.empty(), 40));
+        board.owed().owe(new OwedPayouts.Payout(id, Optional.of(UUID.randomUUID()), 1000));
+        helper.assertValueEqual(board.owed().forPlayers(), Map.of(id, 40L), "the player's own 40, not money for a team");
+        helper.assertValueEqual(Leaderboard.withHeld(Map.of(id, 10L), Map.of(id, 5L), board.owed().forPlayers()), Map.of(id, 55L),
+                "bank, exchange and owed contract money add up");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void returnedMoneyAndItemsAreToldApart(GameTestHelper helper) {
+        withExchange(() -> {
+            net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+            ExchangeData data = new ExchangeData();
+            Fixture trader = new Fixture(helper);
+            trader.deposit(100);
+            trader.give(new ItemStack(Items.COBBLESTONE, 4));
+            ExchangeService.post(trader.player, data, Items.COBBLESTONE, true, 3, 5, 0);
+            ExchangeService.post(trader.player, data, Items.COBBLESTONE, false, 9, 4, 0);
+            ExchangeService.closeAll(server, data);
+            UUID id = trader.player.getUUID();
+            helper.assertValueEqual(data.takeNotices(id), List.of(
+                    new ExchangeData.Notice(id, id(Items.COBBLESTONE), ExchangeData.NoticeKind.RETURNED, 0, 15),
+                    new ExchangeData.Notice(id, id(Items.COBBLESTONE), ExchangeData.NoticeKind.RETURNED, 4, 0)),
+                    "the bid's money and the ask's items, as two notices");
+        });
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void expiryIsCheckedOncePerDay(GameTestHelper helper) {
+        ExchangeData data = new ExchangeData();
+        helper.assertTrue(data.expiryCheckDue(5, 3), "first check");
+        helper.assertFalse(data.expiryCheckDue(5, 3), "not again the same day");
+        helper.assertTrue(data.expiryCheckDue(5, 2), "again when the setting changes");
+        helper.assertTrue(data.expiryCheckDue(6, 2), "and on the next day");
         helper.succeed();
     }
 
@@ -4034,11 +4077,11 @@ public final class MarketGameTests {
         f.giveMany(Items.OAK_LOG, 5);
         ContractService.deliver(f.player, board, board.contracts().get(0).id(), 5);
         board.addNotice(new ContractBoard.Notice(f.player.getUUID(), id(Items.IRON_INGOT), 3, 10, 30, 6));
-        board.owe(new ContractBoard.Payout(f.player.getUUID(), Optional.of(UUID.randomUUID()), 77));
+        board.owed().owe(new OwedPayouts.Payout(f.player.getUUID(), Optional.of(UUID.randomUUID()), 77));
         ContractBoard loaded = ContractBoard.fromTag(board.save(new CompoundTag(), helper.getLevel().registryAccess()),
                 helper.getLevel().registryAccess());
         helper.assertValueEqual(loaded.contracts(), board.contracts(), "contracts, holders and progress");
-        helper.assertValueEqual(loaded.owed(), board.owed(), "money owed");
+        helper.assertValueEqual(loaded.owed().list(), board.owed().list(), "money owed");
         helper.assertValueEqual(loaded.takeNotices(f.player.getUUID()), board.takeNotices(f.player.getUUID()), "notices");
         helper.assertTrue(loaded.takeId() > board.contracts().get(1).id(), "IDs never repeat");
         helper.succeed();
@@ -4586,6 +4629,41 @@ public final class MarketGameTests {
     private static long parcelled(ExchangeData data, Fixture f, ItemStack like) {
         return data.parcels(f.player.getUUID()).stream().filter(p -> ItemStack.isSameItemSameComponents(p.stack(), like))
                 .mapToLong(ExchangeData.Parcel::count).sum();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void itemsWithIgnoredDataAreListedNotPutOnTheBook(GameTestHelper helper) {
+        if (!MarketConfig.SPEC.isLoaded()) {
+            helper.succeed();
+            return;
+        }
+        // custom_name stands in for relics:data (the default), which no mod in the dev runtime adds.
+        List<? extends String> before = MarketConfig.IGNORED_COMPONENTS.get();
+        MarketConfig.IGNORED_COMPONENTS.set(List.of("minecraft:custom_name"));
+        try {
+            withExchange(() -> {
+                ExchangeData data = new ExchangeData();
+                Fixture seller = new Fixture(helper);
+                Fixture buyer = new Fixture(helper);
+                ItemStack levelled = named("Levelled stone", 3);
+                seller.give(levelled.copy());
+                seller.give(new ItemStack(Items.COBBLESTONE, 2));
+                buyer.deposit(100);
+
+                helper.assertValueEqual(ExchangeService.post(seller.player, data, Items.COBBLESTONE, false, 5, 3, 0).result(),
+                        Result.NOT_ENOUGH_ITEMS, "the book takes only the 2 fresh stones, though the name is ignored for market sales");
+                helper.assertValueEqual(countLike(seller, levelled), 3L, "the named stones stay put");
+                helper.assertTrue(ExchangeService.listable(levelled), "they can be listed instead");
+                helper.assertFalse(ExchangeService.listable(new ItemStack(Items.COBBLESTONE)), "fresh stones can't");
+
+                long id = listFrom(seller, data, 0, 4, 3).orderId();
+                helper.assertValueEqual(ExchangeService.buyListing(buyer.player, data, id, 3, 4).result(), Result.OK, "bought");
+                helper.assertValueEqual(parcelled(data, buyer, levelled), 3L, "the buyer gets them exactly as listed");
+            });
+        } finally {
+            MarketConfig.IGNORED_COMPONENTS.set(before);
+        }
+        helper.succeed();
     }
 
     /** Lists from {@code slot}, as the screen does: with the item the player sees there. */

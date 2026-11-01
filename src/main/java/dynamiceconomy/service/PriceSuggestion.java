@@ -639,17 +639,12 @@ public final class PriceSuggestion {
     }
 
     /**
-     * As {@link #craftProfits}, but for contracts: recipes whose ingredients cost less to buy than a contract for the
-     * output pays. {@code contractValue} is what a contract pays per unit, or empty for an item never offered.
+     * Recipes whose ingredients cost less to buy than one unit of the output is worth, by {@code value}: empty for an
+     * output that isn't worth anything this way (for contracts, what a contract pays per unit, or empty for an item
+     * never offered).
      */
-    public static List<CraftProfit> contractCraftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog,
-                                                         Function<CatalogEntry, Optional<BigDecimal>> contractValue) {
-        return craftProfits(paths, catalog, contractValue);
-    }
-
-    /** Recipes whose ingredients cost less to buy than one unit of the output is worth, by {@code value}. */
-    private static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog,
-                                                  Function<CatalogEntry, Optional<BigDecimal>> value) {
+    public static List<CraftProfit> craftProfits(List<Path> paths, Map<Item, CatalogEntry> catalog,
+                                                 Function<CatalogEntry, Optional<BigDecimal>> value) {
         List<CraftProfit> profits = new ArrayList<>();
         for (Path path : paths) {
             CatalogEntry output = catalog.get(path.output());

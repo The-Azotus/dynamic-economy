@@ -110,10 +110,6 @@ public final class ExchangeData extends SavedData {
         }
     }
 
-    /** Money owed to a player (or the team account it goes to) while the bank couldn't be reached. */
-    public record Payout(UUID player, Optional<UUID> team, long amount) {
-    }
-
     private final List<Order> orders = new ArrayList<>();
     private final List<Listing> listings = new ArrayList<>();
     /** Items waiting for each player, by item, in the order they arrived. */
@@ -126,10 +122,13 @@ public final class ExchangeData extends SavedData {
      */
     private final ListTag unreadable = new ListTag();
     private final List<Notice> notices = new ArrayList<>();
-    private final List<Payout> owed = new ArrayList<>();
+    private final OwedPayouts owed = new OwedPayouts(this);
     private long nextId = 1;
     private long taxCollected;
     private long volume;
+    /** The day count and expiry setting expiry was last checked with; not saved, so a restart checks again. */
+    private long expiryCheckedDay = -1;
+    private int expiryCheckedDays = -1;
 
     public static ExchangeData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(FACTORY, ID);
@@ -181,6 +180,19 @@ public final class ExchangeData extends SavedData {
     /** One side of an item's book in fill order: asks cheapest first, bids dearest first; oldest first at a price. */
     public List<Order> side(ResourceLocation item, boolean buy) {
         return orders.stream().filter(o -> o.item().equals(item) && o.buy() == buy).sorted(buy ? BIDS : ASKS).toList();
+    }
+
+    /**
+     * Whether expiry needs checking on {@code day} with {@code expiryDays}: true the first time for each pair, as an
+     * order posted after a check can't be due until the day count moves.
+     */
+    public boolean expiryCheckDue(long day, int expiryDays) {
+        if (day == expiryCheckedDay && expiryDays == expiryCheckedDays) {
+            return false;
+        }
+        expiryCheckedDay = day;
+        expiryCheckedDays = expiryDays;
+        return true;
     }
 
     /** The player's open orders and listings together, which {@code max_open_orders} limits. */
@@ -322,11 +334,15 @@ public final class ExchangeData extends SavedData {
 
     // ---- Notices and owed money ------------------------------------------------------------------------------
 
+    /**
+     * Keeps a notice for an offline player, adding it to one of the same kind for the same item. A buy order's
+     * returned money (no units) and a sell order's returned items stay apart, as they read differently.
+     */
     public void addNotice(Notice notice) {
         for (int i = 0; i < notices.size(); i++) {
             Notice n = notices.get(i);
             if (n.player().equals(notice.player()) && n.item().equals(notice.item()) && n.kind() == notice.kind()
-                    && n.name().equals(notice.name())) {
+                    && n.name().equals(notice.name()) && (n.quantity() == 0) == (notice.quantity() == 0)) {
                 notices.set(i, new Notice(n.player(), n.item(), n.kind(), n.quantity() + notice.quantity(), n.amount() + notice.amount(),
                         n.name()));
                 setDirty();
@@ -347,18 +363,9 @@ public final class ExchangeData extends SavedData {
         return theirs;
     }
 
-    public void owe(Payout payout) {
-        owed.add(payout);
-        setDirty();
-    }
-
-    public List<Payout> owed() {
-        return List.copyOf(owed);
-    }
-
-    public void paidOwed(Payout payout) {
-        owed.remove(payout);
-        setDirty();
+    /** Money owed for trades while the bank couldn't be reached. */
+    public OwedPayouts owed() {
+        return owed;
     }
 
     /**
@@ -372,11 +379,7 @@ public final class ExchangeData extends SavedData {
                 held.merge(order.owner(), order.heldMoney(), Long::sum);
             }
         }
-        for (Payout payout : owed) {
-            if (payout.team().isEmpty()) {
-                held.merge(payout.player(), payout.amount(), Long::sum);
-            }
-        }
+        owed.forPlayers().forEach((player, amount) -> held.merge(player, amount, Long::sum));
         return held;
     }
 
@@ -447,13 +450,7 @@ public final class ExchangeData extends SavedData {
                 data.notices.add(new Notice(n.getUUID("player"), item, kind, n.getLong("quantity"), n.getLong("amount"), n.getString("name")));
             }
         }
-        for (Tag element : tag.getList("owed", Tag.TAG_COMPOUND)) {
-            CompoundTag o = (CompoundTag) element;
-            if (o.hasUUID("player")) {
-                data.owed.add(new Payout(o.getUUID("player"), o.hasUUID("team") ? Optional.of(o.getUUID("team")) : Optional.empty(),
-                        o.getLong("amount")));
-            }
-        }
+        data.owed.read(tag.getList("owed", Tag.TAG_COMPOUND));
         return data;
     }
 
@@ -553,15 +550,7 @@ public final class ExchangeData extends SavedData {
             noticeList.add(n);
         }
         tag.put("notices", noticeList);
-        ListTag owedList = new ListTag();
-        for (Payout payout : owed) {
-            CompoundTag o = new CompoundTag();
-            o.putUUID("player", payout.player());
-            payout.team().ifPresent(id -> o.putUUID("team", id));
-            o.putLong("amount", payout.amount());
-            owedList.add(o);
-        }
-        tag.put("owed", owedList);
+        tag.put("owed", owed.write());
         return tag;
     }
 }

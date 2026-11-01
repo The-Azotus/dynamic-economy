@@ -350,18 +350,23 @@ public final class MarketService {
         return spaceFor(items, entry.item());
     }
 
-    /**
-     * How many default copies of {@code item} fit in the main inventory. Counted here rather than with
-     * {@code Inventory.add}, which in creative mode reports success after deleting what did not fit.
-     */
+    /** How many default copies of {@code item} fit in the main inventory. */
     public static long spaceFor(NonNullList<ItemStack> items, Item item) {
-        ItemStack fresh = new ItemStack(item);
-        int maxStack = fresh.getMaxStackSize();
+        return spaceFor(items, new ItemStack(item));
+    }
+
+    /**
+     * How many units like {@code like} fit in the main inventory, joining only stacks of exactly the same item.
+     * Counted here rather than with {@code Inventory.add}, which in creative mode reports success after deleting what
+     * did not fit.
+     */
+    public static long spaceFor(NonNullList<ItemStack> items, ItemStack like) {
+        int maxStack = like.getMaxStackSize();
         long space = 0;
         for (ItemStack stack : items) {
             if (stack.isEmpty()) {
                 space += maxStack;
-            } else if (ItemStack.isSameItemSameComponents(stack, fresh)) {
+            } else if (ItemStack.isSameItemSameComponents(stack, like)) {
                 space += Math.max(0, maxStack - stack.getCount());
             }
         }
@@ -377,12 +382,19 @@ public final class MarketService {
      * The caller has checked {@link #spaceFor}.
      */
     static void insert(NonNullList<ItemStack> items, Item item, int qty) {
-        ItemStack fresh = new ItemStack(item);
-        int maxStack = fresh.getMaxStackSize();
+        insert(items, new ItemStack(item), qty);
+    }
+
+    /**
+     * Tops up stacks of exactly the same item as {@code like}, then fills empty slots with copies of it. The caller
+     * has checked {@link #spaceFor}.
+     */
+    static void insert(NonNullList<ItemStack> items, ItemStack like, int qty) {
+        int maxStack = like.getMaxStackSize();
         int remaining = qty;
         for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
             ItemStack stack = items.get(slot);
-            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, fresh) && stack.getCount() < maxStack) {
+            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, like) && stack.getCount() < maxStack) {
                 int added = Math.min(remaining, maxStack - stack.getCount());
                 stack.grow(added);
                 remaining -= added;
@@ -391,7 +403,7 @@ public final class MarketService {
         for (int slot = 0; slot < items.size() && remaining > 0; slot++) {
             if (items.get(slot).isEmpty()) {
                 int added = Math.min(remaining, maxStack);
-                items.set(slot, new ItemStack(item, added));
+                items.set(slot, like.copyWithCount(added));
                 remaining -= added;
             }
         }

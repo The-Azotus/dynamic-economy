@@ -80,13 +80,9 @@ public final class ContractBoard extends SavedData {
     public record Notice(UUID player, ResourceLocation item, int delivered, int units, long paid, long lost) {
     }
 
-    /** Money owed to a player (or the team they paid from) that couldn't be paid yet because the bank was unreachable. */
-    public record Payout(UUID player, Optional<UUID> team, long amount) {
-    }
-
     private final List<Contract> contracts = new ArrayList<>();
     private final List<Notice> notices = new ArrayList<>();
-    private final List<Payout> owed = new ArrayList<>();
+    private final OwedPayouts owed = new OwedPayouts(this);
     private long day = -1;
     private long lastWorldDay = -1;
     /** The day count the current board expires at; -1 when there's no board yet. */
@@ -195,18 +191,9 @@ public final class ContractBoard extends SavedData {
         return theirs;
     }
 
-    public void owe(Payout payout) {
-        owed.add(payout);
-        setDirty();
-    }
-
-    public List<Payout> owed() {
-        return List.copyOf(owed);
-    }
-
-    public void paidOwed(Payout payout) {
-        owed.remove(payout);
-        setDirty();
+    /** Contract payouts owed while the bank couldn't be reached. */
+    public OwedPayouts owed() {
+        return owed;
     }
 
     /** Adds to the money counts: rewards paid out (money created) and deposits kept (money destroyed). */
@@ -243,13 +230,7 @@ public final class ContractBoard extends SavedData {
                         n.getLong("paid"), n.getLong("lost")));
             }
         }
-        for (Tag element : tag.getList("owed", Tag.TAG_COMPOUND)) {
-            CompoundTag o = (CompoundTag) element;
-            if (o.hasUUID("player")) {
-                board.owed.add(new Payout(o.getUUID("player"), o.hasUUID("team") ? Optional.of(o.getUUID("team")) : Optional.empty(),
-                        o.getLong("amount")));
-            }
-        }
+        board.owed.read(tag.getList("owed", Tag.TAG_COMPOUND));
         return board;
     }
 
@@ -308,15 +289,7 @@ public final class ContractBoard extends SavedData {
             noticeList.add(n);
         }
         tag.put("notices", noticeList);
-        ListTag owedList = new ListTag();
-        for (Payout payout : owed) {
-            CompoundTag o = new CompoundTag();
-            o.putUUID("player", payout.player());
-            payout.team().ifPresent(id -> o.putUUID("team", id));
-            o.putLong("amount", payout.amount());
-            owedList.add(o);
-        }
-        tag.put("owed", owedList);
+        tag.put("owed", owed.write());
         return tag;
     }
 }

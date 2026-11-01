@@ -5,7 +5,6 @@ import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankTeam;
-import dynamiceconomy.bank.BankTeams;
 import dynamiceconomy.bank.WorldBank;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
@@ -83,7 +82,7 @@ public final class ContractService {
         ContractBoard board = ContractBoard.get(server);
         board.observe(ContractBoard.worldDay(server));
         if (!board.owed().isEmpty()) {
-            payOwed(server, board);
+            PayoutService.payOwed(server, board.owed());
         }
         if (!MarketConfig.contractsEnabled()) {
             if (board.expiresDay() < 0) {
@@ -171,47 +170,12 @@ public final class ContractService {
             }
             long paid = payout(server, contract, contract.delivered());
             long lost = refundDeposits ? 0 : contract.deposit();
-            pay(server, board, contract.holder().get(), contract.team(), paid + contract.deposit() - lost);
+            PayoutService.pay(server, board.owed(), "Contract payout", contract.holder().get(), contract.team(),
+                    paid + contract.deposit() - lost);
             board.count(paid, lost);
             tell(server, board, new ContractBoard.Notice(contract.holder().get(), contract.item(), contract.delivered(),
                     contract.units(), paid, lost));
         }
-    }
-
-    /** Pays into the account the contract's money goes to, or records it as owed if the bank can't be reached. */
-    private static void pay(MinecraftServer server, ContractBoard board, UUID player, Optional<UUID> team, long amount) {
-        if (amount <= 0) {
-            return;
-        }
-        Optional<Bank.Account> account = payee(server, player, team);
-        if (account.isPresent()) {
-            account.get().deposit((int) amount);
-        } else {
-            DynamicEconomy.LOGGER.warn("Contract payout of {} to {} is owed: the bank can't be reached", amount, player);
-            board.owe(new ContractBoard.Payout(player, team, amount));
-        }
-    }
-
-    private static void payOwed(MinecraftServer server, ContractBoard board) {
-        for (ContractBoard.Payout payout : board.owed()) {
-            Optional<Bank.Account> account = payee(server, payout.player(), payout.team());
-            if (account.isPresent()) {
-                account.get().deposit((int) payout.amount());
-                board.paidOwed(payout);
-            }
-        }
-    }
-
-    /** The team's account while the team exists and the bank has team accounts, otherwise the player's own. */
-    static Optional<Bank.Account> payee(MinecraftServer server, UUID player, Optional<UUID> team) {
-        Bank bank = WorldBank.of(server);
-        if (team.isPresent() && BankTeams.byId(server, team.get()).isPresent()) {
-            Optional<Bank.Account> teamAccount = bank.teamAccountOf(team.get());
-            if (teamAccount.isPresent()) {
-                return teamAccount;
-            }
-        }
-        return bank.accountOf(player);
     }
 
     /** Tells the holder how their contract ended: in chat if they're online, otherwise when they next log in. */
@@ -235,14 +199,10 @@ public final class ContractService {
         Component item = BuiltInRegistries.ITEM.get(notice.item()).getDescription();
         if (notice.lost() == 0) {
             return Component.translatable("message.dynamic_economy.contract.ended_kept", item, notice.delivered(), notice.units(),
-                    money(server, notice.paid()));
+                    PayoutService.money(server, notice.paid()));
         }
         return Component.translatable("message.dynamic_economy.contract.ended", item, notice.delivered(), notice.units(),
-                money(server, notice.paid()), money(server, notice.lost()));
-    }
-
-    private static Component money(MinecraftServer server, long amount) {
-        return Component.translatable("money.dynamic_economy." + WorldBank.kind(server).unit(), String.format("%,d", amount));
+                PayoutService.money(server, notice.paid()), PayoutService.money(server, notice.lost()));
     }
 
     /**
@@ -340,7 +300,7 @@ public final class ContractService {
         long paid = completes ? payout(player.server, contract, contract.units()) : 0;
         Optional<Bank.Account> account = Optional.empty();
         if (completes) {
-            account = payee(player.server, player.getUUID(), contract.team());
+            account = PayoutService.payee(player.server, player.getUUID(), contract.team());
             if (account.isEmpty()) {
                 return Outcome.fail(Action.DELIVER, Result.BANK_UNAVAILABLE, contract.item());
             }
@@ -374,7 +334,7 @@ public final class ContractService {
             return Outcome.fail(Action.ABANDON, holding, contract.item());
         }
         long paid = payout(player.server, contract, contract.delivered());
-        Optional<Bank.Account> account = payee(player.server, player.getUUID(), contract.team());
+        Optional<Bank.Account> account = PayoutService.payee(player.server, player.getUUID(), contract.team());
         if (paid > 0 && account.isEmpty()) {
             return Outcome.fail(Action.ABANDON, Result.BANK_UNAVAILABLE, contract.item());
         }
