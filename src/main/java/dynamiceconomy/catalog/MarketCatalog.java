@@ -264,7 +264,13 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         if (Coins.isCoin(item.get())) {
             return DataResult.error(() -> value.item() + " is a coin, and coins can never be listed: selling one would create money");
         }
-        DataResult<CatalogEntry> resolved = value.resolve(item.get(), itemClass);
+        DataResult<CatalogEntry.ContractTerms> contract = CatalogEntry.ContractTerms.CODEC.codec().parse(JsonOps.INSTANCE, entry)
+                .flatMap(CatalogEntry.ContractTerms::validate);
+        if (contract.error().isPresent()) {
+            return DataResult.error(contract.error().get().messageSupplier());
+        }
+        DataResult<CatalogEntry> resolved = value.resolve(item.get(), itemClass)
+                .map(decoded -> decoded.withContract(contract.result().orElseThrow()));
         // Strict: never accept a partial result, e.g. an out-of-range optional field replaced by its default.
         return resolved.error().isPresent() ? DataResult.error(resolved.error().get().messageSupplier()) : resolved;
     }

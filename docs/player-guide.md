@@ -13,7 +13,7 @@ Which bank depends on the server. With Create: Numismatics installed, it's your 
 
 The screen fills most of the window, and the list shows as many items as fit. On a wide window the selected item's panel is to the right of the list; on a narrow one it's below it.
 
-Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see [The Bank tab](#the-bank-tab)), **Leaderboard** (the richest players) and **History** (your own trades). **Contracts** is greyed out; it arrives in a later version.
+Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see [The Bank tab](#the-bank-tab)), **Contracts** (delivery orders, see [The Contracts tab](#the-contracts-tab)), **Exchange** (trading with other players, see [The Exchange tab](#the-exchange-tab)), **Leaderboard** (the richest players) and **History** (your own trades).
 
 | Part | What it shows |
 | --- | --- |
@@ -29,7 +29,7 @@ Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see 
 
 The sort and filter you pick stay the same the next time you open the market, until you quit the game.
 
-The **Leaderboard** tab lists the server's richest players by bank balance, with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker or team accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
+The **Leaderboard** tab lists the server's richest players by bank balance (plus money held in their open exchange buy orders), with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker or team accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
 
 The **History** tab lists your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the Market tab with that item selected. Only you see your trades.
 
@@ -96,6 +96,45 @@ Cheap items show decimals, such as *"Market pays 0.99 spurs each"*. Selling a wh
 
 If an item has no such line, the market doesn't buy it. To turn the line off, set `show_sell_price_in_tooltips = false` in `config/dynamic_economy-client.toml`.
 
+## The Contracts tab
+
+The server puts up a **board** of contracts: orders for a number of one item, such as *256 × Oak Log*, each with a reward. Everyone sees the same board, and a new one replaces it every few in-game days (5 by default; nights you sleep through count). The heading says how long the current one has left, and how many contracts you hold out of the most you may (1 by default).
+
+1. **Claim** a contract to lock it to you. This takes a **deposit** (a fifth of the reward by default) from the account you're using. Nobody else can claim it while you hold it.
+2. **Deliver** the items from your main inventory, in as many batches as you like: set the quantity and click **Deliver**. **All** fills in what you hold, up to what's still wanted. Delivered items are used up; they don't go to the market.
+3. The **last unit pays the reward** and returns the deposit.
+
+If the board is replaced before you finish, or you **Abandon** the contract (click twice), you're paid for the units you delivered and the deposit is lost. If that happens while you're offline, the money still goes to your bank and you get a message when you next log in. If you claimed with your team's account, the payment goes back to the team (or to you, if the team has ended).
+
+Each row shows the item and amount, the reward, and **Open**, who holds it, your progress (*120/256*), **Done** or **Abandoned**. Click one to see its reward, the reward per unit, the deposit, progress and how many you have.
+
+A contract always pays less per unit than the market could ever sell you that item for, so buying from the market to fill one loses money. It pays more than selling the same items to the market at their normal price, so if you gather or farm the items yourself, a contract is the better deal. Contracts for items you haven't unlocked (ProgressiveStages) don't show; one you've already claimed stays yours even if you lose the stage.
+
+`/market contracts` lists the board in chat; `/market contracts claim <id>`, `deliver <id> <amount>` and `abandon <id>` do the same as the buttons, where the server allows `/market`.
+
+## The Exchange tab
+
+Where the server turns it on, the **Exchange** tab lets you trade with other players at prices you choose. The button at the top of the toolbar switches the list between **Items**, **Listings**, **List an item**, **My orders** and your **Box**.
+
+**Items** lists the items that have orders, then the items you carry, with the cheapest seller's price (**Ask**), the highest buyer's price (**Bid**) and how many you have. Type in the search box to find any item at all, listed on the market or not. The ⇄ button on the Market tab's item panel opens the selected item here.
+
+Click an item to see its **book**: what sellers ask above the line (cheapest nearest the line), what buyers bid below it (highest nearest), and how many units at each price. Your own share is marked with a *. Click a price to copy it into the **Price each** box. Then set a quantity and press:
+
+- **Buy N for X**: holds X from the account you're using until the order fills. It buys straight away from any seller asking your price or less, cheapest first, and pays *their* price; whatever you saved comes straight back. The rest waits on the book for sellers.
+- **Sell N for X**: takes N from your main inventory (no enchanted, damaged or renamed copies) and holds them. It sells straight away to any buyer bidding your price or more, highest first, at *their* price. The rest waits on the book for buyers.
+
+When a sale goes through, the money goes to your bank less the exchange tax (5% by default, rounded up to a whole bit); the button's tooltip shows what you'd get. Items you buy go to your **collection box**. You're paid and your box fills even while you're offline; you get a message when you next log in. Your own orders never trade with each other. You may have up to 10 open orders by default.
+
+**Listings** are for items the book can't take: enchanted, damaged, renamed and other one-of-a-kind items (potions, enchanted books, tipped arrows too). A seller puts up one stack's worth of one exact item at a fixed price each, and buyers take it at that price; nothing is matched or haggled. The list shows each listing's price and how many are left, with a * on your own. Hover over one, or click it, to see the item in full: enchantments, durability, name. Set how many you want and press **Buy N for X**: the money is taken now and the items go to your **collection box**, exactly as listed.
+
+**List an item** shows what in your main inventory can be listed. Click one, set a **Price each** and how many (up to one stack; **All** fills in what you have, up to a stack), and press **List N for X**. The items are taken from your inventory and held until bought. Each sale is paid into your bank less the exchange tax, as with sell orders; the note under the quantity shows the tax if all of it sells. Containers such as shulker boxes and bundles can be listed only when empty. Listings count toward your open orders.
+
+**My orders** lists your open orders and listings with their price and how much has filled or sold. Click one, then **Cancel order** to get back what it still holds: a buy order's money to your bank, the items of a sell order or listing to your box. If the server makes orders expire, the panel shows the days left; an expired order or listing is returned the same way.
+
+**Box** lists what waits for you. Click a line to take that item out, or **Take all**. Only what fits in your free inventory space moves; the rest stays as long as you like.
+
+`/market exchange` lists your orders, listings and box in chat; `/market exchange book <item>`, `buy <item> <amount> <price>`, `sell <item> <amount> <price>`, `cancel <id>` and `collect [item]` do the same as the screen, where the server allows `/market`. `/market exchange list <amount> <price>` lists the item in your selected hotbar slot, `listings` shows every listing with its number, and `buylisting <number> <amount>` buys from one at its price.
+
 ## How prices move
 
 - **Selling lowers the price** and **buying raises it**, a little with every item. A big order slides the price as it goes, so 640 items sell for less than 640 × the price shown for one.
@@ -130,6 +169,20 @@ Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
 | *You carry no coins to deposit* | No plain coins of this server's set in your main inventory. |
 | *Not enough money in the bank* | The account you're using can't cover the withdrawal. |
 | *Not enough room in your inventory for the coins* | Make space, or withdraw less. |
+| *Claimed the item contract; X deposit taken* | Done; now deliver. |
+| *Finished the item contract: paid X* | The reward and your deposit are in the bank. |
+| *Someone else has claimed that contract, or it's finished* | Pick another one. |
+| *That contract has expired; the board has been replaced* | The board changed while you had the screen open. |
+| *You already hold as many contracts as you may* | Finish or abandon one first. |
+| *That's more than the contract still wants* | Deliver fewer. |
+| *Posted an order for N item* | Nothing matched yet; it waits on the book. See it under **My orders**. |
+| *All N item traded at once for X* | Done; bought items are in your box, sale money in your bank. |
+| *The exchange is turned off on this server* | Ask an admin. Your box still works. |
+| *You already have as many open orders as you may* | Cancel one, or wait for one to fill. |
+| *That order is no longer open* | It filled or was cancelled while you had the screen open. |
+| *That item can't be traded on the exchange* | Coins can't be, and neither can items you haven't unlocked. Plain items go on the book, not in a listing; full shulker boxes and bundles can't be listed. |
+| *That's your own listing* | Cancel it under **My orders** instead. |
+| *Enter a price of at least 1* | Type a price each in the Price box. |
 
 ## Crafting a terminal
 

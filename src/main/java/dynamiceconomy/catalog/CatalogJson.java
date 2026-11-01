@@ -36,6 +36,11 @@ public final class CatalogJson {
         o.recovery().ifPresent(v -> json.addProperty("recovery", v));
         o.floor().ifPresent(v -> json.addProperty("floor", v));
         o.ceiling().ifPresent(v -> json.addProperty("ceiling", v));
+        CatalogEntry.ContractTerms c = entry.contract();
+        c.weight().ifPresent(v -> json.addProperty("contract_weight", v));
+        c.minSize().ifPresent(v -> json.addProperty("contract_min_size", v));
+        c.maxSize().ifPresent(v -> json.addProperty("contract_max_size", v));
+        c.premium().ifPresent(v -> json.addProperty("contract_premium", v));
         return json;
     }
 

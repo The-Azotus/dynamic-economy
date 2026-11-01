@@ -1,4 +1,4 @@
-# Phase history (Phases 0–14, done)
+# Phase history (Phases 0–15, done)
 
 Archived from `CLAUDE.md`. These are the original specs for finished phases. The code and the guides in `docs/` are now the source of truth; read this only when you need the reasoning behind how something was built.
 
@@ -266,3 +266,57 @@ Step 4 (Bank tab, Bank Card): done 2026-10-29. `service/BankService` (deposit ev
 Step 5 (team accounts): done 2026-10-29. FTB Teams 2101.1.11 (the user's pack) is an optional dependency, on the dev runtime unless `-PwithoutMods=ftbteams`; `compat/FtbTeamsBridge` is the only class importing it (party teams only; probed by reflection). Without it, `/bank team create|invite|join|leave|kick|info` (`command/BankCommand`, `bank/OwnTeams`; owner invites and kicks, ownership passes on when the owner leaves). `bank/BankTeams` picks the source. `OwnBank` keeps team balances apart from players' (teams stay off the leaderboard) and each player's "pay from team" choice; `Bank.activeAccount` is what trades, deposits and withdrawals use. A team's balance is never lost: the last member leaving gets it; a deleted FTB party's goes to its owner. Bank tab: "Using: my account / team X" button for team members. Protocol 10. 127 GameTests pass in four setups (all mods; no Numismatics; no Create/Numismatics; none of the three). Not covered by GameTests: trading with an FTB party's account and the payout when a party is deleted (needs real players).
 
 Step 6 (switching, finishing): done 2026-10-29. `/market admin bank` (info) and `/market admin bank switch <own|numismatics> [confirm]` (`command/AdminBankCommands`, `bank/BankSwitch`): preview first; every account looked up before money moves; balances written to the audit log; Numismatics' hidden overflow drained; teams paid to owners before moving to Numismatics' bank (a gone team's balance stays in ours); warns about loose coins. The terminal recipe was done in step 3. JEI: the user chose to leave coins visible there (2026-10-29); the docs say so. Docs: README, player guide (Bank tab, coins, teams, recipes), admin guide (new "Banks and coins" section, commands, troubleshooting). 130 GameTests pass in all setups.
+
+## Phase 15 — Contracts (done)
+
+Approved by the user on 2026-10-31: the Contracts tab works in game. 143 GameTests pass (142 without Numismatics and FTB Teams). Left to the user: two players claiming the same contract, team payouts with real players. Built: `service/ContractPricing` (offer and cap), `data/ContractBoard` (saved board, day count, owed payouts, login notices), `service/ContractService`, `command/ContractCommands`, the Contracts tab (protocol 12), the `[contracts]` server config and four `contract_*` catalog fields; `Bank` gained `accountOf` and `teamAccountOf` to pay offline players. Choices made while building: setting the time backwards doesn't count as days passing; with `doDaylightCycle` off the board only changes by `/market admin contracts refresh`; turning `contracts_enabled` off returns deposits; an abandoned contract isn't reopened; a finished or abandoned contract answers `CONTRACT_TAKEN`. With equal weights rare classes seldom appear (about 19 rare items against 1,600 others in the full pack); raise their `contract_weight` if wanted.
+
+- A global board, regenerated every **5 in-game days by day count** (sleeping counts). Generated from the catalog using class settings: large orders for common classes, small ones for rare, single items for `unique`. Number of contracts configurable.
+- Flow: a player **claims** a contract, which locks it to them. Claiming takes a **deposit** (fraction of the reward, configurable). They deliver in batches from the **main inventory only**. Delivered items **disappear** (not added to stock).
+- Completion pays the reward and returns the deposit. At expiry, an incomplete contract pays for units delivered and the deposit is lost. A player may abandon, with the same outcome. Max active contracts per player configurable (default 1).
+- Integrity: per-unit reward stays below the lowest buy price the market can reach for that item, so buying from the market to fill a contract never profits. Transaction rules apply (checks before changes, `long` totals, `TOO_LARGE`).
+- New Result values for contract actions (e.g. `CONTRACT_TAKEN`, `CONTRACT_EXPIRED`); list them in the report.
+
+Done when: two players can't both claim one contract; partial and full delivery pay exactly as specified; expiry and refresh happen on the right day, including after sleeping and a restart; buy-from-market-and-deliver never profits (GameTest).
+
+Branched as `phase15` from `main` (v0.3.0). The user's answers to the open questions (2026-10-30):
+
+1. **Reward cap:** a payout never reaches what buying the delivered units could ever cost (the lowest buy price: `base × (1 + min_buy_markup)` for unlimited items, `base × (1 + markup)` for fixed-price ones, `base × floor × (1 + markup)` otherwise; none for `can_buy: false`), less 1 bit. An item is offered only if that still beats selling at the normal price. `unique` items: option (a), never offered (`contract_weight: 0` on the class), not a raised floor.
+2. **Defaults:** 8 contracts per board, deposit 20% of the reward (rounded up), reward `base × 1.25` per unit, sizes 64–512 common / 4–16 rare / 1 `unique`; `unlimited_stock` items allowed, `can_sell: false` items excluded.
+3. **Fields:** `contract_weight` (0 opts out), `contract_premium`, and the size as two fields, `contract_min_size` / `contract_max_size` (instead of one `[min, max]` field, so the CSV and `/market admin set` handle them like every other field). Settable at every catalog layer.
+4. **Visibility:** hidden and unclaimable (answers `NOT_LISTED`) when locked; a held contract stays visible and deliverable after its stage is lost.
+5. **Timing:** one shared lifetime: every contract expires when the board is replaced. An offline holder is paid for delivered units and told at next login. Payouts go to the account the deposit came from (team account while the team exists, else the player's own).
+
+## Phase 16 — Difficulty preset (dropped)
+
+Dropped by the user on 2026-10-31 before it was started: a difficulty option wasn't needed. The spec, kept for reference:
+
+- Server config `difficulty = EASY | NORMAL | HARD | CUSTOM`. Presets apply **multipliers on top of** catalog and class values: payout, added `sell_fee`, impact, recovery, contract reward. `CUSTOM` exposes each multiplier. `NORMAL` changes nothing.
+- After multipliers, the anti-arbitrage invariant must still hold; invalid combinations are clamped with a warning.
+
+Done when: each preset changes prices as documented; round-trip arbitrage tests pass under every preset.
+
+## Phase 17 — Player exchange (done)
+
+Approved by the user on 2026-11-01 after checking the Exchange tab in their pack. 162 GameTests pass with Numismatics' bank and with the own bank. A two-player check on a local dev server (2026-10-31) passed: order book, listings, offline players, a restart mid-order, two players spamming at once, and a listing bought through the Exchange tab. Three small things noticed then were fixed on 2026-11-01 (protocol 15): cancelling a listing now says "listing"; messages and notices about a listing name the item as listed (its custom name); `/market admin exchange` names offline owners from the server's profile cache.
+
+The feature wanted most after the required ones. Players post buy and sell orders at their own prices.
+
+- Sell orders move items into escrow; buy orders move money into escrow (`deduct`). Orders match automatically, price-time priority, partial fills.
+- Proceeds and items go to a **collection box** in the Exchange tab (works for offline players; never drop items).
+- Config: `exchange_enabled` (default false), `exchange_tax` (fraction taken from the seller, destroyed: a money sink), max open orders per player, order expiry.
+- Plain (default-component) items trade on the order book. Items with components (enchanted, damaged, renamed) are traded through listings (decision 7).
+- All transaction rules apply. Cancelling returns escrow exactly.
+
+Done when: matched trades move exactly the right items and money with tax applied; cancelling and expiry return escrow; nothing is lost or duplicated across a restart mid-order; spam-clicking reconciles.
+
+Branch: `phase17` (from `phase15`). Decided by the user on 2026-10-31:
+
+1. **Items:** any default-component item, listed in the catalog or not (same `ignored_components` rule). Coins never. Items locked for a player (Phase 12) are hidden from them and rejected as `NOT_LISTED`.
+2. **Money:** a seller's proceeds (less tax) and returned buy escrow go straight to the bank account the order was paid from (team or own, as contracts do; owed if the bank can't be reached). Only items go to the collection box.
+3. **Matching price:** a trade fills at the waiting order's price; a bid above the best ask pays the ask and keeps the difference.
+4. **Defaults:** `exchange_tax` 0.05, max 10 open orders per player, order expiry in in-game days by the contracts' day count with default 0 (= never), largest order 6,400 units.
+5. **Screen:** an Exchange tab (item search, order book with best asks and bids, your orders, collection box) plus an Exchange button in the Market tab's item panel.
+6. **Collection box:** unlimited stacks kept with the world; "Take all" moves items only into free main-inventory space.
+7. **Listings** (user, 2026-10-31): items with their own components are listed, not put on the book: one stack's worth of one exact item at a fixed price each; buyers take all or part at that price into their collection box; the seller pays `exchange_tax`. Listings share `max_open_orders` with orders. Containers (shulker boxes, bundles) only when empty. Coins and locked items never.
+8. **Leaderboard** (user, 2026-10-31): a player's total includes money held by their open buy orders and payments owed to them (not team accounts').

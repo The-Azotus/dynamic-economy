@@ -65,6 +65,16 @@ public final class OwnBank extends SavedData implements Bank {
     }
 
     @Override
+    public Optional<Bank.Account> accountOf(UUID player) {
+        return Optional.of(account(player));
+    }
+
+    @Override
+    public Optional<Bank.Account> teamAccountOf(UUID team) {
+        return Optional.of(teamAccount(team));
+    }
+
+    @Override
     public Optional<Bank.Account> activeAccount(ServerPlayer player) {
         Optional<BankTeam> team = payingFromTeam(player) ? team(player) : Optional.empty();
         return Optional.of(team.map(t -> teamAccount(t.id())).orElseGet(() -> account(player.getUUID())));

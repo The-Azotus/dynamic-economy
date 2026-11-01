@@ -26,6 +26,20 @@ public final class MarketConfig {
     public static final ModConfigSpec.BooleanValue LEADERBOARD_ENABLED;
     public static final ModConfigSpec.IntValue LEADERBOARD_SIZE;
     public static final ModConfigSpec.BooleanValue LEADERBOARD_EXCLUDE_OPERATORS;
+    public static final ModConfigSpec.BooleanValue CONTRACTS_ENABLED;
+    public static final ModConfigSpec.IntValue BOARD_SIZE;
+    public static final ModConfigSpec.IntValue REFRESH_DAYS;
+    public static final ModConfigSpec.DoubleValue DEPOSIT_FRACTION;
+    public static final ModConfigSpec.IntValue MAX_ACTIVE_CONTRACTS;
+    public static final ModConfigSpec.IntValue CONTRACT_WEIGHT;
+    public static final ModConfigSpec.IntValue CONTRACT_MIN_SIZE;
+    public static final ModConfigSpec.IntValue CONTRACT_MAX_SIZE;
+    public static final ModConfigSpec.DoubleValue CONTRACT_PREMIUM;
+    public static final ModConfigSpec.BooleanValue EXCHANGE_ENABLED;
+    public static final ModConfigSpec.DoubleValue EXCHANGE_TAX;
+    public static final ModConfigSpec.IntValue MAX_OPEN_ORDERS;
+    public static final ModConfigSpec.IntValue ORDER_EXPIRY_DAYS;
+    public static final ModConfigSpec.IntValue MAX_ORDER_SIZE;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -83,6 +97,68 @@ public final class MarketConfig {
         LEADERBOARD_EXCLUDE_OPERATORS = builder
                 .comment("Leave operators off the leaderboard, for servers where admins hold test money.")
                 .define("leaderboard_exclude_operators", false);
+        builder.pop();
+
+        builder.comment("The Contracts tab: a board of delivery orders, shared by every player and replaced every few",
+                "in-game days. A player claims a contract, paying a deposit, and delivers the items; delivered items",
+                "leave the game. Finishing pays the reward and returns the deposit; at expiry or on abandoning, only the",
+                "units delivered are paid and the deposit is lost. A contract never pays more per unit than the lowest",
+                "price the market could ever sell that item for, so buying from the market to deliver never profits.",
+                "The contract_* values are defaults; item classes and catalog entries may override them.").push("contracts");
+        CONTRACTS_ENABLED = builder
+                .comment("Offer contracts. When false the tab is greyed out, and turning it off settles every claimed contract:",
+                        "delivered units are paid and deposits returned.")
+                .define("contracts_enabled", true);
+        BOARD_SIZE = builder
+                .comment("How many contracts each board offers (fewer if not enough items qualify).")
+                .defineInRange("board_size", 8, 1, 64);
+        REFRESH_DAYS = builder
+                .comment("In-game days between boards. Sleeping counts; setting the time backwards doesn't. Every contract",
+                        "on a board expires when the next one replaces it.")
+                .defineInRange("refresh_days", 5, 1, 365);
+        DEPOSIT_FRACTION = builder
+                .comment("The deposit taken when claiming, as a fraction of the reward.")
+                .defineInRange("deposit_fraction", 0.2, 0.0, 1.0);
+        MAX_ACTIVE_CONTRACTS = builder
+                .comment("How many contracts one player may hold at once.")
+                .defineInRange("max_active_contracts", 1, 1, 64);
+        CONTRACT_WEIGHT = builder
+                .comment("How likely an item is to be picked for a board, relative to others. 0 keeps it off the board.")
+                .defineInRange("contract_weight", 1, 0, 1000);
+        CONTRACT_MIN_SIZE = builder
+                .comment("Fewest units one contract asks for.")
+                .defineInRange("contract_min_size", 16, 1, 100_000);
+        CONTRACT_MAX_SIZE = builder
+                .comment("Most units one contract asks for. If below contract_min_size, contract_min_size is used.")
+                .defineInRange("contract_max_size", 64, 1, 100_000);
+        CONTRACT_PREMIUM = builder
+                .comment("The reward per unit is base price x (1 + contract_premium), but never as much as the lowest price",
+                        "the market could sell the item for. Items where that leaves too little to beat selling aren't offered.")
+                .defineInRange("contract_premium", 0.25, 0.0, 100.0);
+        builder.pop();
+
+        builder.comment("The Exchange tab: players post buy and sell orders at their own prices, and orders for the same item",
+                "match automatically, best price first, then oldest first. A trade fills at the price of the order that was",
+                "waiting. A sell order holds its items and a buy order its money until it fills, is cancelled or expires.",
+                "Money always goes to the bank account the order was paid from; bought items, and the items of a cancelled",
+                "or expired sell order, wait in the player's collection box.").push("exchange");
+        EXCHANGE_ENABLED = builder
+                .comment("Run the exchange. Turning it off cancels every open order and returns what it held; collection boxes",
+                        "stay open so players can take their items.")
+                .define("exchange_enabled", false);
+        EXCHANGE_TAX = builder
+                .comment("Fraction of each sale taken from the seller and destroyed (a money sink), rounded up to a whole bit.")
+                .defineInRange("exchange_tax", 0.05, 0.0, 1.0);
+        MAX_OPEN_ORDERS = builder
+                .comment("How many open orders one player may have at once.")
+                .defineInRange("max_open_orders", 10, 1, 1000);
+        ORDER_EXPIRY_DAYS = builder
+                .comment("In-game days until an unfilled order expires and returns what it holds, counted like contracts",
+                        "(sleeping counts; setting the time backwards doesn't). 0 means orders never expire.")
+                .defineInRange("order_expiry_days", 0, 0, 3650);
+        MAX_ORDER_SIZE = builder
+                .comment("Largest quantity one order may ask for.")
+                .defineInRange("max_order_size", 6400, 1, 1_000_000);
         builder.pop();
         SPEC = builder.build();
     }
@@ -148,5 +224,61 @@ public final class MarketConfig {
 
     public static boolean leaderboardExcludeOperators() {
         return SPEC.isLoaded() ? LEADERBOARD_EXCLUDE_OPERATORS.get() : LEADERBOARD_EXCLUDE_OPERATORS.getDefault();
+    }
+
+    public static boolean contractsEnabled() {
+        return SPEC.isLoaded() ? CONTRACTS_ENABLED.get() : CONTRACTS_ENABLED.getDefault();
+    }
+
+    public static int boardSize() {
+        return SPEC.isLoaded() ? BOARD_SIZE.get() : BOARD_SIZE.getDefault();
+    }
+
+    public static int refreshDays() {
+        return SPEC.isLoaded() ? REFRESH_DAYS.get() : REFRESH_DAYS.getDefault();
+    }
+
+    public static double depositFraction() {
+        return SPEC.isLoaded() ? DEPOSIT_FRACTION.get() : DEPOSIT_FRACTION.getDefault();
+    }
+
+    public static int maxActiveContracts() {
+        return SPEC.isLoaded() ? MAX_ACTIVE_CONTRACTS.get() : MAX_ACTIVE_CONTRACTS.getDefault();
+    }
+
+    public static int contractWeight() {
+        return SPEC.isLoaded() ? CONTRACT_WEIGHT.get() : CONTRACT_WEIGHT.getDefault();
+    }
+
+    public static int contractMinSize() {
+        return SPEC.isLoaded() ? CONTRACT_MIN_SIZE.get() : CONTRACT_MIN_SIZE.getDefault();
+    }
+
+    public static int contractMaxSize() {
+        return SPEC.isLoaded() ? CONTRACT_MAX_SIZE.get() : CONTRACT_MAX_SIZE.getDefault();
+    }
+
+    public static double contractPremium() {
+        return SPEC.isLoaded() ? CONTRACT_PREMIUM.get() : CONTRACT_PREMIUM.getDefault();
+    }
+
+    public static boolean exchangeEnabled() {
+        return SPEC.isLoaded() ? EXCHANGE_ENABLED.get() : EXCHANGE_ENABLED.getDefault();
+    }
+
+    public static double exchangeTax() {
+        return SPEC.isLoaded() ? EXCHANGE_TAX.get() : EXCHANGE_TAX.getDefault();
+    }
+
+    public static int maxOpenOrders() {
+        return SPEC.isLoaded() ? MAX_OPEN_ORDERS.get() : MAX_OPEN_ORDERS.getDefault();
+    }
+
+    public static int orderExpiryDays() {
+        return SPEC.isLoaded() ? ORDER_EXPIRY_DAYS.get() : ORDER_EXPIRY_DAYS.getDefault();
+    }
+
+    public static int maxOrderSize() {
+        return SPEC.isLoaded() ? MAX_ORDER_SIZE.get() : MAX_ORDER_SIZE.getDefault();
     }
 }

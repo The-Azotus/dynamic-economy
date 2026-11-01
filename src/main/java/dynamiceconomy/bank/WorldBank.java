@@ -99,6 +99,11 @@ public final class WorldBank extends SavedData {
         }
 
         @Override
+        public Optional<Account> accountOf(UUID player) {
+            return Optional.empty();
+        }
+
+        @Override
         public Map<UUID, Long> playerBalances() {
             return Map.of();
         }

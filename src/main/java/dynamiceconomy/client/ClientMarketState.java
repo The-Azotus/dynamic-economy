@@ -4,6 +4,7 @@ import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.bank.BankKind;
 import dynamiceconomy.bank.CoinMath;
 import dynamiceconomy.bank.Denomination;
+import dynamiceconomy.coin.Coins;
 import dynamiceconomy.service.BankService;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.service.MarketService;
@@ -31,6 +32,20 @@ public final class ClientMarketState {
     private static MarketPayloads.PlayerState player = emptyPlayer();
     private static int maxQuantity = DEFAULT_MAX_QUANTITY;
     private static boolean leaderboardEnabled = true;
+    private static boolean contractsEnabled = true;
+    private static boolean exchangeEnabled;
+    /** The exchange, once the screen has asked for it (or the server sent it with the screen, when there's a box). */
+    @Nullable
+    private static MarketPayloads.Exchange exchange;
+    /** The book of the item the Exchange tab last asked about. */
+    @Nullable
+    private static MarketPayloads.ExchangeBook exchangeBook;
+    /** Every listing, once the Exchange tab has asked to browse them. */
+    @Nullable
+    private static MarketPayloads.ExchangeListings exchangeListings;
+    /** The contract board, once the screen has asked for it. */
+    @Nullable
+    private static MarketPayloads.Contracts contracts;
     private static BankKind bank = BankKind.OWN;
     private static long balanceCap = Long.MAX_VALUE;
     /** The coins the world's bank moves, largest first. */
@@ -62,6 +77,8 @@ public final class ClientMarketState {
         snapshot.rows().forEach(row -> rows.put(row.item(), row));
         maxQuantity = snapshot.maxQuantity();
         leaderboardEnabled = snapshot.leaderboardEnabled();
+        contractsEnabled = snapshot.contractsEnabled();
+        exchangeEnabled = snapshot.exchangeEnabled();
         bank = snapshot.bank();
         balanceCap = snapshot.balanceCap();
         coins = List.copyOf(snapshot.coins());
@@ -89,6 +106,115 @@ public final class ClientMarketState {
 
     public static void applyLeaderboard(MarketPayloads.Leaderboard received) {
         leaderboard = received;
+        version++;
+    }
+
+    public static void applyContracts(MarketPayloads.Contracts received) {
+        contracts = received;
+        version++;
+    }
+
+    /** The contract board, or null until it's been received. */
+    @Nullable
+    public static MarketPayloads.Contracts contracts() {
+        return contracts;
+    }
+
+    /** Whether the server offers contracts. */
+    public static boolean contractsEnabled() {
+        return contractsEnabled;
+    }
+
+    public static void applyExchange(MarketPayloads.Exchange received) {
+        exchange = received;
+        version++;
+    }
+
+    public static void applyExchangeBook(MarketPayloads.ExchangeBook received) {
+        exchangeBook = received;
+        version++;
+    }
+
+    public static void applyExchangeListings(MarketPayloads.ExchangeListings received) {
+        exchangeListings = received;
+        version++;
+    }
+
+    /** Every listing the player may see, or null until they've been received. */
+    @Nullable
+    public static MarketPayloads.ExchangeListings exchangeListings() {
+        return exchangeListings;
+    }
+
+    /** The exchange, or null until it's been received. */
+    @Nullable
+    public static MarketPayloads.Exchange exchange() {
+        return exchange;
+    }
+
+    /** The book for {@code item}, if that's the one last received. */
+    @Nullable
+    public static MarketPayloads.ExchangeBook exchangeBook(ResourceLocation item) {
+        return exchangeBook != null && exchangeBook.item().equals(item) ? exchangeBook : null;
+    }
+
+    /** Whether the server runs the exchange. */
+    public static boolean exchangeEnabled() {
+        return exchangeEnabled;
+    }
+
+    public static void applyExchangeOutcome(MarketPayloads.ExchangeOutcome outcome) {
+        DynamicEconomy.LOGGER.debug("Exchange outcome: {}", outcome);
+        // A listing is named as listed (a custom name, say); anything else by its item.
+        Component itemName = outcome.listed().isEmpty()
+                ? BuiltInRegistries.ITEM.get(outcome.item()).getDescription()
+                : outcome.listed().getHoverName();
+        Component amount = PriceFormat.money(PriceFormat.spurs(outcome.amount()));
+        if (outcome.result() == MarketService.Result.OK) {
+            status = switch (outcome.action()) {
+                case POST -> outcome.filled() == 0
+                        ? Component.translatable("screen.dynamic_economy.exchange.posted", outcome.quantity(), itemName)
+                        : outcome.filled() < outcome.quantity()
+                        ? Component.translatable("screen.dynamic_economy.exchange.posted_part", outcome.quantity(), itemName, outcome.filled(), amount)
+                        : Component.translatable("screen.dynamic_economy.exchange.filled", outcome.quantity(), itemName, amount);
+                case CANCEL -> !outcome.listed().isEmpty()
+                        ? Component.translatable("screen.dynamic_economy.exchange.cancelled_listing", outcome.quantity(), itemName)
+                        : outcome.amount() > 0
+                        ? Component.translatable("screen.dynamic_economy.exchange.cancelled_money", itemName, amount)
+                        : Component.translatable("screen.dynamic_economy.exchange.cancelled_items", outcome.quantity(), itemName);
+                case COLLECT -> Component.translatable("screen.dynamic_economy.exchange.collected", outcome.quantity());
+                case LIST -> Component.translatable("screen.dynamic_economy.exchange.listed", outcome.quantity(), itemName);
+                case BUY_LISTING -> Component.translatable("screen.dynamic_economy.exchange.bought_listing", outcome.quantity(), itemName, amount);
+            };
+            statusIsError = false;
+        } else if (outcome.result() == MarketService.Result.NOT_LISTED) {
+            // Any item but coins can be traded here, so "not on the market" would mislead.
+            status = Component.translatable("screen.dynamic_economy.exchange.not_tradeable");
+            statusIsError = true;
+        } else {
+            status = Component.translatable("screen.dynamic_economy.result." + outcome.result().name().toLowerCase(Locale.ROOT));
+            statusIsError = true;
+        }
+        version++;
+    }
+
+    public static void applyContractOutcome(MarketPayloads.ContractOutcome outcome) {
+        DynamicEconomy.LOGGER.debug("Contract outcome: {}", outcome);
+        Component itemName = BuiltInRegistries.ITEM.get(outcome.item()).getDescription();
+        Component amount = PriceFormat.money(PriceFormat.spurs(outcome.amount()));
+        if (outcome.result() == MarketService.Result.OK) {
+            status = switch (outcome.action()) {
+                case CLAIM -> Component.translatable("screen.dynamic_economy.contracts.claimed", itemName, amount);
+                case DELIVER -> outcome.amount() > 0
+                        ? Component.translatable("screen.dynamic_economy.contracts.completed", itemName, amount)
+                        : Component.translatable("screen.dynamic_economy.contracts.delivered", outcome.quantity(), itemName);
+                case ABANDON -> Component.translatable("screen.dynamic_economy.contracts.abandoned", itemName, amount);
+            };
+            statusIsError = false;
+        } else {
+            status = Component.translatable("screen.dynamic_economy.result." + outcome.result().name().toLowerCase(Locale.ROOT));
+            statusIsError = true;
+        }
         version++;
     }
 
@@ -170,6 +296,10 @@ public final class ClientMarketState {
         lastRequest = null;
         trades = null;
         leaderboard = null;
+        contracts = null;
+        exchange = null;
+        exchangeBook = null;
+        exchangeListings = null;
         status = Component.empty();
         statusIsError = false;
         version++;
@@ -181,6 +311,8 @@ public final class ClientMarketState {
         rows.clear();
         maxQuantity = DEFAULT_MAX_QUANTITY;
         leaderboardEnabled = true;
+        contractsEnabled = true;
+        exchangeEnabled = false;
         bank = BankKind.OWN;
         balanceCap = Long.MAX_VALUE;
         coins = List.of();
@@ -192,6 +324,11 @@ public final class ClientMarketState {
 
     public static int held(ResourceLocation item) {
         return player.held().getOrDefault(item, 0);
+    }
+
+    /** Every item the main inventory holds tradeable copies of, coins left out. */
+    public static List<ResourceLocation> heldItems() {
+        return player.held().keySet().stream().filter(id -> !Coins.isCoin(BuiltInRegistries.ITEM.get(id))).toList();
     }
 
     /** Room in the main inventory for {@code item}, counted as the server counts it for a purchase. */

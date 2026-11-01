@@ -80,8 +80,12 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        // `-PserverDir=run-mptest` runs the server in another folder, e.g. the multiplayer test server.
         server {
             server()
+            if (project.hasProperty('serverDir')) {
+                gameDirectory = project.file(project.property('serverDir').toString())
+            }
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }

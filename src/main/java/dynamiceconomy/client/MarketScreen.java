@@ -2,10 +2,14 @@ package dynamiceconomy.client;
 
 import dynamiceconomy.bank.CoinMath;
 import dynamiceconomy.bank.Denomination;
+import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.service.BankService;
+import dynamiceconomy.service.ContractService;
+import dynamiceconomy.service.ExchangeService;
 import dynamiceconomy.service.MarketListing;
+import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.OrderMath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -40,6 +44,9 @@ import java.util.Optional;
  *
  * <p>The Bank tab lists the coins the player carries and deposits or withdraws them. Opened from a Bank Card, the
  * screen is bank-only: the other tabs are greyed out.
+ *
+ * <p>The Contracts tab lists the contract board; the selected contract can be claimed, delivered to and abandoned
+ * with the quantity controls and two buttons where Buy and Sell are.
  *
  * <p>The screen sizes itself to the window. On a wide window the selected item's panel sits beside the list; on a
  * narrow one it sits below. The list shows as many rows as fit.
@@ -98,27 +105,30 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     /** Lower-case mod display names by namespace, for {@code @mod} searches. The mod list never changes in a session. */
     private static final Map<String, String> MOD_NAMES = new HashMap<>();
 
-    /** The tabs along the top. Those that can't be opened are shown greyed out; Exchange joins them when it exists. */
+    /** The tabs along the top. Those that can't be opened are shown greyed out. */
     private enum Tab {
-        MARKET, BANK, CONTRACTS, LEADERBOARD, HISTORY;
+        MARKET, BANK, CONTRACTS, EXCHANGE, LEADERBOARD, HISTORY;
 
-        /** Contracts isn't built yet, the server can turn the leaderboard off, and a Bank Card opens only the bank. */
+        /**
+         * The server can turn contracts, the exchange and the leaderboard off, and a Bank Card opens only the bank. The
+         * Exchange tab stays open while the player has items waiting in their collection box.
+         */
         boolean available(boolean bankOnly) {
             if (bankOnly) {
                 return this == BANK;
             }
             return switch (this) {
                 case MARKET, BANK, HISTORY -> true;
-                case CONTRACTS -> false;
+                case CONTRACTS -> ClientMarketState.contractsEnabled();
+                case EXCHANGE -> ClientMarketState.exchangeEnabled()
+                        || ClientMarketState.exchange() != null && ClientMarketState.exchange().boxed() > 0;
                 case LEADERBOARD -> ClientMarketState.leaderboardEnabled();
             };
         }
 
         /** Why a greyed-out tab can't be opened. */
         Component unavailableReason(boolean bankOnly) {
-            return Component.translatable(bankOnly && this != CONTRACTS ? "screen.dynamic_economy.tab.terminal_only"
-                    : this == LEADERBOARD ? "screen.dynamic_economy.tab.turned_off"
-                    : "screen.dynamic_economy.tab.coming_soon");
+            return Component.translatable(bankOnly ? "screen.dynamic_economy.tab.terminal_only" : "screen.dynamic_economy.tab.turned_off");
         }
 
         Component label() {
@@ -133,13 +143,60 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private Tab tab = Tab.MARKET;
     private Button buyButton;
     private Button sellButton;
+    private Button maxButton;
     /** The quantity and trade controls, hidden on the Bank tab. */
     private final List<AbstractWidget> marketControls = new ArrayList<>();
+    /** Claim or deliver, and abandon: where Buy and Sell are, on the Contracts tab only. */
+    private Button contractButton;
+    private Button abandonButton;
+    /** The selected contract's ID, if any. */
+    @Nullable
+    private Integer selectedContract;
+    /** Abandoning loses the deposit, so it takes a second click; this is the contract the first click was for. */
+    @Nullable
+    private Integer abandonArmed;
     private EditBox withdrawAmount;
     private Button withdrawButton;
     private Button depositButton;
     /** Switches between the player's own account and their team's; shown only to team members. */
     private Button accountButton;
+
+    /**
+     * What the Exchange tab's list shows: items and their books, other players' listings, the player's own items that
+     * can be listed, their open orders and listings, or their collection box.
+     */
+    private enum ExchangeMode { ITEMS, LISTINGS, LIST, ORDERS, BOX }
+
+    private ExchangeMode exchangeMode = ExchangeMode.ITEMS;
+    /** Cycles the Exchange tab's list between items, the player's orders and their collection box. */
+    private Button exchangeModeButton;
+    /** The price each for a new order. */
+    private EditBox price;
+    /** Post a buy or sell order: where Buy and Sell are, on the Exchange tab's item view. */
+    private Button postBuyButton;
+    private Button postSellButton;
+    /** Cancel the selected order, or take everything out of the box: where Buy is. */
+    private Button exchangeActionButton;
+    /** On the Market tab's panel: opens the selected item on the Exchange tab. */
+    private Button openExchangeButton;
+    /** The item selected on the Exchange tab, listed or not. */
+    @Nullable
+    private ResourceLocation exchangeSelected;
+    /** The selected order or listing under My orders; IDs never repeat across the two. */
+    @Nullable
+    private Long selectedOrder;
+    /** The listing selected while browsing listings. */
+    @Nullable
+    private Long selectedListing;
+    /** The main-inventory slot picked to list, and the item it held then; cleared if it no longer does. */
+    private int listSlot = -1;
+    private ItemStack listStack = ItemStack.EMPTY;
+    /** The listings shown, filtered by the search. */
+    private final List<MarketPayloads.ListingLine> browseLines = new ArrayList<>();
+    /** The Exchange tab's item list: items with orders and items held, or with a search, every item that matches. */
+    private final List<ResourceLocation> exchangeItems = new ArrayList<>();
+    /** Where each price of the shown book is drawn, so a click can copy it into the price box. */
+    private final List<BookRow> bookRows = new ArrayList<>();
 
     // The layout, worked out from the window size in init(). Positions are relative to leftPos/topPos.
     private boolean wide;
@@ -170,6 +227,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private int noteY;
     private int noteWidth;
     private int statusY;
+    /** The Exchange tab's price box: above the quantity controls when wide, beside them when narrow. */
+    private int priceX;
+    private int priceY;
+    private int priceWidth;
 
     private final List<MarketPayloads.Row> visible = new ArrayList<>();
     private int seenVersion = -1;
@@ -253,11 +314,21 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 .bounds(x + controlsX + 60, y + controlsY, 16, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.step_hint")))
                 .build()));
-        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.max"), b -> fillMaxBuy())
+        maxButton = addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.max"), b -> fillMaxBuy())
                 .bounds(x + controlsX + 78, y + controlsY, 28, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.max.tooltip")))
-                .build()));
-        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.all"), b -> fillSellAll())
+                .build());
+        marketControls.add(maxButton);
+        marketControls.add(addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.all"),
+                        b -> {
+                            if (tab == Tab.CONTRACTS) {
+                                fillDeliverAll();
+                            } else if (tab == Tab.EXCHANGE) {
+                                fillExchangeAll();
+                            } else {
+                                fillSellAll();
+                            }
+                        })
                 .bounds(x + controlsX + 108, y + controlsY, 24, 18)
                 .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.all.tooltip")))
                 .build()));
@@ -298,6 +369,33 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         marketControls.add(buyButton);
         marketControls.add(sellButton);
+        contractButton = addRenderableWidget(Button.builder(Component.empty(), b -> contractAction())
+                .bounds(buyButton.getX(), buyButton.getY(), buyButton.getWidth(), 18).build());
+        abandonButton = addRenderableWidget(Button.builder(Component.translatable("screen.dynamic_economy.contracts.abandon"), b -> abandon())
+                .bounds(sellButton.getX(), sellButton.getY(), sellButton.getWidth(), 18).build());
+
+        // The Exchange tab: its list mode where Sort and Filter are, the price box above the quantity (beside it when
+        // narrow), and its own buttons where Buy and Sell are.
+        String priceText = price != null ? price.getValue() : "";
+        exchangeModeButton = addRenderableWidget(Button.builder(Component.empty(), b -> cycleExchangeMode())
+                .bounds(x + sortX, y + TOOLBAR_Y, 102, 16)
+                .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.exchange.mode.tooltip")))
+                .build());
+        price = new EditBox(font, x + priceX, y + priceY, priceWidth, 14, Component.translatable("screen.dynamic_economy.exchange.price"));
+        price.setHint(Component.translatable("screen.dynamic_economy.exchange.price_hint").withColor(TEXT_DIM));
+        price.setFilter(s -> s.isEmpty() || (s.length() <= 10 && s.chars().allMatch(Character::isDigit)));
+        price.setValue(priceText);
+        addRenderableWidget(price);
+        postBuyButton = addRenderableWidget(Button.builder(Component.empty(), b -> postOrder(true))
+                .bounds(buyButton.getX(), buyButton.getY(), buyButton.getWidth(), 18).build());
+        postSellButton = addRenderableWidget(Button.builder(Component.empty(), b -> postOrder(false))
+                .bounds(sellButton.getX(), sellButton.getY(), sellButton.getWidth(), 18).build());
+        exchangeActionButton = addRenderableWidget(Button.builder(Component.empty(), b -> exchangeAction())
+                .bounds(buyButton.getX(), buyButton.getY(), buyButton.getWidth(), 18).build());
+        openExchangeButton = addRenderableWidget(Button.builder(Component.literal("⇄"), b -> openOnExchange())
+                .bounds(x + (wide ? panelX + panelWidth : chartX - 4) - 18, y + panelY - 1, 18, 18)
+                .tooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.exchange.open.tooltip")))
+                .build());
         updateListButtons();
 
         seenVersion = -1;
@@ -359,6 +457,15 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             listWidth = right - SCROLLBAR_WIDTH - 2 - LIST_X;
             rows = Math.max(1, (panelY - 4 - LIST_Y) / ROW_HEIGHT);
         }
+        if (wide) {
+            priceWidth = 70;
+            priceX = panelX + panelWidth - priceWidth;
+            priceY = controlsY - 18;
+        } else {
+            priceX = noteX + 10;
+            priceY = controlsY + 2;
+            priceWidth = Math.min(70, right - priceX);
+        }
 
         int listRight = LIST_X + listWidth;
         colTrend = listRight - 10;
@@ -386,6 +493,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         refreshButtons();
         refreshBankButtons();
+        refreshContractButtons();
+        refreshExchangeButtons();
         requestHistoryIfStale();
     }
 
@@ -407,15 +516,63 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private void rebuildList(String query) {
         visible.clear();
         for (MarketPayloads.Row row : ClientMarketState.rows().values()) {
-            if (matches(row, query) && MarketListing.shows(filter, row, ClientMarketState.held(row.item()))) {
+            if (matches(row.item(), query) && MarketListing.shows(filter, row, ClientMarketState.held(row.item()))) {
                 visible.add(row);
             }
         }
         visible.sort(MarketListing.order(sort, MarketScreen::displayName));
+        if (tab == Tab.EXCHANGE) {
+            rebuildExchangeItems(query);
+        }
         scroll = Mth.clamp(scroll, 0, maxScroll());
     }
 
-    /** Switches tabs, asking the server for the player's trades or the leaderboard when those open. */
+    /** The most items a search of every item lists, so a one-letter search doesn't list the whole game. */
+    private static final int MAX_SEARCH_RESULTS = 300;
+
+    /**
+     * Without a search: items with orders, then items the player holds. With one: every tradeable item that matches,
+     * those with orders first. Each group is sorted by name.
+     */
+    private void rebuildExchangeItems(String query) {
+        browseLines.clear();
+        MarketPayloads.ExchangeListings listings = ClientMarketState.exchangeListings();
+        if (listings != null) {
+            for (MarketPayloads.ListingLine line : listings.listings()) {
+                if (matches(BuiltInRegistries.ITEM.getKey(line.stack().getItem()), query)
+                        || line.stack().getHoverName().getString().toLowerCase(Locale.ROOT).contains(query)) {
+                    browseLines.add(line);
+                }
+            }
+        }
+        exchangeItems.clear();
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        List<ResourceLocation> withOrders = new ArrayList<>();
+        if (exchange != null) {
+            exchange.summaries().forEach(s -> withOrders.add(s.item()));
+        }
+        List<ResourceLocation> others = new ArrayList<>();
+        if (query.isEmpty()) {
+            ClientMarketState.heldItems().stream().filter(id -> !withOrders.contains(id)).forEach(others::add);
+        } else {
+            withOrders.removeIf(id -> !matches(id, query));
+            for (ResourceLocation id : BuiltInRegistries.ITEM.keySet()) {
+                if (others.size() >= MAX_SEARCH_RESULTS) {
+                    break;
+                }
+                if (!withOrders.contains(id) && ExchangeService.tradeable(BuiltInRegistries.ITEM.get(id)) && matches(id, query)) {
+                    others.add(id);
+                }
+            }
+        }
+        java.util.Comparator<ResourceLocation> byName = java.util.Comparator.comparing((ResourceLocation id) -> displayName(id));
+        withOrders.sort(byName);
+        others.sort(byName);
+        exchangeItems.addAll(withOrders);
+        exchangeItems.addAll(others);
+    }
+
+    /** Switches tabs, asking the server for the player's trades, the leaderboard or the contract board when those open. */
     private void selectTab(Tab next) {
         if (!available(next) || next == tab) {
             return;
@@ -426,7 +583,12 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             PacketDistributor.sendToServer(new MarketPayloads.TradesRequest());
         } else if (tab == Tab.LEADERBOARD) {
             PacketDistributor.sendToServer(new MarketPayloads.LeaderboardRequest());
+        } else if (tab == Tab.CONTRACTS) {
+            PacketDistributor.sendToServer(new MarketPayloads.ContractsRequest());
+        } else if (tab == Tab.EXCHANGE) {
+            PacketDistributor.sendToServer(new MarketPayloads.ExchangeRequest(Optional.ofNullable(exchangeSelected), exchangeMode == ExchangeMode.LISTINGS));
         }
+        listDirty = true;
         updateListButtons();
     }
 
@@ -436,18 +598,42 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     private void updateListButtons() {
         boolean market = tab == Tab.MARKET;
-        search.visible = market;
+        boolean exchange = tab == Tab.EXCHANGE;
+        boolean exchangeItemsShown = exchange && exchangeMode == ExchangeMode.ITEMS;
+        boolean exchangeSearch = exchangeItemsShown || exchange && exchangeMode == ExchangeMode.LISTINGS;
+        boolean exchangeQuantity = exchangeSearch || exchange && exchangeMode == ExchangeMode.LIST;
+        boolean exchangePrice = exchangeItemsShown || exchange && exchangeMode == ExchangeMode.LIST;
+        search.visible = market || exchangeSearch;
         sortButton.visible = market;
         filterButton.visible = market;
         boolean bank = tab == Tab.BANK;
-        marketControls.forEach(widget -> widget.visible = !bank);
+        boolean contracts = tab == Tab.CONTRACTS;
+        boolean quantityShown = !bank && (!exchange || exchangeQuantity);
+        marketControls.forEach(widget -> widget.visible = quantityShown);
+        if (contractButton != null) {
+            maxButton.visible = quantityShown && !contracts && !exchange;
+            buyButton.visible = quantityShown && !contracts && !exchange;
+            sellButton.visible = quantityShown && !contracts && !exchange;
+            contractButton.visible = contracts;
+            abandonButton.visible = contracts;
+        }
         if (withdrawAmount != null) {
             withdrawAmount.visible = bank;
             withdrawButton.visible = bank;
             depositButton.visible = bank;
             accountButton.visible = bank && !ClientMarketState.team().isEmpty();
         }
-        if (getFocused() == search && !market || getFocused() == quantity && bank || getFocused() == withdrawAmount && !bank) {
+        if (price != null) {
+            exchangeModeButton.visible = exchange;
+            price.visible = exchangePrice;
+            postBuyButton.visible = exchangeItemsShown;
+            postSellButton.visible = exchangeItemsShown;
+            exchangeActionButton.visible = exchange && !exchangeItemsShown;
+            openExchangeButton.visible = market && selectedRow() != null && Tab.EXCHANGE.available(menu.bankOnly());
+            exchangeModeButton.setMessage(exchangeModeLabel());
+        }
+        if (getFocused() == search && !search.visible || getFocused() == quantity && !quantityShown
+                || getFocused() == withdrawAmount && !bank || getFocused() == price && !exchangePrice) {
             setFocused(null);
         }
         String sortKey = sort.name().toLowerCase(Locale.ROOT);
@@ -459,9 +645,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     }
 
     /** Every space-separated term must match: {@code @mod}, {@code #tag}, or a plain word (see {@link #matchesTerm}). */
-    private static boolean matches(MarketPayloads.Row row, String query) {
+    private static boolean matches(ResourceLocation item, String query) {
         for (String term : query.split("\\s+")) {
-            if (!term.isEmpty() && !matchesTerm(row, term)) {
+            if (!term.isEmpty() && !matchesTerm(item, term)) {
                 return false;
             }
         }
@@ -473,21 +659,21 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
      * the full tag ID. A plain word matches the display name or the ID's path. The namespace only counts when the
      * word contains ':', or every vanilla item would match "mine".
      */
-    private static boolean matchesTerm(MarketPayloads.Row row, String term) {
+    private static boolean matchesTerm(ResourceLocation item, String term) {
         if (term.startsWith("@")) {
             String mod = term.substring(1);
-            return row.item().getNamespace().contains(mod) || modName(row.item().getNamespace()).contains(mod);
+            return item.getNamespace().contains(mod) || modName(item.getNamespace()).contains(mod);
         }
         if (term.startsWith("#")) {
             String tag = term.substring(1);
             boolean full = tag.contains(":");
-            return BuiltInRegistries.ITEM.wrapAsHolder(BuiltInRegistries.ITEM.get(row.item())).tags()
+            return BuiltInRegistries.ITEM.wrapAsHolder(BuiltInRegistries.ITEM.get(item)).tags()
                     .anyMatch(key -> (full ? key.location().toString() : key.location().getPath()).contains(tag));
         }
         if (term.contains(":")) {
-            return row.item().toString().contains(term);
+            return item.toString().contains(term);
         }
-        return displayName(row).toLowerCase(Locale.ROOT).contains(term) || row.item().getPath().contains(term);
+        return item.getPath().contains(term) || displayName(item).toLowerCase(Locale.ROOT).contains(term);
     }
 
     /** A mod's display name in lower case, or "" for a namespace no loaded mod owns. */
@@ -515,7 +701,16 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     }
 
     private void adjustQuantity(int delta) {
-        setQuantity(Mth.clamp(quantityValue() + delta, 1, ClientMarketState.maxQuantity()), Component.empty());
+        setQuantity(Mth.clamp(quantityValue() + delta, 1, quantityLimit()), Component.empty());
+    }
+
+    /** The largest quantity one request may ask for: one exchange order, or one market trade. */
+    private int quantityLimit() {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        if (tab == Tab.EXCHANGE && exchangeMode == ExchangeMode.LIST && listSlot >= 0) {
+            return listStack.getMaxStackSize();
+        }
+        return tab == Tab.EXCHANGE && exchange != null ? exchange.maxOrderSize() : ClientMarketState.maxQuantity();
     }
 
     private void setQuantity(int value, Component note) {
@@ -616,6 +811,519 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (!row.canSell()) {
             sellButton.setTooltip(null);
         }
+    }
+
+    // ---- Contracts -------------------------------------------------------------------------------------------
+
+    private static List<MarketPayloads.ContractLine> contractLines() {
+        MarketPayloads.Contracts board = ClientMarketState.contracts();
+        return board == null ? List.of() : board.lines();
+    }
+
+    @Nullable
+    private MarketPayloads.ContractLine selectedContractLine() {
+        if (selectedContract == null) {
+            return null;
+        }
+        for (MarketPayloads.ContractLine line : contractLines()) {
+            if (line.id() == selectedContract) {
+                return line;
+            }
+        }
+        return null;
+    }
+
+    private static boolean deliverable(MarketPayloads.ContractLine line) {
+        return line.mine() && line.status() == ContractBoard.Status.CLAIMED;
+    }
+
+    /** "All" on the Contracts tab: every copy held, up to what the contract still wants and the order limit. */
+    private void fillDeliverAll() {
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null || !deliverable(line)) {
+            return;
+        }
+        int held = ClientMarketState.held(line.item());
+        if (held == 0) {
+            quantityNote = Component.translatable("screen.dynamic_economy.note.none_held");
+            quantityNoteFor = quantityValue();
+            return;
+        }
+        setQuantity(Math.min(Math.min(held, line.remaining()), ClientMarketState.maxQuantity()), Component.empty());
+    }
+
+    /** Client-side hints only; the server re-checks everything and replies with the real outcome. */
+    private void refreshContractButtons() {
+        if (tab != Tab.CONTRACTS) {
+            return;
+        }
+        MarketPayloads.ContractLine line = selectedContractLine();
+        MarketPayloads.Contracts board = ClientMarketState.contracts();
+        if (line == null || board == null) {
+            contractButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.claim"));
+            contractButton.active = false;
+            contractButton.setTooltip(null);
+            abandonButton.active = false;
+            abandonButton.setTooltip(null);
+            abandonArmed = null;
+            return;
+        }
+        if (deliverable(line)) {
+            int qty = quantityValue();
+            contractButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.deliver", PriceFormat.spurs(qty)));
+            Component problem = qty <= 0 ? Component.translatable("screen.dynamic_economy.result.invalid_quantity")
+                    : qty > ClientMarketState.maxQuantity() ? Component.translatable("screen.dynamic_economy.result.too_large")
+                    : qty > line.remaining() ? Component.translatable("screen.dynamic_economy.result.contract_full")
+                    : ClientMarketState.held(line.item()) < qty ? Component.translatable("screen.dynamic_economy.result.not_enough_items")
+                    : null;
+            contractButton.active = problem == null;
+            contractButton.setTooltip(Tooltip.create(problem != null ? problem
+                    : Component.translatable(qty == line.remaining() ? "screen.dynamic_economy.contracts.deliver.finishes"
+                            : "screen.dynamic_economy.contracts.deliver.tooltip", PriceFormat.money(PriceFormat.spurs(line.reward() + line.deposit())))));
+            abandonButton.active = true;
+            abandonButton.setMessage(Component.translatable(Integer.valueOf(line.id()).equals(abandonArmed)
+                    ? "screen.dynamic_economy.contracts.abandon_confirm" : "screen.dynamic_economy.contracts.abandon"));
+            abandonButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.contracts.abandon.tooltip",
+                    PriceFormat.money(PriceFormat.spurs(line.deposit())))));
+            return;
+        }
+        abandonArmed = null;
+        abandonButton.active = false;
+        abandonButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.abandon"));
+        abandonButton.setTooltip(null);
+        contractButton.setMessage(line.status() == ContractBoard.Status.OPEN
+                ? Component.translatable("screen.dynamic_economy.contracts.claim_for", PriceFormat.money(PriceFormat.spurs(line.deposit())))
+                : Component.translatable("screen.dynamic_economy.contracts.claim"));
+        Component problem = line.status() != ContractBoard.Status.OPEN ? Component.translatable("screen.dynamic_economy.result.contract_taken")
+                : board.held() >= board.maxHeld() ? Component.translatable("screen.dynamic_economy.result.contract_limit")
+                : !ClientMarketState.looksAffordable(line.deposit()) ? Component.translatable("screen.dynamic_economy.result.no_funds")
+                : null;
+        contractButton.active = problem == null;
+        contractButton.setTooltip(Tooltip.create(problem != null ? problem
+                : Component.translatable("screen.dynamic_economy.contracts.claim.tooltip", PriceFormat.money(PriceFormat.spurs(line.deposit())))));
+    }
+
+    private void contractAction() {
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null) {
+            return;
+        }
+        if (deliverable(line)) {
+            int qty = quantityValue();
+            if (qty > 0) {
+                PacketDistributor.sendToServer(new MarketPayloads.ContractRequest(ContractService.Action.DELIVER, line.id(), qty));
+            }
+        } else if (line.status() == ContractBoard.Status.OPEN) {
+            PacketDistributor.sendToServer(new MarketPayloads.ContractRequest(ContractService.Action.CLAIM, line.id(), 0));
+        }
+    }
+
+    private void abandon() {
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null || !deliverable(line)) {
+            return;
+        }
+        if (!Integer.valueOf(line.id()).equals(abandonArmed)) {
+            abandonArmed = line.id();
+            return;
+        }
+        abandonArmed = null;
+        PacketDistributor.sendToServer(new MarketPayloads.ContractRequest(ContractService.Action.ABANDON, line.id(), 0));
+    }
+
+    // ---- Exchange --------------------------------------------------------------------------------------------
+
+    private Component exchangeModeLabel() {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        return switch (exchangeMode) {
+            case ITEMS -> Component.translatable("screen.dynamic_economy.exchange.mode.items");
+            case LISTINGS -> Component.translatable("screen.dynamic_economy.exchange.mode.listings");
+            case LIST -> Component.translatable("screen.dynamic_economy.exchange.mode.list");
+            case ORDERS -> Component.translatable("screen.dynamic_economy.exchange.mode.orders", exchange == null ? 0 : exchange.open());
+            case BOX -> Component.translatable("screen.dynamic_economy.exchange.mode.box",
+                    PriceFormat.count(exchange == null ? 0 : exchange.boxed()));
+        };
+    }
+
+    private void cycleExchangeMode() {
+        ExchangeMode was = exchangeMode;
+        exchangeMode = ExchangeMode.values()[(exchangeMode.ordinal() + 1) % ExchangeMode.values().length];
+        // The server sends every listing only while they're browsed.
+        if (was == ExchangeMode.LISTINGS || exchangeMode == ExchangeMode.LISTINGS) {
+            PacketDistributor.sendToServer(new MarketPayloads.ExchangeRequest(Optional.ofNullable(exchangeSelected),
+                    exchangeMode == ExchangeMode.LISTINGS));
+        }
+        scroll = 0;
+        listDirty = true;
+        updateListButtons();
+    }
+
+    private static List<MarketPayloads.OrderLine> orderLines() {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        return exchange == null ? List.of() : exchange.orders();
+    }
+
+    private static List<MarketPayloads.BoxLine> boxLines() {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        return exchange == null ? List.of() : exchange.box();
+    }
+
+    private static List<MarketPayloads.ParcelLine> parcelLines() {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        return exchange == null ? List.of() : exchange.parcels();
+    }
+
+    /** The player's own listings, listed after their orders under My orders. */
+    private static List<MarketPayloads.ListingLine> myListings() {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        return exchange == null ? List.of() : exchange.listings();
+    }
+
+    @Nullable
+    private MarketPayloads.ListingLine selectedMyListing() {
+        for (MarketPayloads.ListingLine line : myListings()) {
+            if (Long.valueOf(line.id()).equals(selectedOrder)) {
+                return line;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private MarketPayloads.ListingLine selectedBrowseListing() {
+        MarketPayloads.ExchangeListings listings = ClientMarketState.exchangeListings();
+        if (listings != null) {
+            for (MarketPayloads.ListingLine line : listings.listings()) {
+                if (Long.valueOf(line.id()).equals(selectedListing)) {
+                    return line;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Main-inventory slots holding something that can be listed, as the server checks it. */
+    private List<Integer> listableSlots() {
+        List<Integer> slots = new ArrayList<>();
+        List<ItemStack> items = minecraft.player.getInventory().items;
+        for (int slot = 0; slot < items.size(); slot++) {
+            if (ExchangeService.listable(items.get(slot))) {
+                slots.add(slot);
+            }
+        }
+        return slots;
+    }
+
+    private ItemStack slotStack(int slot) {
+        return minecraft.player.getInventory().items.get(slot);
+    }
+
+    /** How many units of exactly {@code like} the main inventory holds. */
+    private int heldLike(ItemStack like) {
+        int count = 0;
+        for (ItemStack stack : minecraft.player.getInventory().items) {
+            if (ItemStack.isSameItemSameComponents(stack, like)) {
+                count += stack.getCount();
+            }
+        }
+        return count;
+    }
+
+    /** Keeps the item picked to list in step with the inventory: follows it to another slot, or drops it. */
+    private void checkListSlot() {
+        if (listSlot < 0 || ItemStack.isSameItemSameComponents(slotStack(listSlot), listStack)) {
+            return;
+        }
+        for (int slot : listableSlots()) {
+            if (ItemStack.isSameItemSameComponents(slotStack(slot), listStack)) {
+                listSlot = slot;
+                return;
+            }
+        }
+        listSlot = -1;
+        listStack = ItemStack.EMPTY;
+    }
+
+    @Nullable
+    private MarketPayloads.OrderLine selectedOrderLine() {
+        for (MarketPayloads.OrderLine line : orderLines()) {
+            if (Long.valueOf(line.id()).equals(selectedOrder)) {
+                return line;
+            }
+        }
+        return null;
+    }
+
+    /** The best prices for an item, or null if it has no orders. */
+    @Nullable
+    private static ExchangeService.Summary summary(ResourceLocation item) {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        if (exchange != null) {
+            for (ExchangeService.Summary summary : exchange.summaries()) {
+                if (summary.item().equals(item)) {
+                    return summary;
+                }
+            }
+        }
+        return null;
+    }
+
+    private long priceValue() {
+        try {
+            return Math.max(0, Long.parseLong(price.getValue()));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** Selects an item on the Exchange tab, asks for its book, and starts the price at the best one on offer. */
+    private void selectExchangeItem(ResourceLocation item) {
+        if (item.equals(exchangeSelected)) {
+            return;
+        }
+        exchangeSelected = item;
+        PacketDistributor.sendToServer(new MarketPayloads.ExchangeRequest(Optional.of(item), false));
+        ExchangeService.Summary s = summary(item);
+        long start = s != null && s.bestAsk() > 0 ? s.bestAsk() : s != null && s.bestBid() > 0 ? s.bestBid() : marketSellPrice(item);
+        price.setValue(start > 0 ? String.valueOf(start) : "");
+    }
+
+    /** What the market pays for a listed item, a fair first price to ask for it; 0 when the market doesn't buy it. */
+    private static long marketSellPrice(ResourceLocation item) {
+        MarketPayloads.Row row = ClientMarketState.rows().get(item);
+        return row != null && row.canSell() ? row.sellPrice() : 0;
+    }
+
+    /** "All" on the Exchange tab: every copy held, up to the largest order. */
+    private void fillExchangeAll() {
+        if (exchangeMode == ExchangeMode.LISTINGS) {
+            MarketPayloads.ListingLine line = selectedBrowseListing();
+            if (line != null) {
+                setQuantity(line.remaining(), Component.empty());
+            }
+            return;
+        }
+        if (exchangeMode == ExchangeMode.LIST) {
+            if (listSlot >= 0) {
+                setQuantity(Math.min(heldLike(listStack), listStack.getMaxStackSize()), Component.empty());
+            }
+            return;
+        }
+        if (exchangeSelected == null) {
+            return;
+        }
+        int held = ClientMarketState.held(exchangeSelected);
+        if (held == 0) {
+            quantityNote = Component.translatable("screen.dynamic_economy.note.none_held");
+            quantityNoteFor = quantityValue();
+            return;
+        }
+        setQuantity(Math.min(held, quantityLimit()), Component.empty());
+    }
+
+    /** Why the order can't be posted, as far as the client can tell, or null if it looks fine. The server re-checks. */
+    @Nullable
+    private Component postProblem(boolean buy, int qty, long each) {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        String problem;
+        if (!ClientMarketState.exchangeEnabled()) {
+            problem = "exchange_closed";
+        } else if (qty <= 0) {
+            problem = "invalid_quantity";
+        } else if (each <= 0) {
+            problem = "invalid_price";
+        } else if (exchange != null && qty > exchange.maxOrderSize() || MarketService.checkedTotal(each, qty).isEmpty()) {
+            problem = "too_large";
+        } else if (exchange != null && exchange.open() >= exchange.maxOrders()) {
+            problem = "order_limit";
+        } else if (buy && !ClientMarketState.looksAffordable(MarketService.checkedTotal(each, qty).getAsLong())) {
+            problem = "no_funds";
+        } else if (!buy && exchangeSelected != null && ClientMarketState.held(exchangeSelected) < qty) {
+            problem = "not_enough_items";
+        } else {
+            return null;
+        }
+        return Component.translatable("screen.dynamic_economy.result." + problem);
+    }
+
+    /** Why the listing can't be bought, as far as the client can tell, or null if it looks fine. */
+    @Nullable
+    private Component buyListingProblem(MarketPayloads.ListingLine line, int qty) {
+        String problem;
+        if (!ClientMarketState.exchangeEnabled()) {
+            problem = "exchange_closed";
+        } else if (line.mine()) {
+            problem = "own_listing";
+        } else if (qty <= 0) {
+            problem = "invalid_quantity";
+        } else if (qty > line.remaining()) {
+            problem = "no_stock";
+        } else if (!ClientMarketState.looksAffordable(MarketService.checkedTotal(line.price(), qty).orElse(Long.MAX_VALUE))) {
+            problem = "no_funds";
+        } else {
+            return null;
+        }
+        return Component.translatable("screen.dynamic_economy.result." + problem);
+    }
+
+    /** Why the picked item can't be listed, as far as the client can tell, or null if it looks fine. */
+    @Nullable
+    private Component listProblem(int qty, long each) {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        String problem;
+        if (!ClientMarketState.exchangeEnabled()) {
+            problem = "exchange_closed";
+        } else if (qty <= 0) {
+            problem = "invalid_quantity";
+        } else if (each <= 0) {
+            problem = "invalid_price";
+        } else if (qty > listStack.getMaxStackSize() || MarketService.checkedTotal(each, qty).isEmpty()) {
+            problem = "too_large";
+        } else if (exchange != null && exchange.open() >= exchange.maxOrders()) {
+            problem = "order_limit";
+        } else if (heldLike(listStack) < qty) {
+            problem = "not_enough_items";
+        } else {
+            return null;
+        }
+        return Component.translatable("screen.dynamic_economy.result." + problem);
+    }
+
+    /** Client-side hints only; the server re-checks everything and replies with the real outcome. */
+    private void refreshExchangeButtons() {
+        openExchangeButton.visible = tab == Tab.MARKET && selectedRow() != null && Tab.EXCHANGE.available(menu.bankOnly());
+        if (tab != Tab.EXCHANGE) {
+            return;
+        }
+        exchangeModeButton.setMessage(exchangeModeLabel());
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        switch (exchangeMode) {
+            case ITEMS -> {
+                int qty = quantityValue();
+                if (qty != quantityNoteFor) {
+                    quantityNote = Component.empty();
+                }
+                long each = priceValue();
+                long total = qty > 0 && each > 0 ? MarketService.checkedTotal(each, qty).orElse(0) : 0;
+                long tax = ExchangeService.tax(total, exchange == null ? 0 : exchange.tax());
+                postBuyButton.setMessage(total > 0 && exchangeSelected != null
+                        ? Component.translatable("screen.dynamic_economy.exchange.buy_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        : Component.translatable("screen.dynamic_economy.exchange.buy"));
+                postSellButton.setMessage(total > 0 && exchangeSelected != null
+                        ? Component.translatable("screen.dynamic_economy.exchange.sell_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        : Component.translatable("screen.dynamic_economy.exchange.sell"));
+                Component buyProblem = exchangeSelected == null ? Component.translatable("screen.dynamic_economy.exchange.select_hint")
+                        : postProblem(true, qty, each);
+                Component sellProblem = exchangeSelected == null ? buyProblem : postProblem(false, qty, each);
+                postBuyButton.active = buyProblem == null;
+                postSellButton.active = sellProblem == null;
+                postBuyButton.setTooltip(Tooltip.create(buyProblem != null ? buyProblem
+                        : Component.translatable("screen.dynamic_economy.exchange.buy.tooltip", PriceFormat.money(PriceFormat.spurs(total)))));
+                postSellButton.setTooltip(Tooltip.create(sellProblem != null ? sellProblem
+                        : Component.translatable("screen.dynamic_economy.exchange.sell.tooltip", PriceFormat.money(PriceFormat.spurs(total - tax)),
+                                PriceFormat.money(PriceFormat.spurs(tax)))));
+            }
+            case LISTINGS -> {
+                int qty = quantityValue();
+                if (qty != quantityNoteFor) {
+                    quantityNote = Component.empty();
+                }
+                MarketPayloads.ListingLine line = selectedBrowseListing();
+                long total = line == null || qty <= 0 ? 0 : MarketService.checkedTotal(line.price(), qty).orElse(0);
+                exchangeActionButton.setMessage(total > 0
+                        ? Component.translatable("screen.dynamic_economy.exchange.buy_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        : Component.translatable("screen.dynamic_economy.exchange.buy_listing"));
+                Component problem = line == null ? Component.translatable("screen.dynamic_economy.exchange.listings.select_hint")
+                        : buyListingProblem(line, qty);
+                exchangeActionButton.active = problem == null;
+                exchangeActionButton.setTooltip(Tooltip.create(problem != null ? problem
+                        : Component.translatable("screen.dynamic_economy.exchange.buy_listing.tooltip", PriceFormat.money(PriceFormat.spurs(total)))));
+            }
+            case LIST -> {
+                checkListSlot();
+                int qty = quantityValue();
+                if (qty != quantityNoteFor) {
+                    quantityNote = Component.empty();
+                }
+                long each = priceValue();
+                long total = qty > 0 && each > 0 ? MarketService.checkedTotal(each, qty).orElse(0) : 0;
+                long tax = ExchangeService.tax(total, exchange == null ? 0 : exchange.tax());
+                exchangeActionButton.setMessage(total > 0 && listSlot >= 0
+                        ? Component.translatable("screen.dynamic_economy.exchange.list_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        : Component.translatable("screen.dynamic_economy.exchange.list"));
+                Component problem = listSlot < 0 ? Component.translatable("screen.dynamic_economy.exchange.list.select_hint")
+                        : listProblem(qty, each);
+                exchangeActionButton.active = problem == null;
+                exchangeActionButton.setTooltip(Tooltip.create(problem != null ? problem
+                        : Component.translatable("screen.dynamic_economy.exchange.list.tooltip", PriceFormat.money(PriceFormat.spurs(total - tax)),
+                                PriceFormat.money(PriceFormat.spurs(tax)))));
+            }
+            case ORDERS -> {
+                MarketPayloads.OrderLine line = selectedOrderLine();
+                MarketPayloads.ListingLine listing = selectedMyListing();
+                exchangeActionButton.setMessage(Component.translatable("screen.dynamic_economy.exchange.cancel"));
+                exchangeActionButton.active = line != null || listing != null;
+                exchangeActionButton.setTooltip(listing != null
+                        ? Tooltip.create(Component.translatable("screen.dynamic_economy.exchange.cancel.items", PriceFormat.count(listing.remaining())))
+                        : line == null ? null : Tooltip.create(line.buy()
+                        ? Component.translatable("screen.dynamic_economy.exchange.cancel.money",
+                                PriceFormat.money(PriceFormat.spurs(line.price() * line.remaining())))
+                        : Component.translatable("screen.dynamic_economy.exchange.cancel.items", PriceFormat.count(line.remaining()))));
+            }
+            case BOX -> {
+                long boxed = exchange == null ? 0 : exchange.boxed();
+                exchangeActionButton.setMessage(Component.translatable("screen.dynamic_economy.exchange.take_all", PriceFormat.count(boxed)));
+                exchangeActionButton.active = boxed > 0;
+                exchangeActionButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.exchange.take_all.tooltip")));
+            }
+        }
+    }
+
+    private void postOrder(boolean buy) {
+        int qty = quantityValue();
+        long each = priceValue();
+        if (exchangeSelected != null && postProblem(buy, qty, each) == null) {
+            PacketDistributor.sendToServer(MarketPayloads.ExchangeAction.post(exchangeSelected, buy, each, qty));
+        }
+    }
+
+    /** Buys from the selected listing, lists the picked item, cancels the selected order, or empties the box. */
+    private void exchangeAction() {
+        int qty = quantityValue();
+        switch (exchangeMode) {
+            case LISTINGS -> {
+                MarketPayloads.ListingLine line = selectedBrowseListing();
+                if (line != null && buyListingProblem(line, qty) == null) {
+                    PacketDistributor.sendToServer(MarketPayloads.ExchangeAction.buyListing(line.id(), qty, line.price()));
+                }
+            }
+            case LIST -> {
+                long each = priceValue();
+                if (listSlot >= 0 && listProblem(qty, each) == null) {
+                    PacketDistributor.sendToServer(new MarketPayloads.ListItem(listSlot, listStack.copy(), each, qty));
+                }
+            }
+            case ORDERS -> {
+                if (selectedOrderLine() != null || selectedMyListing() != null) {
+                    PacketDistributor.sendToServer(MarketPayloads.ExchangeAction.cancel(selectedOrder));
+                }
+            }
+            case BOX -> PacketDistributor.sendToServer(MarketPayloads.ExchangeAction.collect(Optional.empty()));
+            default -> {
+            }
+        }
+    }
+
+    /** The Market tab's ⇄ button: the selected item on the Exchange tab. */
+    private void openOnExchange() {
+        MarketPayloads.Row row = selectedRow();
+        if (row == null) {
+            return;
+        }
+        exchangeMode = ExchangeMode.ITEMS;
+        selectExchangeItem(row.item());
+        selectTab(Tab.EXCHANGE);
+        updateListButtons();
     }
 
     // ---- Bank ------------------------------------------------------------------------------------------------
@@ -746,13 +1454,86 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 refreshButtons();
                 return true;
             }
+            if (index >= 0 && tab == Tab.CONTRACTS) {
+                minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                MarketPayloads.ContractLine line = contractLines().get(index);
+                if (!Integer.valueOf(line.id()).equals(selectedContract)) {
+                    selectedContract = line.id();
+                    abandonArmed = null;
+                    if (deliverable(line)) {
+                        // Start from what can be delivered now.
+                        startDeliveryQuantity(line);
+                    }
+                }
+                setFocused(null);
+                return true;
+            }
             if (index >= 0 && tab == Tab.BANK) {
                 minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
                 withdrawCoins(ClientMarketState.coins().get(index));
                 return true;
             }
+            if (index >= 0 && tab == Tab.EXCHANGE) {
+                minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                int orders = orderLines().size();
+                int boxed = boxLines().size();
+                switch (exchangeMode) {
+                    case ITEMS -> selectExchangeItem(exchangeItems.get(index));
+                    case LISTINGS -> {
+                        long id = browseLines.get(index).id();
+                        if (!Long.valueOf(id).equals(selectedListing)) {
+                            selectedListing = id;
+                            setQuantity(1, Component.empty());
+                        }
+                    }
+                    case LIST -> {
+                        int slot = listableSlots().get(index);
+                        if (slot != listSlot) {
+                            listSlot = slot;
+                            listStack = slotStack(slot).copyWithCount(1);
+                            setQuantity(Math.min(heldLike(listStack), listStack.getMaxStackSize()), Component.empty());
+                        }
+                    }
+                    case ORDERS -> selectedOrder = index < orders ? orderLines().get(index).id() : myListings().get(index - orders).id();
+                    // Clicking a box line takes that item out.
+                    case BOX -> PacketDistributor.sendToServer(index < boxed
+                            ? MarketPayloads.ExchangeAction.collect(Optional.of(boxLines().get(index).item()))
+                            : MarketPayloads.ExchangeAction.collectParcel(parcelLines().get(index - boxed).id()));
+                }
+                setFocused(null);
+                return true;
+            }
+            BookRow bookRow = bookRowAt(mouseX, mouseY);
+            if (bookRow != null) {
+                // Clicking a price in the book copies it into the price box.
+                minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                price.setValue(String.valueOf(bookRow.price()));
+                return true;
+            }
         }
         return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    /** One price drawn in the Exchange tab's book, in screen coordinates. */
+    private record BookRow(int left, int top, int right, int bottom, long price, long mine) {
+    }
+
+    @Nullable
+    private BookRow bookRowAt(double mouseX, double mouseY) {
+        if (tab != Tab.EXCHANGE || exchangeMode != ExchangeMode.ITEMS) {
+            return null;
+        }
+        for (BookRow row : bookRows) {
+            if (mouseX >= row.left() && mouseX < row.right() && mouseY >= row.top() && mouseY < row.bottom()) {
+                return row;
+            }
+        }
+        return null;
+    }
+
+    private void startDeliveryQuantity(MarketPayloads.ContractLine line) {
+        int held = ClientMarketState.held(line.item());
+        setQuantity(Math.max(1, Math.min(Math.min(held, line.remaining()), ClientMarketState.maxQuantity())), Component.empty());
     }
 
     @Nullable
@@ -781,6 +1562,14 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             case HISTORY -> trades().size();
             case LEADERBOARD -> leaderboardLines().size();
             case BANK -> ClientMarketState.coins().size();
+            case CONTRACTS -> contractLines().size();
+            case EXCHANGE -> switch (exchangeMode) {
+                case ITEMS -> exchangeItems.size();
+                case LISTINGS -> browseLines.size();
+                case LIST -> listableSlots().size();
+                case ORDERS -> orderLines().size() + myListings().size();
+                case BOX -> boxLines().size() + parcelLines().size();
+            };
             default -> visible.size();
         };
     }
@@ -803,7 +1592,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         // Keep typing in a text box from triggering the inventory key, which would close the screen.
         if (keyCode != GLFW.GLFW_KEY_ESCAPE && getFocused() instanceof EditBox box && box.canConsumeInput()) {
-            if (keyCode == GLFW.GLFW_KEY_ENTER && (box == quantity || box == withdrawAmount)) {
+            if (keyCode == GLFW.GLFW_KEY_ENTER && (box == quantity || box == withdrawAmount || box == price)) {
                 setFocused(null);
                 return true;
             }
@@ -849,6 +1638,31 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             graphics.renderTooltip(font, tooltip(visible.get(index)), Optional.empty(), mouseX, mouseY);
         } else if (index >= 0 && tab == Tab.HISTORY) {
             graphics.renderTooltip(font, Component.translatable("screen.dynamic_economy.trades.row_hint"), mouseX, mouseY);
+        } else if (index >= 0 && tab == Tab.CONTRACTS) {
+            graphics.renderTooltip(font, contractTooltip(contractLines().get(index)), Optional.empty(), mouseX, mouseY);
+        } else if (index >= 0 && tab == Tab.EXCHANGE && exchangeMode == ExchangeMode.ITEMS) {
+            graphics.renderTooltip(font, exchangeTooltip(exchangeItems.get(index)), Optional.empty(), mouseX, mouseY);
+        } else if (index >= 0 && tab == Tab.EXCHANGE && exchangeMode == ExchangeMode.LISTINGS) {
+            graphics.renderTooltip(font, listingTooltip(browseLines.get(index)), Optional.empty(), mouseX, mouseY);
+        } else if (index >= 0 && tab == Tab.EXCHANGE && exchangeMode == ExchangeMode.LIST) {
+            graphics.renderTooltip(font, getTooltipFromItem(minecraft, slotStack(listableSlots().get(index))), Optional.empty(), mouseX, mouseY);
+        } else if (index >= orderLines().size() && tab == Tab.EXCHANGE && exchangeMode == ExchangeMode.ORDERS) {
+            graphics.renderTooltip(font, listingTooltip(myListings().get(index - orderLines().size())), Optional.empty(), mouseX, mouseY);
+        } else if (index >= 0 && tab == Tab.EXCHANGE && exchangeMode == ExchangeMode.BOX) {
+            List<Component> lines = new ArrayList<>();
+            if (index >= boxLines().size()) {
+                lines.addAll(getTooltipFromItem(minecraft, parcelLines().get(index - boxLines().size()).stack()));
+            }
+            lines.add(Component.translatable("screen.dynamic_economy.exchange.box.click").withColor(TEXT_DIM));
+            graphics.renderTooltip(font, lines, Optional.empty(), mouseX, mouseY);
+        } else if (bookRowAt(mouseX, mouseY) != null) {
+            BookRow row = bookRowAt(mouseX, mouseY);
+            List<Component> lines = new ArrayList<>();
+            lines.add(Component.translatable("screen.dynamic_economy.exchange.book.click"));
+            if (row.mine() > 0) {
+                lines.add(Component.translatable("screen.dynamic_economy.exchange.book.yours", PriceFormat.count(row.mine())).withColor(TEXT_DIM));
+            }
+            graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
         } else if (index >= 0 && tab == Tab.BANK) {
             Denomination coin = ClientMarketState.coins().get(index);
             int count = coinsPerClick(coin);
@@ -871,6 +1685,8 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             case HISTORY -> renderTradeList(graphics, x, y, mouseX, mouseY);
             case LEADERBOARD -> renderLeaderboard(graphics, x, y);
             case BANK -> renderCoinList(graphics, x, y, mouseX, mouseY);
+            case CONTRACTS -> renderContractList(graphics, x, y, mouseX, mouseY);
+            case EXCHANGE -> renderExchangeList(graphics, x, y, mouseX, mouseY);
             default -> renderCatalogList(graphics, x, y, mouseX, mouseY);
         }
         renderScrollbar(graphics, x, y);
@@ -879,9 +1695,19 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             renderBankPanel(graphics, x, y);
             return;
         }
+        bookRows.clear();
+        if (tab == Tab.EXCHANGE) {
+            renderExchangePanel(graphics, x, y, mouseX, mouseY);
+            return;
+        }
+        if (tab == Tab.CONTRACTS) {
+            renderContractPanel(graphics, x, y);
+            renderQuantityNote(graphics, x + noteX, y + noteY);
+            return;
+        }
         MarketPayloads.Row row = selectedRow();
         if (row != null) {
-            int nameWidth = (wide ? panelWidth : chartX - MARGIN - 4) - 20;
+            int nameWidth = (wide ? panelWidth : chartX - MARGIN - 4) - (openExchangeButton.visible ? 40 : 20);
             graphics.renderItem(stack(row), x + panelX, y + panelY);
             graphics.drawString(font, font.plainSubstrByWidth(displayName(row), nameWidth), x + panelX + 20, y + panelY + 4, TEXT, false);
             renderHistory(graphics, row, x + chartX, y + chartY);
@@ -978,6 +1804,582 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                             ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.leaderboard.none"),
                     x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
         }
+    }
+
+    /** The board: what each contract wants, what it pays, and who holds it; the days left and the player's count above. */
+    private void renderContractList(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
+        MarketPayloads.Contracts board = ClientMarketState.contracts();
+        List<MarketPayloads.ContractLine> lines = contractLines();
+        int listRight = LIST_X + listWidth;
+        int statusRight = listRight - 2;
+        int rewardRight = listRight - 66;
+        if (board != null) {
+            graphics.drawString(font, Component.translatable(board.daysLeft() == 1 ? "screen.dynamic_economy.contracts.title_one"
+                    : "screen.dynamic_economy.contracts.title", board.daysLeft()), x + LIST_X + 4, y + HEADER_Y, TEXT_DIM, false);
+            drawRight(graphics, Component.translatable("screen.dynamic_economy.contracts.held", board.held(), board.maxHeld()),
+                    x + statusRight, y + HEADER_Y, board.held() >= board.maxHeld() ? TEXT_MONEY : TEXT_DIM);
+        }
+        int hovered = rowAt(mouseX, mouseY);
+        for (int i = 0; i < rows && scroll + i < lines.size(); i++) {
+            MarketPayloads.ContractLine line = lines.get(scroll + i);
+            int rowY = y + LIST_Y + i * ROW_HEIGHT;
+            boolean selectedRow = Integer.valueOf(line.id()).equals(selectedContract);
+            int background = selectedRow ? ROW_SELECTED : scroll + i == hovered ? ROW_HOVER : i % 2 == 1 ? ROW_ALT : 0;
+            if (background != 0) {
+                graphics.fill(x + LIST_X, rowY, x + listRight, rowY + ROW_HEIGHT, background);
+            }
+            boolean done = line.status() == ContractBoard.Status.COMPLETED || line.status() == ContractBoard.Status.ABANDONED;
+            graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(line.item())), x + LIST_X + 2, rowY + 1);
+            int textY = rowY + 5;
+            Component what = Component.translatable("screen.dynamic_economy.contracts.wants", PriceFormat.spurs(line.units()),
+                    BuiltInRegistries.ITEM.get(line.item()).getDescription());
+            graphics.drawString(font, font.plainSubstrByWidth(what.getString(), rewardRight - 60 - LIST_X - 22),
+                    x + LIST_X + 22, textY, done ? TEXT_DIM : TEXT, false);
+            drawRight(graphics, PriceFormat.money(PriceFormat.spurs(line.reward())), x + rewardRight, textY, done ? TEXT_DIM : TEXT_MONEY);
+            Component state;
+            int color;
+            switch (line.status()) {
+                case OPEN -> {
+                    state = Component.translatable("screen.dynamic_economy.contracts.open");
+                    color = TEXT_GOOD;
+                }
+                case CLAIMED -> {
+                    state = line.mine()
+                            ? Component.literal(PriceFormat.count(line.delivered()) + "/" + PriceFormat.count(line.units()))
+                            : Component.literal(line.holder());
+                    color = line.mine() ? TEXT_MONEY : TEXT_DIM;
+                }
+                case COMPLETED -> {
+                    state = Component.translatable("screen.dynamic_economy.contracts.done");
+                    color = TEXT_OFF;
+                }
+                default -> {
+                    state = Component.translatable("screen.dynamic_economy.contracts.given_up");
+                    color = TEXT_OFF;
+                }
+            }
+            drawRight(graphics, Component.literal(font.plainSubstrByWidth(state.getString(), 60)), x + statusRight, textY, color);
+        }
+        if (lines.isEmpty()) {
+            graphics.drawCenteredString(font, Component.translatable(board == null
+                            ? "screen.dynamic_economy.trades.loading" : "screen.dynamic_economy.contracts.none"),
+                    x + LIST_X + listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
+        }
+    }
+
+    /** The selected contract: what it pays, the deposit, progress, and how many the player holds; or how contracts work. */
+    private void renderContractPanel(GuiGraphics graphics, int x, int y) {
+        int left = x + panelX;
+        MarketPayloads.ContractLine line = selectedContractLine();
+        if (line == null) {
+            List<net.minecraft.util.FormattedCharSequence> help = font.split(
+                    Component.translatable(wide ? "screen.dynamic_economy.contracts.help" : "screen.dynamic_economy.contracts.select_hint"),
+                    panelWidth);
+            for (int i = 0; i < help.size() && panelY + 4 + i * 10 < controlsY - 10; i++) {
+                graphics.drawString(font, help.get(i), left, y + panelY + 4 + i * 10, TEXT_DIM, false);
+            }
+            return;
+        }
+        ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(line.item()));
+        graphics.renderItem(stack, left, y + panelY);
+        int held = ClientMarketState.held(line.item());
+        if (!wide) {
+            Component summary = Component.translatable("screen.dynamic_economy.contracts.summary", stack.getHoverName(),
+                    PriceFormat.money(PriceFormat.spurs(line.reward())), PriceFormat.money(PriceFormat.spurs(line.deposit())),
+                    PriceFormat.count(line.delivered()), PriceFormat.count(line.units()));
+            graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+            return;
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(stack.getHoverName().getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+        int right = left + panelWidth;
+        int top = y + chartY;
+        infoLine(graphics, "contracts.reward", PriceFormat.spurs(line.reward()), TEXT_MONEY, left, right, top);
+        infoLine(graphics, "contracts.per_unit", PriceFormat.decimal(java.math.BigDecimal.valueOf(line.reward())
+                .divide(java.math.BigDecimal.valueOf(line.units()), 2, RoundingMode.FLOOR)), TEXT_MONEY, left, right, top + INFO_LINE_HEIGHT);
+        infoLine(graphics, "contracts.deposit", PriceFormat.spurs(line.deposit()), TEXT, left, right, top + 2 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "contracts.progress", PriceFormat.count(line.delivered()) + "/" + PriceFormat.count(line.units()),
+                line.mine() ? TEXT_MONEY : TEXT, left, right, top + 3 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "col.have", PriceFormat.spurs(held), held > 0 ? TEXT : TEXT_DIM, left, right, top + 4 * INFO_LINE_HEIGHT);
+        Component note = switch (line.status()) {
+            case OPEN -> Component.translatable("screen.dynamic_economy.contracts.note.open");
+            case CLAIMED -> line.mine() ? Component.translatable("screen.dynamic_economy.contracts.note.mine")
+                    : Component.translatable("screen.dynamic_economy.contracts.note.taken", line.holder());
+            case COMPLETED -> Component.translatable("screen.dynamic_economy.contracts.note.done");
+            case ABANDONED -> Component.translatable("screen.dynamic_economy.contracts.note.given_up");
+        };
+        List<net.minecraft.util.FormattedCharSequence> lines = font.split(note, panelWidth);
+        int noteTop = chartY + 5 * INFO_LINE_HEIGHT + 4;
+        for (int i = 0; i < lines.size() && noteTop + i * 10 < controlsY - 9; i++) {
+            graphics.drawString(font, lines.get(i), left, y + noteTop + i * 10, TEXT_DIM, false);
+        }
+    }
+
+    private List<Component> contractTooltip(MarketPayloads.ContractLine line) {
+        List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, new ItemStack(BuiltInRegistries.ITEM.get(line.item()))));
+        lines.add(Component.translatable("screen.dynamic_economy.contracts.tooltip.reward",
+                PriceFormat.money(PriceFormat.spurs(line.reward())), PriceFormat.money(PriceFormat.spurs(line.deposit()))).withColor(TEXT_MONEY));
+        if (line.status() == ContractBoard.Status.CLAIMED && !line.mine()) {
+            lines.add(Component.translatable("screen.dynamic_economy.contracts.note.taken", line.holder()).withColor(TEXT_DIM));
+        }
+        return lines;
+    }
+
+    /** The Exchange tab's list: items with their best prices, the player's open orders, or their collection box. */
+    private void renderExchangeList(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        int listRight = LIST_X + listWidth;
+        int headerY = y + HEADER_Y;
+        int hovered = rowAt(mouseX, mouseY);
+        int size = listSize();
+        switch (exchangeMode) {
+            case ITEMS -> {
+                graphics.drawString(font, Component.translatable("screen.dynamic_economy.col.item"), x + LIST_X + 22, headerY, TEXT_DIM, false);
+                drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.col.ask"), x + colBuy, headerY, TEXT_DIM);
+                drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.col.bid"), x + colSell, headerY, TEXT_DIM);
+                drawRight(graphics, Component.translatable("screen.dynamic_economy.col.have"), x + colHave, headerY, TEXT_DIM);
+            }
+            case LISTINGS -> {
+                graphics.drawString(font, Component.translatable("screen.dynamic_economy.col.item"), x + LIST_X + 22, headerY, TEXT_DIM, false);
+                drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.col.price"), x + colSell, headerY, TEXT_DIM);
+                drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.col.left"), x + colHave, headerY, TEXT_DIM);
+            }
+            case LIST -> {
+                graphics.drawString(font, Component.translatable("screen.dynamic_economy.col.item"), x + LIST_X + 22, headerY, TEXT_DIM, false);
+                drawRight(graphics, Component.translatable("screen.dynamic_economy.col.have"), x + colHave, headerY, TEXT_DIM);
+            }
+            case ORDERS -> graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.orders.title",
+                    exchange == null ? 0 : exchange.open(), exchange == null ? 0 : exchange.maxOrders()), x + LIST_X + 4, headerY, TEXT_DIM, false);
+            case BOX -> {
+                graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.box.title"), x + LIST_X + 4, headerY, TEXT_DIM, false);
+                drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.col.waiting"), x + listRight - 2, headerY, TEXT_DIM);
+            }
+        }
+        List<Integer> slots = exchangeMode == ExchangeMode.LIST ? listableSlots() : List.of();
+        int orders = orderLines().size();
+        int boxed = boxLines().size();
+        for (int i = 0; i < rows && scroll + i < size; i++) {
+            int index = scroll + i;
+            int rowY = y + LIST_Y + i * ROW_HEIGHT;
+            boolean picked = switch (exchangeMode) {
+                case ITEMS -> exchangeItems.get(index).equals(exchangeSelected);
+                case LISTINGS -> Long.valueOf(browseLines.get(index).id()).equals(selectedListing);
+                case LIST -> slots.get(index) == listSlot;
+                case ORDERS -> Long.valueOf(index < orders ? orderLines().get(index).id() : myListings().get(index - orders).id()).equals(selectedOrder);
+                case BOX -> false;
+            };
+            int background = picked ? ROW_SELECTED : index == hovered ? ROW_HOVER : i % 2 == 1 ? ROW_ALT : 0;
+            if (background != 0) {
+                graphics.fill(x + LIST_X, rowY, x + listRight, rowY + ROW_HEIGHT, background);
+            }
+            int textY = rowY + 5;
+            switch (exchangeMode) {
+                case ITEMS -> {
+                    ResourceLocation item = exchangeItems.get(index);
+                    graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(item)), x + LIST_X + 2, rowY + 1);
+                    graphics.drawString(font, font.plainSubstrByWidth(displayName(item), colBuy - 44 - LIST_X - 22), x + LIST_X + 22, textY, TEXT, false);
+                    ExchangeService.Summary s = summary(item);
+                    boolean asks = s != null && s.bestAsk() > 0;
+                    boolean bids = s != null && s.bestBid() > 0;
+                    drawRight(graphics, Component.literal(asks ? PriceFormat.compact(s.bestAsk()) : "-"), x + colBuy, textY, asks ? TEXT_MONEY : TEXT_DIM);
+                    drawRight(graphics, Component.literal(bids ? PriceFormat.compact(s.bestBid()) : "-"), x + colSell, textY, bids ? TEXT_GOOD : TEXT_DIM);
+                    int held = ClientMarketState.held(item);
+                    drawRight(graphics, Component.literal(PriceFormat.count(held)), x + colHave, textY, held > 0 ? TEXT : TEXT_DIM);
+                }
+                case LISTINGS -> {
+                    MarketPayloads.ListingLine line = browseLines.get(index);
+                    renderStack(graphics, line.stack(), x + LIST_X + 2, rowY + 1);
+                    String name = line.stack().getHoverName().getString() + (line.mine() ? " *" : "");
+                    graphics.drawString(font, font.plainSubstrByWidth(name, colSell - 44 - LIST_X - 22), x + LIST_X + 22, textY, TEXT, false);
+                    drawRight(graphics, Component.literal(PriceFormat.compact(line.price())), x + colSell, textY, TEXT_MONEY);
+                    drawRight(graphics, Component.literal(PriceFormat.count(line.remaining())), x + colHave, textY, TEXT);
+                }
+                case LIST -> {
+                    ItemStack stack = slotStack(slots.get(index));
+                    renderStack(graphics, stack, x + LIST_X + 2, rowY + 1);
+                    graphics.drawString(font, font.plainSubstrByWidth(stack.getHoverName().getString(), colHave - 44 - LIST_X - 22),
+                            x + LIST_X + 22, textY, TEXT, false);
+                    drawRight(graphics, Component.literal(PriceFormat.count(heldLike(stack))), x + colHave, textY, TEXT);
+                }
+                case ORDERS -> {
+                    if (index >= orders) {
+                        renderListingRow(graphics, myListings().get(index - orders), x, rowY, textY, listRight);
+                        continue;
+                    }
+                    MarketPayloads.OrderLine line = orderLines().get(index);
+                    int priceRight = listRight - 60;
+                    graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(line.item())), x + LIST_X + 2, rowY + 1);
+                    Component what = Component.translatable(line.buy() ? "screen.dynamic_economy.exchange.order.buy"
+                            : "screen.dynamic_economy.exchange.order.sell", PriceFormat.spurs(line.quantity()), displayName(line.item()));
+                    graphics.drawString(font, font.plainSubstrByWidth(what.getString(), priceRight - 50 - LIST_X - 22), x + LIST_X + 22, textY, TEXT, false);
+                    drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.order.each", PriceFormat.spurs(line.price())),
+                            x + priceRight, textY, line.buy() ? TEXT_MONEY : TEXT_GOOD);
+                    drawRight(graphics, Component.literal(PriceFormat.count(line.filled()) + "/" + PriceFormat.count(line.quantity())),
+                            x + listRight - 2, textY, line.filled() > 0 ? TEXT : TEXT_DIM);
+                }
+                case BOX -> {
+                    if (index >= boxed) {
+                        MarketPayloads.ParcelLine parcel = parcelLines().get(index - boxed);
+                        renderStack(graphics, parcel.stack(), x + LIST_X + 2, rowY + 1);
+                        graphics.drawString(font, font.plainSubstrByWidth(parcel.stack().getHoverName().getString(), listWidth - 90),
+                                x + LIST_X + 22, textY, TEXT, false);
+                        drawRight(graphics, Component.literal(PriceFormat.count(parcel.count())), x + listRight - 2, textY, TEXT);
+                        continue;
+                    }
+                    MarketPayloads.BoxLine line = boxLines().get(index);
+                    graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(line.item())), x + LIST_X + 2, rowY + 1);
+                    graphics.drawString(font, font.plainSubstrByWidth(displayName(line.item()), listWidth - 90), x + LIST_X + 22, textY, TEXT, false);
+                    drawRight(graphics, Component.literal(PriceFormat.count(line.count())), x + listRight - 2, textY, TEXT);
+                }
+            }
+        }
+        if (size == 0) {
+            String key = exchange == null ? "screen.dynamic_economy.trades.loading" : switch (exchangeMode) {
+                case ITEMS -> search.getValue().isBlank() ? "screen.dynamic_economy.exchange.none_items" : "screen.dynamic_economy.no_matches";
+                case LISTINGS -> ClientMarketState.exchangeListings() == null ? "screen.dynamic_economy.trades.loading"
+                        : search.getValue().isBlank() ? "screen.dynamic_economy.exchange.none_listings" : "screen.dynamic_economy.no_matches";
+                case LIST -> "screen.dynamic_economy.exchange.none_listable";
+                case ORDERS -> "screen.dynamic_economy.exchange.none_orders";
+                case BOX -> "screen.dynamic_economy.exchange.none_box";
+            };
+            // Long enough to need wrapping when it explains what can be listed.
+            List<net.minecraft.util.FormattedCharSequence> lines = font.split(Component.translatable(key), listWidth - 8);
+            for (int i = 0; i < lines.size(); i++) {
+                graphics.drawCenteredString(font, lines.get(i), x + LIST_X + listWidth / 2, y + LIST_Y + 20 + i * 10, TEXT_DIM);
+            }
+        } else if (exchangeMode == ExchangeMode.LISTINGS && ClientMarketState.exchangeListings() != null
+                && ClientMarketState.exchangeListings().more() && scroll + rows >= size) {
+            graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.listings.more"), x + LIST_X + 4,
+                    y + LIST_Y + Math.min(rows, size) * ROW_HEIGHT + 2, TEXT_DIM, false);
+        }
+    }
+
+    /** One of the player's listings under My orders, drawn like an order. */
+    private void renderListingRow(GuiGraphics graphics, MarketPayloads.ListingLine line, int x, int rowY, int textY, int listRight) {
+        int priceRight = listRight - 60;
+        renderStack(graphics, line.stack(), x + LIST_X + 2, rowY + 1);
+        Component what = Component.translatable("screen.dynamic_economy.exchange.order.listing", PriceFormat.spurs(line.quantity()),
+                line.stack().getHoverName().getString());
+        graphics.drawString(font, font.plainSubstrByWidth(what.getString(), priceRight - 50 - LIST_X - 22), x + LIST_X + 22, textY, TEXT, false);
+        drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.order.each", PriceFormat.spurs(line.price())),
+                x + priceRight, textY, TEXT_GOOD);
+        drawRight(graphics, Component.literal(PriceFormat.count(line.sold()) + "/" + PriceFormat.count(line.quantity())),
+                x + listRight - 2, textY, line.sold() > 0 ? TEXT : TEXT_DIM);
+    }
+
+    /** An item with its count and durability bar. */
+    private void renderStack(GuiGraphics graphics, ItemStack stack, int x, int y) {
+        graphics.renderItem(stack, x, y);
+        graphics.renderItemDecorations(font, stack, x, y);
+    }
+
+    /** A listed item's own tooltip, then who sells it and for how much. */
+    private List<Component> listingTooltip(MarketPayloads.ListingLine line) {
+        List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, line.stack()));
+        lines.add(Component.translatable("screen.dynamic_economy.exchange.listing.offer", PriceFormat.count(line.remaining()),
+                PriceFormat.money(PriceFormat.spurs(line.price()))).withColor(TEXT_MONEY));
+        lines.add((line.mine() ? Component.translatable("screen.dynamic_economy.exchange.listing.yours")
+                : Component.translatable("screen.dynamic_economy.exchange.listing.by", line.seller())).withColor(TEXT_DIM));
+        return lines;
+    }
+
+    /** The item's tooltip below its name, from {@code top} down to {@code bottom}, so a buyer sees it in full. */
+    private void renderItemDetails(GuiGraphics graphics, ItemStack stack, int left, int top, int bottom) {
+        List<Component> lines = getTooltipFromItem(minecraft, stack);
+        int y = top;
+        // The first line is the name, shown above already.
+        for (int i = 1; i < lines.size(); i++) {
+            for (net.minecraft.util.FormattedCharSequence part : font.split(lines.get(i), panelWidth)) {
+                if (y + 9 > bottom) {
+                    return;
+                }
+                graphics.drawString(font, part, left, y, TEXT_DIM, false);
+                y += 10;
+            }
+        }
+    }
+
+    /** Browsing listings: the selected listing in full, and what buying the quantity costs. */
+    private void renderListingPanel(GuiGraphics graphics, int x, int y, String percent) {
+        int left = x + panelX;
+        MarketPayloads.ListingLine line = selectedBrowseListing();
+        if (line == null) {
+            renderHelp(graphics, Component.translatable(wide ? "screen.dynamic_economy.exchange.listings.help"
+                    : "screen.dynamic_economy.exchange.listings.select_hint", percent), left, y + panelY + 4);
+            return;
+        }
+        renderStack(graphics, line.stack(), left, y + panelY);
+        String name = line.stack().getHoverName().getString();
+        if (wide) {
+            int right = left + panelWidth;
+            int top = y + chartY;
+            graphics.drawString(font, font.plainSubstrByWidth(name, panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+            infoLine(graphics, "exchange.listing.seller", line.mine() ? Component.translatable("screen.dynamic_economy.exchange.listing.you").getString()
+                    : line.seller(), TEXT, left, right, top);
+            infoLine(graphics, "exchange.order.price", PriceFormat.spurs(line.price()), TEXT_MONEY, left, right, top + INFO_LINE_HEIGHT);
+            infoLine(graphics, "exchange.listing.left", PriceFormat.count(line.remaining()), TEXT, left, right, top + 2 * INFO_LINE_HEIGHT);
+            renderItemDetails(graphics, line.stack(), left, top + 3 * INFO_LINE_HEIGHT + 4, y + controlsY - 4);
+        } else {
+            Component summary = Component.translatable("screen.dynamic_economy.exchange.listing.summary", name, PriceFormat.spurs(line.price()),
+                    PriceFormat.count(line.remaining()), line.seller());
+            graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+        }
+        int qty = quantityValue();
+        long total = qty > 0 ? MarketService.checkedTotal(line.price(), qty).orElse(0) : 0;
+        Component note = !quantityNote.getString().isEmpty() ? quantityNote
+                : total > 0 ? Component.translatable("screen.dynamic_economy.exchange.listing.total", PriceFormat.spurs(total)) : Component.empty();
+        graphics.drawString(font, font.plainSubstrByWidth(note.getString(), noteWidth), x + noteX, y + noteY, TEXT_DIM, false);
+    }
+
+    /** Listing an item: the picked item in full, the price box, and what the listing comes to. */
+    private void renderListPanel(GuiGraphics graphics, int x, int y, String percent) {
+        int left = x + panelX;
+        if (listSlot < 0) {
+            renderHelp(graphics, Component.translatable(wide ? "screen.dynamic_economy.exchange.list.help"
+                    : "screen.dynamic_economy.exchange.list.select_hint", percent), left, y + panelY + 4);
+            return;
+        }
+        renderStack(graphics, listStack, left, y + panelY);
+        String name = listStack.getHoverName().getString();
+        if (!wide) {
+            graphics.drawString(font, font.plainSubstrByWidth(name, panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+            graphics.drawString(font, "@", x + noteX, y + controlsY + 5, TEXT_DIM, false);
+            return;
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(name, panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+        renderItemDetails(graphics, listStack, left, y + chartY, y + priceY - 14);
+        infoLine(graphics, "col.have", PriceFormat.spurs(heldLike(listStack)), TEXT, left, left + panelWidth, y + priceY - 12);
+        graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.price"), left, y + priceY + 3, TEXT_DIM, false);
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        int qty = quantityValue();
+        long each = priceValue();
+        long total = qty > 0 && each > 0 ? MarketService.checkedTotal(each, qty).orElse(0) : 0;
+        Component note;
+        int color = TEXT_DIM;
+        if (!quantityNote.getString().isEmpty()) {
+            note = quantityNote;
+        } else if (qty > listStack.getMaxStackSize()) {
+            note = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.spurs(listStack.getMaxStackSize()));
+            color = TEXT_BAD;
+        } else if (total > 0) {
+            note = Component.translatable("screen.dynamic_economy.exchange.note.total", PriceFormat.spurs(total),
+                    PriceFormat.spurs(ExchangeService.tax(total, exchange == null ? 0 : exchange.tax())));
+        } else {
+            note = Component.translatable("screen.dynamic_economy.exchange.note.tax", percent);
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(note.getString(), noteWidth), x + noteX, y + noteY, color, false);
+    }
+
+    /** The Exchange tab's panel: the selected item's book and order controls, the selected order, or the box's help. */
+    private void renderExchangePanel(GuiGraphics graphics, int x, int y, int mouseX, int mouseY) {
+        int left = x + panelX;
+        MarketPayloads.Exchange exchange = ClientMarketState.exchange();
+        String percent = exchange == null ? "-" : String.format(Locale.ROOT, "%.1f%%", exchange.tax() * 100);
+        if (exchangeMode == ExchangeMode.BOX) {
+            renderHelp(graphics, Component.translatable("screen.dynamic_economy.exchange.box.help"), left, y + panelY + 4);
+            return;
+        }
+        if (exchangeMode == ExchangeMode.ORDERS) {
+            renderOrderPanel(graphics, x, y);
+            return;
+        }
+        if (exchangeMode == ExchangeMode.LISTINGS) {
+            renderListingPanel(graphics, x, y, percent);
+            return;
+        }
+        if (exchangeMode == ExchangeMode.LIST) {
+            renderListPanel(graphics, x, y, percent);
+            return;
+        }
+        if (exchangeSelected == null) {
+            renderHelp(graphics, Component.translatable(wide ? "screen.dynamic_economy.exchange.help" : "screen.dynamic_economy.exchange.select_hint",
+                    percent), left, y + panelY + 4);
+            return;
+        }
+        graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(exchangeSelected)), left, y + panelY);
+        if (!wide) {
+            ExchangeService.Summary s = summary(exchangeSelected);
+            Component line = Component.translatable("screen.dynamic_economy.exchange.summary", displayName(exchangeSelected),
+                    s != null && s.bestAsk() > 0 ? PriceFormat.spurs(s.bestAsk()) : "-", s != null && s.bestBid() > 0 ? PriceFormat.spurs(s.bestBid()) : "-");
+            graphics.drawString(font, font.plainSubstrByWidth(line.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+            graphics.drawString(font, "@", x + noteX, y + controlsY + 5, TEXT_DIM, false);
+            return;
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(displayName(exchangeSelected), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+        renderBook(graphics, left, y + chartY, y + priceY - 13, mouseX, mouseY);
+        int held = ClientMarketState.held(exchangeSelected);
+        infoLine(graphics, "col.have", PriceFormat.spurs(held), held > 0 ? TEXT : TEXT_DIM, left, left + panelWidth, y + priceY - 12);
+        graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.price"), left, y + priceY + 3, TEXT_DIM, false);
+
+        // Under the quantity: what the order comes to, and the tax a sale pays.
+        int qty = quantityValue();
+        long each = priceValue();
+        long total = qty > 0 && each > 0 ? MarketService.checkedTotal(each, qty).orElse(0) : 0;
+        Component note;
+        int color = TEXT_DIM;
+        if (!quantityNote.getString().isEmpty()) {
+            note = quantityNote;
+        } else if (exchange != null && qty > exchange.maxOrderSize()) {
+            note = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.spurs(exchange.maxOrderSize()));
+            color = TEXT_BAD;
+        } else if (total > 0) {
+            note = Component.translatable("screen.dynamic_economy.exchange.note.total", PriceFormat.spurs(total),
+                    PriceFormat.spurs(ExchangeService.tax(total, exchange == null ? 0 : exchange.tax())));
+        } else {
+            note = Component.translatable("screen.dynamic_economy.exchange.note.tax", percent);
+        }
+        graphics.drawString(font, font.plainSubstrByWidth(note.getString(), noteWidth), x + noteX, y + noteY, color, false);
+    }
+
+    /**
+     * The selected item's book between {@code top} and {@code bottom}: sellers' prices above the line with the
+     * cheapest nearest it, buyers' below with the highest nearest it. Each price can be clicked to copy it.
+     */
+    private void renderBook(GuiGraphics graphics, int left, int top, int bottom, int mouseX, int mouseY) {
+        int right = left + panelWidth;
+        graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.book.price"), left, top, TEXT_DIM, false);
+        drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.book.units"), right, top, TEXT_DIM);
+        MarketPayloads.ExchangeBook book = exchangeSelected == null ? null : ClientMarketState.exchangeBook(exchangeSelected);
+        if (book == null) {
+            graphics.drawString(font, Component.translatable("screen.dynamic_economy.trades.loading"), left, top + 12, TEXT_DIM, false);
+            return;
+        }
+        int perSide = Mth.clamp((bottom - top - 20) / 20, 1, MarketPayloads.ExchangeBook.DEPTH);
+        int asksTop = top + 10;
+        int lineY = asksTop + perSide * 10;
+        int bidsTop = lineY + 10;
+        int shownAsks = Math.min(perSide, book.asks().size());
+        for (int j = 0; j < shownAsks; j++) {
+            // The cheapest ask sits right above the line.
+            ExchangeService.Level level = book.asks().get(shownAsks - 1 - j);
+            bookLine(graphics, level, left, right, asksTop + (perSide - shownAsks + j) * 10, TEXT_MONEY, mouseX, mouseY);
+        }
+        if (book.asks().isEmpty()) {
+            graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.book.no_asks"), left, lineY - 10, TEXT_OFF, false);
+        }
+        graphics.fill(left, lineY + 4, right, lineY + 5, PANEL_BORDER);
+        if (!book.asks().isEmpty() && !book.bids().isEmpty()) {
+            Component spread = Component.translatable("screen.dynamic_economy.exchange.book.spread",
+                    PriceFormat.spurs(book.asks().get(0).price() - book.bids().get(0).price()));
+            int width = font.width(spread) + 4;
+            int middle = (left + right) / 2;
+            graphics.fill(middle - width / 2, lineY, middle + width / 2, lineY + 9, PANEL);
+            graphics.drawCenteredString(font, spread, middle, lineY + 1, TEXT_DIM);
+        }
+        for (int j = 0; j < Math.min(perSide, book.bids().size()); j++) {
+            bookLine(graphics, book.bids().get(j), left, right, bidsTop + j * 10, TEXT_GOOD, mouseX, mouseY);
+        }
+        if (book.bids().isEmpty()) {
+            graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.book.no_bids"), left, bidsTop, TEXT_OFF, false);
+        }
+    }
+
+    /** One price in the book; the player's own share is marked with a star. */
+    private void bookLine(GuiGraphics graphics, ExchangeService.Level level, int left, int right, int top, int color, int mouseX, int mouseY) {
+        BookRow row = new BookRow(left, top - 1, right, top + 9, level.price(), level.mine());
+        bookRows.add(row);
+        if (mouseX >= row.left() && mouseX < row.right() && mouseY >= row.top() && mouseY < row.bottom()) {
+            graphics.fill(row.left(), row.top(), row.right(), row.bottom(), ROW_HOVER);
+        }
+        graphics.drawString(font, PriceFormat.spurs(level.price()) + (level.mine() > 0 ? " *" : ""), left, top, color, false);
+        drawRight(graphics, Component.literal(PriceFormat.count(level.quantity())), right, top, TEXT);
+    }
+
+    /** The selected order: its side, price, progress, what it still holds and when it expires. */
+    private void renderOrderPanel(GuiGraphics graphics, int x, int y) {
+        int left = x + panelX;
+        MarketPayloads.OrderLine line = selectedOrderLine();
+        MarketPayloads.ListingLine listing = selectedMyListing();
+        if (line == null && listing != null) {
+            renderMyListingPanel(graphics, x, y, listing);
+            return;
+        }
+        if (line == null) {
+            renderHelp(graphics, Component.translatable(wide ? "screen.dynamic_economy.exchange.orders.help"
+                    : "screen.dynamic_economy.exchange.orders.select_hint"), left, y + panelY + 4);
+            return;
+        }
+        graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(line.item())), left, y + panelY);
+        Component expires = line.daysLeft() < 0 ? Component.translatable("screen.dynamic_economy.exchange.order.never")
+                : Component.translatable("screen.dynamic_economy.exchange.order.days", line.daysLeft());
+        if (!wide) {
+            Component summary = Component.translatable("screen.dynamic_economy.exchange.order.summary", displayName(line.item()),
+                    PriceFormat.spurs(line.price()), PriceFormat.count(line.filled()), PriceFormat.count(line.quantity()));
+            graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+            return;
+        }
+        int right = left + panelWidth;
+        int top = y + chartY;
+        graphics.drawString(font, font.plainSubstrByWidth(displayName(line.item()), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+        infoLine(graphics, "exchange.order.side", Component.translatable(line.buy() ? "screen.dynamic_economy.exchange.order.side_buy"
+                : "screen.dynamic_economy.exchange.order.side_sell").getString(), line.buy() ? TEXT_MONEY : TEXT_GOOD, left, right, top);
+        infoLine(graphics, "exchange.order.price", PriceFormat.spurs(line.price()), TEXT, left, right, top + INFO_LINE_HEIGHT);
+        infoLine(graphics, "exchange.order.filled", PriceFormat.count(line.filled()) + "/" + PriceFormat.count(line.quantity()), TEXT,
+                left, right, top + 2 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "exchange.order.holds", line.buy() ? PriceFormat.money(PriceFormat.spurs(line.price() * line.remaining())).getString()
+                : Component.translatable("screen.dynamic_economy.exchange.order.items", PriceFormat.count(line.remaining())).getString(),
+                TEXT, left, right, top + 3 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "exchange.order.expires", expires.getString(), TEXT_DIM, left, right, top + 4 * INFO_LINE_HEIGHT);
+    }
+
+    /** One of the player's own listings under My orders: its price, sales, what it still holds and when it expires. */
+    private void renderMyListingPanel(GuiGraphics graphics, int x, int y, MarketPayloads.ListingLine line) {
+        int left = x + panelX;
+        renderStack(graphics, line.stack(), left, y + panelY);
+        String name = line.stack().getHoverName().getString();
+        if (!wide) {
+            Component summary = Component.translatable("screen.dynamic_economy.exchange.order.summary", name,
+                    PriceFormat.spurs(line.price()), PriceFormat.count(line.sold()), PriceFormat.count(line.quantity()));
+            graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+            return;
+        }
+        int right = left + panelWidth;
+        int top = y + chartY;
+        graphics.drawString(font, font.plainSubstrByWidth(name, panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
+        infoLine(graphics, "exchange.order.side", Component.translatable("screen.dynamic_economy.exchange.order.side_listing").getString(),
+                TEXT_GOOD, left, right, top);
+        infoLine(graphics, "exchange.order.price", PriceFormat.spurs(line.price()), TEXT, left, right, top + INFO_LINE_HEIGHT);
+        infoLine(graphics, "exchange.order.sold", PriceFormat.count(line.sold()) + "/" + PriceFormat.count(line.quantity()), TEXT,
+                left, right, top + 2 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "exchange.order.holds", Component.translatable("screen.dynamic_economy.exchange.order.items",
+                PriceFormat.count(line.remaining())).getString(), TEXT, left, right, top + 3 * INFO_LINE_HEIGHT);
+        Component expires = line.daysLeft() < 0 ? Component.translatable("screen.dynamic_economy.exchange.order.never")
+                : Component.translatable("screen.dynamic_economy.exchange.order.days", line.daysLeft());
+        infoLine(graphics, "exchange.order.expires", expires.getString(), TEXT_DIM, left, right, top + 4 * INFO_LINE_HEIGHT);
+        renderItemDetails(graphics, line.stack(), left, top + 5 * INFO_LINE_HEIGHT + 4, y + tradeY - 4);
+    }
+
+    /** Wrapped help text from {@code top} down to the controls. */
+    private void renderHelp(GuiGraphics graphics, Component text, int left, int top) {
+        List<net.minecraft.util.FormattedCharSequence> lines = font.split(text, panelWidth);
+        // Above the price box when it shows, otherwise above the button; one line when narrow.
+        int bottom = topPos + (!wide ? panelY + 14 : exchangeMode == ExchangeMode.ITEMS || exchangeMode == ExchangeMode.LIST ? priceY - 2
+                : exchangeMode == ExchangeMode.LISTINGS ? controlsY - 2 : tradeY - 2);
+        for (int i = 0; i < lines.size() && top + i * 10 + 9 <= bottom; i++) {
+            graphics.drawString(font, lines.get(i), left, top + i * 10, TEXT_DIM, false);
+        }
+    }
+
+    /** The item's own tooltip plus its best prices on the exchange and, if listed, what the market pays. */
+    private List<Component> exchangeTooltip(ResourceLocation item) {
+        List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, new ItemStack(BuiltInRegistries.ITEM.get(item))));
+        ExchangeService.Summary s = summary(item);
+        if (s != null && s.bestAsk() > 0) {
+            lines.add(Component.translatable("screen.dynamic_economy.exchange.tooltip.ask", PriceFormat.money(PriceFormat.spurs(s.bestAsk())),
+                    PriceFormat.count(s.askUnits())).withColor(TEXT_MONEY));
+        }
+        if (s != null && s.bestBid() > 0) {
+            lines.add(Component.translatable("screen.dynamic_economy.exchange.tooltip.bid", PriceFormat.money(PriceFormat.spurs(s.bestBid())),
+                    PriceFormat.count(s.bidUnits())).withColor(TEXT_GOOD));
+        }
+        if (s == null) {
+            lines.add(Component.translatable("screen.dynamic_economy.exchange.tooltip.none").withColor(TEXT_DIM));
+        }
+        MarketPayloads.Row row = ClientMarketState.rows().get(item);
+        if (row != null && row.canSell()) {
+            lines.add(Component.translatable("screen.dynamic_economy.tooltip.sell",
+                    PriceFormat.money(PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR))).withColor(TEXT_DIM));
+        }
+        return lines;
     }
 
     /** The bank's coins, largest first: what each is worth and how many the player carries. Clicking one withdraws it. */
@@ -1237,7 +2639,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private boolean isOverChart(double mouseX, double mouseY) {
         double x = mouseX - leftPos - chartX;
         double y = mouseY - topPos - chartY;
-        return tab != Tab.BANK && selectedRow() != null && x >= 0 && x < chartWidth && y >= 0 && y < chartHeight;
+        return tab != Tab.BANK && tab != Tab.CONTRACTS && tab != Tab.EXCHANGE && selectedRow() != null && x >= 0 && x < chartWidth && y >= 0 && y < chartHeight;
     }
 
     private List<Component> chartTooltip(MarketPayloads.Row row) {
@@ -1312,7 +2714,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     }
 
     private static String displayName(MarketPayloads.Row row) {
-        return BuiltInRegistries.ITEM.get(row.item()).getDescription().getString();
+        return displayName(row.item());
+    }
+
+    private static String displayName(ResourceLocation item) {
+        return BuiltInRegistries.ITEM.get(item).getDescription().getString();
     }
 
     /** The item's own tooltip plus the exact prices, which the list may abbreviate. */

@@ -7,8 +7,8 @@ import java.util.Map;
 
 /**
  * The spreadsheet layout shared by export and import. Catalog columns are named exactly like the catalog's JSON
- * fields, so a row converts straight into a catalog entry. The five override columns at the end go beyond the brief's
- * list; without them an export → import round trip would drop per-item overrides.
+ * fields, so a row converts straight into a catalog entry. The override and contract columns at the end go beyond the
+ * brief's list; without them an export → import round trip would drop per-item settings.
  */
 final class CatalogColumns {
     static final String ITEM_ID = "item_id";
@@ -41,6 +41,10 @@ final class CatalogColumns {
         OPTIONAL_FIELDS.put("recovery", Kind.DECIMAL);
         OPTIONAL_FIELDS.put("floor", Kind.DECIMAL);
         OPTIONAL_FIELDS.put("ceiling", Kind.DECIMAL);
+        OPTIONAL_FIELDS.put("contract_weight", Kind.WHOLE_NUMBER);
+        OPTIONAL_FIELDS.put("contract_min_size", Kind.WHOLE_NUMBER);
+        OPTIONAL_FIELDS.put("contract_max_size", Kind.WHOLE_NUMBER);
+        OPTIONAL_FIELDS.put("contract_premium", Kind.DECIMAL);
     }
 
     static final List<String> HEADER;

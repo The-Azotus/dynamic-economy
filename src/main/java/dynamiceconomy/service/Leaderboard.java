@@ -3,12 +3,14 @@ package dynamiceconomy.service;
 import com.mojang.authlib.GameProfile;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.bank.WorldBank;
+import dynamiceconomy.data.ExchangeData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.GameProfileCache;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,9 +19,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * The richest players by balance in the world's bank. Only personal accounts of known players count: shared accounts
- * (Numismatics' Blaze Bankers) and accounts with no player profile never appear, nor do empty accounts. Balances are
- * what the bank displays, so they match the market screen's Bank line. Server thread only: it reads the bank.
+ * The richest players by balance in the world's bank, plus the money the exchange holds for them (open buy orders and
+ * owed payments). Only personal accounts of known players count: shared accounts (Numismatics' Blaze Bankers), team
+ * accounts and accounts with no player profile never appear, nor do empty accounts. Bank balances are what the bank
+ * displays. Server thread only: it reads the bank.
  */
 public final class Leaderboard {
     private Leaderboard() {
@@ -48,7 +51,8 @@ public final class Leaderboard {
         Predicate<GameProfile> excluded = MarketConfig.leaderboardExcludeOperators()
                 ? profile -> server.getPlayerList().isOp(profile)
                 : profile -> false;
-        List<Entry> ranked = rank(WorldBank.of(server).playerBalances(), profiles, excluded);
+        List<Entry> ranked = rank(withExchange(WorldBank.of(server).playerBalances(), ExchangeData.get(server).heldForPlayers()),
+                profiles, excluded);
         int ownRank = 0;
         for (int i = 0; i < ranked.size(); i++) {
             if (ranked.get(i).id().equals(viewer.getUUID())) {
@@ -58,6 +62,13 @@ public final class Leaderboard {
         }
         return new View(List.copyOf(ranked.subList(0, Math.min(MarketConfig.leaderboardSize(), ranked.size()))),
                 ownRank, ranked.size());
+    }
+
+    /** Bank balances with the exchange's held money added, by player. */
+    public static Map<UUID, Long> withExchange(Map<UUID, Long> balances, Map<UUID, Long> held) {
+        Map<UUID, Long> total = new HashMap<>(balances);
+        held.forEach((id, amount) -> total.merge(id, amount, Long::sum));
+        return total;
     }
 
     /**
@@ -81,7 +92,7 @@ public final class Leaderboard {
     }
 
     /** An online player's profile, or one the server has seen before (offline players, by their last name). */
-    private static Optional<GameProfile> profile(MinecraftServer server, UUID id) {
+    public static Optional<GameProfile> profile(MinecraftServer server, UUID id) {
         ServerPlayer online = server.getPlayerList().getPlayer(id);
         if (online != null) {
             return Optional.of(online.getGameProfile());

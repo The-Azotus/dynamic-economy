@@ -24,7 +24,8 @@ import java.util.TreeMap;
 public final class ItemClasses {
     /** The catalog fields a class may set. Not {@code item} or {@code base_price}: those are per item. */
     public static final Set<String> FIELDS = Set.of("markup", "sell_fee", "can_sell", "can_buy", "unlimited_stock",
-            "start_stock", "dynamic", "min_buy_markup", "sell_impact", "buy_impact", "recovery", "floor", "ceiling");
+            "start_stock", "dynamic", "min_buy_markup", "sell_impact", "buy_impact", "recovery", "floor", "ceiling",
+            "contract_weight", "contract_min_size", "contract_max_size", "contract_premium");
     private static final String DESCRIPTION = "description";
 
     /**

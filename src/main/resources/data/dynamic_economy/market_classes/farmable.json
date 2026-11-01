@@ -6,5 +6,7 @@
   "buy_impact": 0.001,
   "recovery": 0.05,
   "floor": 0.1,
-  "ceiling": 2.0
+  "ceiling": 2.0,
+  "contract_min_size": 64,
+  "contract_max_size": 512
 }

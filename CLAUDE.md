@@ -5,8 +5,7 @@ NeoForge 1.21.1 mod (NeoForge 21.1.228, Java 21; optional: Create 6.0.10, Numism
 Where to find more (read only when needed):
 - `docs/market-design.md` — background and reasoning. This file overrides it.
 - `docs/admin-guide.md`, `docs/player-guide.md` — every command, catalog field and config option as built.
-- `docs/phase-history.md` — specs for finished Phases 0–14 (Phase 10 includes how `suggest` and the built-in prices work).
-- `docs/roadmap.md` — specs for Phases 16–17.
+- `docs/phase-history.md` — specs for finished Phases 0–15 (Phase 10 includes how `suggest` and the built-in prices work).
 
 ## How to work
 
@@ -18,7 +17,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. **Phase 15 (Contracts) is next, on branch `phase15`** (from `main` at v0.3.0): not started; the open questions under Current phase come first. Then 16 Difficulty preset → 17 Player exchange (optional).
+Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/phase-history.md`). Phase 16 (Difficulty preset) dropped by the user on 2026-10-31. Phase 17 (Player exchange) done on branch `phase17` (from `phase15`), approved 2026-11-01 (checked in the user's pack and two-player on a dev server; three small message fixes after approval, 162 GameTests pass with both banks; details in `docs/phase-history.md`). It was the last planned phase; **next: release v0.4.0** when the user asks.
 
 Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
@@ -32,8 +31,10 @@ Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (M
 - Market pays `base × s × (1 − sell_fee)`; charges `ceil(base × s × (1 + markup))`. `s` is the per-item supply-and-demand factor.
 - Only items with default components are accepted (no enchanted, damaged or renamed copies). Exception (user, 2026-10-30): data types in the `ignored_components` server config (default `relics:data`, which Relics adds to every held relic) don't stop a sale; bought items still come fresh and never join such a stack.
 - Unlimited-stock items: purchases never raise the price, and the buy price never falls below `base × (1 + min_buy_markup)`, which is always above base.
+- No difficulty presets (user, 2026-10-31: Phase 16 dropped). Admins tune the market through classes, catalog fields and the server config.
 - No per-player quotas. Dumping is limited by price impact and item classes.
 - The market holds no balance: sales create money, purchases destroy it, `sell_fee` reduces what is created.
+- Contracts (user, 2026-10-30): a contract never pays more than buying the delivered units from the market could ever cost, less 1 bit, so only items whose buy price can't fall far (unlimited, fixed-price, `can_buy: false`) are worth offering. Items with `can_sell: false` are never offered; the `unique` class has `contract_weight: 0`.
 
 ## Transaction rules (non-negotiable)
 
@@ -48,7 +49,7 @@ Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (M
 - From Phase 14, everything that moves money goes through the bank interface, never a bank directly. The own bank follows the same rules (server main thread, all-or-nothing `deduct`).
 - Coin items (ours and Numismatics') can never be listed in the market; selling them would create money from nothing.
 
-Result enum: `OK, NOT_LISTED, SELL_DISABLED, BUY_DISABLED, NOT_ENOUGH_ITEMS, NO_STOCK, NO_FUNDS, NO_SPACE, PRICE_CHANGED, TOO_LARGE`.
+Result enum: `OK, NOT_LISTED, SELL_DISABLED, BUY_DISABLED, NOT_ENOUGH_ITEMS, NO_STOCK, NO_FUNDS, NO_SPACE, PRICE_CHANGED, TOO_LARGE`, plus `INVALID_QUANTITY`, `BANK_UNAVAILABLE` (earlier phases) for contracts, `CONTRACT_TAKEN, CONTRACT_EXPIRED, CONTRACT_LIMIT, NOT_YOUR_CONTRACT, CONTRACT_FULL`, and for the exchange, `EXCHANGE_CLOSED, ORDER_LIMIT, ORDER_GONE, NOT_YOUR_ORDER, INVALID_PRICE, OWN_LISTING`.
 
 ## Catalog format
 
@@ -65,27 +66,13 @@ Files in `data/<namespace>/market/*.json`; classes in `data/<namespace>/market_c
 }
 ```
 
-Fields: `item` (exact ID), `class`, `base_price` (> 0; ≤ 0 is skipped), `markup` (0.5), `sell_fee` (0.0), `can_sell`/`can_buy` (true), `start_stock` (0, first appearance only), `unlimited_stock` (false), `dynamic` (true), `min_buy_markup` (= `markup`; must be > 0 and ≤ `markup` when set), `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling` (server config). Full reference: `docs/admin-guide.md`.
+Fields: `item` (exact ID), `class`, `base_price` (> 0; ≤ 0 is skipped), `markup` (0.5), `sell_fee` (0.0), `can_sell`/`can_buy` (true), `start_stock` (0, first appearance only), `unlimited_stock` (false), `dynamic` (true), `min_buy_markup` (= `markup`; must be > 0 and ≤ `markup` when set), `sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling`, `contract_weight`, `contract_min_size`, `contract_max_size`, `contract_premium` (server config). Full reference: `docs/admin-guide.md`.
 
 Precedence: server config < class < file `defaults` < entry < tag rules (creation order) < per-item in-game edits.
 
-## Current phase: 15 — Contracts
+## Current phase: none
 
-- A global board, regenerated every **5 in-game days by day count** (sleeping counts). Generated from the catalog using class settings: large orders for common classes, small ones for rare, single items for `unique`. Number of contracts configurable.
-- Flow: a player **claims** a contract, which locks it to them. Claiming takes a **deposit** (fraction of the reward, configurable). They deliver in batches from the **main inventory only**. Delivered items **disappear** (not added to stock).
-- Completion pays the reward and returns the deposit. At expiry, an incomplete contract pays for units delivered and the deposit is lost. A player may abandon, with the same outcome. Max active contracts per player configurable (default 1).
-- Integrity: per-unit reward stays below the lowest buy price the market can reach for that item, so buying from the market to fill a contract never profits. Transaction rules apply (checks before changes, `long` totals, `TOO_LARGE`).
-- New Result values for contract actions (e.g. `CONTRACT_TAKEN`, `CONTRACT_EXPIRED`); list them in the report.
-
-Done when: two players can't both claim one contract; partial and full delivery pay exactly as specified; expiry and refresh happen on the right day, including after sleeping and a restart; buy-from-market-and-deliver never profits (GameTest).
-
-Moved behind Phase 14 on 2026-10-29. Branch it as `phase15` from `main` (v0.3.0). First: read the code, then ask the user these before building (none is decided). Deposits and rewards go through the bank interface from Phase 14.
-
-1. **The reward cap conflicts with selling.** The lowest buy price an item can reach is `base × floor × (1 + markup)`, which with defaults (floor 0.2, markup 0.5) is 0.3 × base, below what simply selling pays (base × s). Capping rewards there makes contracts worse than selling. Options to put to the user: cap against the buy price at claim time and stop the item's price falling below that while the contract is open; exclude contract items from market buying while claimed; only offer contracts for `can_buy: false` items (none can be bought, so any reward is safe); or accept a lower-but-still-useful premium (e.g. reward ≤ min over the contract's life). Whatever is chosen, buy-from-market-and-deliver must never profit (GameTest).
-2. **Defaults:** number of contracts on the board, deposit fraction, contract size per class (common / rare / `unique`), reward premium, and whether items with `unlimited_stock` or `can_sell: false` can appear.
-3. **Class settings:** Phase 9 reserved per-class contract settings. Which fields (e.g. `contract_weight`, `contract_size`, `contract_premium`, or opting a class out)?
-4. **Visibility (Phase 12):** a contract for an item locked for a player is hidden from them; confirm they also can't claim it, and that a claimed contract stays deliverable if their stage is revoked.
-5. **Board timing:** "every 5 in-game days by day count" — confirm contracts expire at the same refresh (one shared lifetime), and what a player sees for a claimed contract that expired while offline (payout for delivered units goes to their bank either way).
+Phase 17 was the last planned phase. Next: release v0.4.0 (Phases 15 and 17) when the user asks. Phase 17's spec and decisions are in `docs/phase-history.md`.
 
 ## Report format (after every phase)
 

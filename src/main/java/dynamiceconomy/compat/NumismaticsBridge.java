@@ -86,6 +86,11 @@ public final class NumismaticsBridge {
             }
         }
 
+        @Override
+        public Optional<Account> accountOf(UUID player) {
+            return accountById(player);
+        }
+
         /** Shared Blaze Banker accounts are left out. Balances are what Numismatics displays. */
         @Override
         public Map<UUID, Long> playerBalances() {
