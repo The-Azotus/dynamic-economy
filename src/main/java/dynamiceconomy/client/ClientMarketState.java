@@ -165,7 +165,10 @@ public final class ClientMarketState {
 
     public static void applyExchangeOutcome(MarketPayloads.ExchangeOutcome outcome) {
         DynamicEconomy.LOGGER.debug("Exchange outcome: {}", outcome);
-        Component itemName = BuiltInRegistries.ITEM.get(outcome.item()).getDescription();
+        // A listing is named as listed (a custom name, say); anything else by its item.
+        Component itemName = outcome.listed().isEmpty()
+                ? BuiltInRegistries.ITEM.get(outcome.item()).getDescription()
+                : outcome.listed().getHoverName();
         Component amount = PriceFormat.money(PriceFormat.spurs(outcome.amount()));
         if (outcome.result() == MarketService.Result.OK) {
             status = switch (outcome.action()) {
@@ -174,7 +177,9 @@ public final class ClientMarketState {
                         : outcome.filled() < outcome.quantity()
                         ? Component.translatable("screen.dynamic_economy.exchange.posted_part", outcome.quantity(), itemName, outcome.filled(), amount)
                         : Component.translatable("screen.dynamic_economy.exchange.filled", outcome.quantity(), itemName, amount);
-                case CANCEL -> outcome.amount() > 0
+                case CANCEL -> !outcome.listed().isEmpty()
+                        ? Component.translatable("screen.dynamic_economy.exchange.cancelled_listing", outcome.quantity(), itemName)
+                        : outcome.amount() > 0
                         ? Component.translatable("screen.dynamic_economy.exchange.cancelled_money", itemName, amount)
                         : Component.translatable("screen.dynamic_economy.exchange.cancelled_items", outcome.quantity(), itemName);
                 case COLLECT -> Component.translatable("screen.dynamic_economy.exchange.collected", outcome.quantity());

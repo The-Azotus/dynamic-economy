@@ -761,17 +761,23 @@ public final class MarketPayloads {
     }
 
     /** Server to client: how this player's last exchange request went; see {@link ExchangeService.Outcome}. */
+    /** {@code listed}: the listing's item when the request was about a listing, so the message can name it; else empty. */
     public record ExchangeOutcome(ExchangeService.Action action, ResourceLocation item, MarketService.Result result, int quantity,
-                                  int filled, long amount) implements CustomPacketPayload {
+                                  int filled, long amount, ItemStack listed) implements CustomPacketPayload {
         public static final Type<ExchangeOutcome> TYPE = payloadType("exchange_outcome");
-        public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeOutcome> CODEC = StreamCodec.composite(
-                EXCHANGE_ACTION_CODEC, ExchangeOutcome::action,
-                ResourceLocation.STREAM_CODEC, ExchangeOutcome::item,
-                RESULT_CODEC, ExchangeOutcome::result,
-                ByteBufCodecs.VAR_INT, ExchangeOutcome::quantity,
-                ByteBufCodecs.VAR_INT, ExchangeOutcome::filled,
-                ByteBufCodecs.VAR_LONG, ExchangeOutcome::amount,
-                ExchangeOutcome::new);
+        public static final StreamCodec<RegistryFriendlyByteBuf, ExchangeOutcome> CODEC = StreamCodec.of(
+                (buf, outcome) -> {
+                    EXCHANGE_ACTION_CODEC.encode(buf, outcome.action());
+                    ResourceLocation.STREAM_CODEC.encode(buf, outcome.item());
+                    RESULT_CODEC.encode(buf, outcome.result());
+                    ByteBufCodecs.VAR_INT.encode(buf, outcome.quantity());
+                    ByteBufCodecs.VAR_INT.encode(buf, outcome.filled());
+                    ByteBufCodecs.VAR_LONG.encode(buf, outcome.amount());
+                    ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, outcome.listed());
+                },
+                buf -> new ExchangeOutcome(EXCHANGE_ACTION_CODEC.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
+                        RESULT_CODEC.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
+                        ByteBufCodecs.VAR_LONG.decode(buf), ItemStack.OPTIONAL_STREAM_CODEC.decode(buf)));
 
         @Override
         public Type<ExchangeOutcome> type() {

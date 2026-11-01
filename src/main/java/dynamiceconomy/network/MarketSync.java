@@ -375,7 +375,7 @@ public final class MarketSync {
     /** Tells the player how an exchange request went, and refreshes whoever's screen it changed. */
     private static void replyExchange(ServerPlayer player, ExchangeService.Outcome outcome) {
         PacketDistributor.sendToPlayer(player, new MarketPayloads.ExchangeOutcome(outcome.action(), outcome.item(), outcome.result(),
-                outcome.quantity(), outcome.filled(), outcome.amount()));
+                outcome.quantity(), outcome.filled(), outcome.amount(), outcome.listed()));
         if (outcome.ok() && outcome.action() != ExchangeService.Action.COLLECT) {
             broadcastExchange(player.server);
         } else {

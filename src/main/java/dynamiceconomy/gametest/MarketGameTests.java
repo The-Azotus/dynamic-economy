@@ -4605,6 +4605,7 @@ public final class MarketGameTests {
 
             ExchangeService.Outcome listed = listFrom(seller, data, 0, 7, 10);
             helper.assertValueEqual(listed.result(), Result.OK, "listed");
+            helper.assertTrue(ItemStack.isSameItemSameComponents(listed.listed(), stone), "the outcome names the listed stone");
             long id = listed.orderId();
             helper.assertValueEqual(countLike(seller, stone), 6L, "the listing holds ten");
             helper.assertValueEqual(data.openOrders(seller.player.getUUID()), 1, "it counts as an open order");
@@ -4618,6 +4619,9 @@ public final class MarketGameTests {
             helper.assertValueEqual(data.taxCollected(), 2L, "the tax was destroyed");
             helper.assertValueEqual(parcelled(data, buyer, stone), 4L, "the units wait in the buyer's box");
             helper.assertValueEqual(data.findListing(id).orElseThrow().remaining(), 6, "six left");
+            helper.assertTrue(ItemStack.isSameItemSameComponents(bought.listed(), stone), "the buyer's outcome names the stone");
+            helper.assertValueEqual(data.takeNotices(seller.player.getUUID()), List.of(new ExchangeData.Notice(seller.player.getUUID(),
+                    id(Items.COBBLESTONE), ExchangeData.NoticeKind.SOLD, 4, 26, "Lucky stone")), "the seller is told, by the stone's name");
 
             // They come out exactly as listed, never as plain cobblestone.
             helper.assertValueEqual(ExchangeService.collect(buyer.player, data, Optional.empty()).quantity(), 4, "collected");
@@ -4648,6 +4652,7 @@ public final class MarketGameTests {
             ExchangeService.Outcome cancelled = ExchangeService.cancel(seller.player, data, id);
             helper.assertValueEqual(cancelled.result(), Result.OK, "cancelled");
             helper.assertValueEqual(cancelled.quantity(), 1, "one sword back");
+            helper.assertTrue(ItemStack.isSameItemSameComponents(cancelled.listed(), sword), "the outcome says it was the listed sword");
             helper.assertValueEqual(parcelled(data, seller, sword), 1L, "in the box");
             long parcel = data.parcels(seller.player.getUUID()).get(0).id();
             helper.assertValueEqual(ExchangeService.collectParcel(seller.player, data, parcel).quantity(), 1, "taken out");
@@ -4798,7 +4803,13 @@ public final class MarketGameTests {
             helper.assertValueEqual(ExchangeService.expire(server, data, 2, 3), 0, "nothing is 3 days old on day 2");
             helper.assertValueEqual(ExchangeService.expire(server, data, 3, 3), 1, "the old listing expires on day 3");
             helper.assertValueEqual(parcelled(data, seller, old), 3L, "its items wait in the box");
-            helper.assertValueEqual(data.takeNotices(seller.player.getUUID()).size(), 1, "the seller is told");
+            // The notice says it was a listing, names the item as listed, and survives a restart.
+            ExchangeData restarted = ExchangeData.fromTag(data.save(new CompoundTag(), helper.getLevel().registryAccess()),
+                    helper.getLevel().registryAccess());
+            List<ExchangeData.Notice> told = List.of(new ExchangeData.Notice(seller.player.getUUID(), id(Items.COBBLESTONE),
+                    ExchangeData.NoticeKind.LISTING_RETURNED, 3, 0, "Old"));
+            helper.assertValueEqual(restarted.takeNotices(seller.player.getUUID()), told, "kept across a restart");
+            helper.assertValueEqual(data.takeNotices(seller.player.getUUID()), told, "the seller is told");
 
             ExchangeService.closeAll(server, data);
             helper.assertTrue(data.listings().isEmpty(), "turning the exchange off closes every listing");

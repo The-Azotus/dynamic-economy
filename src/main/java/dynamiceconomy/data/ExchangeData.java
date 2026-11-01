@@ -95,11 +95,19 @@ public final class ExchangeData extends SavedData {
         /** A buy order bought units, now in the collection box: {@code amount} is what they cost. */
         BOUGHT,
         /** An order expired or was closed: a buy order's money ({@code amount}) or a sell order's items went back. */
-        RETURNED
+        RETURNED,
+        /** A listing expired or was closed: its unsold units went back to the collection box. */
+        LISTING_RETURNED
     }
 
-    /** Something that happened to a player's order, kept until they next log in. Same-kind notices for an item add up. */
-    public record Notice(UUID player, ResourceLocation item, NoticeKind kind, long quantity, long amount) {
+    /**
+     * Something that happened to a player's order or listing, kept until they next log in. Same-kind notices for an item
+     * add up. {@code name} is a listed item's custom name, or empty to use the item's own.
+     */
+    public record Notice(UUID player, ResourceLocation item, NoticeKind kind, long quantity, long amount, String name) {
+        public Notice(UUID player, ResourceLocation item, NoticeKind kind, long quantity, long amount) {
+            this(player, item, kind, quantity, amount, "");
+        }
     }
 
     /** Money owed to a player (or the team account it goes to) while the bank couldn't be reached. */
@@ -317,8 +325,10 @@ public final class ExchangeData extends SavedData {
     public void addNotice(Notice notice) {
         for (int i = 0; i < notices.size(); i++) {
             Notice n = notices.get(i);
-            if (n.player().equals(notice.player()) && n.item().equals(notice.item()) && n.kind() == notice.kind()) {
-                notices.set(i, new Notice(n.player(), n.item(), n.kind(), n.quantity() + notice.quantity(), n.amount() + notice.amount()));
+            if (n.player().equals(notice.player()) && n.item().equals(notice.item()) && n.kind() == notice.kind()
+                    && n.name().equals(notice.name())) {
+                notices.set(i, new Notice(n.player(), n.item(), n.kind(), n.quantity() + notice.quantity(), n.amount() + notice.amount(),
+                        n.name()));
                 setDirty();
                 return;
             }
@@ -434,7 +444,7 @@ public final class ExchangeData extends SavedData {
                 continue;
             }
             if (item != null && n.hasUUID("player")) {
-                data.notices.add(new Notice(n.getUUID("player"), item, kind, n.getLong("quantity"), n.getLong("amount")));
+                data.notices.add(new Notice(n.getUUID("player"), item, kind, n.getLong("quantity"), n.getLong("amount"), n.getString("name")));
             }
         }
         for (Tag element : tag.getList("owed", Tag.TAG_COMPOUND)) {
@@ -537,6 +547,9 @@ public final class ExchangeData extends SavedData {
             n.putString("kind", notice.kind().name().toLowerCase(Locale.ROOT));
             n.putLong("quantity", notice.quantity());
             n.putLong("amount", notice.amount());
+            if (!notice.name().isEmpty()) {
+                n.putString("name", notice.name());
+            }
             noticeList.add(n);
         }
         tag.put("notices", noticeList);

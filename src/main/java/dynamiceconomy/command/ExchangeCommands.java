@@ -1,6 +1,7 @@
 package dynamiceconomy.command;
 
 import com.google.gson.JsonPrimitive;
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -13,6 +14,7 @@ import dynamiceconomy.data.ExchangeData;
 import dynamiceconomy.network.MarketPayloads;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.ExchangeService;
+import dynamiceconomy.service.Leaderboard;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -180,16 +182,20 @@ final class ExchangeCommands {
             return 0;
         }
         String unit = MarketCommand.unit(ctx.getSource());
+        // A listing is named as listed (a custom name, say); anything else by its id.
+        String item = outcome.listed().isEmpty() ? outcome.item().toString() : outcome.listed().getHoverName().getString();
         String message = switch (outcome.action()) {
             case POST -> "Posted an order for %d × %s: %d filled now (%d %s)%s".formatted(outcome.quantity(), outcome.item(),
                     outcome.filled(), outcome.amount(), unit, outcome.orderId() > 0 ? "; the rest is order #" + outcome.orderId() : "");
-            case CANCEL -> outcome.amount() > 0
+            case CANCEL -> !outcome.listed().isEmpty()
+                    ? "Cancelled listing #%d; %d × %s went to your collection box".formatted(outcome.orderId(), outcome.quantity(), item)
+                    : outcome.amount() > 0
                     ? "Cancelled order #%d; %d %s returned".formatted(outcome.orderId(), outcome.amount(), unit)
                     : "Cancelled order #%d; %d × %s went to your collection box".formatted(outcome.orderId(), outcome.quantity(), outcome.item());
             case COLLECT -> "Took %d item(s) out of your collection box".formatted(outcome.quantity());
-            case LIST -> "Listed %d × %s as listing #%d".formatted(outcome.quantity(), outcome.item(), outcome.orderId());
+            case LIST -> "Listed %d × %s as listing #%d".formatted(outcome.quantity(), item, outcome.orderId());
             case BUY_LISTING -> "Bought %d × %s from listing #%d for %d %s; it's in your collection box".formatted(outcome.quantity(),
-                    outcome.item(), outcome.orderId(), outcome.amount(), unit);
+                    item, outcome.orderId(), outcome.amount(), unit);
         };
         ctx.getSource().sendSuccess(() -> Component.literal(message), false);
         if (outcome.action() != ExchangeService.Action.COLLECT) {
@@ -256,8 +262,8 @@ final class ExchangeCommands {
         return 1;
     }
 
+    /** A player's name, from the server's profile cache when they're offline; their UUID if it doesn't know them. */
     private static String name(MinecraftServer server, UUID id) {
-        ServerPlayer online = server.getPlayerList().getPlayer(id);
-        return online != null ? online.getGameProfile().getName() : id.toString();
+        return Leaderboard.profile(server, id).map(GameProfile::getName).orElse(id.toString());
     }
 }

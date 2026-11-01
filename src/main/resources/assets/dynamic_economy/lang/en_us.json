@@ -307,11 +307,13 @@
   "screen.dynamic_economy.exchange.filled": "All %s %s traded at once for %s",
   "screen.dynamic_economy.exchange.cancelled_money": "Cancelled your %s order; %s went back to your bank",
   "screen.dynamic_economy.exchange.cancelled_items": "Cancelled; %s %s went to your collection box",
+  "screen.dynamic_economy.exchange.cancelled_listing": "Cancelled your listing; %s %s went to your collection box",
   "screen.dynamic_economy.exchange.collected": "Took %s items out of your collection box",
   "screen.dynamic_economy.exchange.not_tradeable": "That item can't be traded on the exchange",
   "message.dynamic_economy.exchange.sold": "Exchange: sold %s %s; %s paid into your bank after tax",
   "message.dynamic_economy.exchange.bought": "Exchange: bought %s %s for %s; they're in your collection box",
   "message.dynamic_economy.exchange.returned_money": "Exchange: your buy order for %s was closed; %s went back to your bank",
   "message.dynamic_economy.exchange.returned_items": "Exchange: your sell order was closed; %s %s went to your collection box",
+  "message.dynamic_economy.exchange.returned_listing": "Exchange: your listing was closed; %s %s went to your collection box",
   "message.dynamic_economy.exchange.box_waiting": "Exchange: %s items wait in your collection box"
 }

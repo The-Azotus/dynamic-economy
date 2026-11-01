@@ -85,8 +85,15 @@ public final class ExchangeService {
      * @param amount   posting: money paid for the units bought or received for those sold, after tax; buying from a
      *                 listing: what it cost; cancelling: a buy order's money returned
      * @param orderId  the order left open on the book after posting (0 if it filled completely), or the listing
+     * @param listed   for listing, buying from or cancelling a listing: its item, components and all, so messages can
+     *                 name it as listed; empty otherwise
      */
-    public record Outcome(Action action, Result result, ResourceLocation item, int quantity, int filled, long amount, long orderId) {
+    public record Outcome(Action action, Result result, ResourceLocation item, int quantity, int filled, long amount, long orderId,
+                          ItemStack listed) {
+        public Outcome(Action action, Result result, ResourceLocation item, int quantity, int filled, long amount, long orderId) {
+            this(action, result, item, quantity, filled, amount, orderId, ItemStack.EMPTY);
+        }
+
         static Outcome fail(Action action, Result result, ResourceLocation item) {
             return new Outcome(action, result, item, 0, 0, 0, 0);
         }
@@ -333,7 +340,7 @@ public final class ExchangeService {
         player.getInventory().setChanged();
         Listing listing = new Listing(data.takeId(), player.getUUID(), team, template, price, qty, 0, day);
         data.add(listing);
-        return new Outcome(Action.LIST, Result.OK, id, qty, 0, 0, listing.id());
+        return new Outcome(Action.LIST, Result.OK, id, qty, 0, 0, listing.id(), template);
     }
 
     public static Outcome buyListing(ServerPlayer player, long id, int qty, long price) {
@@ -383,9 +390,10 @@ public final class ExchangeService {
         data.update(listing.withSold(listing.sold() + qty));
         data.count(value, tax);
         pay(player.server, data, listing.owner(), listing.team(), value - tax);
-        tell(player.server, data, new Notice(listing.owner(), listing.item(), NoticeKind.SOLD, qty, value - tax));
+        tell(player.server, data, new Notice(listing.owner(), listing.item(), NoticeKind.SOLD, qty, value - tax,
+                customName(listing.stack())));
         data.addParcel(player.getUUID(), listing.stack(), qty);
-        return new Outcome(Action.BUY_LISTING, Result.OK, listing.item(), qty, qty, value, listing.id());
+        return new Outcome(Action.BUY_LISTING, Result.OK, listing.item(), qty, qty, value, listing.id(), listing.stack());
     }
 
     // ---- Cancelling and expiry -------------------------------------------------------------------------------
@@ -409,7 +417,7 @@ public final class ExchangeService {
             }
             data.removeListing(l.id());
             data.addParcel(l.owner(), l.stack(), l.remaining());
-            return new Outcome(Action.CANCEL, Result.OK, l.item(), l.remaining(), 0, 0, l.id());
+            return new Outcome(Action.CANCEL, Result.OK, l.item(), l.remaining(), 0, 0, l.id(), l.stack());
         }
         Order order = found.get();
         if (!order.owner().equals(player.getUUID())) {
@@ -451,7 +459,8 @@ public final class ExchangeService {
     public static void close(MinecraftServer server, ExchangeData data, Listing listing) {
         data.removeListing(listing.id());
         data.addParcel(listing.owner(), listing.stack(), listing.remaining());
-        tell(server, data, new Notice(listing.owner(), listing.item(), NoticeKind.RETURNED, listing.remaining(), 0));
+        tell(server, data, new Notice(listing.owner(), listing.item(), NoticeKind.LISTING_RETURNED, listing.remaining(), 0,
+                customName(listing.stack())));
     }
 
     /** Closes every order and listing posted at least {@code expiryDays} days before {@code day}. Returns how many. */
@@ -646,14 +655,22 @@ public final class ExchangeService {
         }
     }
 
+    /** A listed item's custom name, for notices, or empty if it has none. */
+    private static String customName(ItemStack stack) {
+        return stack.has(DataComponents.CUSTOM_NAME) ? stack.getHoverName().getString() : "";
+    }
+
     private static Component message(MinecraftServer server, Notice notice) {
-        Component item = BuiltInRegistries.ITEM.get(notice.item()).getDescription();
+        Component item = notice.name().isEmpty()
+                ? BuiltInRegistries.ITEM.get(notice.item()).getDescription()
+                : Component.literal(notice.name());
         return switch (notice.kind()) {
             case SOLD -> Component.translatable("message.dynamic_economy.exchange.sold", notice.quantity(), item, money(server, notice.amount()));
             case BOUGHT -> Component.translatable("message.dynamic_economy.exchange.bought", notice.quantity(), item, money(server, notice.amount()));
             case RETURNED -> notice.amount() > 0
                     ? Component.translatable("message.dynamic_economy.exchange.returned_money", item, money(server, notice.amount()))
                     : Component.translatable("message.dynamic_economy.exchange.returned_items", notice.quantity(), item);
+            case LISTING_RETURNED -> Component.translatable("message.dynamic_economy.exchange.returned_listing", notice.quantity(), item);
         };
     }
 

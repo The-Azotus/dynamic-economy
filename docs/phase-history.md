@@ -298,7 +298,7 @@ Done when: each preset changes prices as documented; round-trip arbitrage tests 
 
 ## Phase 17 — Player exchange (done)
 
-Approved by the user on 2026-11-01 after checking the Exchange tab in their pack. 162 GameTests pass with Numismatics' bank and with the own bank. A two-player check on a local dev server (2026-10-31) passed: order book, listings, offline players, a restart mid-order, two players spamming at once, and a listing bought through the Exchange tab. Small things noticed then and not changed: cancelling a listing by command says "order"; exchange messages name the base item, not a custom name; `/market admin exchange` shows offline owners as UUIDs.
+Approved by the user on 2026-11-01 after checking the Exchange tab in their pack. 162 GameTests pass with Numismatics' bank and with the own bank. A two-player check on a local dev server (2026-10-31) passed: order book, listings, offline players, a restart mid-order, two players spamming at once, and a listing bought through the Exchange tab. Three small things noticed then were fixed on 2026-11-01 (protocol 15): cancelling a listing now says "listing"; messages and notices about a listing name the item as listed (its custom name); `/market admin exchange` names offline owners from the server's profile cache.
 
 The feature wanted most after the required ones. Players post buy and sell orders at their own prices.
 
