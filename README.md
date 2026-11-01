@@ -8,6 +8,9 @@ A server-wide market for Minecraft. Players sell items to the server for money a
 - **Team accounts.** Players in a team (an FTB Teams party, or the mod's own `/bank team`) can share one account.
 - **Prices that move.** Selling an item lowers its price and buying raises it. Prices drift back toward normal over time.
 - **Item classes.** Groups of items share pricing behaviour: common resources stay stable, while rare items swing hard and recover slowly, so dumping a pile of something valuable doesn't pay.
+- **Contracts.** A shared board of delivery jobs that refreshes every few in-game days: claim one, deliver the items, get paid.
+- **Player exchange** (off by default). Players trade with each other at their own prices: buy and sell orders that match automatically, plus fixed-price listings for enchanted, damaged or renamed items. Bought items wait in a collection box, and a small tax on each sale takes money out of the economy.
+- **Leaderboard.** The richest players by bank balance, counting money they have tied up in the exchange.
 - **Market Terminal block.** Players open the market from a craftable terminal, or with `/market` if the server allows it.
 - **Prices in tooltips.** Any item the market buys shows what it pays, wherever the item appears.
 - **Easy to price a whole modpack.** Export every item to a spreadsheet, fill in prices, and import it back. Admins can also edit prices in game, one item at a time or for a whole tag such as "all logs".
@@ -46,7 +49,7 @@ The [admin guide](docs/admin-guide.md) covers every command, catalog field and s
 
 Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests. Create, Numismatics and FTB Teams are optional: add `-PwithoutMods=numismatics` to run without Numismatics, `-PwithoutMods=create` to run without both Create and Numismatics (Numismatics needs Create), or `-PwithoutMods=ftbteams` to run without FTB Teams; combine them with commas. Each such run uses its own test world, since a world remembers which bank it uses.
 
-Released versions are tagged in git (for example `v0.3.0`).
+Released versions are tagged in git (for example `v0.4.0`).
 
 ## Licence
 
