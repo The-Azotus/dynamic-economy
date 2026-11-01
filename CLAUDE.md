@@ -17,7 +17,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/phase-history.md`). Phase 16 (Difficulty preset) dropped by the user on 2026-10-31. **Phase 17 (Player exchange) built on branch `phase17`** (from `phase15`), 2026-10-31: the leaderboard counts money the exchange holds for a player, and items with components are traded through listings (both user, 2026-10-31); 162 GameTests pass with Numismatics' bank and with the own bank; a two-player check on a local dev server (`gradlew runServer -PserverDir=run-mptest` plus `runClient`/`runClient2`, 2026-10-31) passed: order book, listings, offline players, restart mid-order, two players spamming at once, and a listing bought through the Exchange tab. Awaiting the user's approval and in-pack checks of the Exchange tab. It is the last planned phase.
+Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/phase-history.md`). Phase 16 (Difficulty preset) dropped by the user on 2026-10-31. Phase 17 (Player exchange) done on branch `phase17` (from `phase15`), approved 2026-11-01 (checked in the user's pack and two-player on a dev server; details in `docs/phase-history.md`). It was the last planned phase; **next: release v0.4.0** when the user asks.
 
 Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
@@ -70,28 +70,9 @@ Fields: `item` (exact ID), `class`, `base_price` (> 0; ≤ 0 is skipped), `marku
 
 Precedence: server config < class < file `defaults` < entry < tag rules (creation order) < per-item in-game edits.
 
-## Current phase: 17 — Player exchange (config toggle)
+## Current phase: none
 
-The feature wanted most after the required ones. Players post buy and sell orders at their own prices.
-
-- Sell orders move items into escrow; buy orders move money into escrow (`deduct`). Orders match automatically, price-time priority, partial fills.
-- Proceeds and items go to a **collection box** in the Exchange tab (works for offline players; never drop items).
-- Config: `exchange_enabled` (default false), `exchange_tax` (fraction taken from the seller, destroyed: a money sink), max open orders per player, order expiry.
-- Plain (default-component) items trade on the order book. Items with components (enchanted, damaged, renamed) are traded through listings (decision 7).
-- All transaction rules apply. Cancelling returns escrow exactly.
-
-Done when: matched trades move exactly the right items and money with tax applied; cancelling and expiry return escrow; nothing is lost or duplicated across a restart mid-order; spam-clicking reconciles.
-
-Branch: `phase17` (from `phase15`). Decided by the user on 2026-10-31:
-
-1. **Items:** any default-component item, listed in the catalog or not (same `ignored_components` rule). Coins never. Items locked for a player (Phase 12) are hidden from them and rejected as `NOT_LISTED`.
-2. **Money:** a seller's proceeds (less tax) and returned buy escrow go straight to the bank account the order was paid from (team or own, as contracts do; owed if the bank can't be reached). Only items go to the collection box.
-3. **Matching price:** a trade fills at the waiting order's price; a bid above the best ask pays the ask and keeps the difference.
-4. **Defaults:** `exchange_tax` 0.05, max 10 open orders per player, order expiry in in-game days by the contracts' day count with default 0 (= never), largest order 6,400 units.
-5. **Screen:** an Exchange tab (item search, order book with best asks and bids, your orders, collection box) plus an Exchange button in the Market tab's item panel.
-6. **Collection box:** unlimited stacks kept with the world; "Take all" moves items only into free main-inventory space.
-7. **Listings** (user, 2026-10-31): items with their own components are listed, not put on the book: one stack's worth of one exact item at a fixed price each; buyers take all or part at that price into their collection box; the seller pays `exchange_tax`. Listings share `max_open_orders` with orders. Containers (shulker boxes, bundles) only when empty. Coins and locked items never.
-8. **Leaderboard** (user, 2026-10-31): a player's total includes money held by their open buy orders and payments owed to them (not team accounts').
+Phase 17 was the last planned phase. Next: release v0.4.0 (Phases 15 and 17) when the user asks. Phase 17's spec and decisions are in `docs/phase-history.md`.
 
 ## Report format (after every phase)
 

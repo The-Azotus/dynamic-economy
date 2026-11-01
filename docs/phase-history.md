@@ -295,3 +295,28 @@ Dropped by the user on 2026-10-31 before it was started: a difficulty option was
 - After multipliers, the anti-arbitrage invariant must still hold; invalid combinations are clamped with a warning.
 
 Done when: each preset changes prices as documented; round-trip arbitrage tests pass under every preset.
+
+## Phase 17 — Player exchange (done)
+
+Approved by the user on 2026-11-01 after checking the Exchange tab in their pack. 162 GameTests pass with Numismatics' bank and with the own bank. A two-player check on a local dev server (2026-10-31) passed: order book, listings, offline players, a restart mid-order, two players spamming at once, and a listing bought through the Exchange tab. Small things noticed then and not changed: cancelling a listing by command says "order"; exchange messages name the base item, not a custom name; `/market admin exchange` shows offline owners as UUIDs.
+
+The feature wanted most after the required ones. Players post buy and sell orders at their own prices.
+
+- Sell orders move items into escrow; buy orders move money into escrow (`deduct`). Orders match automatically, price-time priority, partial fills.
+- Proceeds and items go to a **collection box** in the Exchange tab (works for offline players; never drop items).
+- Config: `exchange_enabled` (default false), `exchange_tax` (fraction taken from the seller, destroyed: a money sink), max open orders per player, order expiry.
+- Plain (default-component) items trade on the order book. Items with components (enchanted, damaged, renamed) are traded through listings (decision 7).
+- All transaction rules apply. Cancelling returns escrow exactly.
+
+Done when: matched trades move exactly the right items and money with tax applied; cancelling and expiry return escrow; nothing is lost or duplicated across a restart mid-order; spam-clicking reconciles.
+
+Branch: `phase17` (from `phase15`). Decided by the user on 2026-10-31:
+
+1. **Items:** any default-component item, listed in the catalog or not (same `ignored_components` rule). Coins never. Items locked for a player (Phase 12) are hidden from them and rejected as `NOT_LISTED`.
+2. **Money:** a seller's proceeds (less tax) and returned buy escrow go straight to the bank account the order was paid from (team or own, as contracts do; owed if the bank can't be reached). Only items go to the collection box.
+3. **Matching price:** a trade fills at the waiting order's price; a bid above the best ask pays the ask and keeps the difference.
+4. **Defaults:** `exchange_tax` 0.05, max 10 open orders per player, order expiry in in-game days by the contracts' day count with default 0 (= never), largest order 6,400 units.
+5. **Screen:** an Exchange tab (item search, order book with best asks and bids, your orders, collection box) plus an Exchange button in the Market tab's item panel.
+6. **Collection box:** unlimited stacks kept with the world; "Take all" moves items only into free main-inventory space.
+7. **Listings** (user, 2026-10-31): items with their own components are listed, not put on the book: one stack's worth of one exact item at a fixed price each; buyers take all or part at that price into their collection box; the seller pays `exchange_tax`. Listings share `max_open_orders` with orders. Containers (shulker boxes, bundles) only when empty. Coins and locked items never.
+8. **Leaderboard** (user, 2026-10-31): a player's total includes money held by their open buy orders and payments owed to them (not team accounts').
