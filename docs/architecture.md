@@ -23,7 +23,7 @@ All code is under `dynamiceconomy`.
 | `block`, `menu` | The Market Terminal block and the menu the market screen runs in. |
 | `command` | Every command. They parse arguments and call a service; they don't change state themselves. |
 | `network` | `MarketPayloads` (every packet), `MarketNetwork` (registration and handlers), `MarketSync` (what each player is sent, and when). |
-| `client` | The market screen, tooltips and the client's copy of market state. `MarketScreen` is the frame (tabs, toolbar, shared widgets); each tab is its own class. `ClientMarketState` holds what the server last sent. |
+| `client` | The market screen, tooltips and the client's copy of market state. `MarketScreen` is the frame: tab strip, search, quantity row, layout, scrolling and shared drawing helpers. Each tab extends `ScreenTab` (`MarketTab`, `BankTab`, `ContractsTab`, `ExchangeTab`, `LeaderboardTab`, `HistoryTab`), and the screen hands events to the open one. `ClientMarketState` holds what the server last sent; `PriceFormat` writes numbers; `SellPriceTooltip` adds prices to item tooltips. |
 | `io` | Spreadsheet export and import (`CatalogExport`, `CatalogImport`, `CatalogColumns`, `Csv`). |
 | `compat` | Everything that touches an optional mod: Numismatics, Create, FTB Teams, ProgressiveStages, and other mods' machine recipes for `suggest`. |
 | `gametest` | The GameTests, one class per feature, with shared setup in `GameTestSupport`. |
