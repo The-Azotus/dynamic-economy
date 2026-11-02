@@ -129,7 +129,22 @@ public final class CatalogImport {
             meta.add("pack", packInfo);
             Files.writeString(mcmeta, CatalogExport.GSON.toJson(meta), StandardCharsets.UTF_8);
         }
+        return writeFiles(report, market, created);
+    }
 
+    /**
+     * As {@link #write}, but into the config folder's {@code market/} folder ({@code marketDir}), which every world
+     * reads. {@code createdPack} is always false: there's no pack to enable.
+     */
+    public static Written writeToConfig(Report report, Path marketDir) throws IOException {
+        return writeFiles(report, Files.createDirectories(marketDir), false);
+    }
+
+    /**
+     * Each file replaces whole entries ({@code "replace": true} in its defaults): a spreadsheet row shows every field
+     * the entry sets, so a cleared cell means the field is unset, not "keep the built-in value".
+     */
+    private static Written writeFiles(Report report, Path market, boolean created) throws IOException {
         List<Path> files = new ArrayList<>();
         List<Path> backups = new ArrayList<>();
         for (Map.Entry<String, List<JsonObject>> mod : report.byMod().entrySet()) {
@@ -142,6 +157,9 @@ public final class CatalogImport {
             JsonArray entries = new JsonArray();
             mod.getValue().forEach(entries::add);
             JsonObject catalog = new JsonObject();
+            JsonObject defaults = new JsonObject();
+            defaults.addProperty(MarketCatalog.REPLACE, true);
+            catalog.add("defaults", defaults);
             catalog.add("entries", entries);
             Files.writeString(file, CatalogExport.GSON.toJson(catalog), StandardCharsets.UTF_8);
             files.add(file);

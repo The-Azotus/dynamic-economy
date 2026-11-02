@@ -23,7 +23,7 @@ The market is owned by the server. Players sell items to it and buy items from i
 1. **The server config** (`config/dynamic_economy-server.toml`): defaults for supply and demand, and for contracts.
 2. **The item's [class](#item-classes)**, such as `rare_resource`.
 3. **The catalog file's `defaults` block.**
-4. **The item's catalog entry**: JSON in a datapack, including the built-in prices and what the spreadsheet import writes.
+4. **The item's catalog entry**: JSON in a datapack or the [config folder](#the-config-folder-prices-for-every-world), including the built-in prices and what the spreadsheet import writes. When several files list one item, each higher file changes only the fields it sets (see [Changing a built-in price](#changing-a-built-in-price)).
 5. **[Tag rules](#tag-rules-pricing-many-items-at-once)**: in-game rules such as "every log costs 4 bits". Where rules overlap, later ones win.
 6. **[Item edits](#editing-prices-in-game)**: in-game changes to one item.
 
@@ -106,10 +106,10 @@ There are three ways to price items, and you can mix them:
 | Way | Best for |
 | --- | --- |
 | [Spreadsheet export and import](#pricing-from-a-spreadsheet) | Pricing a whole modpack at once. |
-| [Catalog files](#catalog-files) | Keeping prices in a datapack you version or share. |
+| [Catalog files](#catalog-files) | Keeping prices in files you version or share: in the [config folder](#the-config-folder-prices-for-every-world) for every world, or in one world's datapack. |
 | [In-game commands](#editing-prices-in-game) | Quick changes, and whole tags such as "all logs". |
 
-**Built-in prices.** The mod ships prices for vanilla and a set of popular mods in a datapack that is **on** by default. It has one price file per mod, and each file loads only if its mod is installed, so it works in any modpack. It sits below every other datapack, so your own catalog files, imports and edits always override it. To run your own prices from scratch, turn it off with `/datapack disable "mod/dynamic_economy:default_prices"`.
+**Built-in prices.** The mod ships prices for vanilla and a set of popular mods in a datapack that is **on** by default. It has one price file per mod, and each file loads only if its mod is installed, so it works in any modpack. It sits below the config folder and every other datapack, so your own catalog files, imports and edits always override it. To run your own prices from scratch, turn it off with `/datapack disable "mod/dynamic_economy:default_prices"`.
 
 The built-in prices cover raw materials: ores, logs, crops, mob drops and loot. Run [`/market admin suggest`](#suggesting-prices-from-recipes) to price the crafted items in your pack from them. The scale is roughly: cobblestone 1 bit, a log 8, an iron ingot 32, a diamond 512, a nether star 16,384. To change some of these prices without turning the pack off, see [Changing a built-in price](#changing-a-built-in-price).
 
@@ -128,9 +128,11 @@ The mod also includes a small **example catalog**: cobblestone and oak log (unli
 2. Open `items.csv` in a spreadsheet. Fill in `base_price` for anything you want on the market, and change any other column you like. Leave `base_price` blank for items you don't want.
 3. Save it somewhere inside `config/dynamic_economy/`. Either CSV encoding works, UTF-8 or Excel's default.
 4. Check it: `/market admin import "exports/2026-10-23_09-30-00/items.csv" preview`. This writes nothing. It reports how many entries would be written, how many rows were skipped and why any were rejected.
-5. Import it: run the same command without `preview`.
+5. Import it: run the same command without `preview`. To import into the [config folder](#the-config-folder-prices-for-every-world) instead, so the prices apply to every world, add `config`: `/market admin import "exports/2026-10-23_09-30-00/items.csv" config`.
 
-The import writes one file per mod, `imported_<modid>.json`, into a world datapack at `<world>/datapacks/dynamic_economy_catalog/`. The first import creates and enables that datapack. Later imports back up each file they replace as `<name>.json.bak`, then reload the catalog straight away. Importing never changes stock or current prices.
+The import writes one file per mod, `imported_<modid>.json`. By default it goes into a world datapack at `<world>/datapacks/dynamic_economy_catalog/`, which the first import creates and enables. With `config`, it goes into `config/dynamic_economy/catalog/market/`. Later imports back up each file they replace as `<name>.json.bak`. The catalog reloads straight away either way, and importing never changes stock or current prices.
+
+Each imported row **replaces** the item's entry from lower files, such as the built-in prices, rather than changing only some fields: the spreadsheet showed every field the entry sets, so a cell you cleared means "not set". The files are marked with `"replace": true` for this (see [Catalog files](#catalog-files)).
 
 Put the path in quotes, since it contains slashes. To export one mod only, use `/market admin export <modid>`.
 
@@ -207,7 +209,7 @@ You don't need this to use `suggest`; it explains the cases where a suggested pr
 
 ### Catalog files
 
-Catalog files live in any datapack at `data/<namespace>/market/<name>.json`:
+Catalog files live in any datapack at `data/<namespace>/market/<name>.json`, or in the [config folder](#the-config-folder-prices-for-every-world):
 
 ```json
 {
@@ -224,20 +226,40 @@ Catalog files live in any datapack at `data/<namespace>/market/<name>.json`:
 - `entries` is required: the items to list.
 - `defaults` is optional. Its fields apply to every entry in that file unless the entry sets the field itself. It can't contain `item`.
 - `required_mods` is optional: a list of mod IDs, such as `["create"]`. If any of them isn't installed, the whole file is skipped without a warning. Use it for a price file that belongs to one mod.
-- **Duplicates:** if two files list the same item, the higher-priority datapack wins. Within one datapack, the file whose name sorts last wins, and the log warns about it.
+- **Several files for one item:** files are applied from lowest priority to highest: the built-in prices, then the config folder, then the world's datapacks in their `/datapack list` order. Within one datapack or the config folder, files apply in name order, and the log warns about the repeat. Each later file changes **only the fields it sets** and keeps the rest; see [Changing a built-in price](#changing-a-built-in-price).
+- `"replace": true` on an entry makes it start over instead: fields that lower files set and this entry doesn't go back to the class, the server config or the built-in defaults. Put it in `defaults` to apply it to every entry in the file. The spreadsheet import writes its files this way.
 - **Reloading:** after editing files, run `/market admin reload` to reload just the market, or `/reload` to reload all datapacks (use `/reload` after adding a new datapack).
-- **Bad entries are skipped, not fatal.** An unknown item, an out-of-range value or a missing field skips only that entry, with a log warning naming the file and entry. Entries with `base_price` 0 or below are skipped with one summary warning, so a half-filled template is safe to load.
+- **Bad entries are skipped, not fatal.** An unknown item, an out-of-range value or a missing field skips only that entry, with a log warning naming the file and entry. If a lower file already lists the item, its entry stays as it was. Entries with `base_price` 0 or below are skipped with one summary warning, so a half-filled template is safe to load.
 
 You can also start from a file in `templates/` from an export.
 
+### The config folder: prices for every world
+
+Datapacks belong to one world. Catalog files in `config/dynamic_economy/catalog/` apply to **every world** on the server or in the modpack, which is the easy way for a modpack to ship its own prices:
+
+```
+config/dynamic_economy/catalog/
+  market/            catalog files, such as my_prices.json (subfolders are fine)
+  market_classes/    item classes, such as rare_resource.json
+```
+
+- The files are the same format as in a datapack; there's no `pack.mcmeta` or `data/` folder to set up. The mod creates both folders on first start.
+- **Priority:** above the built-in prices and other mods' data, below the world's own datapacks. So the folder sets the pack-wide prices, and one world can still change them in its datapack.
+- File names may use only lowercase letters, digits, `_`, `-` and `.`; a file with another name is skipped with a warning. In `/market admin info`, a file `market/my_prices.json` shows as `file config:my_prices`.
+- A class file takes the mod's namespace: `market_classes/rare_resource.json` replaces the built-in `rare_resource` class, and `market_classes/gems.json` adds a class called `gems`.
+- The folder is read whenever the catalog loads: at start, `/reload` and `/market admin reload`. An empty folder does nothing. Only the server reads it, so players don't need it.
+
 ### Changing a built-in price
 
-A catalog entry in your own datapack **replaces** the built-in entry for that item completely: its fields aren't merged with the built-in ones. An entry that gives only a new `markup` therefore has no `base_price`: it's skipped with a warning, and the built-in entry stays as it was. To change part of a built-in price, either:
+An entry in your own catalog file **changes only the fields it sets**, and the built-in entry keeps the rest. To raise the diamond's price and leave its class, markup and everything else alone, this is the whole file:
 
-- **Edit it in game**, which changes only the fields you name and keeps the rest: `/market admin set minecraft:diamond markup 0.8`, or for a whole tag, `/market admin tag c:gems set markup 0.8`. See [Editing prices in game](#editing-prices-in-game).
-- **Copy the whole entry** into your own catalog file, with its `base_price` and `class`, and change what you need. `/market admin info <item>` shows the values to copy; built-in entries show as coming from `file dynamic_economy:<modid>`.
+```json
+{ "entries": [ { "item": "minecraft:diamond", "base_price": 600 } ] }
+```
 
-Your datapacks always sit above the built-in prices, so either way your value wins.
+Put it in the [config folder](#the-config-folder-prices-for-every-world) for every world, or in a world's datapack. An entry for an item the built-in prices don't list still needs a `base_price`. To drop a built-in field rather than change it, give the entry `"replace": true` and every field you want.
+
+You can also edit in game, which works the same way: `/market admin set minecraft:diamond markup 0.8`, or for a whole tag, `/market admin tag c:gems set markup 0.8`. See [Editing prices in game](#editing-prices-in-game). `/market admin info <item>` shows where each value came from; built-in entries show as `file dynamic_economy:<modid>`.
 
 ### Item classes
 
@@ -308,7 +330,7 @@ See [Supply and demand](#supply-and-demand) for the formulas.
 }
 ```
 
-Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file at the same path, such as `data/dynamic_economy/market_classes/rare_resource.json`, in your own datapack. It replaces the whole class.
+Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file with the same name in the [config folder](#the-config-folder-prices-for-every-world) (`market_classes/rare_resource.json`) or at the same path in your own datapack (`data/dynamic_economy/market_classes/rare_resource.json`). Unlike catalog entries, it replaces the whole class, so give every value the class should have.
 
 - **Checks:** class values must pass the same rules as catalog entries. A class with a bad value is skipped, and so is every entry naming it. Unknown fields in a class file are ignored with a warning. All of these show in `/market admin diagnose`.
 - **Reloading:** `/market admin reload` re-reads classes along with the catalog files, and every member is repriced. Stock and price factors are never touched.
@@ -401,6 +423,7 @@ Prices are whole numbers of **bits** (spurs with Numismatics' bank; 1 bit = 1 sp
 | --- | --- | --- |
 | `item` | *required* | The exact item ID, such as `minecraft:iron_ingot`. Enchanted, damaged or renamed copies are never accepted (apart from data listed in the `ignored_components` server config). |
 | `class` | none | An [item class](#item-classes) that fills in the fields nothing else sets, such as `rare_resource`. |
+| `replace` | `false` | Catalog files only: `true` starts the entry over instead of changing only the fields it sets on an entry from a lower file. See [Catalog files](#catalog-files). |
 | `base_price` | *required* | What the market pays for one unit at normal supply, in bits. At least 1; 0 or below means "not priced yet". |
 | `markup` | `0.5` | Added on top when the market sells. `0.5` means buyers pay 150% of base. 0 to 1000. |
 | `sell_fee` | `0.0` | Fraction kept back from what the market pays, such as `0.1` for 10%. Nobody receives it; it's a money sink. 0 to 0.99. |
@@ -557,7 +580,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
-| `/market admin import "<path>" [preview]` | 4 | Imports a priced CSV. The path is relative to `config/dynamic_economy/`. |
+| `/market admin import "<path>" [config\|preview]` | 4 | Imports a priced CSV into the world's datapack, or with `config` into the config folder for every world. The path is relative to `config/dynamic_economy/`. |
 | `/market admin bank` | 2 | Which bank the world uses and what its accounts hold. |
 | `/market admin bank switch <own\|numismatics> [confirm]` | 2 | Shows, then does, a move of every balance to the other bank; see [Banks and coins](#banks-and-coins). |
 | `/bank team ...` | everyone | The mod's own teams, for team accounts; see the [player guide](player-guide.md#the-bank-tab). Off with Numismatics' bank; with FTB Teams only the info line (`/bank team`) works, since parties are the teams. |
@@ -604,7 +627,9 @@ The rest of the file still imports. The first 15 reasons appear in chat, and all
 | `N unpriced market entries (base_price 0 or below) skipped` | Template entries still waiting for a price. Harmless. |
 | `Market file … entry N: unknown item …; skipped` | The item doesn't exist, usually because its mod isn't installed. |
 | `Market file … entry N: Value … outside of range …; skipped` | A field's value is out of range; see [Catalog fields](#catalog-fields). |
-| `Market file … overrides … listed earlier in … of the same pack` | Two files in one datapack list the same item; the later name wins. |
+| `Market file … changes (or replaces) … listed earlier in … of the same pack` | Two files in one datapack, or in the config folder, list the same item; the later name's fields win. |
+| `Market file … entry N: …; skipped (the entry from … stays)` | A change to an item a lower file lists broke a rule, such as a `min_buy_markup` above the combined entry's `markup`; the lower entry is used unchanged. |
+| `Catalog file … in config/dynamic_economy/catalog: file names may use only …` | Rename the file in lowercase, without spaces. |
 | `Market admin edit not applied: …` | A saved in-game edit no longer fits, for example because a catalog file changed. Check `/market admin info <item>`. |
 | `Market item …: a round trip may make a profit` | The item's impacts, markup and fee allow a profit from buying then selling back, or selling then buying back; see [Supply and demand](#supply-and-demand). |
 | `This world uses Numismatics' bank, but Numismatics isn't installed or its bank API doesn't match this mod; the market will refuse all trades` | Install Numismatics 1.1.x again, or move the world to the mod's own bank with `/market admin bank switch own` (which needs Numismatics installed to read the balances). |

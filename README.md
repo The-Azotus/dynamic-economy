@@ -39,7 +39,7 @@ Install the mod on the **server and every client**. Clients need it for the mark
 
 1. Install the mod and start the server. Built-in prices for vanilla and many popular mods are on by default (each mod's file loads only if that mod is installed); your own files, imports and edits always override them. To start from an empty market instead, `/datapack disable "mod/dynamic_economy:default_prices"`.
 2. Check the bank: a new world uses Numismatics' bank when Numismatics is installed, otherwise the mod's own. `/market admin bank` says which, and can switch it.
-3. Price your pack. From the server console, run `/market admin export`, fill in `base_price` in the exported `items.csv`, then run `/market admin import "<path to the csv>"`.
+3. Price your pack. From the server console, run `/market admin export`, fill in `base_price` in the exported `items.csv`, then run `/market admin import "<path to the csv>"`. Or write catalog files by hand: files in `config/dynamic_economy/catalog/market/` apply to every world, and an entry only needs the fields it changes, such as `{ "item": "minecraft:diamond", "base_price": 600 }`.
 4. Tune it in game. For example, `/market admin setprice minecraft:diamond 300` prices one item, and `/market admin tag minecraft:logs setprice 4` prices every log.
 5. To make terminals the only way in, set `access_mode = "BLOCK_ONLY"` in `config/dynamic_economy-server.toml`.
 

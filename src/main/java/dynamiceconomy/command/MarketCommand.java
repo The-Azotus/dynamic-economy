@@ -146,9 +146,11 @@ public final class MarketCommand {
                         .then(Commands.literal("import")
                                 .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
                                 .then(Commands.argument("path", StringArgumentType.string())
-                                        .executes(ctx -> importCsv(ctx, false))
+                                        .executes(ctx -> importCsv(ctx, false, false))
+                                        .then(Commands.literal("config")
+                                                .executes(ctx -> importCsv(ctx, false, true)))
                                         .then(Commands.literal("preview")
-                                                .executes(ctx -> importCsv(ctx, true)))))));
+                                                .executes(ctx -> importCsv(ctx, true, false)))))));
     }
 
     /** The in-game catalog editing commands live in their own class; they hang off {@code /market admin}. */
@@ -662,7 +664,8 @@ public final class MarketCommand {
 
     private static final int REJECTIONS_SHOWN = 15;
 
-    private static int importCsv(CommandContext<CommandSourceStack> ctx, boolean preview) {
+    /** {@code toConfig}: write into the config folder, which every world reads, instead of this world's datapack. */
+    private static int importCsv(CommandContext<CommandSourceStack> ctx, boolean preview, boolean toConfig) {
         CommandSourceStack source = ctx.getSource();
         MinecraftServer server = source.getServer();
         String typed = StringArgumentType.getString(ctx, "path");
@@ -709,7 +712,8 @@ public final class MarketCommand {
 
         CatalogImport.Written written;
         try {
-            written = CatalogImport.write(report, server.getWorldPath(LevelResource.DATAPACK_DIR));
+            written = toConfig ? CatalogImport.writeToConfig(report, MarketCatalog.configFolder().resolve("market"))
+                    : CatalogImport.write(report, server.getWorldPath(LevelResource.DATAPACK_DIR));
         } catch (IOException e) {
             DynamicEconomy.LOGGER.error("Market import failed while writing", e);
             AuditLog.record(source, "import", typed, "failed: " + e.getMessage(), null, null);
@@ -722,8 +726,9 @@ public final class MarketCommand {
                 .formatted(report.toWrite(), report.rejected().size(), written.backups().size()), null, files);
         String backups = written.backups().isEmpty() ? ""
                 : " (backed up %d replaced file(s) as .json.bak)".formatted(written.backups().size());
-        source.sendSuccess(() -> Component.literal("Wrote %d catalog file(s) to <world>/datapacks/%s%s"
-                .formatted(written.files().size(), CatalogImport.PACK_FOLDER, backups)), true);
+        String folder = toConfig ? MarketCatalog.CONFIG_PACK_ID + "/market" : "<world>/datapacks/" + CatalogImport.PACK_FOLDER;
+        source.sendSuccess(() -> Component.literal("Wrote %d catalog file(s) to %s%s"
+                .formatted(written.files().size(), folder, backups)), true);
 
         // Admin edits sit above catalog files, so they still win for these items.
         MarketOverrides overrides = MarketOverrides.get(server);
@@ -735,7 +740,7 @@ public final class MarketCommand {
         }
 
         PackRepository packs = server.getPackRepository();
-        if (packs.getSelectedIds().contains(CatalogImport.PACK_ID)) {
+        if (toConfig || packs.getSelectedIds().contains(CatalogImport.PACK_ID)) {
             int count = MarketCatalog.INSTANCE.reloadNow(server.getResourceManager());
             DynamicEconomy.catalogReloaded(server);
             source.sendSuccess(() -> Component.literal("Reloaded market catalog: %d entries".formatted(count)), true);

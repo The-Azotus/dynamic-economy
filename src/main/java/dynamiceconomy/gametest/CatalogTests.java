@@ -264,6 +264,118 @@ public final class CatalogTests {
         helper.succeed();
     }
 
+    private static MarketCatalog.SourceFile sourceFile(String name, int order, String json) {
+        return new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("test", name), order, "pack" + order,
+                JsonParser.parseString(json));
+    }
+
+    @GameTest(template = EMPTY)
+    public static void higherFilesChangeOnlyTheFieldsTheySet(GameTestHelper helper) {
+        MarketCatalog.SourceFile builtIn = sourceFile("built_in", 0, """
+                { "entries": [
+                  { "item": "minecraft:iron_ingot", "base_price": 10, "markup": 0.25, "can_sell": false, "sell_impact": 0.01 },
+                  { "item": "minecraft:gold_ingot", "base_price": 40, "markup": 0.25 },
+                  { "item": "minecraft:copper_ingot", "base_price": 5, "markup": 0.25 }
+                ] }""");
+        MarketCatalog.SourceFile override = sourceFile("override", 1, """
+                { "entries": [
+                  { "item": "minecraft:iron_ingot", "base_price": 20 },
+                  { "item": "minecraft:gold_ingot", "base_price": 50, "replace": true },
+                  { "item": "minecraft:copper_ingot", "min_buy_markup": 0.4 },
+                  { "item": "minecraft:diamond", "markup": 0.3 },
+                  { "item": "minecraft:emerald", "base_price": 9, "replace": "yes" }
+                ] }""");
+        MarketCatalog.Loaded loaded = MarketCatalog.load(List.of(override, builtIn));
+
+        CatalogEntry iron = loaded.entries().get(Items.IRON_INGOT);
+        helper.assertValueEqual(iron.basePrice(), 20, "the higher file's price");
+        helper.assertValueEqual(iron.markup(), 0.25, "markup kept from the lower file");
+        helper.assertTrue(!iron.canSell(), "can_sell kept from the lower file");
+        helper.assertValueEqual(iron.overrides().sellImpact(), Optional.of(0.01), "sell_impact kept from the lower file");
+        helper.assertValueEqual(loaded.sources().get(Items.IRON_INGOT).get("base_price").stream().map(FieldSource::layer).toList(),
+                List.of("file test:built_in", "file test:override"), "both layers recorded for the changed field");
+        helper.assertValueEqual(loaded.sources().get(Items.IRON_INGOT).get("markup").stream().map(FieldSource::layer).toList(),
+                List.of("file test:built_in"), "an unchanged field keeps its source");
+
+        CatalogEntry gold = loaded.entries().get(Items.GOLD_INGOT);
+        helper.assertValueEqual(gold.basePrice(), 50, "replaced entry's price");
+        helper.assertValueEqual(gold.markup(), CatalogEntry.DEFAULT_MARKUP, "replace drops the lower file's markup");
+        helper.assertTrue(!loaded.sources().get(Items.GOLD_INGOT).containsKey("replace"), "replace isn't an entry field");
+
+        helper.assertValueEqual(loaded.entries().get(Items.COPPER_INGOT).markup(), 0.25,
+                "a change the rules reject leaves the lower entry as it was");
+        helper.assertTrue(loaded.entries().get(Items.COPPER_INGOT).minBuyMarkup().isEmpty(), "rejected change not applied");
+        helper.assertTrue(!loaded.entries().containsKey(Items.DIAMOND), "with no lower entry, a change needs a price");
+        helper.assertTrue(!loaded.entries().containsKey(Items.EMERALD), "replace must be true or false");
+        String problems = loaded.problems().stream().map(MarketCatalog.Problem::message).reduce("", (a, b) -> a + "\n" + b);
+        for (String expected : List.of("min_buy_markup", "stays", "base_price", "\"replace\" must be true or false")) {
+            helper.assertTrue(problems.contains(expected), "expected a problem mentioning \"" + expected + "\" in:" + problems);
+        }
+
+        // A file's defaults count as set on each of its entries, so they change the lower entry too.
+        MarketCatalog.SourceFile withDefaults = sourceFile("with_defaults", 1, """
+                { "defaults": { "markup": 0.75 }, "entries": [ { "item": "minecraft:iron_ingot", "base_price": 30 } ] }""");
+        CatalogEntry tuned = MarketCatalog.parse(List.of(builtIn, withDefaults)).get(Items.IRON_INGOT);
+        helper.assertValueEqual(tuned.markup(), 0.75, "the higher file's defaults apply");
+        helper.assertTrue(!tuned.canSell(), "fields neither file's defaults nor entry set are kept");
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void importedFilesReplaceWholeEntries(GameTestHelper helper) {
+        try {
+            Path config = Files.createTempDirectory("market-config");
+            CatalogImport.Report report = CatalogImport.analyze("item_id,base_price\nminecraft:iron_ingot,20\n");
+            CatalogImport.Written written = CatalogImport.writeToConfig(report, config.resolve("market"));
+            helper.assertTrue(!written.createdPack(), "no pack for the config folder");
+            helper.assertValueEqual(written.files(), List.of(config.resolve("market/imported_minecraft.json")), "written into market/");
+
+            MarketCatalog.SourceFile builtIn = sourceFile("built_in", 0, """
+                    { "entries": [ { "item": "minecraft:iron_ingot", "base_price": 10, "markup": 0.25 } ] }""");
+            MarketCatalog.ConfigFolder folder = MarketCatalog.readConfigFolder(config, 1);
+            List<MarketCatalog.SourceFile> files = new ArrayList<>(folder.files());
+            files.add(builtIn);
+            CatalogEntry iron = MarketCatalog.parse(files).get(Items.IRON_INGOT);
+            helper.assertValueEqual(iron.basePrice(), 20, "imported price");
+            helper.assertValueEqual(iron.markup(), CatalogEntry.DEFAULT_MARKUP, "a blank cell leaves the field unset");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void configFolderIsReadLikeAPack(GameTestHelper helper) {
+        try {
+            Path root = Files.createTempDirectory("market-config");
+            MarketCatalog.ConfigFolder empty = MarketCatalog.readConfigFolder(root, 3);
+            helper.assertTrue(empty.files().isEmpty() && empty.classFiles().isEmpty() && empty.problems().isEmpty(), "nothing to read");
+            helper.assertTrue(Files.isDirectory(root.resolve("market")) && Files.isDirectory(root.resolve("market_classes")),
+                    "both folders created for admins to find");
+
+            Files.createDirectories(root.resolve("market/ores"));
+            Files.writeString(root.resolve("market/ores/iron.json"),
+                    "{ \"entries\": [ { \"item\": \"minecraft:iron_ingot\", \"base_price\": 20 } ] }");
+            Files.writeString(root.resolve("market/Bad Name.json"), "{ \"entries\": [] }");
+            Files.writeString(root.resolve("market/broken.json"), "{ not json");
+            Files.writeString(root.resolve("market/notes.txt"), "ignored");
+            Files.writeString(root.resolve("market_classes/common_resource.json"), "{ \"sell_impact\": 0.001 }");
+
+            MarketCatalog.ConfigFolder folder = MarketCatalog.readConfigFolder(root, 3);
+            helper.assertValueEqual(folder.files().stream().map(MarketCatalog.SourceFile::id).toList(),
+                    List.of(ResourceLocation.fromNamespaceAndPath("config", "ores/iron")), "market file IDs");
+            helper.assertValueEqual(folder.files().get(0).packOrder(), 3, "the folder's priority");
+            helper.assertValueEqual(folder.classFiles().keySet(),
+                    Set.of(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "common_resource")),
+                    "a class file takes the mod's namespace, so it replaces the built-in class of that name");
+            helper.assertValueEqual(folder.problems().size(), 2, "bad name and unreadable file: " + folder.problems());
+            helper.assertValueEqual(MarketCatalog.parse(folder.files()).get(Items.IRON_INGOT).basePrice(), 20, "the file loads");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        helper.succeed();
+    }
+
     // ---- Admin edits and tag rules -----------------------------------------------------------------------------
 
     private static CatalogOverlay.Result overlay(MarketOverrides edits) {
