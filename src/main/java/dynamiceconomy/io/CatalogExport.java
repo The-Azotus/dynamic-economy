@@ -134,7 +134,7 @@ public final class CatalogExport {
     static final List<String> SUGGESTION_COLUMNS = List.of("price_source", "exact_cost", "recipe", "recipe_type", "depth", "note");
 
     /** Where the suggestions went and how many of each kind there were. */
-    public record SuggestionResult(Path folder, int listed, int suggested, int underOneSpur, int toReview, int noRecipe,
+    public record SuggestionResult(Path folder, int listed, int suggested, int underOneBit, int toReview, int noRecipe,
                                    int unpricedInputs, int leftOut) {
     }
 
@@ -187,7 +187,7 @@ public final class CatalogExport {
                         row.set(CatalogColumns.HEADER.indexOf("class"), suggestion.itemClass());
                     } else {
                         under++;
-                        notes.add("worth under 1 spur, so left unpriced");
+                        notes.add("worth under 1 bit, so left unpriced");
                     }
                     if (suggestion.raised()) {
                         List<PriceSuggestion.Path> via = suggestion.raisedVia();

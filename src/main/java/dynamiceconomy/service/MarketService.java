@@ -64,7 +64,7 @@ public final class MarketService {
     }
 
     /**
-     * {@code unitPrice} (what the first unit traded at) and {@code total} are in spurs, and are zero unless the trade
+     * {@code unitPrice} (what the first unit traded at) and {@code total} are in bits, and are zero unless the trade
      * got as far as pricing.
      */
     public record TradeResult(Result result, int quantity, long unitPrice, long total) {

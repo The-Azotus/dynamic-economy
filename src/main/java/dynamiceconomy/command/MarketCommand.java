@@ -64,7 +64,7 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 /**
- * {@code /market} opens the market screen. The sell, buy, stock and price subcommands are the Phase 1 test commands,
+ * {@code /market} opens the market screen. The sell, buy, stock and price subcommands trade and look up prices in chat,
  * kept for scripting and testing without the screen.
  * Brigadier runs commands on the server thread, which is what {@link MarketService} requires.
  */
@@ -520,8 +520,8 @@ public final class MarketCommand {
                     null, null);
             List<String> lines = new ArrayList<>();
             lines.add("Wrote " + file + ". Nothing on the market changed.");
-            lines.add("  %d already listed, %d priced from recipes (%d of them worth under 1 spur, left blank; %d from recipe types worth checking)"
-                    .formatted(written.listed(), written.suggested(), written.underOneSpur(), written.toReview()));
+            lines.add("  %d already listed, %d priced from recipes (%d of them worth under 1 bit, left blank; %d from recipe types worth checking)"
+                    .formatted(written.listed(), written.suggested(), written.underOneBit(), written.toReview()));
             lines.add("  %d made only from unpriced items, %d with no usable recipe (these need hand-set prices)"
                     .formatted(written.unpricedInputs(), written.noRecipe()));
             if (written.leftOut() > 0) {

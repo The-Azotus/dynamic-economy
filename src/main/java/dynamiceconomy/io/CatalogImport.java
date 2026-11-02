@@ -173,7 +173,7 @@ public final class CatalogImport {
 
     private static String putPrice(JsonObject json, String price) {
         if (!price.matches("\\d+")) {
-            return "base_price \"" + price + "\" must be a positive whole number of spurs";
+            return "base_price \"" + price + "\" must be a positive whole number of bits";
         }
         BigDecimal value = new BigDecimal(price);
         if (value.signum() <= 0 || value.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0) {

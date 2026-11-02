@@ -745,7 +745,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 : row.stock().isPresent() && best == row.stock().getAsLong() ? "max_stock"
                 : best == room ? "max_room"
                 : "max_afford";
-        setQuantity(best, Component.translatable("screen.dynamic_economy.note." + reason, PriceFormat.spurs(limit)));
+        setQuantity(best, Component.translatable("screen.dynamic_economy.note." + reason, PriceFormat.amount(limit)));
     }
 
     /** "All": every copy held, up to the order limit. */
@@ -764,7 +764,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int limit = ClientMarketState.maxQuantity();
         int amount = OrderMath.sellAll(held, limit);
         setQuantity(amount, held > limit
-                ? Component.translatable("screen.dynamic_economy.note.capped", PriceFormat.spurs(amount), PriceFormat.spurs(held))
+                ? Component.translatable("screen.dynamic_economy.note.capped", PriceFormat.amount(amount), PriceFormat.amount(held))
                 : Component.empty());
     }
 
@@ -797,10 +797,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                     PriceFormat.money(PriceFormat.decimal(OrderMath.average(sellTotal, qty))))));
         }
         buyButton.setMessage(row.canBuy()
-                ? Component.translatable("screen.dynamic_economy.buy_for", PriceFormat.spurs(buyTotal))
+                ? Component.translatable("screen.dynamic_economy.buy_for", PriceFormat.amount(buyTotal))
                 : Component.translatable("screen.dynamic_economy.buy"));
         sellButton.setMessage(row.canSell()
-                ? Component.translatable("screen.dynamic_economy.sell_for", PriceFormat.spurs(sellTotal))
+                ? Component.translatable("screen.dynamic_economy.sell_for", PriceFormat.amount(sellTotal))
                 : Component.translatable("screen.dynamic_economy.sell"));
         buyButton.active = row.canBuy() && row.hasStock(qty) && ClientMarketState.looksAffordable(buyTotal)
                 && ClientMarketState.room(row.item(), stack(row).getMaxStackSize()) >= qty;
@@ -870,7 +870,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         if (deliverable(line)) {
             int qty = quantityValue();
-            contractButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.deliver", PriceFormat.spurs(qty)));
+            contractButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.deliver", PriceFormat.amount(qty)));
             Component problem = qty <= 0 ? Component.translatable("screen.dynamic_economy.result.invalid_quantity")
                     : qty > ClientMarketState.maxQuantity() ? Component.translatable("screen.dynamic_economy.result.too_large")
                     : qty > line.remaining() ? Component.translatable("screen.dynamic_economy.result.contract_full")
@@ -879,12 +879,12 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             contractButton.active = problem == null;
             contractButton.setTooltip(Tooltip.create(problem != null ? problem
                     : Component.translatable(qty == line.remaining() ? "screen.dynamic_economy.contracts.deliver.finishes"
-                            : "screen.dynamic_economy.contracts.deliver.tooltip", PriceFormat.money(PriceFormat.spurs(line.reward() + line.deposit())))));
+                            : "screen.dynamic_economy.contracts.deliver.tooltip", PriceFormat.money(PriceFormat.amount(line.reward() + line.deposit())))));
             abandonButton.active = true;
             abandonButton.setMessage(Component.translatable(Integer.valueOf(line.id()).equals(abandonArmed)
                     ? "screen.dynamic_economy.contracts.abandon_confirm" : "screen.dynamic_economy.contracts.abandon"));
             abandonButton.setTooltip(Tooltip.create(Component.translatable("screen.dynamic_economy.contracts.abandon.tooltip",
-                    PriceFormat.money(PriceFormat.spurs(line.deposit())))));
+                    PriceFormat.money(PriceFormat.amount(line.deposit())))));
             return;
         }
         abandonArmed = null;
@@ -892,7 +892,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         abandonButton.setMessage(Component.translatable("screen.dynamic_economy.contracts.abandon"));
         abandonButton.setTooltip(null);
         contractButton.setMessage(line.status() == ContractBoard.Status.OPEN
-                ? Component.translatable("screen.dynamic_economy.contracts.claim_for", PriceFormat.money(PriceFormat.spurs(line.deposit())))
+                ? Component.translatable("screen.dynamic_economy.contracts.claim_for", PriceFormat.money(PriceFormat.amount(line.deposit())))
                 : Component.translatable("screen.dynamic_economy.contracts.claim"));
         Component problem = line.status() != ContractBoard.Status.OPEN ? Component.translatable("screen.dynamic_economy.result.contract_taken")
                 : board.held() >= board.maxHeld() ? Component.translatable("screen.dynamic_economy.result.contract_limit")
@@ -900,7 +900,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 : null;
         contractButton.active = problem == null;
         contractButton.setTooltip(Tooltip.create(problem != null ? problem
-                : Component.translatable("screen.dynamic_economy.contracts.claim.tooltip", PriceFormat.money(PriceFormat.spurs(line.deposit())))));
+                : Component.translatable("screen.dynamic_economy.contracts.claim.tooltip", PriceFormat.money(PriceFormat.amount(line.deposit())))));
     }
 
     private void contractAction() {
@@ -1212,10 +1212,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 long total = qty > 0 && each > 0 ? MarketService.checkedTotal(each, qty).orElse(0) : 0;
                 long tax = ExchangeService.tax(total, exchange == null ? 0 : exchange.tax());
                 postBuyButton.setMessage(total > 0 && exchangeSelected != null
-                        ? Component.translatable("screen.dynamic_economy.exchange.buy_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        ? Component.translatable("screen.dynamic_economy.exchange.buy_for", PriceFormat.amount(qty), PriceFormat.amount(total))
                         : Component.translatable("screen.dynamic_economy.exchange.buy"));
                 postSellButton.setMessage(total > 0 && exchangeSelected != null
-                        ? Component.translatable("screen.dynamic_economy.exchange.sell_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        ? Component.translatable("screen.dynamic_economy.exchange.sell_for", PriceFormat.amount(qty), PriceFormat.amount(total))
                         : Component.translatable("screen.dynamic_economy.exchange.sell"));
                 Component buyProblem = exchangeSelected == null ? Component.translatable("screen.dynamic_economy.exchange.select_hint")
                         : postProblem(true, qty, each);
@@ -1223,10 +1223,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 postBuyButton.active = buyProblem == null;
                 postSellButton.active = sellProblem == null;
                 postBuyButton.setTooltip(Tooltip.create(buyProblem != null ? buyProblem
-                        : Component.translatable("screen.dynamic_economy.exchange.buy.tooltip", PriceFormat.money(PriceFormat.spurs(total)))));
+                        : Component.translatable("screen.dynamic_economy.exchange.buy.tooltip", PriceFormat.money(PriceFormat.amount(total)))));
                 postSellButton.setTooltip(Tooltip.create(sellProblem != null ? sellProblem
-                        : Component.translatable("screen.dynamic_economy.exchange.sell.tooltip", PriceFormat.money(PriceFormat.spurs(total - tax)),
-                                PriceFormat.money(PriceFormat.spurs(tax)))));
+                        : Component.translatable("screen.dynamic_economy.exchange.sell.tooltip", PriceFormat.money(PriceFormat.amount(total - tax)),
+                                PriceFormat.money(PriceFormat.amount(tax)))));
             }
             case LISTINGS -> {
                 int qty = quantityValue();
@@ -1236,13 +1236,13 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 MarketPayloads.ListingLine line = selectedBrowseListing();
                 long total = line == null || qty <= 0 ? 0 : MarketService.checkedTotal(line.price(), qty).orElse(0);
                 exchangeActionButton.setMessage(total > 0
-                        ? Component.translatable("screen.dynamic_economy.exchange.buy_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        ? Component.translatable("screen.dynamic_economy.exchange.buy_for", PriceFormat.amount(qty), PriceFormat.amount(total))
                         : Component.translatable("screen.dynamic_economy.exchange.buy_listing"));
                 Component problem = line == null ? Component.translatable("screen.dynamic_economy.exchange.listings.select_hint")
                         : buyListingProblem(line, qty);
                 exchangeActionButton.active = problem == null;
                 exchangeActionButton.setTooltip(Tooltip.create(problem != null ? problem
-                        : Component.translatable("screen.dynamic_economy.exchange.buy_listing.tooltip", PriceFormat.money(PriceFormat.spurs(total)))));
+                        : Component.translatable("screen.dynamic_economy.exchange.buy_listing.tooltip", PriceFormat.money(PriceFormat.amount(total)))));
             }
             case LIST -> {
                 checkListSlot();
@@ -1254,14 +1254,14 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 long total = qty > 0 && each > 0 ? MarketService.checkedTotal(each, qty).orElse(0) : 0;
                 long tax = ExchangeService.tax(total, exchange == null ? 0 : exchange.tax());
                 exchangeActionButton.setMessage(total > 0 && listSlot >= 0
-                        ? Component.translatable("screen.dynamic_economy.exchange.list_for", PriceFormat.spurs(qty), PriceFormat.spurs(total))
+                        ? Component.translatable("screen.dynamic_economy.exchange.list_for", PriceFormat.amount(qty), PriceFormat.amount(total))
                         : Component.translatable("screen.dynamic_economy.exchange.list"));
                 Component problem = listSlot < 0 ? Component.translatable("screen.dynamic_economy.exchange.list.select_hint")
                         : listProblem(qty, each);
                 exchangeActionButton.active = problem == null;
                 exchangeActionButton.setTooltip(Tooltip.create(problem != null ? problem
-                        : Component.translatable("screen.dynamic_economy.exchange.list.tooltip", PriceFormat.money(PriceFormat.spurs(total - tax)),
-                                PriceFormat.money(PriceFormat.spurs(tax)))));
+                        : Component.translatable("screen.dynamic_economy.exchange.list.tooltip", PriceFormat.money(PriceFormat.amount(total - tax)),
+                                PriceFormat.money(PriceFormat.amount(tax)))));
             }
             case ORDERS -> {
                 MarketPayloads.OrderLine line = selectedOrderLine();
@@ -1272,7 +1272,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                         ? Tooltip.create(Component.translatable("screen.dynamic_economy.exchange.cancel.items", PriceFormat.count(listing.remaining())))
                         : line == null ? null : Tooltip.create(line.buy()
                         ? Component.translatable("screen.dynamic_economy.exchange.cancel.money",
-                                PriceFormat.money(PriceFormat.spurs(line.price() * line.remaining())))
+                                PriceFormat.money(PriceFormat.amount(line.price() * line.remaining())))
                         : Component.translatable("screen.dynamic_economy.exchange.cancel.items", PriceFormat.count(line.remaining()))));
             }
             case BOX -> {
@@ -1383,7 +1383,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         long carried = ClientMarketState.carriedCoinValue();
         depositButton.active = carried > 0;
         depositButton.setMessage(carried > 0
-                ? Component.translatable("screen.dynamic_economy.bank.deposit_for", PriceFormat.money(PriceFormat.spurs(carried)))
+                ? Component.translatable("screen.dynamic_economy.bank.deposit_for", PriceFormat.money(PriceFormat.amount(carried)))
                 : Component.translatable("screen.dynamic_economy.bank.deposit"));
         depositButton.setTooltip(Tooltip.create(Component.translatable(carried > 0
                 ? "screen.dynamic_economy.bank.deposit.tooltip" : "screen.dynamic_economy.bank.result.no_coins")));
@@ -1673,7 +1673,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             int count = coinsPerClick(coin);
             graphics.renderComponentTooltip(font, List.of(
                     Component.translatable("screen.dynamic_economy.bank.click_withdraw", count, coin.item().getDescription(),
-                            PriceFormat.money(PriceFormat.spurs((long) count * coin.value()))),
+                            PriceFormat.money(PriceFormat.amount((long) count * coin.value()))),
                     Component.translatable("screen.dynamic_economy.bank.click_hint").withColor(TEXT_DIM)), mouseX, mouseY);
         }
     }
@@ -1763,10 +1763,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             int textY = rowY + 5;
             String name = BuiltInRegistries.ITEM.get(trade.item()).getDescription().getString();
             Component what = Component.translatable(trade.buy() ? "screen.dynamic_economy.trades.bought"
-                    : "screen.dynamic_economy.trades.sold", PriceFormat.spurs(trade.quantity()), name);
+                    : "screen.dynamic_economy.trades.sold", PriceFormat.amount(trade.quantity()), name);
             graphics.drawString(font, font.plainSubstrByWidth(what.getString(), amountRight - 60 - LIST_X - 22),
                     x + LIST_X + 22, textY, TEXT, false);
-            drawRight(graphics, Component.literal((trade.buy() ? "-" : "+") + PriceFormat.spurs(trade.total())),
+            drawRight(graphics, Component.literal((trade.buy() ? "-" : "+") + PriceFormat.amount(trade.total())),
                     x + amountRight, textY, trade.buy() ? TEXT_MONEY : TEXT_GOOD);
             drawRight(graphics, ago(received.now() - trade.time()), x + listRight - 2, textY, TEXT_DIM);
         }
@@ -1801,7 +1801,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             int textY = rowY + 5;
             drawRight(graphics, Component.literal("#" + rank), x + LIST_X + 26, textY, rank <= 3 ? TEXT_MONEY : TEXT_DIM);
             graphics.drawString(font, line.name(), x + LIST_X + 32, textY, line.you() ? TEXT_GOOD : TEXT, false);
-            drawRight(graphics, PriceFormat.money(PriceFormat.spurs(line.balance())
+            drawRight(graphics, PriceFormat.money(PriceFormat.amount(line.balance())
                     + (ClientMarketState.capped(line.balance()) ? "+" : "")), x + listRight - 2, textY, TEXT_MONEY);
         }
         if (lines.isEmpty()) {
@@ -1836,11 +1836,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             boolean done = line.status() == ContractBoard.Status.COMPLETED || line.status() == ContractBoard.Status.ABANDONED;
             graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(line.item())), x + LIST_X + 2, rowY + 1);
             int textY = rowY + 5;
-            Component what = Component.translatable("screen.dynamic_economy.contracts.wants", PriceFormat.spurs(line.units()),
+            Component what = Component.translatable("screen.dynamic_economy.contracts.wants", PriceFormat.amount(line.units()),
                     BuiltInRegistries.ITEM.get(line.item()).getDescription());
             graphics.drawString(font, font.plainSubstrByWidth(what.getString(), rewardRight - 60 - LIST_X - 22),
                     x + LIST_X + 22, textY, done ? TEXT_DIM : TEXT, false);
-            drawRight(graphics, PriceFormat.money(PriceFormat.spurs(line.reward())), x + rewardRight, textY, done ? TEXT_DIM : TEXT_MONEY);
+            drawRight(graphics, PriceFormat.money(PriceFormat.amount(line.reward())), x + rewardRight, textY, done ? TEXT_DIM : TEXT_MONEY);
             Component state;
             int color;
             switch (line.status()) {
@@ -1890,7 +1890,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         int held = ClientMarketState.held(line.item());
         if (!wide) {
             Component summary = Component.translatable("screen.dynamic_economy.contracts.summary", stack.getHoverName(),
-                    PriceFormat.money(PriceFormat.spurs(line.reward())), PriceFormat.money(PriceFormat.spurs(line.deposit())),
+                    PriceFormat.money(PriceFormat.amount(line.reward())), PriceFormat.money(PriceFormat.amount(line.deposit())),
                     PriceFormat.count(line.delivered()), PriceFormat.count(line.units()));
             graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
             return;
@@ -1898,13 +1898,13 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         graphics.drawString(font, font.plainSubstrByWidth(stack.getHoverName().getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
         int right = left + panelWidth;
         int top = y + chartY;
-        infoLine(graphics, "contracts.reward", PriceFormat.spurs(line.reward()), TEXT_MONEY, left, right, top);
+        infoLine(graphics, "contracts.reward", PriceFormat.amount(line.reward()), TEXT_MONEY, left, right, top);
         infoLine(graphics, "contracts.per_unit", PriceFormat.decimal(java.math.BigDecimal.valueOf(line.reward())
                 .divide(java.math.BigDecimal.valueOf(line.units()), 2, RoundingMode.FLOOR)), TEXT_MONEY, left, right, top + INFO_LINE_HEIGHT);
-        infoLine(graphics, "contracts.deposit", PriceFormat.spurs(line.deposit()), TEXT, left, right, top + 2 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "contracts.deposit", PriceFormat.amount(line.deposit()), TEXT, left, right, top + 2 * INFO_LINE_HEIGHT);
         infoLine(graphics, "contracts.progress", PriceFormat.count(line.delivered()) + "/" + PriceFormat.count(line.units()),
                 line.mine() ? TEXT_MONEY : TEXT, left, right, top + 3 * INFO_LINE_HEIGHT);
-        infoLine(graphics, "col.have", PriceFormat.spurs(held), held > 0 ? TEXT : TEXT_DIM, left, right, top + 4 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "col.have", PriceFormat.amount(held), held > 0 ? TEXT : TEXT_DIM, left, right, top + 4 * INFO_LINE_HEIGHT);
         Component note = switch (line.status()) {
             case OPEN -> Component.translatable("screen.dynamic_economy.contracts.note.open");
             case CLAIMED -> line.mine() ? Component.translatable("screen.dynamic_economy.contracts.note.mine")
@@ -1922,7 +1922,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private List<Component> contractTooltip(MarketPayloads.ContractLine line) {
         List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, new ItemStack(BuiltInRegistries.ITEM.get(line.item()))));
         lines.add(Component.translatable("screen.dynamic_economy.contracts.tooltip.reward",
-                PriceFormat.money(PriceFormat.spurs(line.reward())), PriceFormat.money(PriceFormat.spurs(line.deposit()))).withColor(TEXT_MONEY));
+                PriceFormat.money(PriceFormat.amount(line.reward())), PriceFormat.money(PriceFormat.amount(line.deposit()))).withColor(TEXT_MONEY));
         if (line.status() == ContractBoard.Status.CLAIMED && !line.mine()) {
             lines.add(Component.translatable("screen.dynamic_economy.contracts.note.taken", line.holder()).withColor(TEXT_DIM));
         }
@@ -2014,9 +2014,9 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                     int priceRight = listRight - 60;
                     graphics.renderItem(new ItemStack(BuiltInRegistries.ITEM.get(line.item())), x + LIST_X + 2, rowY + 1);
                     Component what = Component.translatable(line.buy() ? "screen.dynamic_economy.exchange.order.buy"
-                            : "screen.dynamic_economy.exchange.order.sell", PriceFormat.spurs(line.quantity()), displayName(line.item()));
+                            : "screen.dynamic_economy.exchange.order.sell", PriceFormat.amount(line.quantity()), displayName(line.item()));
                     graphics.drawString(font, font.plainSubstrByWidth(what.getString(), priceRight - 50 - LIST_X - 22), x + LIST_X + 22, textY, TEXT, false);
-                    drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.order.each", PriceFormat.spurs(line.price())),
+                    drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.order.each", PriceFormat.amount(line.price())),
                             x + priceRight, textY, line.buy() ? TEXT_MONEY : TEXT_GOOD);
                     drawRight(graphics, Component.literal(PriceFormat.count(line.filled()) + "/" + PriceFormat.count(line.quantity())),
                             x + listRight - 2, textY, line.filled() > 0 ? TEXT : TEXT_DIM);
@@ -2062,10 +2062,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private void renderListingRow(GuiGraphics graphics, MarketPayloads.ListingLine line, int x, int rowY, int textY, int listRight) {
         int priceRight = listRight - 60;
         renderStack(graphics, line.stack(), x + LIST_X + 2, rowY + 1);
-        Component what = Component.translatable("screen.dynamic_economy.exchange.order.listing", PriceFormat.spurs(line.quantity()),
+        Component what = Component.translatable("screen.dynamic_economy.exchange.order.listing", PriceFormat.amount(line.quantity()),
                 line.stack().getHoverName().getString());
         graphics.drawString(font, font.plainSubstrByWidth(what.getString(), priceRight - 50 - LIST_X - 22), x + LIST_X + 22, textY, TEXT, false);
-        drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.order.each", PriceFormat.spurs(line.price())),
+        drawRight(graphics, Component.translatable("screen.dynamic_economy.exchange.order.each", PriceFormat.amount(line.price())),
                 x + priceRight, textY, TEXT_GOOD);
         drawRight(graphics, Component.literal(PriceFormat.count(line.sold()) + "/" + PriceFormat.count(line.quantity())),
                 x + listRight - 2, textY, line.sold() > 0 ? TEXT : TEXT_DIM);
@@ -2081,7 +2081,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private List<Component> listingTooltip(MarketPayloads.ListingLine line) {
         List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, line.stack()));
         lines.add(Component.translatable("screen.dynamic_economy.exchange.listing.offer", PriceFormat.count(line.remaining()),
-                PriceFormat.money(PriceFormat.spurs(line.price()))).withColor(TEXT_MONEY));
+                PriceFormat.money(PriceFormat.amount(line.price()))).withColor(TEXT_MONEY));
         lines.add((line.mine() ? Component.translatable("screen.dynamic_economy.exchange.listing.yours")
                 : Component.translatable("screen.dynamic_economy.exchange.listing.by", line.seller())).withColor(TEXT_DIM));
         return lines;
@@ -2120,18 +2120,18 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             graphics.drawString(font, font.plainSubstrByWidth(name, panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
             infoLine(graphics, "exchange.listing.seller", line.mine() ? Component.translatable("screen.dynamic_economy.exchange.listing.you").getString()
                     : line.seller(), TEXT, left, right, top);
-            infoLine(graphics, "exchange.order.price", PriceFormat.spurs(line.price()), TEXT_MONEY, left, right, top + INFO_LINE_HEIGHT);
+            infoLine(graphics, "exchange.order.price", PriceFormat.amount(line.price()), TEXT_MONEY, left, right, top + INFO_LINE_HEIGHT);
             infoLine(graphics, "exchange.listing.left", PriceFormat.count(line.remaining()), TEXT, left, right, top + 2 * INFO_LINE_HEIGHT);
             renderItemDetails(graphics, line.stack(), left, top + 3 * INFO_LINE_HEIGHT + 4, y + controlsY - 4);
         } else {
-            Component summary = Component.translatable("screen.dynamic_economy.exchange.listing.summary", name, PriceFormat.spurs(line.price()),
+            Component summary = Component.translatable("screen.dynamic_economy.exchange.listing.summary", name, PriceFormat.amount(line.price()),
                     PriceFormat.count(line.remaining()), line.seller());
             graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
         }
         int qty = quantityValue();
         long total = qty > 0 ? MarketService.checkedTotal(line.price(), qty).orElse(0) : 0;
         Component note = !quantityNote.getString().isEmpty() ? quantityNote
-                : total > 0 ? Component.translatable("screen.dynamic_economy.exchange.listing.total", PriceFormat.spurs(total)) : Component.empty();
+                : total > 0 ? Component.translatable("screen.dynamic_economy.exchange.listing.total", PriceFormat.amount(total)) : Component.empty();
         graphics.drawString(font, font.plainSubstrByWidth(note.getString(), noteWidth), x + noteX, y + noteY, TEXT_DIM, false);
     }
 
@@ -2152,7 +2152,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         }
         graphics.drawString(font, font.plainSubstrByWidth(name, panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
         renderItemDetails(graphics, listStack, left, y + chartY, y + priceY - 14);
-        infoLine(graphics, "col.have", PriceFormat.spurs(heldLike(listStack)), TEXT, left, left + panelWidth, y + priceY - 12);
+        infoLine(graphics, "col.have", PriceFormat.amount(heldLike(listStack)), TEXT, left, left + panelWidth, y + priceY - 12);
         graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.price"), left, y + priceY + 3, TEXT_DIM, false);
         MarketPayloads.Exchange exchange = ClientMarketState.exchange();
         int qty = quantityValue();
@@ -2163,11 +2163,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (!quantityNote.getString().isEmpty()) {
             note = quantityNote;
         } else if (qty > listStack.getMaxStackSize()) {
-            note = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.spurs(listStack.getMaxStackSize()));
+            note = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.amount(listStack.getMaxStackSize()));
             color = TEXT_BAD;
         } else if (total > 0) {
-            note = Component.translatable("screen.dynamic_economy.exchange.note.total", PriceFormat.spurs(total),
-                    PriceFormat.spurs(ExchangeService.tax(total, exchange == null ? 0 : exchange.tax())));
+            note = Component.translatable("screen.dynamic_economy.exchange.note.total", PriceFormat.amount(total),
+                    PriceFormat.amount(ExchangeService.tax(total, exchange == null ? 0 : exchange.tax())));
         } else {
             note = Component.translatable("screen.dynamic_economy.exchange.note.tax", percent);
         }
@@ -2204,7 +2204,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (!wide) {
             ExchangeService.Summary s = summary(exchangeSelected);
             Component line = Component.translatable("screen.dynamic_economy.exchange.summary", displayName(exchangeSelected),
-                    s != null && s.bestAsk() > 0 ? PriceFormat.spurs(s.bestAsk()) : "-", s != null && s.bestBid() > 0 ? PriceFormat.spurs(s.bestBid()) : "-");
+                    s != null && s.bestAsk() > 0 ? PriceFormat.amount(s.bestAsk()) : "-", s != null && s.bestBid() > 0 ? PriceFormat.amount(s.bestBid()) : "-");
             graphics.drawString(font, font.plainSubstrByWidth(line.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
             graphics.drawString(font, "@", x + noteX, y + controlsY + 5, TEXT_DIM, false);
             return;
@@ -2212,7 +2212,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         graphics.drawString(font, font.plainSubstrByWidth(displayName(exchangeSelected), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
         renderBook(graphics, left, y + chartY, y + priceY - 13, mouseX, mouseY);
         int held = freshHeld(exchangeSelected);
-        infoLine(graphics, "col.have", PriceFormat.spurs(held), held > 0 ? TEXT : TEXT_DIM, left, left + panelWidth, y + priceY - 12);
+        infoLine(graphics, "col.have", PriceFormat.amount(held), held > 0 ? TEXT : TEXT_DIM, left, left + panelWidth, y + priceY - 12);
         graphics.drawString(font, Component.translatable("screen.dynamic_economy.exchange.price"), left, y + priceY + 3, TEXT_DIM, false);
 
         // Under the quantity: what the order comes to, and the tax a sale pays.
@@ -2224,11 +2224,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (!quantityNote.getString().isEmpty()) {
             note = quantityNote;
         } else if (exchange != null && qty > exchange.maxOrderSize()) {
-            note = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.spurs(exchange.maxOrderSize()));
+            note = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.amount(exchange.maxOrderSize()));
             color = TEXT_BAD;
         } else if (total > 0) {
-            note = Component.translatable("screen.dynamic_economy.exchange.note.total", PriceFormat.spurs(total),
-                    PriceFormat.spurs(ExchangeService.tax(total, exchange == null ? 0 : exchange.tax())));
+            note = Component.translatable("screen.dynamic_economy.exchange.note.total", PriceFormat.amount(total),
+                    PriceFormat.amount(ExchangeService.tax(total, exchange == null ? 0 : exchange.tax())));
         } else {
             note = Component.translatable("screen.dynamic_economy.exchange.note.tax", percent);
         }
@@ -2264,7 +2264,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         graphics.fill(left, lineY + 4, right, lineY + 5, PANEL_BORDER);
         if (!book.asks().isEmpty() && !book.bids().isEmpty()) {
             Component spread = Component.translatable("screen.dynamic_economy.exchange.book.spread",
-                    PriceFormat.spurs(book.asks().get(0).price() - book.bids().get(0).price()));
+                    PriceFormat.amount(book.asks().get(0).price() - book.bids().get(0).price()));
             int width = font.width(spread) + 4;
             int middle = (left + right) / 2;
             graphics.fill(middle - width / 2, lineY, middle + width / 2, lineY + 9, PANEL);
@@ -2285,7 +2285,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         if (mouseX >= row.left() && mouseX < row.right() && mouseY >= row.top() && mouseY < row.bottom()) {
             graphics.fill(row.left(), row.top(), row.right(), row.bottom(), ROW_HOVER);
         }
-        graphics.drawString(font, PriceFormat.spurs(level.price()) + (level.mine() > 0 ? " *" : ""), left, top, color, false);
+        graphics.drawString(font, PriceFormat.amount(level.price()) + (level.mine() > 0 ? " *" : ""), left, top, color, false);
         drawRight(graphics, Component.literal(PriceFormat.count(level.quantity())), right, top, TEXT);
     }
 
@@ -2308,7 +2308,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 : Component.translatable("screen.dynamic_economy.exchange.order.days", line.daysLeft());
         if (!wide) {
             Component summary = Component.translatable("screen.dynamic_economy.exchange.order.summary", displayName(line.item()),
-                    PriceFormat.spurs(line.price()), PriceFormat.count(line.filled()), PriceFormat.count(line.quantity()));
+                    PriceFormat.amount(line.price()), PriceFormat.count(line.filled()), PriceFormat.count(line.quantity()));
             graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
             return;
         }
@@ -2317,10 +2317,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         graphics.drawString(font, font.plainSubstrByWidth(displayName(line.item()), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
         infoLine(graphics, "exchange.order.side", Component.translatable(line.buy() ? "screen.dynamic_economy.exchange.order.side_buy"
                 : "screen.dynamic_economy.exchange.order.side_sell").getString(), line.buy() ? TEXT_MONEY : TEXT_GOOD, left, right, top);
-        infoLine(graphics, "exchange.order.price", PriceFormat.spurs(line.price()), TEXT, left, right, top + INFO_LINE_HEIGHT);
+        infoLine(graphics, "exchange.order.price", PriceFormat.amount(line.price()), TEXT, left, right, top + INFO_LINE_HEIGHT);
         infoLine(graphics, "exchange.order.filled", PriceFormat.count(line.filled()) + "/" + PriceFormat.count(line.quantity()), TEXT,
                 left, right, top + 2 * INFO_LINE_HEIGHT);
-        infoLine(graphics, "exchange.order.holds", line.buy() ? PriceFormat.money(PriceFormat.spurs(line.price() * line.remaining())).getString()
+        infoLine(graphics, "exchange.order.holds", line.buy() ? PriceFormat.money(PriceFormat.amount(line.price() * line.remaining())).getString()
                 : Component.translatable("screen.dynamic_economy.exchange.order.items", PriceFormat.count(line.remaining())).getString(),
                 TEXT, left, right, top + 3 * INFO_LINE_HEIGHT);
         infoLine(graphics, "exchange.order.expires", expires.getString(), TEXT_DIM, left, right, top + 4 * INFO_LINE_HEIGHT);
@@ -2333,7 +2333,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         String name = line.stack().getHoverName().getString();
         if (!wide) {
             Component summary = Component.translatable("screen.dynamic_economy.exchange.order.summary", name,
-                    PriceFormat.spurs(line.price()), PriceFormat.count(line.sold()), PriceFormat.count(line.quantity()));
+                    PriceFormat.amount(line.price()), PriceFormat.count(line.sold()), PriceFormat.count(line.quantity()));
             graphics.drawString(font, font.plainSubstrByWidth(summary.getString(), panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
             return;
         }
@@ -2342,7 +2342,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         graphics.drawString(font, font.plainSubstrByWidth(name, panelWidth - 20), left + 20, y + panelY + 4, TEXT, false);
         infoLine(graphics, "exchange.order.side", Component.translatable("screen.dynamic_economy.exchange.order.side_listing").getString(),
                 TEXT_GOOD, left, right, top);
-        infoLine(graphics, "exchange.order.price", PriceFormat.spurs(line.price()), TEXT, left, right, top + INFO_LINE_HEIGHT);
+        infoLine(graphics, "exchange.order.price", PriceFormat.amount(line.price()), TEXT, left, right, top + INFO_LINE_HEIGHT);
         infoLine(graphics, "exchange.order.sold", PriceFormat.count(line.sold()) + "/" + PriceFormat.count(line.quantity()), TEXT,
                 left, right, top + 2 * INFO_LINE_HEIGHT);
         infoLine(graphics, "exchange.order.holds", Component.translatable("screen.dynamic_economy.exchange.order.items",
@@ -2369,11 +2369,11 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         List<Component> lines = new ArrayList<>(getTooltipFromItem(minecraft, new ItemStack(BuiltInRegistries.ITEM.get(item))));
         ExchangeService.Summary s = summary(item);
         if (s != null && s.bestAsk() > 0) {
-            lines.add(Component.translatable("screen.dynamic_economy.exchange.tooltip.ask", PriceFormat.money(PriceFormat.spurs(s.bestAsk())),
+            lines.add(Component.translatable("screen.dynamic_economy.exchange.tooltip.ask", PriceFormat.money(PriceFormat.amount(s.bestAsk())),
                     PriceFormat.count(s.askUnits())).withColor(TEXT_MONEY));
         }
         if (s != null && s.bestBid() > 0) {
-            lines.add(Component.translatable("screen.dynamic_economy.exchange.tooltip.bid", PriceFormat.money(PriceFormat.spurs(s.bestBid())),
+            lines.add(Component.translatable("screen.dynamic_economy.exchange.tooltip.bid", PriceFormat.money(PriceFormat.amount(s.bestBid())),
                     PriceFormat.count(s.bidUnits())).withColor(TEXT_GOOD));
         }
         if (s == null) {
@@ -2406,7 +2406,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
             graphics.renderItem(new ItemStack(coin.item()), x + LIST_X + 2, rowY + 1);
             int textY = rowY + 5;
             graphics.drawString(font, coin.item().getDescription(), x + LIST_X + 22, textY, TEXT, false);
-            drawRight(graphics, PriceFormat.money(PriceFormat.spurs(coin.value())), x + worthRight, textY, TEXT_MONEY);
+            drawRight(graphics, PriceFormat.money(PriceFormat.amount(coin.value())), x + worthRight, textY, TEXT_MONEY);
             int held = ClientMarketState.held(coin);
             drawRight(graphics, Component.literal(PriceFormat.count(held)), x + listRight - 2, textY, held > 0 ? TEXT : TEXT_DIM);
         }
@@ -2420,12 +2420,12 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
     private void renderBankPanel(GuiGraphics graphics, int x, int y) {
         int left = x + panelX;
         long balance = ClientMarketState.balance();
-        Component inBankAmount = PriceFormat.money(PriceFormat.spurs(balance) + (ClientMarketState.capped(balance) ? "+" : ""));
+        Component inBankAmount = PriceFormat.money(PriceFormat.amount(balance) + (ClientMarketState.capped(balance) ? "+" : ""));
         Component inBank = ClientMarketState.usingTeam()
                 ? Component.translatable("screen.dynamic_economy.bank.in_team_bank", ClientMarketState.team(), inBankAmount)
                 : Component.translatable("screen.dynamic_economy.bank.in_bank", inBankAmount);
         Component carried = Component.translatable("screen.dynamic_economy.bank.carried",
-                PriceFormat.money(PriceFormat.spurs(ClientMarketState.carriedCoinValue())));
+                PriceFormat.money(PriceFormat.amount(ClientMarketState.carriedCoinValue())));
         if (wide) {
             graphics.drawString(font, font.plainSubstrByWidth(inBank.getString(), panelWidth), left, y + panelY + 4, TEXT_MONEY, false);
             graphics.drawString(font, font.plainSubstrByWidth(carried.getString(), panelWidth), left, y + panelY + 16, TEXT, false);
@@ -2513,12 +2513,12 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
         Component text;
         int color = TEXT_DIM;
         if (quantityValue() > limit) {
-            text = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.spurs(limit));
+            text = Component.translatable("screen.dynamic_economy.note.over_limit", PriceFormat.amount(limit));
             color = TEXT_BAD;
         } else if (!quantityNote.getString().isEmpty()) {
             text = quantityNote;
         } else {
-            text = Component.translatable("screen.dynamic_economy.note.limit", PriceFormat.spurs(limit));
+            text = Component.translatable("screen.dynamic_economy.note.limit", PriceFormat.amount(limit));
         }
         graphics.drawString(font, font.plainSubstrByWidth(text.getString(), noteWidth), x, y, color, false);
     }
@@ -2564,10 +2564,10 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                     TEXT_GOOD, x, right, y + 2 * INFO_LINE_HEIGHT);
         } else {
             long stock = row.stock().getAsLong();
-            infoLine(graphics, "col.stock", PriceFormat.spurs(stock), stock > 0 ? TEXT : TEXT_BAD, x, right, y + 2 * INFO_LINE_HEIGHT);
+            infoLine(graphics, "col.stock", PriceFormat.amount(stock), stock > 0 ? TEXT : TEXT_BAD, x, right, y + 2 * INFO_LINE_HEIGHT);
         }
         int held = ClientMarketState.held(row.item());
-        infoLine(graphics, "col.have", PriceFormat.spurs(held), held > 0 ? TEXT : TEXT_DIM, x, right, y + 3 * INFO_LINE_HEIGHT);
+        infoLine(graphics, "col.have", PriceFormat.amount(held), held > 0 ? TEXT : TEXT_DIM, x, right, y + 3 * INFO_LINE_HEIGHT);
         double factor = row.factor();
         int factorColor = factor > 1 + TREND_THRESHOLD ? TEXT_BAD : factor < 1 - TREND_THRESHOLD ? TEXT_GOOD : TEXT;
         infoLine(graphics, "col.vs_base", percent(factor), factorColor, x, right, y + 4 * INFO_LINE_HEIGHT);
@@ -2692,7 +2692,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
 
     /** "Bank: 1,234 spurs"; abbreviated ("Bank: 123k spurs") where it has to share the toolbar. */
     private static Component balanceText(long balance, boolean abbreviated) {
-        String amount = (abbreviated ? PriceFormat.compact(balance) : PriceFormat.spurs(balance))
+        String amount = (abbreviated ? PriceFormat.compact(balance) : PriceFormat.amount(balance))
                 + (ClientMarketState.capped(balance) ? "+" : "");
         return Component.translatable("screen.dynamic_economy.balance", PriceFormat.money(amount));
     }
@@ -2743,7 +2743,7 @@ public final class MarketScreen extends AbstractContainerScreen<MarketMenu> {
                 : Component.translatable("screen.dynamic_economy.tooltip.buy_disabled").withColor(TEXT_DIM));
         lines.add((row.unlimited()
                 ? Component.translatable("screen.dynamic_economy.tooltip.unlimited")
-                : Component.translatable("screen.dynamic_economy.tooltip.stock", PriceFormat.spurs(row.stock().getAsLong())))
+                : Component.translatable("screen.dynamic_economy.tooltip.stock", PriceFormat.amount(row.stock().getAsLong())))
                 .withColor(TEXT_DIM));
         return lines;
     }

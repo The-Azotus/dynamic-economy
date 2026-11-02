@@ -132,8 +132,8 @@ public final class PriceSuggestion {
     /**
      * A suggested price for an item the catalog doesn't list.
      *
-     * @param cost        the exact derived value in spurs, before rounding
-     * @param basePrice   {@code cost} rounded down; empty if it's under 1 spur
+     * @param cost        the exact derived value in bits, before rounding
+     * @param basePrice   {@code cost} rounded down; empty if it's under 1 bit
      * @param itemClass   {@code rare_processed} if its rare inputs are worth at least half its cost or one unit of the
      *                    cheapest rare item in the catalog, else {@code common_processed}
      * @param depth       recipe steps from the nearest priced item
@@ -587,8 +587,8 @@ public final class PriceSuggestion {
      * Raises each suggestion to at least what the item can be processed into, through recipes the suggester fully
      * reads, at most {@value #RAISE_STEPS} recipes on, divided by its class's markup, so buying it and processing it
      * never profits. Suggestions too cheap to
-     * price (under 1 spur) stay unpriced: rounded up to 1, they'd sell for more than they cost to make (9 tiny dusts
-     * unpacked from a 1-spur dust).
+     * price (under 1 bit) stay unpriced: rounded up to 1, they'd sell for more than they cost to make (9 tiny dusts
+     * unpacked from a 1-bit dust).
      * <p>
      * A raise stops at what the item costs to make from bought ingredients (its cost before the premium, times the
      * smallest markup), or it would sell for more than that: coarse dirt made for 1.10 raised to 2. An item worth more

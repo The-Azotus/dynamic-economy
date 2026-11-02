@@ -30,7 +30,7 @@ public final class TradeHistory extends SavedData {
      * One completed trade.
      *
      * @param time  when it happened, in milliseconds since 1970 (server clock)
-     * @param total spurs paid or received
+     * @param total bits paid or received
      */
     public record Trade(long time, ResourceLocation item, boolean buy, int quantity, long total) {
     }

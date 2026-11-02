@@ -114,7 +114,7 @@ public final class MarketGameTests {
     // ---- Happy paths -------------------------------------------------------------------------------------------
 
     @GameTest(template = EMPTY)
-    public static void sellingTenIronPays160(GameTestHelper helper) {
+    public static void sellingTenIronPays320(GameTestHelper helper) {
         withFixedPrice(Items.IRON_INGOT, () -> {
             Fixture f = new Fixture(helper);
             f.setStock(Items.IRON_INGOT, 0);
@@ -124,14 +124,14 @@ public final class MarketGameTests {
 
             f.assertResult(result, Result.OK);
             helper.assertValueEqual(f.stock(Items.IRON_INGOT), 10L, "iron stock");
-            helper.assertValueEqual(f.balance(), 160, "balance");
+            helper.assertValueEqual(f.balance(), 320, "balance");
             helper.assertValueEqual(f.count(Items.IRON_INGOT), 0L, "iron left in inventory");
         });
         helper.succeed();
     }
 
     @GameTest(template = EMPTY)
-    public static void buyingFiveIronCosts120(GameTestHelper helper) {
+    public static void buyingFiveIronCosts240(GameTestHelper helper) {
         withFixedPrice(Items.IRON_INGOT, () -> {
             Fixture f = new Fixture(helper);
             f.setStock(Items.IRON_INGOT, 20);
@@ -141,7 +141,7 @@ public final class MarketGameTests {
 
             f.assertResult(result, Result.OK);
             helper.assertValueEqual(f.stock(Items.IRON_INGOT), 15L, "iron stock");
-            helper.assertValueEqual(f.balance(), 1000 - 120, "balance");
+            helper.assertValueEqual(f.balance(), 1000 - 240, "balance");
             helper.assertValueEqual(f.count(Items.IRON_INGOT), 5L, "iron received");
         });
         helper.succeed();
@@ -359,11 +359,11 @@ public final class MarketGameTests {
             f.give(new ItemStack(Items.IRON_INGOT, 5));
 
             // Quotes are order totals, so a unit price sent for a multi-unit order is stale too.
-            f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 1, OptionalLong.of(15)));
-            f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 2, OptionalLong.of(16)));
-            f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, OptionalLong.of(23)));
-            f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, OptionalLong.of(24)), Result.OK);
-            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 2, OptionalLong.of(32)), Result.OK);
+            f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 1, OptionalLong.of(31)));
+            f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.trySell(f.player, Items.IRON_INGOT, 2, OptionalLong.of(32)));
+            f.assertRejectedUnchanged(Result.PRICE_CHANGED, () -> MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, OptionalLong.of(47)));
+            f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, 1, OptionalLong.of(48)), Result.OK);
+            f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 2, OptionalLong.of(64)), Result.OK);
         });
         helper.succeed();
     }
@@ -792,7 +792,7 @@ public final class MarketGameTests {
             Fixture f = new Fixture(helper);
             f.giveMany(Items.IRON_INGOT, 100);
             f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.OK);
-            helper.assertValueEqual(f.balance(), 144, "10 × 16 less a 10% fee");
+            helper.assertValueEqual(f.balance(), 288, "10 × 32 less a 10% fee");
             f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 90, ANY_PRICE), Result.OK);
             helper.assertValueEqual(f.factor(Items.IRON_INGOT), 1.0, "dynamic: false keeps the factor at 1.0");
             helper.assertValueEqual(f.market.factorsView().containsKey(iron.itemId()), false, "nothing stored");
@@ -2381,12 +2381,12 @@ public final class MarketGameTests {
             f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.OK);
             f.assertResult(MarketService.tryBuy(f.player, Items.IRON_INGOT, 5, ANY_PRICE), Result.OK);
 
-            MarketStockData.Totals expected = new MarketStockData.Totals(before.paidOut() + 160, before.collected() + 120,
+            MarketStockData.Totals expected = new MarketStockData.Totals(before.paidOut() + 320, before.collected() + 240,
                     before.unitsSold() + 10, before.unitsBought() + 5);
-            helper.assertValueEqual(f.market.totals(), expected, "160 paid out for 10, 120 collected for 5");
-            helper.assertValueEqual(f.market.totals(key(Items.IRON_INGOT)), new MarketStockData.Totals(ironBefore.paidOut() + 160,
-                    ironBefore.collected() + 120, ironBefore.unitsSold() + 10, ironBefore.unitsBought() + 5), "per item too");
-            helper.assertValueEqual(expected.netCreated() - before.netCreated(), 40L, "net 40 spurs added to the economy");
+            helper.assertValueEqual(f.market.totals(), expected, "320 paid out for 10, 240 collected for 5");
+            helper.assertValueEqual(f.market.totals(key(Items.IRON_INGOT)), new MarketStockData.Totals(ironBefore.paidOut() + 320,
+                    ironBefore.collected() + 240, ironBefore.unitsSold() + 10, ironBefore.unitsBought() + 5), "per item too");
+            helper.assertValueEqual(expected.netCreated() - before.netCreated(), 80L, "net 80 bits added to the economy");
         });
 
         MarketStockData data = new MarketStockData();
@@ -2454,7 +2454,7 @@ public final class MarketGameTests {
     public static void infoShowsWhereEachFieldComesFrom(GameTestHelper helper) {
         List<String> info = runCommand(helper, "market admin info minecraft:iron_ingot");
         for (String expected : List.of(
-                "  base_price = 16 [file dynamic_economy:example_catalog]",
+                "  base_price = 32 [file dynamic_economy:example_catalog]",
                 "  markup = 0.5 [file dynamic_economy:example_catalog defaults]",
                 "  can_sell = true [default]",
                 "  min_buy_markup = 0.5 [same as markup]",
@@ -2542,7 +2542,7 @@ public final class MarketGameTests {
         List<String> setPrice = runCommand(helper, "market admin tag minecraft:logs setprice 4 preview");
         helper.assertTrue(setPrice.get(1).contains("Of the tag's %d items: %d newly listed, 0 taken off, 1 changed".formatted(logs, logs - 1)),
                 "oak is already listed and changes; every other log would be listed: " + setPrice);
-        helper.assertTrue(setPrice.stream().anyMatch(line -> line.contains("minecraft:oak_log: base_price 2 → 4")), "oak's change shown: " + setPrice);
+        helper.assertTrue(setPrice.stream().anyMatch(line -> line.contains("minecraft:oak_log: base_price 8 → 4")), "oak's change shown: " + setPrice);
         List<String> remove = runCommand(helper, "market admin tag minecraft:logs remove preview");
         helper.assertTrue(remove.get(1).contains("1 taken off"), "removing the tag would delist oak: " + remove);
         List<String> markup = runCommand(helper, "market admin tag minecraft:logs set markup 1.0 preview");
@@ -2550,7 +2550,7 @@ public final class MarketGameTests {
 
         helper.assertValueEqual(MarketOverrides.get(server).snapshot(), before, "no edit was saved");
         helper.assertTrue(MarketCatalog.INSTANCE.get(Items.BIRCH_LOG).isEmpty(), "the live catalog is unchanged");
-        helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.OAK_LOG).map(CatalogEntry::basePrice), Optional.of(2), "oak still at 2");
+        helper.assertValueEqual(MarketCatalog.INSTANCE.get(Items.OAK_LOG).map(CatalogEntry::basePrice), Optional.of(8), "oak still at 8");
         helper.succeed();
     }
 
@@ -2682,7 +2682,7 @@ public final class MarketGameTests {
             f.assertResult(MarketService.trySell(f.player, Items.IRON_INGOT, 10, ANY_PRICE), Result.NOT_ENOUGH_ITEMS);
             List<TradeHistory.Trade> mine = world.recent(f.player.getUUID());
             helper.assertValueEqual(mine.size(), 1, "only the completed trade");
-            helper.assertTrue(!mine.get(0).buy() && mine.get(0).quantity() == 10 && mine.get(0).total() == 160, "what was sold: " + mine);
+            helper.assertTrue(!mine.get(0).buy() && mine.get(0).quantity() == 10 && mine.get(0).total() == 320, "what was sold: " + mine);
         });
         helper.succeed();
     }

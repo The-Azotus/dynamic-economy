@@ -36,7 +36,7 @@ public final class SellPriceTooltip {
         Component each = PriceFormat.money(PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR));
         Component line = stack.getCount() > 1
                 ? Component.translatable("tooltip.dynamic_economy.sell_price_stack", each,
-                PriceFormat.money(PriceFormat.spurs(row.sellTotal(stack.getCount()))), stack.getCount())
+                PriceFormat.money(PriceFormat.amount(row.sellTotal(stack.getCount()))), stack.getCount())
                 : Component.translatable("tooltip.dynamic_economy.sell_price", each);
         event.getToolTip().add(line.copy().withColor(GOLD));
         if (Math.abs(row.factor() - 1) > 0.005) {
