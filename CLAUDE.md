@@ -1,11 +1,13 @@
 # Dynamic-Economy — build brief
 
+> **For contributors:** this file is the working brief for [Claude Code](https://claude.com/claude-code), which reads it automatically, and records the project's design decisions and status. Human contributors will find a shorter overview in [docs/architecture.md](docs/architecture.md); the transaction rules below apply to everyone.
+
 NeoForge 1.21.1 mod (NeoForge 21.1.228, Java 21; optional: Create 6.0.10, Numismatics 1.1.0). Adds a **server-owned global market**: players sell items to the server for currency paid into their bank account, sold items enter one shared persistent stock, and players buy from that stock at a markup. Prices move with supply and demand. Since Phase 14 it is named Dynamic-Economy and has its own coins and bank, using Numismatics' bank when that mod is installed; Create and Numismatics are optional.
 
 Where to find more (read only when needed):
-- `docs/market-design.md` — background and reasoning. This file overrides it.
+- `docs/dev/market-design.md` — background and reasoning. This file overrides it.
 - `docs/admin-guide.md`, `docs/player-guide.md` — every command, catalog field and config option as built.
-- `docs/phase-history.md` — specs for finished Phases 0–15 (Phase 10 includes how `suggest` and the built-in prices work).
+- `docs/dev/phase-history.md` — specs for finished Phases 0–15 (Phase 10 includes how `suggest` and the built-in prices work).
 
 ## How to work
 
@@ -17,7 +19,7 @@ Where to find more (read only when needed):
 
 ## Status
 
-Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/phase-history.md`). Phase 16 (Difficulty preset) dropped by the user on 2026-10-31. Phase 17 (Player exchange) done on branch `phase17` (from `phase15`), approved 2026-11-01 (checked in the user's pack and two-player on a dev server; three small message fixes after approval, 162 GameTests pass with both banks; details in `docs/phase-history.md`). It was the last planned phase. 2026-11-01: `phase17` merged into `main` (Phases 15 and 17) and `mod_version` set to 0.4.0; fixes from a code review committed on `main` the same day (exchange book takes only fresh copies, items with any data are listed; shared owed-payout code; owed contract payouts count on the leaderboard, deposits don't; 166 GameTests pass with both banks); **not yet tagged or pushed**: the user reviews the code first, then tag `v0.4.0` and push `main`, `phase15`, `phase17` and the tag.
+Phases 0–7 released as v0.2.0; Phases 8–14 released as **v0.3.0** on `main` (2026-10-30, tag `v0.3.0`). Phases 8 (recipe + table block), 9 (item classes) and 10 (built-in price packs) done on branch `phase8`; Phase 10 approved by the user on 2026-10-28 (full pack loads with no warnings). Phase 10 result: the built-in pack has 55 files (vanilla + 54 mods): hand-set seeds plus 7,519 packaged suggested prices (one commit per mod); 104 GameTests pass; in the user's pack, `suggest`/`diagnose` show only flint and the check-by-hand group in `craft_profits.txt`, and removing a mod caused no issues. Remaining profitable chains all run through pack generators the user will change with KubeJS (list in `pricing-work/safety_net.txt`). Phase 11 (GUI rework) done on branch `phase11`, approved 2026-10-29 (some manual checks left to the user). Phase 12 (ProgressiveStages) done on branch `phase12`, approved 2026-10-29 (two-player and in-pack checks left to the user). Phase 13 (Leaderboard) done on branch `phase13`, approved 2026-10-29 (in-game look not checked yet). Phase 14 (Standalone currency) done on branch `phase14`, approved 2026-10-30 (in-game checks left to the user; details in `docs/dev/phase-history.md`). All branches pushed to GitHub 2026-10-30. Phase 15 (Contracts) done on branch `phase15` (from `main` at v0.3.0), approved 2026-10-31 (Contracts tab checked in game; two-player checks left to the user; details in `docs/dev/phase-history.md`). Phase 16 (Difficulty preset) dropped by the user on 2026-10-31. Phase 17 (Player exchange) done on branch `phase17` (from `phase15`), approved 2026-11-01 (checked in the user's pack and two-player on a dev server; three small message fixes after approval, 162 GameTests pass with both banks; details in `docs/dev/phase-history.md`). It was the last planned phase. 2026-11-01: `phase17` merged into `main` (Phases 15 and 17) and `mod_version` set to 0.4.0; fixes from a code review committed on `main` the same day (exchange book takes only fresh copies, items with any data are listed; shared owed-payout code; owed contract payouts count on the leaderboard, deposits don't; 166 GameTests pass with both banks); **not yet tagged or pushed**: the user reviews the code first, then tag `v0.4.0` and push `main`, `phase15`, `phase17` and the tag.
 
 Phases 15+ target v0.4.0. Repo: https://github.com/The-Azotus/dynamic-economy (MIT). `main` holds the latest release; start new work on a fresh branch from it. Poker and a random-walk stock market are out of scope.
 
@@ -60,8 +62,8 @@ Files in `data/<namespace>/market/*.json`; classes in `data/<namespace>/market_c
   "defaults": { "markup": 0.5, "sell_fee": 0.0, "dynamic": true },
   "entries": [
     { "item": "minecraft:cobblestone", "base_price": 1,    "unlimited_stock": true },
-    { "item": "minecraft:diamond",     "base_price": 256,  "class": "rare_resource" },
-    { "item": "minecraft:nether_star", "base_price": 8192, "can_sell": false }
+    { "item": "minecraft:diamond",     "base_price": 512,  "class": "rare_resource" },
+    { "item": "minecraft:nether_star", "base_price": 16384, "can_sell": false }
   ]
 }
 ```
@@ -72,7 +74,7 @@ Precedence: server config < class < file `defaults` < entry < tag rules (creatio
 
 ## Current phase: none
 
-Phase 17 was the last planned phase. v0.4.0 is merged on `main`, waiting for the user's code review before tagging and pushing. Phase 17's spec and decisions are in `docs/phase-history.md`.
+Phase 17 was the last planned phase. v0.4.0 is merged on `main`, waiting for the user's code review before tagging and pushing. Phase 17's spec and decisions are in `docs/dev/phase-history.md`.
 
 ## Report format (after every phase)
 

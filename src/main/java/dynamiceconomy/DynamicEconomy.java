@@ -46,6 +46,11 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 
+/**
+ * The mod's entry point: registers the config, blocks, items, menu and network, adds the built-in datapacks, and hooks
+ * the server events everything else hangs off (catalog reloads, commands, the per-tick market, contract and exchange
+ * work, logins, server start and stop). See {@code docs/architecture.md} for a map of the code.
+ */
 @Mod(DynamicEconomy.MOD_ID)
 public final class DynamicEconomy {
     public static final String MOD_ID = "dynamic_economy";

@@ -1,5 +1,7 @@
 # Phase history (Phases 0–15, done)
 
+> **Development notes, not user documentation.** For how the mod works today, read the [admin guide](../admin-guide.md) and the [player guide](../player-guide.md).
+
 Archived from `CLAUDE.md`. These are the original specs for finished phases. The code and the guides in `docs/` are now the source of truth; read this only when you need the reasoning behind how something was built.
 
 ## Phase 0 — Setup and verification (done)
