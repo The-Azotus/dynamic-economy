@@ -342,6 +342,67 @@ public final class CatalogTests {
         helper.succeed();
     }
 
+    /** suggested.csv's catalog rows: unchanged ones are left out, unless they come from the file the import rewrites. */
+    @GameTest(template = EMPTY)
+    public static void importLeavesOutUnchangedListedRows(GameTestHelper helper) {
+        MarketCatalog.Loaded loaded = MarketCatalog.load(List.of(
+                sourceFile("built_in", 0, """
+                        { "entries": [
+                          { "item": "minecraft:iron_ingot", "base_price": 10, "class": "rare_resource", "sell_fee": 0.1 },
+                          { "item": "minecraft:gold_ingot", "base_price": 40 } ] }"""),
+                new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("config", "imported_minecraft"), 1, "config",
+                        JsonParser.parseString("""
+                                { "defaults": { "replace": true }, "entries": [ { "item": "minecraft:copper_ingot", "base_price": 5 } ] }"""))));
+        try {
+            Path root = Files.createTempDirectory("market-listed-rows");
+            try {
+                CatalogExport.Result result = CatalogExport.export(root, Optional.of("minecraft"), loaded.entries().values(),
+                        item -> loaded.sources().getOrDefault(item, FieldSource.NONE));
+                // items.csv as suggested.csv has it: gold edited in the sheet, and one suggestion.
+                Csv.Table table = Csv.parse(Files.readString(result.folder().resolve("items.csv")));
+                List<String> header = new ArrayList<>(table.headers());
+                header.add("price_source");
+                StringBuilder csv = new StringBuilder(Csv.line(header));
+                for (Csv.Row row : table.rows()) {
+                    List<String> cells = new ArrayList<>(table.headers().stream().map(row::get).toList());
+                    String item = row.get("item_id");
+                    if (item.equals("minecraft:gold_ingot")) {
+                        cells.set(table.headers().indexOf("base_price"), "45");
+                    } else if (item.equals("minecraft:iron_block")) {
+                        cells.set(table.headers().indexOf("base_price"), "100");
+                        cells.set(table.headers().indexOf("class"), "common_processed");
+                    }
+                    cells.add(item.equals("minecraft:iron_block") ? "suggested" : row.get("in_catalog").equals("true") ? "catalog" : "");
+                    csv.append(Csv.line(cells));
+                }
+                Function<Item, Optional<CatalogEntry>> live = item -> Optional.ofNullable(loaded.entries().get(item));
+                Function<Item, Map<String, List<FieldSource>>> sources = item -> loaded.sources().getOrDefault(item, FieldSource.NONE);
+
+                CatalogImport.Report toConfig = CatalogImport.analyze(csv.toString(), CatalogImport.alreadyListed(live, sources, true));
+                helper.assertValueEqual(toConfig.rejected(), List.of(), "imports cleanly");
+                helper.assertValueEqual(toConfig.decoded().stream().map(CatalogEntry::item).collect(java.util.stream.Collectors.toSet()),
+                        Set.of(Items.GOLD_INGOT, Items.COPPER_INGOT, Items.IRON_BLOCK),
+                        "iron is left out; edited gold, copper from the file being rewritten, and the suggestion stay");
+                helper.assertValueEqual(toConfig.skippedListed(), 1, "iron counted as left out");
+                helper.assertValueEqual(toConfig.decoded().stream().filter(e -> e.item() == Items.GOLD_INGOT).findFirst().orElseThrow().basePrice(),
+                        45, "with the sheet's change");
+
+                CatalogImport.Report toWorld = CatalogImport.analyze(csv.toString(), CatalogImport.alreadyListed(live, sources, false));
+                helper.assertValueEqual(toWorld.decoded().stream().map(CatalogEntry::item).collect(java.util.stream.Collectors.toSet()),
+                        Set.of(Items.GOLD_INGOT, Items.IRON_BLOCK), "into the world's datapack, the config folder's copper is left out too");
+
+                helper.assertValueEqual(CatalogImport.analyze(csv.toString()).skippedListed(), 0, "without a rule nothing is left out");
+                helper.assertValueEqual(CatalogImport.analyze(csv.toString().replace(",catalog\r\n", ",\r\n"),
+                        CatalogImport.alreadyListed(live, sources, true)).skippedListed(), 0, "rows not marked catalog are never left out");
+            } finally {
+                deleteTree(root);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        helper.succeed();
+    }
+
     private static MarketCatalog.SourceFile sourceFile(String name, int order, String json) {
         return new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("test", name), order, "pack" + order,
                 JsonParser.parseString(json));

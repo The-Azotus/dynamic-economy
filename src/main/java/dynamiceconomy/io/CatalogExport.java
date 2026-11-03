@@ -130,8 +130,14 @@ public final class CatalogExport {
         return row;
     }
 
-    /** Reference columns after the catalog ones in {@code suggested.csv}; the importer ignores them. */
-    static final List<String> SUGGESTION_COLUMNS = List.of("price_source", "exact_cost", "recipe", "recipe_type", "depth", "note");
+    static final String PRICE_SOURCE = "price_source";
+    /** {@code price_source} of an item that was already listed: its row holds the live values. */
+    static final String FROM_CATALOG = "catalog";
+    /**
+     * Reference columns after the catalog ones in {@code suggested.csv}. The importer reads only {@code price_source},
+     * to leave out unchanged {@code catalog} rows ({@link CatalogImport#alreadyListed}).
+     */
+    static final List<String> SUGGESTION_COLUMNS = List.of(PRICE_SOURCE, "exact_cost", "recipe", "recipe_type", "depth", "note");
 
     /** Where the suggestions went and how many of each kind there were. */
     public record SuggestionResult(Path folder, int listed, int suggested, int underOneBit, int toReview, int noRecipe,
@@ -176,7 +182,7 @@ public final class CatalogExport {
             if (entry != null) {
                 listedCount++;
                 row = row(item, id, entry, sources.apply(item));
-                extra = List.of("catalog", "", "", "", "", "");
+                extra = List.of(FROM_CATALOG, "", "", "", "", "");
             } else {
                 row = row(item, id, null, FieldSource.NONE);
                 if (suggestion != null) {

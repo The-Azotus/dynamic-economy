@@ -265,7 +265,7 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         List<SourceFile> files = new ArrayList<>();
         Map<ResourceLocation, JsonElement> classFiles = new LinkedHashMap<>();
         List<Problem> problems = new ArrayList<>();
-        readFolder(root.resolve("market"), "config", problems,
+        readFolder(root.resolve("market"), CONFIG_NAMESPACE, problems,
                 (id, json) -> files.add(new SourceFile(id, order, CONFIG_PACK_ID, json)));
         readFolder(root.resolve("market_classes"), DynamicEconomy.MOD_ID, problems, classFiles::put);
         return new ConfigFolder(files, classFiles, problems);
@@ -273,6 +273,8 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
 
     /** The pack name config-folder files are reported under. */
     public static final String CONFIG_PACK_ID = "config/" + DynamicEconomy.MOD_ID + "/catalog";
+    /** The namespace of the config folder's market files: {@code market/prices.json} loads as {@code config:prices}. */
+    public static final String CONFIG_NAMESPACE = "config";
 
     private static void readFolder(Path folder, String namespace, List<Problem> problems,
                                    BiConsumer<ResourceLocation, JsonElement> found) {

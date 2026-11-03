@@ -685,14 +685,17 @@ public final class MarketCommand {
 
         CatalogImport.Report report;
         try {
-            report = CatalogImport.analyze(readText(csv));
+            report = CatalogImport.analyze(readText(csv), CatalogImport.alreadyListed(MarketCatalog.INSTANCE::get,
+                    MarketCatalog.INSTANCE::sources, toConfig));
         } catch (IOException e) {
             source.sendFailure(Component.literal("Could not read " + typed + ": " + e.getMessage()));
             return 0;
         }
-        source.sendSuccess(() -> Component.literal("%s%s: %d entries to write across %d mods, %d rows skipped (no base_price), %d rejected"
+        String listed = report.skippedListed() == 0 ? ""
+                : ", %d already-listed rows left out (unchanged, and not from the file this import rewrites)".formatted(report.skippedListed());
+        source.sendSuccess(() -> Component.literal("%s%s: %d entries to write across %d mods, %d rows skipped (no base_price)%s, %d rejected"
                 .formatted(preview ? "Preview of " : "Import of ", typed, report.toWrite(), report.byMod().size(),
-                        report.skippedBlank(), report.rejected().size())), false);
+                        report.skippedBlank(), listed, report.rejected().size())), false);
         for (int i = 0; i < report.rejected().size(); i++) {
             String reason = report.rejected().get(i);
             DynamicEconomy.LOGGER.warn("Market import {}: rejected {}", typed, reason);

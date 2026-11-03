@@ -148,7 +148,7 @@ In a big modpack, you only need to price the raw materials (ores, logs, crops, m
 
 1. Price the raw materials, by any of the ways above.
 2. Run `/market admin suggest` (or `/market admin suggest <modid>` for one mod) from the console or as a level-4 operator. It writes a folder like `config/dynamic_economy/exports/2026-10-23_09-30-00/` (its reply gives the name) holding `suggested.csv`, `craft_profits.txt`, `chain_profits.txt`, `chain_details.txt` and `skipped_recipes.txt`. Nothing on the market changes.
-3. Review the file in a spreadsheet. Before importing, delete every row whose `price_source` isn't `suggested` (filter on that column): the `catalog` rows hold the item's current values, so importing them would copy the built-in prices into your import file, and later updates to the built-in prices wouldn't reach those items. Then import it like any other CSV, for example `/market admin import "exports/2026-10-23_09-30-00/suggested.csv" config`.
+3. Review the file in a spreadsheet, then import it like any other CSV, for example `/market admin import "exports/2026-10-23_09-30-00/suggested.csv" config`. The import leaves out the `catalog` rows (items already listed) that you haven't changed, as described below the column table.
 
 [Pricing a whole modpack](#pricing-a-whole-modpack) below puts these steps, and the checks after them, in order.
 
@@ -158,15 +158,22 @@ Prices are rounded down and the 10% is less than any built-in markup, so buying 
 
 Items from Chipped and Rechiseled (decorative block variants, thousands each) are left out of the market: `suggest` never prices them and leaves them out of `suggested.csv`. You can still list one by hand.
 
-`suggested.csv` has the same columns as `items.csv`, with the suggested `base_price` and `class` filled in, plus these columns for reference (the importer ignores them):
+`suggested.csv` has the same columns as `items.csv`, with the suggested `base_price` and `class` filled in, plus these columns for reference (the importer reads only `price_source`):
 
 | Column | Meaning |
 | --- | --- |
-| `price_source` | `catalog` (already listed; the row holds its current values, and importing it copies them), `suggested`, or blank (no price could be worked out) |
+| `price_source` | `catalog` (already listed; the row holds its current values), `suggested`, or blank (no price could be worked out) |
 | `exact_cost` | The worked-out cost before rounding down |
 | `recipe`, `recipe_type` | The recipe the price came from |
 | `depth` | How many crafting steps from a priced item |
 | `note` | Anything worth checking; see below |
+
+**`catalog` rows.** An import of `suggested.csv` leaves out each `catalog` row that still matches the item's current values, and says how many it left out. Importing them would only copy their values (usually the built-in prices) into the import file, where they'd stay fixed: later updates to the built-in prices wouldn't reach those items. Two kinds of `catalog` row are imported anyway:
+
+- a row you changed in the sheet, such as a new `base_price`: it's imported like a `suggested` row, replacing the item's entry;
+- a row with any value from the file the import rewrites (`imported_<modid>.json` in the same place, the config folder or the world's datapack), such as a suggestion an earlier import wrote. Leaving it out would drop the item from that file.
+
+Only `suggested.csv` has this column, so an `items.csv` import is unaffected: every priced row in it is imported.
 
 `/market admin diagnose` also reads the recipes, and warns about any listed item whose ingredients can be bought from the market for less than the item sells for. A player could buy the ingredients, craft and sell at a profit forever. The fix is to raise the ingredients' prices, lower the item's, or set `can_sell` false on it. `suggest` writes the same list to `craft_profits.txt` (listed items only: the suggestions are checked in `chain_profits.txt`, and show up in `craft_profits.txt` once imported), in three groups:
 
@@ -195,7 +202,7 @@ The whole process, from the built-in prices to a finished pack that applies to e
 3. In `suggested.csv`, the rows noted **No recipe makes it** or **every recipe for it needs an unpriced item** are what's left to price. Add the ones you want listed to `pack_prices.json`.
 4. Fix the price gaps in `craft_profits.txt` and the first item of each chain in `chain_profits.txt`, also in `pack_prices.json`.
 5. Reload and repeat steps 2–4 until nothing new turns up. Each run prices from the current files, so fixes carry down the chains.
-6. In the last `suggested.csv`, delete every row whose `price_source` isn't `suggested`. Run `/market admin import "exports/<folder>/suggested.csv" config preview`, then the same command without `preview`.
+6. Import the last `suggested.csv`: run `/market admin import "exports/<folder>/suggested.csv" config preview`, then the same command without `preview`.
 7. Run `/market admin diagnose` to check the result. Put any later fix in `pack_prices.json`; to reprice the suggestions, see **Re-running after a fix** above.
 
 #### How suggest works
@@ -359,7 +366,7 @@ See [Supply and demand](#supply-and-demand) for the formulas.
 }
 ```
 
-Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file with the same name in the [config folder](#the-config-folder-prices-for-every-world) (`market_classes/rare_resource.json`) or at the same path in your own datapack (`data/dynamic_economy/market_classes/rare_resource.json`). Unlike catalog entries, it replaces the whole class, so give every value the class should have. `/market admin classes` prints each class's values as JSON (run it from the server console to copy them), and the built-in files are in the mod's jar at `data/dynamic_economy/market_classes/`. For example, the built-in `rare_resource` is:
+Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file with the same name in the [config folder](#the-config-folder-prices-for-every-world) (`market_classes/rare_resource.json`) or at the same path in your own datapack (`data/dynamic_economy/market_classes/rare_resource.json`). Unlike catalog entries, it replaces the whole class, so give every value the class should have. `/market admin classes` prints each class's values as JSON; in game, click a class's values to copy them as a class file (hovering shows where to save it), or copy them from the server console. The built-in files are in the mod's jar at `data/dynamic_economy/market_classes/`. For example, the built-in `rare_resource` is:
 
 ```json
 {
@@ -615,7 +622,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin restore <name> <stock\|prices\|edits\|all> [confirm]` | 2 | Shows what restoring would change, then restores with `confirm`. |
 | `/market admin audit [page]` | 2 | The latest admin actions from the [audit log](#audit-log). |
 | `/market admin tag <tag> ...`, `/market admin tags` | 2 | Tag rules; see [Tag rules](#tag-rules-pricing-many-items-at-once). |
-| `/market admin classes` | 2 | Lists the [item classes](#item-classes), their values and how many listed items use each. |
+| `/market admin classes` | 2 | Lists the [item classes](#item-classes), their values and how many listed items use each. In game, click a class's values to copy it as a class file. |
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
