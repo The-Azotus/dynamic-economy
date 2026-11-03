@@ -20,14 +20,14 @@ The market is owned by the server. Players sell items to it and buy items from i
 
 **Where an item's settings come from**, weakest to strongest:
 
-1. **The server config** (`config/dynamic_economy-server.toml`): defaults for supply and demand, and for contracts.
+1. **Built-in defaults and the server config.** The fixed defaults are `markup` 0.5, `sell_fee` 0, `can_sell` and `can_buy` true, `start_stock` 0, `unlimited_stock` false, `dynamic` true, and `min_buy_markup` equal to `markup`. Supply and demand (`sell_impact`, `buy_impact`, `recovery`, `floor`, `ceiling`) and contracts take their defaults from the server config, `config/dynamic_economy-server.toml`. `info` shows these as `[default]`, `[same as markup]` or `[server config]`.
 2. **The item's [class](#item-classes)**, such as `rare_resource`.
 3. **The catalog file's `defaults` block.**
 4. **The item's catalog entry**: JSON in a datapack or the [config folder](#the-config-folder-prices-for-every-world), including the built-in prices and what the spreadsheet import writes. When several files list one item, each higher file changes only the fields it sets (see [Changing a built-in price](#changing-a-built-in-price)).
 5. **[Tag rules](#tag-rules-pricing-many-items-at-once)**: in-game rules such as "every log costs 4 bits". Where rules overlap, later ones win.
 6. **[Item edits](#editing-prices-in-game)**: in-game changes to one item.
 
-Each layer only changes the fields it sets; everything else comes from the layers below it. So pricing one item by hand always beats a tag rule, and a tag rule that only sets a price leaves the item's class alone. Tag rules and item edits are saved with the world and never touch stock or current prices. `/market admin info <item>` shows which layer each of an item's values came from.
+Each layer only changes the fields it sets; everything else comes from the layers below it. So pricing one item by hand always beats a tag rule, and a tag rule that only sets a price leaves the item's class alone. Tag rules and item edits are saved with the world. Like catalog files, they never touch stock or price factors: a new `base_price` applies at once, at the item's current factor. `/market admin info <item>` shows which layer each of an item's values came from.
 
 ## Banks and coins
 
@@ -130,13 +130,13 @@ The mod also includes a small **example catalog**: cobblestone and oak log (unli
 4. Check it: `/market admin import "exports/2026-10-23_09-30-00/items.csv" preview`. This writes nothing. It reports how many entries would be written, how many rows were skipped and why any were rejected.
 5. Import it: run the same command without `preview`. To import into the [config folder](#the-config-folder-prices-for-every-world) instead, so the prices apply to every world, add `config`: `/market admin import "exports/2026-10-23_09-30-00/items.csv" config` (and `config preview` to check it first).
 
-The import writes one file per mod, `imported_<modid>.json`. By default it goes into a world datapack at `<world>/datapacks/dynamic_economy_catalog/`, which the first import creates and enables. With `config`, it goes into `config/dynamic_economy/catalog/market/`. Later imports back up each file they replace as `<name>.json.bak`. The catalog reloads straight away either way, and importing never changes stock or current prices.
+The import writes one file per mod, `imported_<modid>.json`. By default it goes into a world datapack at `<world>/datapacks/dynamic_economy_catalog/`, which the first import creates and enables. With `config`, it goes into `config/dynamic_economy/catalog/market/`. An import rewrites each mod's `imported_<modid>.json` from that mod's rows in this CSV only, so items an earlier import listed that this CSV leaves out go back to what lower files say (usually the built-in prices), or leave the market if nothing else lists them; the old file is kept as `<name>.json.bak`. Files for mods with no imported rows (none, or all blank or rejected) are left alone. The catalog reloads straight away either way. Importing never changes stock or price factors: a new `base_price` applies at once, at the item's current factor.
 
 Each imported row **replaces** the item's entry from lower files, such as the built-in prices, rather than changing only some fields: the spreadsheet showed every field the entry sets, so a cell you cleared means "not set". The files are marked with `"replace": true` for this (see [Catalog files](#catalog-files)).
 
 Put the path in quotes, since it contains slashes. To export one mod only, use `/market admin export <modid>`.
 
-Items that also have an in-game edit keep that edit, because edits beat catalog files. The import lists any such items; use `/market admin revert <item>` to let the imported value through.
+Items whose imported field is also set by an in-game edit or a [tag rule](#tag-rules-pricing-many-items-at-once) keep that value, since both beat catalog files. The import lists items with edits, but not items a tag rule changes; `/market admin info <item>` shows those. Drop an edit with `/market admin revert <item>`. A tag rule can't exempt one item: give the item its own edit, or change the rule (`/market admin tag <tag> unset <field>` or `revert`).
 
 The import also lists items a higher catalog file still changes. For example, an import into the config folder doesn't override an earlier import into the world's datapack, which sits above the config folder. `/market admin info <item>` shows which file it is; delete or edit that file to let the imported value through.
 
@@ -147,10 +147,12 @@ The [spreadsheet format](#spreadsheet-format) section has the details on columns
 In a big modpack, you only need to price the raw materials (ores, logs, crops, mob drops, loot) yourself. The market can work out the rest from the game's recipes:
 
 1. Price the raw materials, by any of the ways above.
-2. Run `/market admin suggest` (or `/market admin suggest <modid>` for one mod) from the console or as a level-4 operator. It writes `suggested.csv` to a new folder in `config/dynamic_economy/exports/`. Nothing on the market changes.
-3. Review the file in a spreadsheet, then import it like any other CSV.
+2. Run `/market admin suggest` (or `/market admin suggest <modid>` for one mod) from the console or as a level-4 operator. It writes a folder like `config/dynamic_economy/exports/2026-10-23_09-30-00/` (its reply gives the name) holding `suggested.csv`, `craft_profits.txt`, `chain_profits.txt`, `chain_details.txt` and `skipped_recipes.txt`. Nothing on the market changes.
+3. Review the file in a spreadsheet. Before importing, delete every row whose `price_source` isn't `suggested` (filter on that column): the `catalog` rows hold the item's current values, so importing them would copy the built-in prices into your import file, and later updates to the built-in prices wouldn't reach those items. Then import it like any other CSV, for example `/market admin import "exports/2026-10-23_09-30-00/suggested.csv" config`.
 
-For each unlisted item, `suggest` finds its cheapest recipe, adds up the cheapest priced ingredients, divides by how many the recipe makes, and adds 10% for processing. It repeats until nothing gets cheaper, so long crafting chains are priced from the bottom up. It reads every recipe type that lists its items, including modded machines such as Create's presses and mills, and lists any recipe type it couldn't use, with the reason, in `skipped_recipes.txt`. Each suggestion also gets a class: `rare_processed` if rare ingredients make up much of its cost, otherwise `common_processed`. [How suggest works](#how-suggest-works) below has the details, for when a price looks wrong.
+[Pricing a whole modpack](#pricing-a-whole-modpack) below puts these steps, and the checks after them, in order.
+
+For each unlisted item, `suggest` finds its cheapest recipe, adds up the cheapest priced ingredients, divides by how many the recipe makes, and adds 10% for processing. It repeats until nothing gets cheaper, so long crafting chains are priced from the bottom up. It reads every recipe type that lists its items, including modded machines such as Create's presses and mills, and lists any recipe type it couldn't use, with the reason, in `skipped_recipes.txt`. Items made only by those recipe types show as **No recipe makes it**: price them by hand if they should be listed. The craft-profit checks can't see those recipes either, so look over any skipped type that makes valuable items. Each suggestion also gets a class: `rare_processed` if rare ingredients make up much of its cost, otherwise `common_processed`. [How suggest works](#how-suggest-works) below has the details, for when a price looks wrong.
 
 Prices are rounded down and the 10% is less than any built-in markup, so buying the ingredients from the market, crafting and selling the result never pays. If your catalog gives any item a markup (or `min_buy_markup`) below 10%, `suggest` uses that smaller figure instead and says so in its reply.
 
@@ -160,13 +162,13 @@ Items from Chipped and Rechiseled (decorative block variants, thousands each) ar
 
 | Column | Meaning |
 | --- | --- |
-| `price_source` | `catalog` (already listed), `suggested`, or blank (no price could be worked out) |
+| `price_source` | `catalog` (already listed; the row holds its current values, and importing it copies them), `suggested`, or blank (no price could be worked out) |
 | `exact_cost` | The worked-out cost before rounding down |
 | `recipe`, `recipe_type` | The recipe the price came from |
 | `depth` | How many crafting steps from a priced item |
 | `note` | Anything worth checking; see below |
 
-`/market admin diagnose` also reads the recipes, and warns about any listed item whose ingredients can be bought from the market for less than the item sells for. A player could buy the ingredients, craft and sell at a profit forever. The fix is to raise the ingredients' prices, lower the item's, or set `can_sell` false on it. `suggest` writes the same list to `craft_profits.txt`, in three groups:
+`/market admin diagnose` also reads the recipes, and warns about any listed item whose ingredients can be bought from the market for less than the item sells for. A player could buy the ingredients, craft and sell at a profit forever. The fix is to raise the ingredients' prices, lower the item's, or set `can_sell` false on it. `suggest` writes the same list to `craft_profits.txt` (listed items only: the suggestions are checked in `chain_profits.txt`, and show up in `craft_profits.txt` once imported), in three groups:
 
 - **Price gaps** (warnings): fix them as above.
 - **Check by hand** (notes): recipe types that may take fluids, extra items or ingredient amounts the check can't see, such as Spectrum's fusion shrine. These are often false alarms.
@@ -181,6 +183,20 @@ Notes to look out for:
 - **Converts back into …:** the item and its ingredient turn into each other, like iron blocks and ingots. If both are listed, a player whose ingots have dropped in price can craft blocks and sell those at full price instead. List only one form, or set `can_sell` false on the other.
 - **Price kept falling through a recipe loop:** a set of recipes makes the item out of less than itself, so the suggestion is too low. Price it by hand. This should be rare: an item is never priced from ingredients that were themselves priced from it, so a loop such as one plank sawn into a door and the door sawn back into two planks is cut where it closes. The loop itself still works in game, so consider removing one of its recipes.
 - **No recipe makes it** and **every recipe for it needs an unpriced item:** price these by hand if they should be listed, then run `suggest` again.
+
+**Re-running after a fix.** `suggest` never reprices an item that's already listed, and imported suggestions count as listed. To reprice them from new ingredient prices, delete the `imported_<modid>.json` files the import wrote, run `/market admin reload`, then run `suggest` and import again.
+
+#### Pricing a whole modpack
+
+The whole process, from the built-in prices to a finished pack that applies to every world:
+
+1. Put your own prices for raw materials, and any fixes, in one file in the [config folder](#the-config-folder-prices-for-every-world), such as `config/dynamic_economy/catalog/market/pack_prices.json`. Files there apply in name order, so pick a name that sorts after `imported_`: then its entries change what an import writes, instead of being replaced by it. Run `/market admin reload`.
+2. Run `/market admin suggest`.
+3. In `suggested.csv`, the rows noted **No recipe makes it** or **every recipe for it needs an unpriced item** are what's left to price. Add the ones you want listed to `pack_prices.json`.
+4. Fix the price gaps in `craft_profits.txt` and the first item of each chain in `chain_profits.txt`, also in `pack_prices.json`.
+5. Reload and repeat steps 2–4 until nothing new turns up. Each run prices from the current files, so fixes carry down the chains.
+6. In the last `suggested.csv`, delete every row whose `price_source` isn't `suggested`. Run `/market admin import "exports/<folder>/suggested.csv" config preview`, then the same command without `preview`.
+7. Run `/market admin diagnose` to check the result. Put any later fix in `pack_prices.json`; to reprice the suggestions, see **Re-running after a fix** above.
 
 #### How suggest works
 
@@ -226,12 +242,14 @@ Catalog files live in any datapack at `data/<namespace>/market/<name>.json`, or 
 ```
 
 - `entries` is required: the items to list.
-- `defaults` is optional. Its fields apply to every entry in that file unless the entry sets the field itself. It can't contain `item`.
+- `defaults` is optional. Its fields apply to every entry in that file unless the entry sets the field itself. It can't contain `item`. Because `defaults` beats the class, a `defaults` that sets `markup` or `sell_fee`, as in the example above, overrides those values for every entry in the file that names a class; leave such fields out of `defaults` in a file that uses classes.
 - `required_mods` is optional: a list of mod IDs, such as `["create"]`. If any of them isn't installed, the whole file is skipped without a warning. Use it for a price file that belongs to one mod.
-- **Several files for one item:** files are applied from lowest priority to highest: the built-in prices, then the config folder, then the world's datapacks (and the example catalog, if enabled) in their `/datapack list` order. Within one datapack or the config folder, files apply in name order, and the log warns about the repeat. Each later file changes **only the fields it sets** and keeps the rest; see [Changing a built-in price](#changing-a-built-in-price).
-- `"replace": true` on an entry makes it start over instead: fields that lower files set and this entry doesn't go back to the class, the server config or the built-in defaults. Put it in `defaults` to apply it to every entry in the file. The spreadsheet import writes its files this way.
-- **Reloading:** after editing files, run `/market admin reload` to reload just the market, or `/reload` to reload all datapacks (use `/reload` after adding a new datapack).
-- **Bad entries are skipped, not fatal.** An unknown item, an out-of-range value or a missing field skips only that entry, with a log warning naming the file and entry. If a lower file already lists the item, its entry stays as it was. Entries with `base_price` 0 or below are skipped with one summary warning, so a half-filled template is safe to load.
+- **Several files for one item:** files are applied from lowest priority to highest: the built-in prices, then the mods' own data, then the config folder, then the world's datapacks (and the example catalog, if enabled) in their `/datapack list` order. Within one datapack or the config folder, files apply in order of their path, compared as text, and the log warns about the repeat. Each later file changes **only the fields it sets** and keeps the rest; see [Changing a built-in price](#changing-a-built-in-price).
+- **How a later file's fields combine with a lower one's:** each file's `defaults` are first filled into its own entries, and the result is laid over the lower files. So a later file's `defaults` beat a lower file's entry for the same field. A class never beats a value a file set: giving an item a new `class` in your file changes only the fields no file sets.
+- `"replace": true` on an entry makes it start over instead: every field lower files set, `class` included, is dropped, so repeat any you want to keep; fields this entry doesn't set come from its own class, the server config or the built-in defaults. Put it in `defaults` to apply it to every entry in the file. The spreadsheet import writes its files this way.
+- **Reloading:** after editing files, run `/market admin reload` to reload just the market, or `/reload` to reload all datapacks (use `/reload` after adding a new datapack). Players get the new prices at once: an open market screen and item tooltips update without reopening or rejoining.
+- **Bad entries are skipped, not fatal.** An unknown item, an out-of-range value or a missing field skips only that entry, with a log warning naming the file and entry. (An entry that changes an item a lower file lists may leave out `base_price`.) If a lower file already lists the item, its entry stays as it was. Entries with `base_price` 0 or below are skipped with one summary warning, so a half-filled template is safe to load.
+- **A file that can't be read as JSON** (a missing brace or quote, a trailing comma inside an entry) is skipped whole, and lower files' entries for its items stay. A trailing comma after the last entry only adds an empty entry, skipped with `entry N: must be an object`. The log and `/market admin diagnose` show it as an error, `Market file … could not be read: …` (`Catalog file …` for the config folder), with the line and column of the mistake.
 
 You can also start from a file in `templates/` from an export.
 
@@ -246,8 +264,11 @@ config/dynamic_economy/catalog/
 ```
 
 - The files are the same format as in a datapack; there's no `pack.mcmeta` or `data/` folder to set up. The mod creates both folders on first start.
-- **Priority:** above the built-in prices and the mods' own data, below the world's own datapacks and the example catalog. So the folder sets the pack-wide prices, and one world can still change them in its datapack. A world datapack moved to the bottom of `/datapack list` (with `/datapack enable ... first`) ends up below the folder instead. A pack another mod adds to the top of the list is below the folder in a world with no datapacks and above it otherwise; such packs rarely hold market files.
+- **Filling it:** write files by hand ([Catalog files](#catalog-files) has the format, and [Changing a built-in price](#changing-a-built-in-price) a one-line example), or import a spreadsheet straight into it with `/market admin import "<path>" config`. The import writes `market/imported_<modid>.json`, one per mod; see [Pricing from a spreadsheet](#pricing-from-a-spreadsheet) for the steps and the [spreadsheet format](#spreadsheet-format) for the columns.
+- **Priority:** `/datapack list` shows packs lowest priority first, and a pack listed later overrides one listed earlier. The folder sits just below the first world datapack (`file/…`) or the example catalog, whichever comes first, and never below the built-in prices or the mods' own data; with neither in the list, it's above every pack. So the folder sets the pack-wide prices, and one world can still change them in its datapack. A world datapack moved to the bottom (`/datapack enable … first`) ends up below the folder. Packs other mods add are above the folder only if they're listed after the first world datapack or the example catalog, whichever comes first; such packs rarely hold market files.
+- **Order inside the folder:** files apply in name order, so a hand-written `my_prices.json` changes what `imported_<modid>.json` sets, while a file that sorts before `imported_` is replaced by the import without a word. The import lists the items a later file such as `my_prices.json` changes, among those "changed by a higher catalog file".
 - File names may use only lowercase letters, digits, `_`, `-` and `.`; a file with another name is skipped with a warning. In `/market admin info`, a file `market/my_prices.json` shows as `file config:my_prices`.
+- **Shipping it in a modpack:** include `config/dynamic_economy/catalog/` in the pack's `config/` folder. The mod never changes your files there; only `import … config` writes to it (`market/imported_<modid>.json`, keeping the old one as `.bak`), so don't name your own files `imported_*`.
 - A class file takes the mod's namespace: `market_classes/rare_resource.json` replaces the built-in `rare_resource` class, and `market_classes/gems.json` adds a class called `gems`.
 - The folder is read whenever the catalog loads: at start, `/reload` and `/market admin reload`. An empty folder does nothing. Only the server reads it, so players don't need it.
 
@@ -259,9 +280,13 @@ An entry in your own catalog file **changes only the fields it sets**, and the b
 { "entries": [ { "item": "minecraft:diamond", "base_price": 600 } ] }
 ```
 
-Put it in the [config folder](#the-config-folder-prices-for-every-world) for every world, or in a world's datapack. An entry for an item the built-in prices don't list still needs a `base_price`. To drop a built-in field rather than change it, give the entry `"replace": true` and every field you want.
+Put it in the [config folder](#the-config-folder-prices-for-every-world) for every world, or in a world's datapack. Run `/market admin info <item>` first to see whether the built-in prices list the item, and with which class and values. An entry for an item they don't list still needs a `base_price`. To drop a built-in field rather than change it, give the entry `"replace": true` and every field you want.
 
-You can also edit in game, which works the same way: `/market admin set minecraft:diamond markup 0.8`, or for a whole tag, `/market admin tag c:gems set markup 0.8`. See [Editing prices in game](#editing-prices-in-game). `/market admin info <item>` shows where each value came from; built-in entries show as `file dynamic_economy:<modid>`.
+`/market admin info <item>` shows where each value came from. Built-in entries show as `file dynamic_economy:<modid>` (`dynamic_economy:minecraft` for vanilla). With the file above saved as `market/my_prices.json` in the config folder, `info minecraft:diamond` shows `base_price = 600 [file config:my_prices; overrides 512 from file dynamic_economy:minecraft]`.
+
+**Don't copy a built-in file to the same path** in a datapack (`data/dynamic_economy/market/<modid>.json`). Like any datapack file, the copy replaces the whole built-in file instead of merging, so every item it leaves out loses its built-in price. Use another file name, or the config folder. The built-in files are in the mod's jar (open it as a zip) under `default_prices/data/dynamic_economy/market/`, and `items.csv` from [`/market admin export`](#pricing-from-a-spreadsheet) shows their values.
+
+You can also edit in game, which works the same way: `/market admin set minecraft:diamond markup 0.8`, or for a whole tag, `/market admin tag c:gems set markup 0.8`. See [Editing prices in game](#editing-prices-in-game). Edits and tag rules are saved with the world, though, so for every world put the change in a config-folder file instead, and `/market admin revert <item>` (or `tag <tag> revert`) any edit, so it doesn't hide the file's value.
 
 ### Item classes
 
@@ -281,7 +306,7 @@ A class fills in only the fields that nothing stronger sets (see [where an item'
 
 Classes are the main protection against someone finding a way to get a lot of a valuable item. Rare classes move their price a lot per unit sold and recover slowly, so dumping a big pile pays far less than its base price. There are no per-player limits: the price does the limiting.
 
-The mod ships these classes, and the built-in prices use them. Every one passes the round-trip check (see [Keeping it fair](#supply-and-demand)); change them to suit how fast your server's economy should move:
+The mod ships these classes. Every built-in price entry names one, and sets nothing else except `base_price` and sometimes `can_buy` or `can_sell`; the built-in files have no `defaults` block. So the class decides everything else: diamonds are `rare_resource`, cobblestone is `common_resource`, and `/market admin info <item>` shows any item's class. Every class passes the round-trip check (see [Keeping it fair](#supply-and-demand)); change them to suit how fast your server's economy should move:
 
 | Class | For | Stock | Markup | Impact per unit | Units to drop 10% | Recovery per step | Half recovered after | Floor – ceiling |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -296,9 +321,9 @@ The mod ships these classes, and the built-in prices use them. Every one passes 
 
 "Units to drop 10%" is how many units sold in a row take the price down by a tenth. "Half recovered after" is how long, at the default 1-minute step, a price takes to win back half of any drop.
 
-They also set [contract](#contracts) sizes: 64–512 units for `common_resource` and `farmable`, 32–256 for `common_processed`, 4–16 for `rare_resource` and `rare_processed`, 2–8 for `rare_loot`. `unique` has `contract_weight: 0`, so its items are never offered.
+They also set [contract](#contracts) sizes: 64–512 units for `common_resource` and `farmable`, 32–256 for `common_processed`, 4–16 for `rare_resource` and `rare_processed`, 2–8 for `rare_loot`, 1–1 for `unique`. `unique` also has `contract_weight: 0`, so its items are never offered.
 
-"Impact per unit" is both `sell_impact` and `buy_impact`. For a sense of scale, at the default 1-minute recovery step:
+"Impact per unit" is both `sell_impact` and `buy_impact`. "Unlimited" stock is `"unlimited_stock": true`; "normal" means the class doesn't set it. The table and the contract sizes are every value the built-in classes set: none sets `sell_fee`, `min_buy_markup` or `contract_premium`, so those come from the entry or the defaults. For a sense of scale, at the default 1-minute recovery step:
 
 - Selling 1,000 cobblestone lowers its sell price to about 82%, and it's back to normal within about half an hour.
 - Selling 100 diamonds lowers theirs to about 61%, and it takes about 35 minutes to recover even half the drop.
@@ -320,6 +345,8 @@ See [Supply and demand](#supply-and-demand) for the formulas.
 | Less money flowing into the economy | Add a `sell_fee`, raise `markup`, or lower farmable items' base prices. See [Where the money goes](#where-the-money-goes). |
 | An item players can sell but not buy, or the reverse | `can_buy: false` or `can_sell: false`. |
 
+**A sell fee on everything.** There's no server-wide `sell_fee` setting. Every built-in price and every `suggest` row names a class, and the built-in files set no fee, so put the fee in the classes: copy each built-in class file into `config/dynamic_economy/catalog/market_classes/` (keeping its name) and add `"sell_fee": 0.05`. A class file replaces the whole class, so keep its other values; `/market admin classes` prints them. Items with no class, or in classes of your own, need the fee in their class, entry, a file's `defaults` or a tag rule. Check an item with `/market admin info <item>`.
+
 **Making your own.** A class is a file in any datapack at `data/<namespace>/market_classes/<name>.json`. It may set any catalog field except `item`, `base_price` and `class`, plus an optional `description`:
 
 ```json
@@ -332,7 +359,17 @@ See [Supply and demand](#supply-and-demand) for the formulas.
 }
 ```
 
-Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file with the same name in the [config folder](#the-config-folder-prices-for-every-world) (`market_classes/rare_resource.json`) or at the same path in your own datapack (`data/dynamic_economy/market_classes/rare_resource.json`). Unlike catalog entries, it replaces the whole class, so give every value the class should have.
+Refer to it as `<namespace>:<name>`. A name without a namespace, such as `rare_resource`, means `dynamic_economy:rare_resource`. To change a built-in class, put a file with the same name in the [config folder](#the-config-folder-prices-for-every-world) (`market_classes/rare_resource.json`) or at the same path in your own datapack (`data/dynamic_economy/market_classes/rare_resource.json`). Unlike catalog entries, it replaces the whole class, so give every value the class should have. `/market admin classes` prints each class's values as JSON (run it from the server console to copy them), and the built-in files are in the mod's jar at `data/dynamic_economy/market_classes/`. For example, the built-in `rare_resource` is:
+
+```json
+{
+  "description": "Scarce raw materials (diamonds, ancient debris). Each sale moves the price noticeably and it recovers slowly.",
+  "markup": 1.0, "sell_impact": 0.005, "buy_impact": 0.005, "recovery": 0.02,
+  "floor": 0.15, "ceiling": 5.0, "contract_min_size": 4, "contract_max_size": 16
+}
+```
+
+`/market admin classes` doesn't show which file a class came from, so give your copy its own `description` to see that it took effect.
 
 - **Checks:** class values must pass the same rules as catalog entries. A class with a bad value is skipped, and so is every entry naming it. Unknown fields in a class file are ignored with a warning. All of these show in `/market admin diagnose`.
 - **Reloading:** `/market admin reload` re-reads classes along with the catalog files, and every member is repriced. Stock and price factors are never touched.
@@ -347,7 +384,7 @@ These commands need operator level 2. Items can be typed with tab completion, su
 | --- | --- |
 | `/market admin setprice <item> <price>` | Sets the base price. Also lists an item that isn't on the market yet. |
 | `/market admin set <item> <field> <value>` | Sets any [catalog field](#catalog-fields), such as `set minecraft:diamond markup 0.25`, `set minecraft:dirt can_buy false` or `set minecraft:diamond class rare_loot`. |
-| `/market admin unset <item> <field>` | Drops one of your edits, so the catalog files decide that field again. |
+| `/market admin unset <item> <field>` | Drops one of your edits, so tag rules and the catalog files decide that field again. |
 | `/market admin remove <item>` | Takes the item off the market. Its stock is kept for if you list it again. |
 | `/market admin revert <item>` | Drops all your edits for the item, back to what the catalog files and tag rules say. |
 | `/market admin clearstock <item>` | Empties the item's stock; it stays listed. |
@@ -355,7 +392,7 @@ These commands need operator level 2. Items can be typed with tab completion, su
 
 For example, `info minecraft:oak_log` might show `base_price = 9 [item edit; overrides 4 from tag rule #minecraft:logs, then 8 from file dynamic_economy:example_catalog]` and `markup = 0.5 [file dynamic_economy:example_catalog defaults]`.
 
-Every edit is checked before it's saved. If it would break a rule, it's refused with the reason and nothing changes; for example, a `min_buy_markup` above the `markup`, or a field set on an item that has no price.
+Every edit is checked before it's saved. If it would break a rule, it's refused with the reason and nothing changes; for example, a `min_buy_markup` above the `markup`, or a field set on an item that has no price. The round-trip check (see [Keeping it fair](#supply-and-demand)) never refuses anything; it only warns, in the server log and in `/market admin diagnose`. So you can change `sell_impact` and `buy_impact` one command at a time, and check `diagnose` once both are set.
 
 ### Tag rules: pricing many items at once
 
@@ -379,7 +416,7 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 
 ## Checking the catalog
 
-`/market admin diagnose` looks over the catalog, your edits and the saved market data, and lists what it finds, ten per page (`/market admin diagnose 2` for the next page). It never changes anything.
+`/market admin diagnose` looks over the catalog, your edits and the saved market data, and lists what it finds, ten per page (`/market admin diagnose 2` for the next page). It never changes anything. In a big pack, the craft-profit warnings are easier to read in `craft_profits.txt`, which [`/market admin suggest`](#suggesting-prices-from-recipes) writes; contract warnings and the other findings appear only here.
 
 | Level | Means | Examples |
 | --- | --- | --- |
@@ -426,7 +463,7 @@ Prices are whole numbers of **bits** (spurs with Numismatics' bank; 1 bit = 1 sp
 | `item` | *required* | The exact item ID, such as `minecraft:iron_ingot`. Enchanted, damaged or renamed copies are never accepted (apart from data listed in the `ignored_components` server config). |
 | `class` | none | An [item class](#item-classes) that fills in the fields nothing else sets, such as `rare_resource`. |
 | `replace` | `false` | Catalog files only: `true` starts the entry over instead of changing only the fields it sets on an entry from a lower file. See [Catalog files](#catalog-files). |
-| `base_price` | *required* | What the market pays for one unit at normal supply, in bits. At least 1; 0 or below means "not priced yet". |
+| `base_price` | *required*, unless a lower file already lists the item ([Changing a built-in price](#changing-a-built-in-price)) | What the market pays for one unit at normal supply, in bits. At least 1; 0 or below means "not priced yet". |
 | `markup` | `0.5` | Added on top when the market sells. `0.5` means buyers pay 150% of base. 0 to 1000. |
 | `sell_fee` | `0.0` | Fraction kept back from what the market pays, such as `0.1` for 10%. Nobody receives it; it's a money sink. 0 to 0.99. |
 | `can_sell` | `true` | Whether players may sell this item to the market. |
@@ -462,9 +499,9 @@ Unlimited items charge `base_price × max(s × (1 + markup), 1 + min_buy_markup)
 **Keeping it fair.** At startup and after every reload, the server log warns about any item whose settings would let a player make money from a round trip in either order: buying and immediately selling back, or selling and buying back. To stay safe:
 
 - keep `buy_impact` no higher than `markup`, and no higher than `sell_impact / (1 − sell_impact)`;
-- don't set `buy_impact` far below `sell_impact`. Otherwise a player can sell a large amount, crashing the price, and buy the same items back at the bottom for less than they were paid. For example, the default settings with `buy_impact = 0` let 3,000 iron be sold and bought back at a profit.
+- don't set `buy_impact` far below `sell_impact`. Otherwise a player can sell a large amount, crashing the price, and buy the same items back at the bottom for less than they were paid. For example, the default settings with `buy_impact = 0` let 3,000 iron be sold and bought back at a profit. How far below is safe depends on `markup`, `sell_fee`, `floor` and `ceiling`, so there's no fixed threshold.
 
-Equal impacts, as in the default config, are safe.
+The default config's values and every built-in class are safe: their impacts are equal and small. Large equal impacts with a low markup can still allow a sell-and-buy-back profit. A `sell_fee`, a higher `markup`, a higher `floor` or a lower `ceiling` only make round trips less profitable. Unlimited and fixed-price items can't profit from a round trip and aren't checked. The server log repeats the check after every reload or edit, and `/market admin diagnose` runs it on demand. It's cautious, so it may warn about an item that can't quite profit; look there after changing impacts.
 
 ## Contracts
 
@@ -481,7 +518,7 @@ The **Contracts** tab shows a board of delivery orders shared by every player: *
 - other items: `base × floor × (1 + markup)`, which is about a third of base with the built-in classes
 - items the market doesn't sell (`can_buy: false`): no limit
 
-An item is only offered if its contract still pays more than selling those units to the market at the normal price. In practice that means unlimited items, fixed-price items and items the market doesn't sell; with the built-in classes, finite items' prices can fall too far. Items the market doesn't buy (`can_sell: false`) are never offered: most were switched off because they could be crafted at a profit, and a contract would pay for them again. The payout is worked out again when it's made, never above what was offered, so it stays safe if you change the item meanwhile.
+An item is only offered if its contract still pays more than selling those units to the market from its normal price (factor 1.0), after `sell_fee` and the drop the sale itself causes. In practice that means unlimited items, fixed-price items and items the market doesn't sell; with the built-in classes, finite items' prices can fall too far. Items the market doesn't buy (`can_sell: false`) are never offered: most were switched off because they could be crafted at a profit, and a contract would pay for them again. The payout is worked out again when it's made, never above what was offered, so it stays safe if you change the item meanwhile.
 
 `/market admin info <item>` says whether an item can be offered, and if not, why. `/market admin diagnose` warns about recipes whose ingredients cost less to buy than a contract for the result pays. To control what's offered, use the `contract_*` [catalog fields](#catalog-fields), in classes, catalog files, tag rules or `/market admin set`: `contract_weight 0` keeps an item off the board, a higher weight makes it more common.
 
@@ -630,7 +667,8 @@ The rest of the file still imports. The first 15 reasons appear in chat, and all
 | `Market file … entry N: unknown item …; skipped` | The item doesn't exist, usually because its mod isn't installed. |
 | `Market file … entry N: Value … outside of range …; skipped` | A field's value is out of range; see [Catalog fields](#catalog-fields). |
 | `Market file … changes (or replaces) … listed earlier in … of the same pack` | Two files in one datapack, or in the config folder, list the same item; the later name's fields win. |
-| `Market file … entry N: …; skipped (the entry from … stays)` | A change to an item a lower file lists broke a rule; the lower entry is used unchanged. If the change is fine on its own but clashes with a value it didn't set, such as its `min_buy_markup` above the lower file's `markup`, the message goes on `It conflicts with …` and names that value and its file: set that field in your entry too, or add `"replace": true`. |
+| `Market file … entry N: …; skipped (the entry from … stays)` | A change to an item a lower file lists broke a rule; the lower entry is used unchanged. If the change is fine on its own but clashes with a value it didn't set, such as its `min_buy_markup` above the lower file's `markup`, the message goes on `It conflicts with …` and names that value as `from file <id>`, `from file <id> defaults` or `from the item's class or the default`: set that field in your entry too, or add `"replace": true`. Only two rules span fields: `min_buy_markup` must be above 0 and no higher than `markup`, and `contract_min_size` no higher than `contract_max_size`. |
+| `Market file … could not be read` or `Catalog file … could not be read` | The file isn't valid JSON, so the whole file is skipped and lower files' entries stay. The message gives the line and column of the mistake. |
 | `Catalog file … in config/dynamic_economy/catalog: file names may use only …` | Rename the file in lowercase, without spaces. |
 | `Market admin edit not applied: …` | A saved in-game edit no longer fits, for example because a catalog file changed. Check `/market admin info <item>`. |
 | `Market item …: a round trip may make a profit` | The item's impacts, markup and fee allow a profit from buying then selling back, or selling then buying back; see [Supply and demand](#supply-and-demand). |

@@ -21,7 +21,8 @@ import java.util.OptionalLong;
 import java.util.function.Predicate;
 
 /**
- * The only code that changes market stock or player money. Money moves only through the world's {@link Bank}.
+ * Player trades with the market. Outside this class, stock is written only by admin {@code setstock}, {@code clearstock}
+ * and {@code prune}, start-stock seeding ({@code MarketStockData.seed}) and backup restore. Money moves only through the world's {@link Bank}.
  * <p>
  * Every check runs before anything changes, and once the first change is made no remaining step can fail. That holds
  * because everything runs on the server thread, so nothing else can touch the inventory, stock or bank in between.
