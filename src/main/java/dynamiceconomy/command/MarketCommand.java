@@ -148,7 +148,9 @@ public final class MarketCommand {
                                 .then(Commands.argument("path", StringArgumentType.string())
                                         .executes(ctx -> importCsv(ctx, false, false))
                                         .then(Commands.literal("config")
-                                                .executes(ctx -> importCsv(ctx, false, true)))
+                                                .executes(ctx -> importCsv(ctx, false, true))
+                                                .then(Commands.literal("preview")
+                                                        .executes(ctx -> importCsv(ctx, true, true))))
                                         .then(Commands.literal("preview")
                                                 .executes(ctx -> importCsv(ctx, true, false)))))));
     }
@@ -744,6 +746,15 @@ public final class MarketCommand {
             int count = MarketCatalog.INSTANCE.reloadNow(server.getResourceManager());
             DynamicEconomy.catalogReloaded(server);
             source.sendSuccess(() -> Component.literal("Reloaded market catalog: %d entries".formatted(count)), true);
+            CatalogImport.Outcome outcome = CatalogImport.outcome(report, MarketCatalog.INSTANCE::fileEntry);
+            if (!outcome.changedByHigherFile().isEmpty()) {
+                source.sendFailure(Component.literal("%d imported item(s) are changed by a higher catalog file, such as a world datapack above the config folder: %s. /market admin info <item> shows which"
+                        .formatted(outcome.changedByHigherFile().size(), firstFew(outcome.changedByHigherFile()))));
+            }
+            if (!outcome.noLongerLoad().isEmpty()) {
+                source.sendFailure(Component.literal("%d imported item(s) no longer load, since a class file changed: %s. /market admin diagnose shows why"
+                        .formatted(outcome.noLongerLoad().size(), firstFew(outcome.noLongerLoad()))));
+            }
         } else if (written.createdPack()) {
             packs.reload();
             if (packs.isAvailable(CatalogImport.PACK_ID)) {
@@ -760,6 +771,12 @@ public final class MarketCommand {
                     .formatted(CatalogImport.PACK_ID, CatalogImport.PACK_ID)));
         }
         return report.toWrite();
+    }
+
+    /** Up to five IDs, then "...". */
+    private static String firstFew(List<ResourceLocation> ids) {
+        String shown = ids.stream().limit(5).map(ResourceLocation::toString).collect(Collectors.joining(", "));
+        return ids.size() > 5 ? shown + ", ..." : shown;
     }
 
     /** UTF-8, or Windows-1252 for spreadsheets saved as plain "CSV" by Excel, which isn't UTF-8. */

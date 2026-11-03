@@ -412,17 +412,21 @@ public final class PriceSuggestionTests {
 
         try {
             Path root = Files.createTempDirectory("market-suggest");
-            CatalogExport.SuggestionResult written = CatalogExport.exportSuggestions(root, Optional.of("minecraft"), catalog.values(),
-                    item -> FieldSource.NONE, result);
-            String csv = Files.readString(written.folder().resolve("suggested.csv"));
-            Csv.Row block = Csv.parse(csv).rows().stream().filter(row -> row.get("item_id").equals("minecraft:iron_block")).findFirst().orElseThrow();
-            helper.assertValueEqual(block.get("base_price"), "316", "suggested price written");
-            helper.assertValueEqual(block.get("class"), "common_processed", "and class");
-            helper.assertValueEqual(block.get("price_source"), "suggested", "marked as a suggestion");
-            CatalogImport.Report report = CatalogImport.analyze(csv);
-            helper.assertValueEqual(report.rejected(), List.of(), "the suggestion file imports cleanly");
-            helper.assertTrue(report.decoded().stream().anyMatch(entry -> entry.item() == Items.IRON_BLOCK && entry.basePrice() == 316),
-                    "with the suggested prices");
+            try {
+                CatalogExport.SuggestionResult written = CatalogExport.exportSuggestions(root, Optional.of("minecraft"), catalog.values(),
+                        item -> FieldSource.NONE, result);
+                String csv = Files.readString(written.folder().resolve("suggested.csv"));
+                Csv.Row block = Csv.parse(csv).rows().stream().filter(row -> row.get("item_id").equals("minecraft:iron_block")).findFirst().orElseThrow();
+                helper.assertValueEqual(block.get("base_price"), "316", "suggested price written");
+                helper.assertValueEqual(block.get("class"), "common_processed", "and class");
+                helper.assertValueEqual(block.get("price_source"), "suggested", "marked as a suggestion");
+                CatalogImport.Report report = CatalogImport.analyze(csv);
+                helper.assertValueEqual(report.rejected(), List.of(), "the suggestion file imports cleanly");
+                helper.assertTrue(report.decoded().stream().anyMatch(entry -> entry.item() == Items.IRON_BLOCK && entry.basePrice() == 316),
+                        "with the suggested prices");
+            } finally {
+                deleteTree(root);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

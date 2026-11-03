@@ -60,6 +60,24 @@ final class GameTestSupport {
 
     // ---- Shared helpers ----------------------------------------------------------------------------------------
 
+    /**
+     * Deletes a test's temp folder and everything in it. Never throws, so called from {@code finally} it can't hide
+     * the test's own failure; what can't be deleted is left for the system to clean up.
+     */
+    static void deleteTree(Path root) {
+        try (java.util.stream.Stream<Path> walk = Files.walk(root)) {
+            for (Path path : walk.sorted(java.util.Comparator.reverseOrder()).toList()) {
+                try {
+                    Files.deleteIfExists(path);
+                } catch (java.io.IOException | RuntimeException e) {
+                    DynamicEconomy.LOGGER.warn("Could not delete test file {}: {}", path, e.toString());
+                }
+            }
+        } catch (java.io.IOException | RuntimeException e) {
+            DynamicEconomy.LOGGER.warn("Could not clean up test folder {}: {}", root, e.toString());
+        }
+    }
+
     /** Runs {@code body} with an item's supply/demand turned off, so it trades at fixed base prices. */
     static void withFixedPrice(Item item, Runnable body) {
         CatalogEntry entry = MarketCatalog.INSTANCE.get(item).orElseThrow();

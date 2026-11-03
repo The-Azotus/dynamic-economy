@@ -128,7 +128,7 @@ The mod also includes a small **example catalog**: cobblestone and oak log (unli
 2. Open `items.csv` in a spreadsheet. Fill in `base_price` for anything you want on the market, and change any other column you like. Leave `base_price` blank for items you don't want.
 3. Save it somewhere inside `config/dynamic_economy/`. Either CSV encoding works, UTF-8 or Excel's default.
 4. Check it: `/market admin import "exports/2026-10-23_09-30-00/items.csv" preview`. This writes nothing. It reports how many entries would be written, how many rows were skipped and why any were rejected.
-5. Import it: run the same command without `preview`. To import into the [config folder](#the-config-folder-prices-for-every-world) instead, so the prices apply to every world, add `config`: `/market admin import "exports/2026-10-23_09-30-00/items.csv" config`.
+5. Import it: run the same command without `preview`. To import into the [config folder](#the-config-folder-prices-for-every-world) instead, so the prices apply to every world, add `config`: `/market admin import "exports/2026-10-23_09-30-00/items.csv" config` (and `config preview` to check it first).
 
 The import writes one file per mod, `imported_<modid>.json`. By default it goes into a world datapack at `<world>/datapacks/dynamic_economy_catalog/`, which the first import creates and enables. With `config`, it goes into `config/dynamic_economy/catalog/market/`. Later imports back up each file they replace as `<name>.json.bak`. The catalog reloads straight away either way, and importing never changes stock or current prices.
 
@@ -137,6 +137,8 @@ Each imported row **replaces** the item's entry from lower files, such as the bu
 Put the path in quotes, since it contains slashes. To export one mod only, use `/market admin export <modid>`.
 
 Items that also have an in-game edit keep that edit, because edits beat catalog files. The import lists any such items; use `/market admin revert <item>` to let the imported value through.
+
+The import also lists items a higher catalog file still changes. For example, an import into the config folder doesn't override an earlier import into the world's datapack, which sits above the config folder. `/market admin info <item>` shows which file it is; delete or edit that file to let the imported value through.
 
 The [spreadsheet format](#spreadsheet-format) section has the details on columns and what the importer accepts.
 
@@ -226,7 +228,7 @@ Catalog files live in any datapack at `data/<namespace>/market/<name>.json`, or 
 - `entries` is required: the items to list.
 - `defaults` is optional. Its fields apply to every entry in that file unless the entry sets the field itself. It can't contain `item`.
 - `required_mods` is optional: a list of mod IDs, such as `["create"]`. If any of them isn't installed, the whole file is skipped without a warning. Use it for a price file that belongs to one mod.
-- **Several files for one item:** files are applied from lowest priority to highest: the built-in prices, then the config folder, then the world's datapacks in their `/datapack list` order. Within one datapack or the config folder, files apply in name order, and the log warns about the repeat. Each later file changes **only the fields it sets** and keeps the rest; see [Changing a built-in price](#changing-a-built-in-price).
+- **Several files for one item:** files are applied from lowest priority to highest: the built-in prices, then the config folder, then the world's datapacks (and the example catalog, if enabled) in their `/datapack list` order. Within one datapack or the config folder, files apply in name order, and the log warns about the repeat. Each later file changes **only the fields it sets** and keeps the rest; see [Changing a built-in price](#changing-a-built-in-price).
 - `"replace": true` on an entry makes it start over instead: fields that lower files set and this entry doesn't go back to the class, the server config or the built-in defaults. Put it in `defaults` to apply it to every entry in the file. The spreadsheet import writes its files this way.
 - **Reloading:** after editing files, run `/market admin reload` to reload just the market, or `/reload` to reload all datapacks (use `/reload` after adding a new datapack).
 - **Bad entries are skipped, not fatal.** An unknown item, an out-of-range value or a missing field skips only that entry, with a log warning naming the file and entry. If a lower file already lists the item, its entry stays as it was. Entries with `base_price` 0 or below are skipped with one summary warning, so a half-filled template is safe to load.
@@ -244,7 +246,7 @@ config/dynamic_economy/catalog/
 ```
 
 - The files are the same format as in a datapack; there's no `pack.mcmeta` or `data/` folder to set up. The mod creates both folders on first start.
-- **Priority:** above the built-in prices and other mods' data, below the world's own datapacks. So the folder sets the pack-wide prices, and one world can still change them in its datapack.
+- **Priority:** above the built-in prices and the mods' own data, below the world's own datapacks and the example catalog. So the folder sets the pack-wide prices, and one world can still change them in its datapack. A world datapack moved to the bottom of `/datapack list` (with `/datapack enable ... first`) ends up below the folder instead. A pack another mod adds to the top of the list is below the folder in a world with no datapacks and above it otherwise; such packs rarely hold market files.
 - File names may use only lowercase letters, digits, `_`, `-` and `.`; a file with another name is skipped with a warning. In `/market admin info`, a file `market/my_prices.json` shows as `file config:my_prices`.
 - A class file takes the mod's namespace: `market_classes/rare_resource.json` replaces the built-in `rare_resource` class, and `market_classes/gems.json` adds a class called `gems`.
 - The folder is read whenever the catalog loads: at start, `/reload` and `/market admin reload`. An empty folder does nothing. Only the server reads it, so players don't need it.
@@ -580,7 +582,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin reload` | 2 | Re-reads the catalog files. Stock and in-game edits are untouched. |
 | `/market admin stats [item]` | 2 | Money created and removed by the market, and items moved; see [Where the money goes](#where-the-money-goes). |
 | `/market admin export [modid]` | 4 | Writes `items.csv` and templates to `config/dynamic_economy/exports/<timestamp>/`. |
-| `/market admin import "<path>" [config\|preview]` | 4 | Imports a priced CSV into the world's datapack, or with `config` into the config folder for every world. The path is relative to `config/dynamic_economy/`. |
+| `/market admin import "<path>" [config] [preview]` | 4 | Imports a priced CSV into the world's datapack, or with `config` into the config folder for every world; `preview` writes nothing. The path is relative to `config/dynamic_economy/`. |
 | `/market admin bank` | 2 | Which bank the world uses and what its accounts hold. |
 | `/market admin bank switch <own\|numismatics> [confirm]` | 2 | Shows, then does, a move of every balance to the other bank; see [Banks and coins](#banks-and-coins). |
 | `/bank team ...` | everyone | The mod's own teams, for team accounts; see the [player guide](player-guide.md#the-bank-tab). Off with Numismatics' bank; with FTB Teams only the info line (`/bank team`) works, since parties are the teams. |
@@ -628,7 +630,7 @@ The rest of the file still imports. The first 15 reasons appear in chat, and all
 | `Market file … entry N: unknown item …; skipped` | The item doesn't exist, usually because its mod isn't installed. |
 | `Market file … entry N: Value … outside of range …; skipped` | A field's value is out of range; see [Catalog fields](#catalog-fields). |
 | `Market file … changes (or replaces) … listed earlier in … of the same pack` | Two files in one datapack, or in the config folder, list the same item; the later name's fields win. |
-| `Market file … entry N: …; skipped (the entry from … stays)` | A change to an item a lower file lists broke a rule, such as a `min_buy_markup` above the combined entry's `markup`; the lower entry is used unchanged. |
+| `Market file … entry N: …; skipped (the entry from … stays)` | A change to an item a lower file lists broke a rule; the lower entry is used unchanged. If the change is fine on its own but clashes with a value it didn't set, such as its `min_buy_markup` above the lower file's `markup`, the message goes on `It conflicts with …` and names that value and its file: set that field in your entry too, or add `"replace": true`. |
 | `Catalog file … in config/dynamic_economy/catalog: file names may use only …` | Rename the file in lowercase, without spaces. |
 | `Market admin edit not applied: …` | A saved in-game edit no longer fits, for example because a catalog file changed. Check `/market admin info <item>`. |
 | `Market item …: a round trip may make a profit` | The item's impacts, markup and fee allow a profit from buying then selling back, or selling then buying back; see [Supply and demand](#supply-and-demand). |

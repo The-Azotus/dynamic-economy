@@ -6,6 +6,7 @@ import com.mojang.serialization.DataResult;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -18,7 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 /**
  * Turns a priced spreadsheet back into catalog files. Each row is checked with the catalog loader's own rules, so
@@ -106,6 +109,31 @@ public final class CatalogImport {
             decoded.add(entry.result().orElseThrow());
         }
         return new Report(byMod, decoded, skippedBlank, rejected);
+    }
+
+    /** What became of the imported rows once the catalog was reloaded. */
+    public record Outcome(List<ResourceLocation> changedByHigherFile, List<ResourceLocation> noLongerLoad) {
+    }
+
+    /**
+     * Checks an import against the reloaded catalog files ({@code fileEntry}: before tag rules and item edits). Each
+     * row is decoded again, since a class file may have changed since {@link #analyze}. A row that loaded but differs
+     * from what the catalog now has was changed by a higher file, such as a world datapack above the config folder.
+     */
+    public static Outcome outcome(Report report, Function<Item, Optional<CatalogEntry>> fileEntry) {
+        List<ResourceLocation> changed = new ArrayList<>();
+        List<ResourceLocation> failed = new ArrayList<>();
+        for (List<JsonObject> rows : report.byMod().values()) {
+            for (JsonObject row : rows) {
+                DataResult<CatalogEntry> expected = MarketCatalog.decode(row);
+                if (expected.error().isPresent()) {
+                    failed.add(ResourceLocation.parse(row.get("item").getAsString()));
+                } else if (!fileEntry.apply(expected.result().orElseThrow().item()).equals(expected.result())) {
+                    changed.add(expected.result().orElseThrow().itemId());
+                }
+            }
+        }
+        return new Outcome(changed, failed);
     }
 
     /** Writes the result of an import. {@code createdPack} means the datapack folder didn't exist before. */

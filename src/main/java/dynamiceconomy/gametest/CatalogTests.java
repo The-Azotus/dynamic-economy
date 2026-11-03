@@ -150,40 +150,44 @@ public final class CatalogTests {
     public static void exportThenImportGivesTheSameCatalog(GameTestHelper helper) {
         try {
             Path root = Files.createTempDirectory("market-export");
-            // Include an override and a min_buy_markup so the extra columns are covered too.
-            CatalogEntry iron = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
-            CatalogEntry tuned = iron.withPricing(0.05, true, Optional.empty(), new CatalogEntry.Overrides(
-                    Optional.of(0.001), Optional.empty(), Optional.of(0.1), Optional.empty(), Optional.of(3.0)));
-            CatalogEntry cobble = MarketCatalog.INSTANCE.get(Items.COBBLESTONE).orElseThrow()
-                    .withPricing(0.0, true, Optional.of(0.25), CatalogEntry.Overrides.NONE);
-            List<CatalogEntry> catalog = new ArrayList<>(MarketCatalog.INSTANCE.entries());
-            catalog.replaceAll(e -> e.item() == Items.IRON_INGOT ? tuned : e.item() == Items.COBBLESTONE ? cobble : e);
+            try {
+                // Include an override and a min_buy_markup so the extra columns are covered too.
+                CatalogEntry iron = MarketCatalog.INSTANCE.get(Items.IRON_INGOT).orElseThrow();
+                CatalogEntry tuned = iron.withPricing(0.05, true, Optional.empty(), new CatalogEntry.Overrides(
+                        Optional.of(0.001), Optional.empty(), Optional.of(0.1), Optional.empty(), Optional.of(3.0)));
+                CatalogEntry cobble = MarketCatalog.INSTANCE.get(Items.COBBLESTONE).orElseThrow()
+                        .withPricing(0.0, true, Optional.of(0.25), CatalogEntry.Overrides.NONE);
+                List<CatalogEntry> catalog = new ArrayList<>(MarketCatalog.INSTANCE.entries());
+                catalog.replaceAll(e -> e.item() == Items.IRON_INGOT ? tuned : e.item() == Items.COBBLESTONE ? cobble : e);
 
-            // No recorded sources: every value is written, as if every field were set.
-            CatalogExport.Result result = CatalogExport.export(root, Optional.empty(), catalog, item -> FieldSource.NONE);
-            long registered = BuiltInRegistries.ITEM.stream().filter(item -> item != Items.AIR).count();
-            helper.assertValueEqual((long) result.total(), registered, "every item but air exported");
-            helper.assertValueEqual(result.priced(), catalog.size(), "already priced");
-            helper.assertValueEqual(result.unpriced(), result.total() - catalog.size(), "new");
+                // No recorded sources: every value is written, as if every field were set.
+                CatalogExport.Result result = CatalogExport.export(root, Optional.empty(), catalog, item -> FieldSource.NONE);
+                long registered = BuiltInRegistries.ITEM.stream().filter(item -> item != Items.AIR).count();
+                helper.assertValueEqual((long) result.total(), registered, "every item but air exported");
+                helper.assertValueEqual(result.priced(), catalog.size(), "already priced");
+                helper.assertValueEqual(result.unpriced(), result.total() - catalog.size(), "new");
 
-            CatalogImport.Report report = CatalogImport.analyze(Files.readString(result.folder().resolve("items.csv")));
-            helper.assertValueEqual(report.rejected(), List.of(), "an unchanged export imports cleanly");
-            helper.assertValueEqual(report.skippedBlank(), result.unpriced(), "unpriced rows are skipped");
-            helper.assertValueEqual(new java.util.HashSet<>(report.decoded()), new java.util.HashSet<>(catalog), "entries identical");
+                CatalogImport.Report report = CatalogImport.analyze(Files.readString(result.folder().resolve("items.csv")));
+                helper.assertValueEqual(report.rejected(), List.of(), "an unchanged export imports cleanly");
+                helper.assertValueEqual(report.skippedBlank(), result.unpriced(), "unpriced rows are skipped");
+                helper.assertValueEqual(new java.util.HashSet<>(report.decoded()), new java.util.HashSet<>(catalog), "entries identical");
 
-            // Templates load without error, and every entry is skipped as unpriced until someone prices it.
-            Path templates = result.folder().resolve("templates");
-            Path minecraft = templates.resolve("minecraft.json");
-            helper.assertTrue(Files.exists(minecraft), "a template for minecraft");
-            Map<Item, CatalogEntry> loaded = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "template"),
-                    JsonParser.parseString(Files.readString(minecraft))));
-            helper.assertTrue(loaded.isEmpty(), "unpriced template entries are skipped");
+                // Templates load without error, and every entry is skipped as unpriced until someone prices it.
+                Path templates = result.folder().resolve("templates");
+                Path minecraft = templates.resolve("minecraft.json");
+                helper.assertTrue(Files.exists(minecraft), "a template for minecraft");
+                Map<Item, CatalogEntry> loaded = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "template"),
+                        JsonParser.parseString(Files.readString(minecraft))));
+                helper.assertTrue(loaded.isEmpty(), "unpriced template entries are skipped");
 
-            CatalogExport.Result onlyMinecraft = CatalogExport.export(root, Optional.of("minecraft"), catalog, item -> FieldSource.NONE);
-            long minecraftItems = BuiltInRegistries.ITEM.keySet().stream()
-                    .filter(id -> id.getNamespace().equals("minecraft") && !id.getPath().equals("air")).count();
-            helper.assertValueEqual((long) onlyMinecraft.total(), minecraftItems, "modid filter");
-            helper.assertTrue(!onlyMinecraft.folder().equals(result.folder()), "a second export never reuses a folder");
+                CatalogExport.Result onlyMinecraft = CatalogExport.export(root, Optional.of("minecraft"), catalog, item -> FieldSource.NONE);
+                long minecraftItems = BuiltInRegistries.ITEM.keySet().stream()
+                        .filter(id -> id.getNamespace().equals("minecraft") && !id.getPath().equals("air")).count();
+                helper.assertValueEqual((long) onlyMinecraft.total(), minecraftItems, "modid filter");
+                helper.assertTrue(!onlyMinecraft.folder().equals(result.folder()), "a second export never reuses a folder");
+            } finally {
+                deleteTree(root);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -194,23 +198,27 @@ public final class CatalogTests {
     public static void importWritesThePackAndBacksUpReplacedFiles(GameTestHelper helper) {
         try {
             Path datapacks = Files.createTempDirectory("market-datapacks");
-            CatalogImport.Report first = CatalogImport.analyze("item_id,base_price\nminecraft:stone,5\nminecraft:dirt,2\n");
-            CatalogImport.Written written = CatalogImport.write(first, datapacks);
-            Path pack = datapacks.resolve(CatalogImport.PACK_FOLDER);
-            Path file = pack.resolve("data/dynamic_economy/market/imported_minecraft.json");
-            helper.assertTrue(written.createdPack(), "pack created");
-            helper.assertTrue(Files.exists(pack.resolve("pack.mcmeta")), "pack.mcmeta written");
-            helper.assertValueEqual(written.files(), List.of(file), "one file for one mod");
-            Map<Item, CatalogEntry> loaded = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "imported"),
-                    JsonParser.parseString(Files.readString(file))));
-            helper.assertValueEqual(new java.util.HashSet<>(loaded.values()), new java.util.HashSet<>(first.decoded()), "written file loads back");
+            try {
+                CatalogImport.Report first = CatalogImport.analyze("item_id,base_price\nminecraft:stone,5\nminecraft:dirt,2\n");
+                CatalogImport.Written written = CatalogImport.write(first, datapacks);
+                Path pack = datapacks.resolve(CatalogImport.PACK_FOLDER);
+                Path file = pack.resolve("data/dynamic_economy/market/imported_minecraft.json");
+                helper.assertTrue(written.createdPack(), "pack created");
+                helper.assertTrue(Files.exists(pack.resolve("pack.mcmeta")), "pack.mcmeta written");
+                helper.assertValueEqual(written.files(), List.of(file), "one file for one mod");
+                Map<Item, CatalogEntry> loaded = MarketCatalog.parse(Map.of(ResourceLocation.fromNamespaceAndPath("test", "imported"),
+                        JsonParser.parseString(Files.readString(file))));
+                helper.assertValueEqual(new java.util.HashSet<>(loaded.values()), new java.util.HashSet<>(first.decoded()), "written file loads back");
 
-            CatalogImport.Report second = CatalogImport.analyze("item_id,base_price\nminecraft:stone,9\n");
-            CatalogImport.Written again = CatalogImport.write(second, datapacks);
-            helper.assertTrue(!again.createdPack(), "pack already existed");
-            Path backup = file.resolveSibling("imported_minecraft.json.bak");
-            helper.assertValueEqual(again.backups(), List.of(backup), "backup made");
-            helper.assertTrue(Files.readString(backup).contains("minecraft:dirt"), "backup holds the previous file");
+                CatalogImport.Report second = CatalogImport.analyze("item_id,base_price\nminecraft:stone,9\n");
+                CatalogImport.Written again = CatalogImport.write(second, datapacks);
+                helper.assertTrue(!again.createdPack(), "pack already existed");
+                Path backup = file.resolveSibling("imported_minecraft.json.bak");
+                helper.assertValueEqual(again.backups(), List.of(backup), "backup made");
+                helper.assertTrue(Files.readString(backup).contains("minecraft:dirt"), "backup holds the previous file");
+            } finally {
+                deleteTree(datapacks);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -264,6 +272,76 @@ public final class CatalogTests {
         helper.succeed();
     }
 
+    /** The one problem whose message names {@code item}. */
+    private static String problemAbout(MarketCatalog.Loaded loaded, String item) {
+        List<String> found = loaded.problems().stream().map(MarketCatalog.Problem::message)
+                .filter(message -> message.contains("minecraft:" + item)).toList();
+        if (found.size() != 1) {
+            throw new GameTestAssertException("expected one problem about " + item + ", got " + found);
+        }
+        return found.get(0);
+    }
+
+    @GameTest(template = EMPTY)
+    public static void configFolderSitsBetweenBuiltInsAndWorldPacks(GameTestHelper helper) {
+        String prices = DynamicEconomy.DEFAULT_PRICES_PACK_ID;
+        String example = DynamicEconomy.EXAMPLE_PACK_ID;
+        // Each pack i is at 2 * i, so 2 * i - 1 is just below pack i and 2 * i + 1 just above it.
+        // "other:pack" is neither built in nor a world pack, so "just below the world pack" and "just above the
+        // built-ins" give different answers.
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack")), 7,
+                "no world packs: above all");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", "file/a", "file/b")), 7,
+                "just below the first world datapack");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", example)), 7,
+                "below the example catalog with no world packs too");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", example, "file/a")), 7,
+                "below the example catalog when it comes first");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", "file/a", example)), 7,
+                "below the world pack when it comes first");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of("file/a", prices, "vanilla", "mod_data")), 7,
+                "a world pack moved below the built-ins doesn't take the folder down with it");
+        // Each mod's own data is a pack of its own after mod_data, and the built-in classes are in mod/dynamic_economy.
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of("file/a", prices, "vanilla", "mod_data", "mod/neoforge",
+                "mod/dynamic_economy")), 11, "never below a mod's own data");
+
+        // The real pack list: the folder sits above the pack the built-in classes come from, so they can be replaced.
+        var resources = helper.getLevel().getServer().getResourceManager();
+        List<String> ids = resources.listPacks().map(net.minecraft.server.packs.PackResources::packId).toList();
+        int order = MarketCatalog.configOrder(ids);
+        String classPack = resources.getResource(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID,
+                "market_classes/rare_resource.json")).orElseThrow().sourcePackId();
+        helper.assertValueEqual(classPack, "mod/" + DynamicEconomy.MOD_ID, "the built-in classes come from the mod's own pack");
+        int classOrder = ids.indexOf(classPack) < 0 ? -1 : 2 * ids.indexOf(classPack);
+        helper.assertTrue(classOrder < order, "built-in classes in " + classPack + " sit below the folder in " + ids);
+        // The same with a world pack moved to the bottom, which only the floor keeps the folder above.
+        List<String> moved = new ArrayList<>(ids);
+        moved.removeIf(id -> id.startsWith("file/") || id.equals(example));
+        moved.add(0, "file/moved");
+        int movedClassOrder = moved.indexOf(classPack) < 0 ? -1 : 2 * moved.indexOf(classPack);
+        helper.assertTrue(movedClassOrder < MarketCatalog.configOrder(moved),
+                "built-in classes in " + classPack + " sit below the folder in " + moved);
+        helper.succeed();
+    }
+
+    @GameTest(template = EMPTY)
+    public static void importReportsRowsAHigherFileChanged(GameTestHelper helper) {
+        CatalogImport.Report report = CatalogImport.analyze("item_id,base_price\nminecraft:iron_ingot,20\nminecraft:gold_ingot,40\n");
+        JsonElement imported = JsonParser.parseString("""
+                { "defaults": { "replace": true }, "entries": [
+                  { "item": "minecraft:iron_ingot", "base_price": 20 }, { "item": "minecraft:gold_ingot", "base_price": 40 } ] }""");
+        MarketCatalog.Loaded loaded = MarketCatalog.load(List.of(
+                new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("config", "imported_minecraft"), 1, "config", imported),
+                sourceFile("world", 2, "{ \"entries\": [ { \"item\": \"minecraft:gold_ingot\", \"markup\": 0.75 } ] }")));
+        CatalogImport.Outcome outcome = CatalogImport.outcome(report, item -> Optional.ofNullable(loaded.entries().get(item)));
+        helper.assertValueEqual(outcome.changedByHigherFile(), List.of(key(Items.GOLD_INGOT)), "only gold was changed above the import");
+        helper.assertValueEqual(outcome.noLongerLoad(), List.of(), "every row still loads");
+
+        CatalogImport.Outcome missing = CatalogImport.outcome(report, item -> Optional.empty());
+        helper.assertValueEqual(missing.changedByHigherFile().size(), 2, "a row that isn't in the catalog at all is reported too");
+        helper.succeed();
+    }
+
     private static MarketCatalog.SourceFile sourceFile(String name, int order, String json) {
         return new MarketCatalog.SourceFile(ResourceLocation.fromNamespaceAndPath("test", name), order, "pack" + order,
                 JsonParser.parseString(json));
@@ -275,13 +353,19 @@ public final class CatalogTests {
                 { "entries": [
                   { "item": "minecraft:iron_ingot", "base_price": 10, "markup": 0.25, "can_sell": false, "sell_impact": 0.01 },
                   { "item": "minecraft:gold_ingot", "base_price": 40, "markup": 0.25 },
-                  { "item": "minecraft:copper_ingot", "base_price": 5, "markup": 0.25 }
+                  { "item": "minecraft:copper_ingot", "base_price": 5, "markup": 0.25 },
+                  { "item": "minecraft:lapis_lazuli", "base_price": 3, "markup": 0.25 },
+                  { "item": "minecraft:redstone", "base_price": 2 },
+                  { "item": "minecraft:quartz", "base_price": 6, "contract_max_size": 16 }
                 ] }""");
         MarketCatalog.SourceFile override = sourceFile("override", 1, """
                 { "entries": [
                   { "item": "minecraft:iron_ingot", "base_price": 20 },
                   { "item": "minecraft:gold_ingot", "base_price": 50, "replace": true },
                   { "item": "minecraft:copper_ingot", "min_buy_markup": 0.4 },
+                  { "item": "minecraft:lapis_lazuli", "min_buy_markup": 0.4, "markup": 0.3 },
+                  { "item": "minecraft:redstone", "markup": 2000 },
+                  { "item": "minecraft:quartz", "class": "common_resource" },
                   { "item": "minecraft:diamond", "markup": 0.3 },
                   { "item": "minecraft:emerald", "base_price": 9, "replace": "yes" }
                 ] }""");
@@ -311,6 +395,19 @@ public final class CatalogTests {
         for (String expected : List.of("min_buy_markup", "stays", "base_price", "\"replace\" must be true or false")) {
             helper.assertTrue(problems.contains(expected), "expected a problem mentioning \"" + expected + "\" in:" + problems);
         }
+        String copper = problemAbout(loaded, "copper_ingot");
+        helper.assertTrue(copper.contains("(the entry from test:built_in stays). It conflicts with markup 0.25 from file test:built_in")
+                && copper.contains("\"replace\": true"), "a change that's fine on its own names the lower value it conflicts with: " + copper);
+        String lapis = problemAbout(loaded, "lapis_lazuli");
+        helper.assertTrue(lapis.contains("stays") && !lapis.contains("conflicts"),
+                "a change that breaks a rule with its own values gets no hint about lower values: " + lapis);
+        helper.assertValueEqual(loaded.entries().get(Items.LAPIS_LAZULI).markup(), 0.25, "lapis unchanged");
+        String redstone = problemAbout(loaded, "redstone");
+        helper.assertTrue(redstone.contains("stays") && !redstone.contains("conflicts"), "an out-of-range value gets no hint: " + redstone);
+        // The new class's contract_min_size 64 clashes with the lower file's contract_max_size 16: name the lower value.
+        String quartz = problemAbout(loaded, "quartz");
+        helper.assertTrue(quartz.contains("It conflicts with contract_max_size 16 from file test:built_in"),
+                "the hint names the value the lower file set, not the one the new class brings: " + quartz);
 
         // A file's defaults count as set on each of its entries, so they change the lower entry too.
         MarketCatalog.SourceFile withDefaults = sourceFile("with_defaults", 1, """
@@ -325,19 +422,23 @@ public final class CatalogTests {
     public static void importedFilesReplaceWholeEntries(GameTestHelper helper) {
         try {
             Path config = Files.createTempDirectory("market-config");
-            CatalogImport.Report report = CatalogImport.analyze("item_id,base_price\nminecraft:iron_ingot,20\n");
-            CatalogImport.Written written = CatalogImport.writeToConfig(report, config.resolve("market"));
-            helper.assertTrue(!written.createdPack(), "no pack for the config folder");
-            helper.assertValueEqual(written.files(), List.of(config.resolve("market/imported_minecraft.json")), "written into market/");
+            try {
+                CatalogImport.Report report = CatalogImport.analyze("item_id,base_price\nminecraft:iron_ingot,20\n");
+                CatalogImport.Written written = CatalogImport.writeToConfig(report, config.resolve("market"));
+                helper.assertTrue(!written.createdPack(), "no pack for the config folder");
+                helper.assertValueEqual(written.files(), List.of(config.resolve("market/imported_minecraft.json")), "written into market/");
 
-            MarketCatalog.SourceFile builtIn = sourceFile("built_in", 0, """
-                    { "entries": [ { "item": "minecraft:iron_ingot", "base_price": 10, "markup": 0.25 } ] }""");
-            MarketCatalog.ConfigFolder folder = MarketCatalog.readConfigFolder(config, 1);
-            List<MarketCatalog.SourceFile> files = new ArrayList<>(folder.files());
-            files.add(builtIn);
-            CatalogEntry iron = MarketCatalog.parse(files).get(Items.IRON_INGOT);
-            helper.assertValueEqual(iron.basePrice(), 20, "imported price");
-            helper.assertValueEqual(iron.markup(), CatalogEntry.DEFAULT_MARKUP, "a blank cell leaves the field unset");
+                MarketCatalog.SourceFile builtIn = sourceFile("built_in", 0, """
+                        { "entries": [ { "item": "minecraft:iron_ingot", "base_price": 10, "markup": 0.25 } ] }""");
+                MarketCatalog.ConfigFolder folder = MarketCatalog.readConfigFolder(config, 1);
+                List<MarketCatalog.SourceFile> files = new ArrayList<>(folder.files());
+                files.add(builtIn);
+                CatalogEntry iron = MarketCatalog.parse(files).get(Items.IRON_INGOT);
+                helper.assertValueEqual(iron.basePrice(), 20, "imported price");
+                helper.assertValueEqual(iron.markup(), CatalogEntry.DEFAULT_MARKUP, "a blank cell leaves the field unset");
+            } finally {
+                deleteTree(config);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -348,28 +449,32 @@ public final class CatalogTests {
     public static void configFolderIsReadLikeAPack(GameTestHelper helper) {
         try {
             Path root = Files.createTempDirectory("market-config");
-            MarketCatalog.ConfigFolder empty = MarketCatalog.readConfigFolder(root, 3);
-            helper.assertTrue(empty.files().isEmpty() && empty.classFiles().isEmpty() && empty.problems().isEmpty(), "nothing to read");
-            helper.assertTrue(Files.isDirectory(root.resolve("market")) && Files.isDirectory(root.resolve("market_classes")),
-                    "both folders created for admins to find");
+            try {
+                MarketCatalog.ConfigFolder empty = MarketCatalog.readConfigFolder(root, 3);
+                helper.assertTrue(empty.files().isEmpty() && empty.classFiles().isEmpty() && empty.problems().isEmpty(), "nothing to read");
+                helper.assertTrue(Files.isDirectory(root.resolve("market")) && Files.isDirectory(root.resolve("market_classes")),
+                        "both folders created for admins to find");
 
-            Files.createDirectories(root.resolve("market/ores"));
-            Files.writeString(root.resolve("market/ores/iron.json"),
-                    "{ \"entries\": [ { \"item\": \"minecraft:iron_ingot\", \"base_price\": 20 } ] }");
-            Files.writeString(root.resolve("market/Bad Name.json"), "{ \"entries\": [] }");
-            Files.writeString(root.resolve("market/broken.json"), "{ not json");
-            Files.writeString(root.resolve("market/notes.txt"), "ignored");
-            Files.writeString(root.resolve("market_classes/common_resource.json"), "{ \"sell_impact\": 0.001 }");
+                Files.createDirectories(root.resolve("market/ores"));
+                Files.writeString(root.resolve("market/ores/iron.json"),
+                        "{ \"entries\": [ { \"item\": \"minecraft:iron_ingot\", \"base_price\": 20 } ] }");
+                Files.writeString(root.resolve("market/Bad Name.json"), "{ \"entries\": [] }");
+                Files.writeString(root.resolve("market/broken.json"), "{ not json");
+                Files.writeString(root.resolve("market/notes.txt"), "ignored");
+                Files.writeString(root.resolve("market_classes/common_resource.json"), "{ \"sell_impact\": 0.001 }");
 
-            MarketCatalog.ConfigFolder folder = MarketCatalog.readConfigFolder(root, 3);
-            helper.assertValueEqual(folder.files().stream().map(MarketCatalog.SourceFile::id).toList(),
-                    List.of(ResourceLocation.fromNamespaceAndPath("config", "ores/iron")), "market file IDs");
-            helper.assertValueEqual(folder.files().get(0).packOrder(), 3, "the folder's priority");
-            helper.assertValueEqual(folder.classFiles().keySet(),
-                    Set.of(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "common_resource")),
-                    "a class file takes the mod's namespace, so it replaces the built-in class of that name");
-            helper.assertValueEqual(folder.problems().size(), 2, "bad name and unreadable file: " + folder.problems());
-            helper.assertValueEqual(MarketCatalog.parse(folder.files()).get(Items.IRON_INGOT).basePrice(), 20, "the file loads");
+                MarketCatalog.ConfigFolder folder = MarketCatalog.readConfigFolder(root, 3);
+                helper.assertValueEqual(folder.files().stream().map(MarketCatalog.SourceFile::id).toList(),
+                        List.of(ResourceLocation.fromNamespaceAndPath("config", "ores/iron")), "market file IDs");
+                helper.assertValueEqual(folder.files().get(0).packOrder(), 3, "the folder's priority");
+                helper.assertValueEqual(folder.classFiles().keySet(),
+                        Set.of(ResourceLocation.fromNamespaceAndPath(DynamicEconomy.MOD_ID, "common_resource")),
+                        "a class file takes the mod's namespace, so it replaces the built-in class of that name");
+                helper.assertValueEqual(folder.problems().size(), 2, "bad name and unreadable file: " + folder.problems());
+                helper.assertValueEqual(MarketCatalog.parse(folder.files()).get(Items.IRON_INGOT).basePrice(), 20, "the file loads");
+            } finally {
+                deleteTree(root);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -622,28 +727,32 @@ public final class CatalogTests {
                         { "item": "minecraft:iron_ingot", "base_price": 16, "class": "rare_resource", "sell_fee": 0.1 },
                         { "item": "minecraft:diamond", "base_price": 256 } ] }""");
             Path root = Files.createTempDirectory("market-class-export");
-            CatalogExport.Result result = CatalogExport.export(root, Optional.of("minecraft"), loaded.entries().values(),
-                    item -> loaded.sources().getOrDefault(item, FieldSource.NONE));
-            String csv = Files.readString(result.folder().resolve("items.csv"));
-            Csv.Row ironRow = Csv.parse(csv).rows().stream().filter(row -> row.get("item_id").equals("minecraft:iron_ingot"))
-                    .findFirst().orElseThrow();
-            java.util.function.Function<String, String> cell = ironRow::get;
-            helper.assertValueEqual(cell.apply("class"), "rare_resource", "class column");
-            helper.assertValueEqual(cell.apply("sell_fee"), "0.1", "a value the entry sets is written");
-            helper.assertValueEqual(cell.apply("markup"), "", "a value from the class is left blank");
-            helper.assertValueEqual(cell.apply("sell_impact"), "", "so is sell_impact");
-            String diamondRow = csv.lines().filter(line -> line.startsWith("minecraft:diamond,")).findFirst().orElseThrow();
-            helper.assertTrue(!diamondRow.contains("0.5"), "a built-in default is left blank too: " + diamondRow);
+            try {
+                CatalogExport.Result result = CatalogExport.export(root, Optional.of("minecraft"), loaded.entries().values(),
+                        item -> loaded.sources().getOrDefault(item, FieldSource.NONE));
+                String csv = Files.readString(result.folder().resolve("items.csv"));
+                Csv.Row ironRow = Csv.parse(csv).rows().stream().filter(row -> row.get("item_id").equals("minecraft:iron_ingot"))
+                        .findFirst().orElseThrow();
+                java.util.function.Function<String, String> cell = ironRow::get;
+                helper.assertValueEqual(cell.apply("class"), "rare_resource", "class column");
+                helper.assertValueEqual(cell.apply("sell_fee"), "0.1", "a value the entry sets is written");
+                helper.assertValueEqual(cell.apply("markup"), "", "a value from the class is left blank");
+                helper.assertValueEqual(cell.apply("sell_impact"), "", "so is sell_impact");
+                String diamondRow = csv.lines().filter(line -> line.startsWith("minecraft:diamond,")).findFirst().orElseThrow();
+                helper.assertTrue(!diamondRow.contains("0.5"), "a built-in default is left blank too: " + diamondRow);
 
-            CatalogImport.Report same = CatalogImport.analyze(csv);
-            helper.assertValueEqual(same.rejected(), List.of(), "imports cleanly");
-            helper.assertValueEqual(new java.util.HashSet<>(same.decoded()), new java.util.HashSet<>(loaded.entries().values()),
-                    "export then import gives identical entries");
+                CatalogImport.Report same = CatalogImport.analyze(csv);
+                helper.assertValueEqual(same.rejected(), List.of(), "imports cleanly");
+                helper.assertValueEqual(new java.util.HashSet<>(same.decoded()), new java.util.HashSet<>(loaded.entries().values()),
+                        "export then import gives identical entries");
 
-            CatalogImport.Report changed = CatalogImport.analyze(csv.replace(",rare_resource,", ",unique,"));
-            CatalogEntry iron = changed.decoded().stream().filter(e -> e.item() == Items.IRON_INGOT).findFirst().orElseThrow();
-            helper.assertValueEqual(iron.markup(), 2.0, "changing only the class in the sheet changes the class's fields");
-            helper.assertValueEqual(iron.sellFee(), 0.1, "and keeps the entry's own");
+                CatalogImport.Report changed = CatalogImport.analyze(csv.replace(",rare_resource,", ",unique,"));
+                CatalogEntry iron = changed.decoded().stream().filter(e -> e.item() == Items.IRON_INGOT).findFirst().orElseThrow();
+                helper.assertValueEqual(iron.markup(), 2.0, "changing only the class in the sheet changes the class's fields");
+                helper.assertValueEqual(iron.sellFee(), 0.1, "and keeps the entry's own");
+            } finally {
+                deleteTree(root);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

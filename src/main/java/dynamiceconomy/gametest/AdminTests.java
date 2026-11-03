@@ -253,18 +253,23 @@ public final class AdminTests {
     @GameTest(template = EMPTY)
     public static void auditLogRotatesAndReadsBackNewestFirst(GameTestHelper helper) {
         try {
-            Path file = Files.createTempDirectory("market-audit").resolve("audit.log");
-            for (int i = 0; i < 80; i++) {
-                AuditLog.append(file, "{\"n\":" + i + "}", 100, AuditLog.KEEP);
+            Path dir = Files.createTempDirectory("market-audit");
+            Path file = dir.resolve("audit.log");
+            try {
+                for (int i = 0; i < 80; i++) {
+                    AuditLog.append(file, "{\"n\":" + i + "}", 100, AuditLog.KEEP);
+                }
+                helper.assertTrue(Files.size(file) <= 100, "the current file stays under the cap");
+                for (int i = 1; i < AuditLog.KEEP; i++) {
+                    helper.assertTrue(Files.exists(file.resolveSibling("audit.log." + i)), "rotated file " + i + " kept");
+                }
+                helper.assertTrue(!Files.exists(file.resolveSibling("audit.log." + AuditLog.KEEP)), "nothing beyond the limit is kept");
+                List<Integer> newest = AuditLog.recent(file, 12).stream().map(entry -> entry.get("n").getAsInt()).toList();
+                helper.assertValueEqual(newest, java.util.stream.IntStream.iterate(79, n -> n - 1).limit(12).boxed().toList(),
+                        "newest first, reading back into rotated files");
+            } finally {
+                deleteTree(dir);
             }
-            helper.assertTrue(Files.size(file) <= 100, "the current file stays under the cap");
-            for (int i = 1; i < AuditLog.KEEP; i++) {
-                helper.assertTrue(Files.exists(file.resolveSibling("audit.log." + i)), "rotated file " + i + " kept");
-            }
-            helper.assertTrue(!Files.exists(file.resolveSibling("audit.log." + AuditLog.KEEP)), "nothing beyond the limit is kept");
-            List<Integer> newest = AuditLog.recent(file, 12).stream().map(entry -> entry.get("n").getAsInt()).toList();
-            helper.assertValueEqual(newest, java.util.stream.IntStream.iterate(79, n -> n - 1).limit(12).boxed().toList(),
-                    "newest first, reading back into rotated files");
         } catch (java.io.IOException e) {
             throw new GameTestAssertException("audit log test failed: " + e);
         }
