@@ -87,7 +87,7 @@ public final class MarketConfig {
                 .defineInRange("ceiling", 5.0, 1.0, 1000.0);
         builder.pop();
 
-        builder.comment("The Leaderboard tab: the richest players by Numismatics bank balance.").push("leaderboard");
+        builder.comment("The Leaderboard tab: the richest players by bank balance.").push("leaderboard");
         LEADERBOARD_ENABLED = builder
                 .comment("Show the Leaderboard tab. When false the tab is greyed out and no balances are sent.")
                 .define("leaderboard_enabled", true);
@@ -150,7 +150,7 @@ public final class MarketConfig {
                 .comment("Fraction of each sale taken from the seller and destroyed (a money sink), rounded up to a whole bit.")
                 .defineInRange("exchange_tax", 0.05, 0.0, 1.0);
         MAX_OPEN_ORDERS = builder
-                .comment("How many open orders one player may have at once.")
+                .comment("How many open orders and listings, together, one player may have at once.")
                 .defineInRange("max_open_orders", 10, 1, 1000);
         ORDER_EXPIRY_DAYS = builder
                 .comment("In-game days until an unfilled order expires and returns what it holds, counted like contracts",

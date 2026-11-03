@@ -1,5 +1,7 @@
 # Numismatics Server Market Addon — Technical Investigation
 
+> **Development notes, not user documentation.** The investigation written before the mod was built (Oct 2026), kept for the reasoning behind early decisions. Much of it is out of date: the mod no longer needs Numismatics. For how the mod works today, read the [README](../../README.md), the [admin guide](../admin-guide.md) and the [player guide](../player-guide.md).
+
 Oct 22, 2026 · @Patrick Tervo
 
 Recommendation: build a separate companion mod (Option B) that depends on Numismatics only, not on Create: Stock Market. Complexity is medium.

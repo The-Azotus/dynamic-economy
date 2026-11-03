@@ -39,7 +39,7 @@ Install the mod on the **server and every client**. Clients need it for the mark
 
 1. Install the mod and start the server. Built-in prices for vanilla and many popular mods are on by default (each mod's file loads only if that mod is installed); your own files, imports and edits always override them. To start from an empty market instead, `/datapack disable "mod/dynamic_economy:default_prices"`.
 2. Check the bank: a new world uses Numismatics' bank when Numismatics is installed, otherwise the mod's own. `/market admin bank` says which, and can switch it.
-3. Price your pack. From the server console, run `/market admin export`, fill in `base_price` in the exported `items.csv`, then run `/market admin import "<path to the csv>"`.
+3. Price your pack. From the server console, run `/market admin export`, fill in `base_price` in the exported `items.csv`, then run `/market admin import "<path to the csv>"`. In a big pack, run `/market admin suggest` too: it prices crafted items from their recipes, and its `suggested.csv` imports the same way (see [Pricing a whole modpack](docs/admin-guide.md#pricing-a-whole-modpack)). Or write catalog files by hand: files in `config/dynamic_economy/catalog/market/` apply to every world, and an entry only needs the fields it changes, such as `{ "item": "minecraft:diamond", "base_price": 600 }`.
 4. Tune it in game. For example, `/market admin setprice minecraft:diamond 300` prices one item, and `/market admin tag minecraft:logs setprice 4` prices every log.
 5. To make terminals the only way in, set `access_mode = "BLOCK_ONLY"` in `config/dynamic_economy-server.toml`.
 
@@ -49,7 +49,7 @@ The [admin guide](docs/admin-guide.md) covers every command, catalog field and s
 
 Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests. Create, Numismatics and FTB Teams are optional: add `-PwithoutMods=numismatics` to run without Numismatics, `-PwithoutMods=create` to run without both Create and Numismatics (Numismatics needs Create), or `-PwithoutMods=ftbteams` to run without FTB Teams; combine them with commas. Each such run uses its own test world, since a world remembers which bank it uses.
 
-Released versions are tagged in git (for example `v0.4.0`).
+Released versions are tagged in git (for example `v0.4.0`). To find your way around the code, start with [docs/architecture.md](docs/architecture.md).
 
 ## Licence
 

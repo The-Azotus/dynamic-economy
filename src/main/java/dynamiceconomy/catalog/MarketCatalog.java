@@ -20,8 +20,13 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.FMLPaths;
 
+import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,19 +36,23 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 /**
  * Item listings loaded from {@code data/<namespace>/market/*.json}. Each file holds an {@code entries} array and may
  * hold a {@code defaults} object whose fields apply to every entry in that file unless the entry sets them itself.
  * <p>
  * A bad entry is logged and skipped without discarding the rest of its file; entries with {@code base_price} ≤ 0
- * (unfilled templates) are skipped with one summary warning. If several files list the same item, the file from the
- * higher-priority datapack wins, as with any datapack override; within one pack, the file whose ID sorts last wins.
- * The loader also records where each field of each entry came from, and keeps its problems for
- * {@code /market admin diagnose}.
+ * (unfilled templates) are skipped with one summary warning. If several files list the same item, they're applied in
+ * priority order (datapack order; within one pack, by file ID), and each changes only the fields it sets, unless the
+ * entry has {@code "replace": true}, which starts the entry over. The loader also records where each field of each
+ * entry came from, and keeps its problems for {@code /market admin diagnose}.
  * <p>
  * The same pass reads the item classes ({@link ItemClasses}) from {@code data/<namespace>/market_classes/*.json}, and
- * uses them before decoding any entry.
+ * uses them before decoding any entry. Both kinds of file are also read from {@link #configFolder()}, which applies to
+ * every world and sits just below the world's own datapacks.
  */
 public final class MarketCatalog extends SimplePreparableReloadListener<MarketCatalog.Prepared> {
     public static final MarketCatalog INSTANCE = new MarketCatalog();
@@ -154,11 +163,13 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
 
     @Override
     protected Prepared prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+        // Pack positions are doubled so the config folder can sit between two packs (see configOrder).
         Map<String, Integer> packOrder = new HashMap<>();
-        List<PackResources> packs = resourceManager.listPacks().toList();
-        for (int i = 0; i < packs.size(); i++) {
-            packOrder.put(packs.get(i).packId(), i);
+        List<String> packIds = resourceManager.listPacks().map(PackResources::packId).toList();
+        for (int i = 0; i < packIds.size(); i++) {
+            packOrder.put(packIds.get(i), 2 * i);
         }
+        int configOrder = configOrder(packIds);
         List<SourceFile> found = new ArrayList<>();
         List<Problem> unreadable = new ArrayList<>();
         for (Map.Entry<ResourceLocation, Resource> file : FILES.listMatchingResources(resourceManager).entrySet()) {
@@ -175,16 +186,127 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         }
         // Only the highest-priority pack's copy of each class file is listed, so a pack replaces a whole class.
         Map<ResourceLocation, JsonElement> classFiles = new LinkedHashMap<>();
+        Map<ResourceLocation, Integer> classOrder = new HashMap<>();
         for (Map.Entry<ResourceLocation, Resource> file : CLASS_FILES.listMatchingResources(resourceManager).entrySet()) {
             ResourceLocation id = CLASS_FILES.fileToId(file.getKey());
             try (Reader reader = file.getValue().openAsReader()) {
                 classFiles.put(id, JsonParser.parseReader(reader));
+                classOrder.put(id, packOrder.getOrDefault(file.getValue().sourcePackId(), -1));
             } catch (Exception e) {
                 DynamicEconomy.LOGGER.error("Market class {} could not be read; skipped", id, e);
                 unreadable.add(new Problem(true, "Market class %s could not be read: %s".formatted(id, e.getMessage())));
             }
         }
+
+        ConfigFolder config = readConfigFolder(configFolder(), configOrder);
+        found.addAll(config.files());
+        unreadable.addAll(config.problems());
+        // A config class replaces a class from a pack below the folder, but not one from a world datapack.
+        config.classFiles().forEach((id, json) -> {
+            if (!classOrder.containsKey(id) || classOrder.get(id) < configOrder) {
+                classFiles.put(id, json);
+            }
+        });
         return new Prepared(found, classFiles, unreadable);
+    }
+
+    /**
+     * Packs that are always there and hold built-in data: the config folder never goes below them. Each mod's own
+     * data is also a pack, {@code mod/<modid>} (listed after {@code mod_data}); see {@link #isBuiltIn}.
+     */
+    private static final Set<String> BUILT_IN_PACKS = Set.of("vanilla", "mod_data", "mod_resources",
+            DynamicEconomy.DEFAULT_PRICES_PACK_ID);
+
+    /**
+     * Whether a pack holds built-in data: one of {@link #BUILT_IN_PACKS}, or a mod's own data ({@code mod/<modid>},
+     * where the built-in classes are). A mod's optional packs ({@code mod/<modid>:<name>}, such as the example
+     * catalog) aren't built in.
+     */
+    private static boolean isBuiltIn(String packId) {
+        return BUILT_IN_PACKS.contains(packId) || (packId.startsWith("mod/") && packId.indexOf(':') < 0);
+    }
+
+    /**
+     * Where the config folder goes among packs listed lowest priority first, with pack {@code i} at {@code 2 * i}:
+     * just below the first world datapack ({@code file/...}) or the example catalog, so each world can still change
+     * its prices, but never below the built-in prices or the mods' own data (where the built-in classes are), even
+     * if a world datapack was moved below them. With neither, it's above every pack.
+     */
+    public static int configOrder(List<String> packIds) {
+        int below = packIds.size();
+        int lowest = -1;
+        for (int i = 0; i < packIds.size(); i++) {
+            String id = packIds.get(i);
+            if (below == packIds.size() && (id.startsWith("file/") || id.equals(DynamicEconomy.EXAMPLE_PACK_ID))) {
+                below = i;
+            }
+            if (isBuiltIn(id)) {
+                lowest = i;
+            }
+        }
+        return Math.max(2 * below - 1, 2 * lowest + 1);
+    }
+
+    /** {@code config/dynamic_economy/catalog/}: catalog files that apply to every world. */
+    public static Path configFolder() {
+        return FMLPaths.CONFIGDIR.get().resolve(DynamicEconomy.MOD_ID).resolve("catalog");
+    }
+
+    /** What the config folder holds, as {@link #readConfigFolder} found it. */
+    public record ConfigFolder(List<SourceFile> files, Map<ResourceLocation, JsonElement> classFiles, List<Problem> problems) {
+    }
+
+    /**
+     * Reads {@code market/} and {@code market_classes/} under {@code root}, creating both if missing so admins can find
+     * them. Market files get the ID {@code config:<path>} and priority {@code order}; class files get
+     * {@code dynamic_economy:<path>}, so a file named after a built-in class replaces it.
+     */
+    public static ConfigFolder readConfigFolder(Path root, int order) {
+        List<SourceFile> files = new ArrayList<>();
+        Map<ResourceLocation, JsonElement> classFiles = new LinkedHashMap<>();
+        List<Problem> problems = new ArrayList<>();
+        readFolder(root.resolve("market"), CONFIG_NAMESPACE, problems,
+                (id, json) -> files.add(new SourceFile(id, order, CONFIG_PACK_ID, json)));
+        readFolder(root.resolve("market_classes"), DynamicEconomy.MOD_ID, problems, classFiles::put);
+        return new ConfigFolder(files, classFiles, problems);
+    }
+
+    /** The pack name config-folder files are reported under. */
+    public static final String CONFIG_PACK_ID = "config/" + DynamicEconomy.MOD_ID + "/catalog";
+    /** The namespace of the config folder's market files: {@code market/prices.json} loads as {@code config:prices}. */
+    public static final String CONFIG_NAMESPACE = "config";
+
+    private static void readFolder(Path folder, String namespace, List<Problem> problems,
+                                   BiConsumer<ResourceLocation, JsonElement> found) {
+        List<Path> paths;
+        try {
+            Files.createDirectories(folder);
+            try (Stream<Path> walk = Files.walk(folder)) {
+                paths = walk.filter(path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".json"))
+                        .sorted().toList();
+            }
+        } catch (IOException e) {
+            DynamicEconomy.LOGGER.error("The catalog folder {} could not be read; skipped", folder, e);
+            problems.add(new Problem(true, "The catalog folder %s could not be read: %s".formatted(folder, e.getMessage())));
+            return;
+        }
+        for (Path path : paths) {
+            String relative = folder.relativize(path).toString().replace('\\', '/');
+            String name = relative.substring(0, relative.length() - ".json".length());
+            ResourceLocation id = ResourceLocation.tryBuild(namespace, name);
+            if (id == null) {
+                skipped(problems, "Catalog file %s in %s: file names may use only lowercase letters, digits, _ - . and /; skipped"
+                        .formatted(relative, CONFIG_PACK_ID));
+                continue;
+            }
+            try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+                found.accept(id, JsonParser.parseReader(reader));
+            } catch (Exception e) {
+                DynamicEconomy.LOGGER.error("Catalog file {} in {} could not be read; skipped", relative, CONFIG_PACK_ID, e);
+                problems.add(new Problem(true, "Catalog file %s in %s could not be read: %s".formatted(relative, CONFIG_PACK_ID,
+                        e.getMessage())));
+            }
+        }
     }
 
     @Override
@@ -334,40 +456,111 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
             JsonObject own = element.getAsJsonObject();
             JsonObject merged = defaults.deepCopy();
             own.entrySet().forEach(field -> merged.add(field.getKey(), field.getValue()));
+            String where = merged.has("item") ? " (" + merged.get("item") + ")" : "";
+            JsonElement replaceField = merged.remove(REPLACE);
+            if (replaceField != null && !(replaceField.isJsonPrimitive() && replaceField.getAsJsonPrimitive().isBoolean())) {
+                skipped(problems, "Market file %s entry %d%s: \"replace\" must be true or false; skipped".formatted(fileId, i, where));
+                continue;
+            }
+            boolean replace = replaceField != null && replaceField.getAsBoolean();
             if (isUnpriced(merged)) {
                 unpriced++;
                 continue;
             }
 
-            DataResult<CatalogEntry> decoded = decode(merged);
+            // An entry for an item a lower file already lists changes only the fields it sets, unless it replaces.
+            Optional<Item> target = itemOf(merged);
+            Map<String, List<FieldSource>> earlier = replace || target.isEmpty() || !into.containsKey(target.get())
+                    ? FieldSource.NONE : sources.get(target.get());
+            JsonObject combined = earlier.isEmpty() ? merged
+                    : CatalogJson.merge(CatalogJson.explicit(into.get(target.get()).itemId(), earlier), merged);
+            DataResult<CatalogEntry> decoded = decode(combined);
             if (decoded.error().isPresent()) {
-                String where = merged.has("item") ? " (" + merged.get("item") + ")" : "";
-                skipped(problems, "Market file %s entry %d%s: %s; skipped".formatted(fileId, i, where, decoded.error().get().message()));
+                String message = decoded.error().get().message();
+                String kept = target.isPresent() && into.containsKey(target.get())
+                        ? " (the entry from " + origin.get(target.get()).id() + " stays)" + conflictHint(message, merged, combined, earlier)
+                        : "";
+                skipped(problems, "Market file %s entry %d%s: %s; skipped%s".formatted(fileId, i, where, message, kept));
                 continue;
             }
             CatalogEntry entry = decoded.result().orElseThrow();
-            Map<String, List<FieldSource>> fields = new LinkedHashMap<>();
+            Map<String, List<FieldSource>> fields = new LinkedHashMap<>(earlier);
             for (Map.Entry<String, JsonElement> field : merged.entrySet()) {
                 if (!field.getKey().equals("item")) {
                     String layer = own.has(field.getKey()) ? "file " + fileId : "file " + fileId + " defaults";
-                    fields.put(field.getKey(), List.of(new FieldSource(layer, field.getValue())));
+                    List<FieldSource> layers = new ArrayList<>(fields.getOrDefault(field.getKey(), List.of()));
+                    layers.add(new FieldSource(layer, field.getValue()));
+                    fields.put(field.getKey(), List.copyOf(layers));
                 }
             }
-            // A higher-priority file replaces the whole entry, so its sources replace the earlier file's too.
             sources.put(entry.item(), Collections.unmodifiableMap(fields));
             CatalogEntry previous = into.put(entry.item(), entry);
             SourceFile previousFile = origin.put(entry.item(), file);
             if (previous != null && previousFile != null) {
+                String how = replace ? "replaces" : "changes";
                 if (previousFile.packOrder() == file.packOrder()) {
-                    warning(problems, "Market file %s overrides %s listed earlier in %s of the same pack"
-                            .formatted(fileId, entry.itemId(), previousFile.id()));
+                    warning(problems, "Market file %s %s %s, listed earlier in %s of the same pack"
+                            .formatted(fileId, how, entry.itemId(), previousFile.id()));
                 } else {
-                    DynamicEconomy.LOGGER.debug("Market file {} (pack {}) overrides {} from {} (pack {})",
-                            fileId, file.packId(), entry.itemId(), previousFile.id(), previousFile.packId());
+                    DynamicEconomy.LOGGER.debug("Market file {} (pack {}) {} {} from {} (pack {})",
+                            fileId, file.packId(), how, entry.itemId(), previousFile.id(), previousFile.packId());
                 }
             }
         }
         return unpriced;
+    }
+
+    /**
+     * The entry field that makes an entry replace a lower file's entry for the same item, instead of changing only the
+     * fields it sets. Allowed in a file's {@code defaults}, where it applies to every entry.
+     */
+    public static final String REPLACE = "replace";
+
+    /** The rules that span two fields, as (field named in the error, the field it's checked against). */
+    private static final List<List<String>> PAIRED_FIELDS = List.of(List.of("min_buy_markup", "markup"),
+            List.of("contract_min_size", "contract_max_size"));
+
+    /**
+     * For a change that failed only because of a value it didn't set: which value that is and how to get past it.
+     * Empty when the change fails on its own too (a bad value of its own), since then the hint wouldn't help.
+     */
+    private static String conflictHint(String error, JsonObject change, JsonObject combined, Map<String, List<FieldSource>> earlier) {
+        if (earlier.isEmpty()) {
+            return "";
+        }
+        // base_price is the one required field a change may leave to the lower entry, and no paired rule uses it.
+        JsonObject alone = change.deepCopy();
+        if (!alone.has("base_price") && combined.has("base_price")) {
+            alone.add("base_price", combined.get("base_price").deepCopy());
+        }
+        if (decode(alone).error().isPresent()) {
+            return "";
+        }
+        for (List<String> pair : PAIRED_FIELDS) {
+            if (!error.contains(pair.get(0))) {
+                continue;
+            }
+            // The value to name is the one a lower file set and this change didn't. Failing that, it came from a class
+            // (this change's, if it sets one) or a built-in default.
+            Optional<String> lowerField = pair.stream()
+                    .filter(field -> !change.has(field) && earlier.containsKey(field) && !earlier.get(field).isEmpty()).findFirst();
+            String other = lowerField.orElse(change.has(pair.get(0)) ? pair.get(1) : pair.get(0));
+            String from = lowerField.map(field -> earlier.get(field).get(earlier.get(field).size() - 1))
+                    .map(layer -> layer.value() + " from " + layer.layer())
+                    .orElse("from the item's class or the default");
+            return ". It conflicts with %s %s: set %s in this entry (or its file's defaults) too, or add \"replace\": true"
+                    .formatted(other, from, other);
+        }
+        return "";
+    }
+
+    /** The registered item an entry's {@code item} field names, if it names one. */
+    private static Optional<Item> itemOf(JsonObject entry) {
+        if (!(entry.get("item") instanceof JsonElement id) || !id.isJsonPrimitive() || !id.getAsJsonPrimitive().isString()) {
+            return Optional.empty();
+        }
+        ResourceLocation parsed = ResourceLocation.tryParse(id.getAsString());
+        return parsed == null ? Optional.empty() : BuiltInRegistries.ITEM.getOptional(parsed).filter(item -> item != Items.AIR);
     }
 
     private static void skipped(List<Problem> problems, String message) {

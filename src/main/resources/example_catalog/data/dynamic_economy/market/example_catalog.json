@@ -2,9 +2,9 @@
   "defaults": { "markup": 0.5, "sell_fee": 0.0, "dynamic": true },
   "entries": [
     { "item": "minecraft:cobblestone",  "base_price": 1,    "unlimited_stock": true },
-    { "item": "minecraft:oak_log",      "base_price": 2,    "unlimited_stock": true },
-    { "item": "minecraft:iron_ingot",   "base_price": 16,   "start_stock": 0 },
-    { "item": "minecraft:diamond",      "base_price": 256,  "start_stock": 0 },
-    { "item": "minecraft:nether_star",  "base_price": 8192, "start_stock": 0, "can_sell": false }
+    { "item": "minecraft:oak_log",      "base_price": 8,    "unlimited_stock": true },
+    { "item": "minecraft:iron_ingot",   "base_price": 32,   "start_stock": 0 },
+    { "item": "minecraft:diamond",      "base_price": 512,  "start_stock": 0 },
+    { "item": "minecraft:nether_star",  "base_price": 16384, "start_stock": 0, "can_sell": false }
   ]
 }

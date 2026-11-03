@@ -64,7 +64,7 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 /**
- * {@code /market} opens the market screen. The sell, buy, stock and price subcommands are the Phase 1 test commands,
+ * {@code /market} opens the market screen. The sell, buy, stock and price subcommands trade and look up prices in chat,
  * kept for scripting and testing without the screen.
  * Brigadier runs commands on the server thread, which is what {@link MarketService} requires.
  */
@@ -146,9 +146,13 @@ public final class MarketCommand {
                         .then(Commands.literal("import")
                                 .requires(source -> source.hasPermission(Commands.LEVEL_OWNERS))
                                 .then(Commands.argument("path", StringArgumentType.string())
-                                        .executes(ctx -> importCsv(ctx, false))
+                                        .executes(ctx -> importCsv(ctx, false, false))
+                                        .then(Commands.literal("config")
+                                                .executes(ctx -> importCsv(ctx, false, true))
+                                                .then(Commands.literal("preview")
+                                                        .executes(ctx -> importCsv(ctx, true, true))))
                                         .then(Commands.literal("preview")
-                                                .executes(ctx -> importCsv(ctx, true)))))));
+                                                .executes(ctx -> importCsv(ctx, true, false)))))));
     }
 
     /** The in-game catalog editing commands live in their own class; they hang off {@code /market admin}. */
@@ -520,8 +524,8 @@ public final class MarketCommand {
                     null, null);
             List<String> lines = new ArrayList<>();
             lines.add("Wrote " + file + ". Nothing on the market changed.");
-            lines.add("  %d already listed, %d priced from recipes (%d of them worth under 1 spur, left blank; %d from recipe types worth checking)"
-                    .formatted(written.listed(), written.suggested(), written.underOneSpur(), written.toReview()));
+            lines.add("  %d already listed, %d priced from recipes (%d of them worth under 1 bit, left blank; %d from recipe types worth checking)"
+                    .formatted(written.listed(), written.suggested(), written.underOneBit(), written.toReview()));
             lines.add("  %d made only from unpriced items, %d with no usable recipe (these need hand-set prices)"
                     .formatted(written.unpricedInputs(), written.noRecipe()));
             if (written.leftOut() > 0) {
@@ -662,7 +666,8 @@ public final class MarketCommand {
 
     private static final int REJECTIONS_SHOWN = 15;
 
-    private static int importCsv(CommandContext<CommandSourceStack> ctx, boolean preview) {
+    /** {@code toConfig}: write into the config folder, which every world reads, instead of this world's datapack. */
+    private static int importCsv(CommandContext<CommandSourceStack> ctx, boolean preview, boolean toConfig) {
         CommandSourceStack source = ctx.getSource();
         MinecraftServer server = source.getServer();
         String typed = StringArgumentType.getString(ctx, "path");
@@ -680,14 +685,17 @@ public final class MarketCommand {
 
         CatalogImport.Report report;
         try {
-            report = CatalogImport.analyze(readText(csv));
+            report = CatalogImport.analyze(readText(csv), CatalogImport.alreadyListed(MarketCatalog.INSTANCE::get,
+                    MarketCatalog.INSTANCE::sources, toConfig));
         } catch (IOException e) {
             source.sendFailure(Component.literal("Could not read " + typed + ": " + e.getMessage()));
             return 0;
         }
-        source.sendSuccess(() -> Component.literal("%s%s: %d entries to write across %d mods, %d rows skipped (no base_price), %d rejected"
+        String listed = report.skippedListed() == 0 ? ""
+                : ", %d already-listed rows left out (unchanged, and not from the file this import rewrites)".formatted(report.skippedListed());
+        source.sendSuccess(() -> Component.literal("%s%s: %d entries to write across %d mods, %d rows skipped (no base_price)%s, %d rejected"
                 .formatted(preview ? "Preview of " : "Import of ", typed, report.toWrite(), report.byMod().size(),
-                        report.skippedBlank(), report.rejected().size())), false);
+                        report.skippedBlank(), listed, report.rejected().size())), false);
         for (int i = 0; i < report.rejected().size(); i++) {
             String reason = report.rejected().get(i);
             DynamicEconomy.LOGGER.warn("Market import {}: rejected {}", typed, reason);
@@ -709,7 +717,8 @@ public final class MarketCommand {
 
         CatalogImport.Written written;
         try {
-            written = CatalogImport.write(report, server.getWorldPath(LevelResource.DATAPACK_DIR));
+            written = toConfig ? CatalogImport.writeToConfig(report, MarketCatalog.configFolder().resolve("market"))
+                    : CatalogImport.write(report, server.getWorldPath(LevelResource.DATAPACK_DIR));
         } catch (IOException e) {
             DynamicEconomy.LOGGER.error("Market import failed while writing", e);
             AuditLog.record(source, "import", typed, "failed: " + e.getMessage(), null, null);
@@ -722,8 +731,9 @@ public final class MarketCommand {
                 .formatted(report.toWrite(), report.rejected().size(), written.backups().size()), null, files);
         String backups = written.backups().isEmpty() ? ""
                 : " (backed up %d replaced file(s) as .json.bak)".formatted(written.backups().size());
-        source.sendSuccess(() -> Component.literal("Wrote %d catalog file(s) to <world>/datapacks/%s%s"
-                .formatted(written.files().size(), CatalogImport.PACK_FOLDER, backups)), true);
+        String folder = toConfig ? MarketCatalog.CONFIG_PACK_ID + "/market" : "<world>/datapacks/" + CatalogImport.PACK_FOLDER;
+        source.sendSuccess(() -> Component.literal("Wrote %d catalog file(s) to %s%s"
+                .formatted(written.files().size(), folder, backups)), true);
 
         // Admin edits sit above catalog files, so they still win for these items.
         MarketOverrides overrides = MarketOverrides.get(server);
@@ -735,10 +745,19 @@ public final class MarketCommand {
         }
 
         PackRepository packs = server.getPackRepository();
-        if (packs.getSelectedIds().contains(CatalogImport.PACK_ID)) {
+        if (toConfig || packs.getSelectedIds().contains(CatalogImport.PACK_ID)) {
             int count = MarketCatalog.INSTANCE.reloadNow(server.getResourceManager());
             DynamicEconomy.catalogReloaded(server);
             source.sendSuccess(() -> Component.literal("Reloaded market catalog: %d entries".formatted(count)), true);
+            CatalogImport.Outcome outcome = CatalogImport.outcome(report, MarketCatalog.INSTANCE::fileEntry);
+            if (!outcome.changedByHigherFile().isEmpty()) {
+                source.sendFailure(Component.literal("%d imported item(s) are changed by a higher catalog file, such as a world datapack above the config folder: %s. /market admin info <item> shows which"
+                        .formatted(outcome.changedByHigherFile().size(), firstFew(outcome.changedByHigherFile()))));
+            }
+            if (!outcome.noLongerLoad().isEmpty()) {
+                source.sendFailure(Component.literal("%d imported item(s) no longer load, since a class file changed: %s. /market admin diagnose shows why"
+                        .formatted(outcome.noLongerLoad().size(), firstFew(outcome.noLongerLoad()))));
+            }
         } else if (written.createdPack()) {
             packs.reload();
             if (packs.isAvailable(CatalogImport.PACK_ID)) {
@@ -755,6 +774,12 @@ public final class MarketCommand {
                     .formatted(CatalogImport.PACK_ID, CatalogImport.PACK_ID)));
         }
         return report.toWrite();
+    }
+
+    /** Up to five IDs, then "...". */
+    private static String firstFew(List<ResourceLocation> ids) {
+        String shown = ids.stream().limit(5).map(ResourceLocation::toString).collect(Collectors.joining(", "));
+        return ids.size() > 5 ? shown + ", ..." : shown;
     }
 
     /** UTF-8, or Windows-1252 for spreadsheets saved as plain "CSV" by Excel, which isn't UTF-8. */

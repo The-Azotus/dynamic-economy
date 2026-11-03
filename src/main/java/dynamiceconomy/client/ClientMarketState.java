@@ -169,7 +169,7 @@ public final class ClientMarketState {
         Component itemName = outcome.listed().isEmpty()
                 ? BuiltInRegistries.ITEM.get(outcome.item()).getDescription()
                 : outcome.listed().getHoverName();
-        Component amount = PriceFormat.money(PriceFormat.spurs(outcome.amount()));
+        Component amount = PriceFormat.money(PriceFormat.amount(outcome.amount()));
         if (outcome.result() == MarketService.Result.OK) {
             status = switch (outcome.action()) {
                 case POST -> outcome.filled() == 0
@@ -201,7 +201,7 @@ public final class ClientMarketState {
     public static void applyContractOutcome(MarketPayloads.ContractOutcome outcome) {
         DynamicEconomy.LOGGER.debug("Contract outcome: {}", outcome);
         Component itemName = BuiltInRegistries.ITEM.get(outcome.item()).getDescription();
-        Component amount = PriceFormat.money(PriceFormat.spurs(outcome.amount()));
+        Component amount = PriceFormat.money(PriceFormat.amount(outcome.amount()));
         if (outcome.result() == MarketService.Result.OK) {
             status = switch (outcome.action()) {
                 case CLAIM -> Component.translatable("screen.dynamic_economy.contracts.claimed", itemName, amount);
@@ -244,7 +244,7 @@ public final class ClientMarketState {
         DynamicEconomy.LOGGER.debug("Bank outcome: {}", outcome);
         if (outcome.result() == BankService.Result.OK) {
             status = Component.translatable(outcome.deposit() ? "screen.dynamic_economy.bank.deposited" : "screen.dynamic_economy.bank.withdrew",
-                    PriceFormat.money(PriceFormat.spurs(outcome.amount())));
+                    PriceFormat.money(PriceFormat.amount(outcome.amount())));
             statusIsError = false;
         } else {
             status = Component.translatable("screen.dynamic_economy.bank.result." + outcome.result().name().toLowerCase(Locale.ROOT));
@@ -258,17 +258,17 @@ public final class ClientMarketState {
         Component itemName = BuiltInRegistries.ITEM.get(outcome.item()).getDescription();
         if (outcome.result() == MarketService.Result.OK) {
             status = Component.translatable(outcome.buy() ? "screen.dynamic_economy.bought" : "screen.dynamic_economy.sold",
-                    outcome.quantity(), itemName, PriceFormat.money(PriceFormat.spurs(outcome.total())));
+                    outcome.quantity(), itemName, PriceFormat.money(PriceFormat.amount(outcome.total())));
             statusIsError = false;
         } else if (outcome.result() == MarketService.Result.PRICE_CHANGED) {
             // The server also sent the refreshed row, so the button already shows the new total.
             MarketPayloads.TradeRequest request = lastRequest;
             status = request != null && request.buy() == outcome.buy() && request.item().equals(outcome.item())
                     ? Component.translatable("screen.dynamic_economy.price_changed_from_to",
-                            PriceFormat.money(PriceFormat.spurs(request.quotedTotal())),
-                            PriceFormat.money(PriceFormat.spurs(outcome.total())))
+                            PriceFormat.money(PriceFormat.amount(request.quotedTotal())),
+                            PriceFormat.money(PriceFormat.amount(outcome.total())))
                     : Component.translatable("screen.dynamic_economy.price_changed_to",
-                            PriceFormat.money(PriceFormat.spurs(outcome.total())));
+                            PriceFormat.money(PriceFormat.amount(outcome.total())));
             statusIsError = true;
         } else {
             status = Component.translatable("screen.dynamic_economy.result." + outcome.result().name().toLowerCase(Locale.ROOT));

@@ -50,7 +50,7 @@ public final class MarketStockData extends SavedData {
     }
 
     /**
-     * Lifetime money and units through the market, in spurs. The market keeps no balance of its own: what it pays
+     * Lifetime money and units through the market, in bits. The market keeps no balance of its own: what it pays
      * sellers is new money, and what buyers pay it leaves the economy. Counts saturate rather than overflow.
      *
      * @param paidOut   paid to players for items they sold (money created)
@@ -287,7 +287,7 @@ public final class MarketStockData extends SavedData {
                 data.factors.put(id, new Factor(value, entry.getLong("t")));
             }
         }
-        // Absent before Phase 5 saves.
+        // Absent from saves made before price history was added.
         CompoundTag historyTag = tag.getCompound("history");
         for (String key : historyTag.getAllKeys()) {
             ResourceLocation id = ResourceLocation.tryParse(key);

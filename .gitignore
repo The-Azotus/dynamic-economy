@@ -45,3 +45,5 @@ run-mptest/
 
 ### Phase 10 pricing inputs (large exports) ###
 pricing-work/
+### Claude Code worktrees ###
+.claude/worktrees/

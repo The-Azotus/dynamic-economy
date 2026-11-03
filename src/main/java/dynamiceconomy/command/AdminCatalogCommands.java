@@ -1,5 +1,7 @@
 package dynamiceconomy.command;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -37,7 +39,9 @@ import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.item.ItemArgument;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
@@ -618,9 +622,30 @@ final class AdminCatalogCommands {
             String about = itemClass.description().isEmpty() ? "" : " - " + itemClass.description();
             ctx.getSource().sendSuccess(() -> Component.literal("  %s (%d listed)%s".formatted(ItemClasses.shortName(itemClass.id()),
                     count, about)), false);
-            ctx.getSource().sendSuccess(() -> Component.literal("    " + itemClass.values()).withStyle(ChatFormatting.GRAY), false);
+            String file = classFile(itemClass);
+            ResourceLocation id = itemClass.id();
+            String saveAs = id.getNamespace().equals(DynamicEconomy.MOD_ID)
+                    ? MarketCatalog.CONFIG_PACK_ID + "/market_classes/" + id.getPath() + ".json"
+                    : "data/" + id.getNamespace() + "/market_classes/" + id.getPath() + ".json in a datapack";
+            ctx.getSource().sendSuccess(() -> Component.literal("    " + itemClass.values()).withStyle(style -> style
+                    .withColor(ChatFormatting.GRAY)
+                    .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, file))
+                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(
+                            "Click to copy as a class file. Saved as " + saveAs + ", it replaces this class")))), false);
         }
         return classes.size();
+    }
+
+    private static final Gson PRETTY = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+
+    /** The class as a file that loads back as the same class: its description, then its values. */
+    private static String classFile(ItemClasses.ItemClass itemClass) {
+        JsonObject file = new JsonObject();
+        if (!itemClass.description().isEmpty()) {
+            file.addProperty("description", itemClass.description());
+        }
+        itemClass.values().entrySet().forEach(field -> file.add(field.getKey(), field.getValue()));
+        return PRETTY.toJson(file);
     }
 
     // ---- Applying an edit -------------------------------------------------------------------------------------

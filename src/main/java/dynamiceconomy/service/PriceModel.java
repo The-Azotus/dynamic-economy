@@ -8,7 +8,7 @@ import java.math.RoundingMode;
 import java.util.Optional;
 
 /**
- * Supply-and-demand pricing, in spurs. Each item has a factor {@code s}, 1.0 at rest.
+ * Supply-and-demand pricing, in bits (= spurs). Each item has a factor {@code s}, 1.0 at rest.
  * <ul>
  *   <li>The market pays {@code base × s × (1 − sell_fee)} per unit and charges {@code base × s × (1 + markup)}.
  *       Unlimited-stock items charge {@code base × max(s × (1 + markup), 1 + min_buy_markup)}.</li>

@@ -2,7 +2,7 @@
 
 The market is run by the server. You can sell it items for money and buy items from what everyone has sold. Everything is paid through your bank account, so you don't need coins in your inventory.
 
-Which bank depends on the server. With Create: Numismatics installed, it's your **Numismatics bank account** and money is counted in **spurs**. Without it, the market has its **own bank** and coins, and money is counted in **bits**. 1 bit is worth exactly 1 spur, so prices are the same either way. The screen always shows the right unit.
+Which bank depends on the server. Normally the market has its **own bank** and coins, and money is counted in **bits**. On servers with Create: Numismatics, it uses your **Numismatics bank account** instead, and money is counted in **spurs**. 1 bit is worth exactly 1 spur, so prices are the same either way. The screen always shows the right unit; this guide says bits.
 
 ## Opening the market
 
@@ -17,7 +17,7 @@ Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see 
 
 | Part | What it shows |
 | --- | --- |
-| **Bank** (top right) | The balance of the account you're using, in spurs or bits. Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. On a narrow screen it sits at the end of the search row and large amounts are shortened, such as **123k**. |
+| **Bank** (top right) | The balance of the account you're using, in bits (spurs with Numismatics). Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. On a narrow screen it sits at the end of the search row and large amounts are shortened, such as **123k**. |
 | **Search box** | Type part of an item's name to filter the list. **`@create`** shows only one mod's items (by its name or ID, so `@farmer` finds Farmer's Delight). **`#ingots`** shows items with a matching tag; `#c:ingots` matches that tag's full ID. Combine words to narrow it down: `@create #plates`, or `iron ingot` (both words must match). A mod ID followed by `:`, such as `create:`, still works too. |
 | **Sort button** | Click to cycle the order: **Name**, **Cheapest** (lowest buy price first), **Best pay** (highest sell price first), **Stock** (most first). |
 | **Filter button** | Click to cycle what's shown: **All**, **Buyable** (in stock and for sale), **Sellable** (the market buys it), **Held** (you have some it accepts). |
@@ -90,9 +90,9 @@ On a server using Numismatics' bank, recipe viewers such as JEI may still list t
 
 Hover over any item, in your inventory, a chest or a recipe viewer, to see what the market pays for it:
 
-> Market pays 16 spurs each (318 for all 20)
+> Market pays 32 bits each (636 for all 20)
 
-Cheap items show decimals, such as *"Market pays 0.99 spurs each"*. Selling a whole stack still pays the exact total, rounded once.
+Cheap items show decimals, such as *"Market pays 0.99 bits each"*. Selling a whole stack still pays the exact total, rounded once.
 
 If an item has no such line, the market doesn't buy it. To turn the line off, set `show_sell_price_in_tooltips = false` in `config/dynamic_economy-client.toml`.
 
@@ -142,7 +142,7 @@ When a sale goes through, the money goes to your bank less the exchange tax (5% 
 - **Prices recover.** Every minute or so, each price moves part of the way back toward normal.
 - Buying something and selling it straight back always loses a little money, so there's no free profit.
 
-Money is counted in **spurs** or **bits** (1 bit = 1 spur); see [Coins](#coins).
+Money is counted in **bits**, or **spurs** on servers with Numismatics (1 bit = 1 spur); see [Coins](#coins).
 
 ## What the market accepts
 
@@ -192,4 +192,4 @@ Coin  Crafting table  Coin
 Coin  Coin            Coin
 ```
 
-The coins are 8 spurs on servers with Numismatics, or 8 Bits without it. Your server may use a different recipe; check a recipe viewer if this one doesn't work. Break the terminal (by hand or with an axe) to pick it up again.
+The coins are 8 Bits, or 8 Numismatics Spurs on servers with Numismatics. Your server may use a different recipe; check a recipe viewer if this one doesn't work. Break the terminal (by hand or with an axe) to pick it up again.

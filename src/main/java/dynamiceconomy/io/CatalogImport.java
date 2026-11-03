@@ -3,9 +3,12 @@ package dynamiceconomy.io;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.DataResult;
+import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.catalog.CatalogEntry;
+import dynamiceconomy.catalog.FieldSource;
 import dynamiceconomy.catalog.MarketCatalog;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -18,7 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Turns a priced spreadsheet back into catalog files. Each row is checked with the catalog loader's own rules, so
@@ -40,27 +46,37 @@ public final class CatalogImport {
      *
      * @param byMod        accepted entries as catalog JSON, grouped by mod ID; what would be written
      * @param decoded      the same entries as the loader will read them
-     * @param skippedBlank rows with no base_price (left unpriced on purpose)
-     * @param rejected     one reason per rejected row, with its line number
+     * @param skippedBlank  rows with no base_price (left unpriced on purpose)
+     * @param skippedListed {@code catalog} rows of {@code suggested.csv} left out, see {@link #alreadyListed}
+     * @param rejected      one reason per rejected row, with its line number
      */
     public record Report(Map<String, List<JsonObject>> byMod, List<CatalogEntry> decoded, int skippedBlank,
-                         List<String> rejected) {
+                         int skippedListed, List<String> rejected) {
         public int toWrite() {
             return decoded.size();
         }
     }
 
     public static Report analyze(String csvText) {
+        return analyze(csvText, entry -> false);
+    }
+
+    /**
+     * @param leaveOut which {@code catalog} rows of {@code suggested.csv} (by {@code price_source}) to leave out, once
+     *                 they've passed the rules; other rows are never left out
+     */
+    public static Report analyze(String csvText, Predicate<CatalogEntry> leaveOut) {
         Csv.Table table = Csv.parse(csvText);
         List<String> rejected = new ArrayList<>();
         Map<String, List<JsonObject>> byMod = new TreeMap<>();
         List<CatalogEntry> decoded = new ArrayList<>();
         if (!table.headers().contains(CatalogColumns.ITEM_ID) || !table.headers().contains(CatalogColumns.BASE_PRICE)) {
             rejected.add("The header row needs \"item_id\" and \"base_price\" columns (found: " + table.headers() + ")");
-            return new Report(byMod, decoded, 0, rejected);
+            return new Report(byMod, decoded, 0, 0, rejected);
         }
 
         int skippedBlank = 0;
+        int skippedListed = 0;
         Map<ResourceLocation, Integer> seen = new HashMap<>();
         for (Csv.Row row : table.rows()) {
             String itemText = row.get(CatalogColumns.ITEM_ID);
@@ -102,10 +118,64 @@ public final class CatalogImport {
                 rejected.add(where + ": " + entry.error().get().message());
                 continue;
             }
+            if (row.get(CatalogExport.PRICE_SOURCE).equals(CatalogExport.FROM_CATALOG) && leaveOut.test(entry.result().orElseThrow())) {
+                skippedListed++;
+                continue;
+            }
             byMod.computeIfAbsent(id.getNamespace(), ns -> new ArrayList<>()).add(json);
             decoded.add(entry.result().orElseThrow());
         }
-        return new Report(byMod, decoded, skippedBlank, rejected);
+        return new Report(byMod, decoded, skippedBlank, skippedListed, rejected);
+    }
+
+    /**
+     * Which {@code catalog} rows of {@code suggested.csv} an import leaves out: those that still match the item's live
+     * entry ({@code live}, with tag rules and edits), so importing them would only copy lower files' values (such as
+     * the built-in prices) into the import file and pin them there. A row is kept if it was changed in the sheet, or
+     * if any of its values come from the file the import rewrites, since leaving it out would drop it from that file.
+     *
+     * @param toConfig whether the import writes into the config folder rather than the world's datapack
+     */
+    public static Predicate<CatalogEntry> alreadyListed(Function<Item, Optional<CatalogEntry>> live,
+                                                        Function<Item, Map<String, List<FieldSource>>> sources, boolean toConfig) {
+        return entry -> {
+            if (!live.apply(entry.item()).equals(Optional.of(entry))) {
+                return false;
+            }
+            String file = "file " + importFileId(entry.itemId().getNamespace(), toConfig);
+            return sources.apply(entry.item()).values().stream().flatMap(List::stream)
+                    .noneMatch(source -> source.layer().equals(file) || source.layer().equals(file + " defaults"));
+        };
+    }
+
+    /** The catalog file ID that {@code imported_<mod>.json} loads as, in the config folder or the world's datapack. */
+    static ResourceLocation importFileId(String mod, boolean toConfig) {
+        return ResourceLocation.fromNamespaceAndPath(toConfig ? MarketCatalog.CONFIG_NAMESPACE : DynamicEconomy.MOD_ID, "imported_" + mod);
+    }
+
+    /** What became of the imported rows once the catalog was reloaded. */
+    public record Outcome(List<ResourceLocation> changedByHigherFile, List<ResourceLocation> noLongerLoad) {
+    }
+
+    /**
+     * Checks an import against the reloaded catalog files ({@code fileEntry}: before tag rules and item edits). Each
+     * row is decoded again, since a class file may have changed since {@link #analyze}. A row that loaded but differs
+     * from what the catalog now has was changed by a higher file, such as a world datapack above the config folder.
+     */
+    public static Outcome outcome(Report report, Function<Item, Optional<CatalogEntry>> fileEntry) {
+        List<ResourceLocation> changed = new ArrayList<>();
+        List<ResourceLocation> failed = new ArrayList<>();
+        for (List<JsonObject> rows : report.byMod().values()) {
+            for (JsonObject row : rows) {
+                DataResult<CatalogEntry> expected = MarketCatalog.decode(row);
+                if (expected.error().isPresent()) {
+                    failed.add(ResourceLocation.parse(row.get("item").getAsString()));
+                } else if (!fileEntry.apply(expected.result().orElseThrow().item()).equals(expected.result())) {
+                    changed.add(expected.result().orElseThrow().itemId());
+                }
+            }
+        }
+        return new Outcome(changed, failed);
     }
 
     /** Writes the result of an import. {@code createdPack} means the datapack folder didn't exist before. */
@@ -129,11 +199,26 @@ public final class CatalogImport {
             meta.add("pack", packInfo);
             Files.writeString(mcmeta, CatalogExport.GSON.toJson(meta), StandardCharsets.UTF_8);
         }
+        return writeFiles(report, market, created);
+    }
 
+    /**
+     * As {@link #write}, but into the config folder's {@code market/} folder ({@code marketDir}), which every world
+     * reads. {@code createdPack} is always false: there's no pack to enable.
+     */
+    public static Written writeToConfig(Report report, Path marketDir) throws IOException {
+        return writeFiles(report, Files.createDirectories(marketDir), false);
+    }
+
+    /**
+     * Each file replaces whole entries ({@code "replace": true} in its defaults): a spreadsheet row shows every field
+     * the entry sets, so a cleared cell means the field is unset, not "keep the built-in value".
+     */
+    private static Written writeFiles(Report report, Path market, boolean created) throws IOException {
         List<Path> files = new ArrayList<>();
         List<Path> backups = new ArrayList<>();
         for (Map.Entry<String, List<JsonObject>> mod : report.byMod().entrySet()) {
-            Path file = market.resolve("imported_" + mod.getKey() + ".json");
+            Path file = market.resolve(importFileId(mod.getKey(), false).getPath() + ".json");
             if (Files.exists(file)) {
                 Path backup = file.resolveSibling(file.getFileName() + ".bak");
                 Files.copy(file, backup, StandardCopyOption.REPLACE_EXISTING);
@@ -142,6 +227,9 @@ public final class CatalogImport {
             JsonArray entries = new JsonArray();
             mod.getValue().forEach(entries::add);
             JsonObject catalog = new JsonObject();
+            JsonObject defaults = new JsonObject();
+            defaults.addProperty(MarketCatalog.REPLACE, true);
+            catalog.add("defaults", defaults);
             catalog.add("entries", entries);
             Files.writeString(file, CatalogExport.GSON.toJson(catalog), StandardCharsets.UTF_8);
             files.add(file);
@@ -173,7 +261,7 @@ public final class CatalogImport {
 
     private static String putPrice(JsonObject json, String price) {
         if (!price.matches("\\d+")) {
-            return "base_price \"" + price + "\" must be a positive whole number of spurs";
+            return "base_price \"" + price + "\" must be a positive whole number of bits";
         }
         BigDecimal value = new BigDecimal(price);
         if (value.signum() <= 0 || value.compareTo(BigDecimal.valueOf(Integer.MAX_VALUE)) > 0) {

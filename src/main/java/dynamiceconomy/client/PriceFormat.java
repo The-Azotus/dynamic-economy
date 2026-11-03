@@ -21,18 +21,19 @@ final class PriceFormat {
                 ? "money.dynamic_economy.bits" : "money.dynamic_economy.spurs", amount);
     }
 
-    static String spurs(long spurs) {
-        return String.format(Locale.ROOT, "%,d", spurs);
+    /** A whole amount with thousands separators: "1,234". */
+    static String amount(long amount) {
+        return String.format(Locale.ROOT, "%,d", amount);
     }
 
     /** Full digits up to 99,999; abbreviated above that so the price columns keep their width. */
-    static String compact(long spurs) {
-        if (spurs < 100_000) {
-            return spurs(spurs);
+    static String compact(long amount) {
+        if (amount < 100_000) {
+            return amount(amount);
         }
-        return spurs < 1_000_000
-                ? String.format(Locale.ROOT, "%.0fk", spurs / 1_000.0)
-                : String.format(Locale.ROOT, "%.2fM", spurs / 1_000_000.0);
+        return amount < 1_000_000
+                ? String.format(Locale.ROOT, "%.0fk", amount / 1_000.0)
+                : String.format(Locale.ROOT, "%.2fM", amount / 1_000_000.0);
     }
 
     static String count(long count) {
@@ -46,8 +47,8 @@ final class PriceFormat {
     }
 
     /**
-     * A price for one unit: up to two decimals below 100 spurs, so a cheap item's moving price doesn't show as 0, and
-     * whole spurs above. Pass {@code FLOOR} for what the market pays and {@code CEILING} for what it charges, so the
+     * A price for one unit: up to two decimals below 100, so a cheap item's moving price doesn't show as 0, and
+     * whole numbers above. Pass {@code FLOOR} for what the market pays and {@code CEILING} for what it charges, so the
      * shown price is never better than the real one. Orders are still totalled exactly and rounded once.
      */
     static String unitPrice(BigDecimal exact, RoundingMode direction) {
@@ -57,12 +58,12 @@ final class PriceFormat {
         return compact(exact.setScale(0, direction).longValueExact());
     }
 
-    /** An average or other decimal amount: two decimals below 1,000, whole spurs with separators above. */
+    /** An average or other decimal amount: two decimals below 1,000, whole numbers with separators above. */
     static String decimal(BigDecimal value) {
         if (value.compareTo(THOUSAND) < 0) {
             return plain(value.setScale(2, RoundingMode.HALF_UP));
         }
-        return spurs(value.setScale(0, RoundingMode.HALF_UP).longValueExact());
+        return amount(value.setScale(0, RoundingMode.HALF_UP).longValueExact());
     }
 
     private static String plain(BigDecimal value) {

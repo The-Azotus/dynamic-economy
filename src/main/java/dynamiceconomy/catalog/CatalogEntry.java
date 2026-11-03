@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * One listed item. Prices are in spurs.
+ * One listed item. Prices are in bits (= spurs).
  *
  * @param basePrice      what the market pays per unit before the supply/demand factor and fee
  * @param markup         extra fraction charged when the market sells, e.g. 0.5 means buyers pay 150%
