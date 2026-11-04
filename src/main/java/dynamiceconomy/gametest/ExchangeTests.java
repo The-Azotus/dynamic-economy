@@ -83,6 +83,53 @@ public final class ExchangeTests {
         helper.succeed();
     }
 
+    /** The tax is rounded up once on what an order or listing sells in all, so selling in small pieces costs no more. */
+    @GameTest(template = EMPTY)
+    public static void exchangeTaxIsRoundedOncePerOrder(GameTestHelper helper) {
+        withExchange(() -> {
+            ExchangeData data = new ExchangeData();
+            Fixture seller = new Fixture(helper);
+            Fixture buyer = new Fixture(helper);
+            seller.give(new ItemStack(Items.COBBLESTONE, 20));
+            buyer.deposit(1000);
+
+            // A waiting sell order bought one unit at a time, with a save and reload halfway.
+            long ask = posted(helper, seller, data, Items.COBBLESTONE, false, 1, 20).orderId();
+            for (int i = 0; i < 10; i++) {
+                posted(helper, buyer, data, Items.COBBLESTONE, true, 1, 1);
+            }
+            data = ExchangeData.fromTag(data.save(new CompoundTag(), helper.getLevel().registryAccess()), helper.getLevel().registryAccess());
+            helper.assertValueEqual(data.find(ask).orElseThrow().soldValue(), 10L, "its takings so far survive a restart");
+            for (int i = 0; i < 10; i++) {
+                posted(helper, buyer, data, Items.COBBLESTONE, true, 1, 1);
+            }
+            helper.assertTrue(data.find(ask).isEmpty(), "all twenty sold");
+            helper.assertValueEqual(seller.balance(), 19, "20 less one tax of 1 (5% rounded up once), not 1 on every unit");
+            helper.assertValueEqual(data.taxCollected(), 1L, "one bit destroyed");
+
+            // An incoming sell order filling several waiting bids: 3 × 7 = 21, tax 1.05 rounded up to 2, not 1 per bid.
+            Fixture other = new Fixture(helper);
+            other.give(new ItemStack(Items.COBBLESTONE, 3));
+            for (int i = 0; i < 3; i++) {
+                posted(helper, buyer, data, Items.COBBLESTONE, true, 7, 1);
+            }
+            helper.assertValueEqual(posted(helper, other, data, Items.COBBLESTONE, false, 7, 3).amount(), 19L, "21 less a tax of 2");
+            helper.assertValueEqual(other.balance(), 19, "paid in");
+
+            // A listing bought one unit at a time: 10 × 1, tax 0.5 rounded up once.
+            ItemStack stone = named("Tax stone", 10);
+            Fixture lister = new Fixture(helper);
+            lister.give(stone.copy());
+            long listing = listFrom(lister, data, 0, 1, 10).orderId();
+            for (int i = 0; i < 10; i++) {
+                helper.assertValueEqual(ExchangeService.buyListing(buyer.player, data, listing, 1, 1).result(), Result.OK, "bought one");
+            }
+            helper.assertValueEqual(lister.balance(), 9, "10 less one tax of 1");
+            helper.assertValueEqual(data.taxCollected(), 1L + 2L + 1L, "every tax destroyed");
+        });
+        helper.succeed();
+    }
+
     @GameTest(template = EMPTY)
     public static void exchangeFillsBestPriceFirstThenOldestFirst(GameTestHelper helper) {
         withExchange(() -> {
