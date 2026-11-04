@@ -298,6 +298,8 @@ public final class CatalogTests {
                 "below the example catalog");
         helper.assertValueEqual(MarketCatalog.configOrder(List.of("file/a", prices, "vanilla", "mod_data")), 7,
                 "a world pack moved below the built-ins stays below the folder");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of("vanilla", "mod_data", "file/a", prices)), 7,
+                "built-in prices moved above a world pack take the folder with them: it never goes below them");
         // Each mod's own data is a pack of its own after mod_data, and the built-in classes are in mod/dynamic_economy;
         // a mod's optional packs (with a ':', like the example catalog) aren't built in.
         helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "mod/neoforge",

@@ -464,14 +464,14 @@ public final class ContractTests {
         ContractBoard board = new ContractBoard();
         board.owed().owe(new OwedPayouts.Payout(f.player.getUUID(), Optional.empty(), 25));
         long tick = server.getTickCount();
-        PayoutService.payOwed(server, board.owed(), (player, team) -> Optional.empty());
+        PayoutService.payOwedForTesting(server, board.owed(), (player, team) -> Optional.empty());
         helper.assertValueEqual(board.owed().size(), 1, "the bank couldn't be reached, so it's still owed");
-        helper.assertTrue(!board.owed().retryDue(tick) && board.owed().retryDue(tick + PayoutService.RETRY_TICKS),
+        helper.assertTrue(!board.owed().retryDue(tick) && board.owed().retryDue(tick + OwedPayouts.RETRY_TICKS),
                 "and the failure set the wait");
         PayoutService.payOwed(server, board.owed());
         helper.assertValueEqual(board.owed().size(), 1, "not tried again yet, though the bank is back");
         helper.assertValueEqual(f.balance(), 0, "nothing paid");
-        board.owed().retryAt(server.getTickCount());
+        board.owed().retryNowForTesting();
         PayoutService.payOwed(server, board.owed());
         helper.assertTrue(board.owed().isEmpty(), "paid once it's due");
         helper.assertValueEqual(f.balance(), 25, "into the player's account");

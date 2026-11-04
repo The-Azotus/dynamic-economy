@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -52,7 +53,7 @@ import java.util.stream.Stream;
  * <p>
  * The same pass reads the item classes ({@link ItemClasses}) from {@code data/<namespace>/market_classes/*.json}, and
  * uses them before decoding any entry. Both kinds of file are also read from {@link #configFolder()}, which applies to
- * every world and sits just above the built-in packs, below every other pack (see {@link #configOrder}).
+ * every world and sits just above the built-in packs, normally below every other pack (see {@link #configOrder}).
  */
 public final class MarketCatalog extends SimplePreparableReloadListener<MarketCatalog.Prepared> {
     public static final MarketCatalog INSTANCE = new MarketCatalog();
@@ -201,7 +202,8 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         ConfigFolder config = readConfigFolder(configFolder(), configOrder);
         found.addAll(config.files());
         unreadable.addAll(config.problems());
-        // A config class replaces a class from a pack below the folder, but not one from a world datapack.
+        warnBelowConfigFolder(found, classOrder, packIds, configOrder);
+        // A config class replaces a class from a pack below the folder (a built-in one), but not one from a pack above it.
         config.classFiles().forEach((id, json) -> {
             if (!classOrder.containsKey(id) || classOrder.get(id) < configOrder) {
                 classFiles.put(id, json);
@@ -229,8 +231,11 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
     /**
      * Where the config folder goes among packs listed lowest priority first, with pack {@code i} at {@code 2 * i}: just
      * above the highest built-in pack ({@link #isBuiltIn}: the built-in prices and the mods' own data, where the
-     * built-in classes are). Every other pack is above it, whichever mod adds it (world datapacks, the example
-     * catalog, global-pack mods), so its place never depends on which other packs a world has.
+     * built-in classes are), so it never goes below them. Other packs (world datapacks, the example catalog,
+     * global-pack mods) are normally all above that: NeoForge puts a newly found built-in prices pack at the very
+     * bottom, even in an existing world, and so does a plain {@code /datapack enable}. Only an admin moving a pack
+     * past a built-in one (with {@code first}, {@code last}, {@code before} or {@code after}) puts it below the
+     * folder, and loading then logs which packs' files that affects.
      */
     public static int configOrder(List<String> packIds) {
         int highest = -1;
@@ -240,6 +245,26 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
             }
         }
         return 2 * highest + 1;
+    }
+
+    /** Warns about packs that aren't built in but sit below the config folder, so it overrides their market files. */
+    private static void warnBelowConfigFolder(List<SourceFile> found, Map<ResourceLocation, Integer> classOrder,
+            List<String> packIds, int configOrder) {
+        Set<String> below = new TreeSet<>();
+        for (SourceFile file : found) {
+            if (file.packOrder() >= 0 && file.packOrder() < configOrder && !isBuiltIn(file.packId())) {
+                below.add(file.packId());
+            }
+        }
+        classOrder.forEach((id, order) -> {
+            if (order >= 0 && order < configOrder && !isBuiltIn(packIds.get(order / 2))) {
+                below.add(packIds.get(order / 2));
+            }
+        });
+        if (!below.isEmpty()) {
+            DynamicEconomy.LOGGER.warn("Packs {} sit below a built-in pack in the pack order, so files in {} override their"
+                    + " market files; move them up with /datapack to change that", below, configFolder());
+        }
     }
 
     /** {@code config/dynamic_economy/catalog/}: catalog files that apply to every world. */
