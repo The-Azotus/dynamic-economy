@@ -183,45 +183,45 @@ final class ExchangeTab extends ScreenTab {
 
     @Override
     boolean rowClicked(int index) {
-                screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                int orders = orderLines().size();
-                int boxed = boxLines().size();
-                switch (exchangeMode) {
-                    case ITEMS -> selectExchangeItem(exchangeItems.get(index));
-                    case LISTINGS -> {
-                        long id = browseLines.get(index).id();
-                        if (!Long.valueOf(id).equals(selectedListing)) {
-                            selectedListing = id;
-                            screen.setQuantity(1, Component.empty());
-                        }
-                    }
-                    case LIST -> {
-                        int slot = listableSlots().get(index);
-                        if (slot != listSlot) {
-                            listSlot = slot;
-                            listStack = slotStack(slot).copyWithCount(1);
-                            screen.setQuantity(Math.min(heldLike(listStack), listStack.getMaxStackSize()), Component.empty());
-                        }
-                    }
-                    case ORDERS -> selectedOrder = index < orders ? orderLines().get(index).id() : myListings().get(index - orders).id();
-                    // Clicking a box line takes that item out.
-                    case BOX -> PacketDistributor.sendToServer(index < boxed
-                            ? MarketPayloads.ExchangeAction.collect(Optional.of(boxLines().get(index).item()))
-                            : MarketPayloads.ExchangeAction.collectParcel(parcelLines().get(index - boxed).id()));
+        screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        int orders = orderLines().size();
+        int boxed = boxLines().size();
+        switch (exchangeMode) {
+            case ITEMS -> selectExchangeItem(exchangeItems.get(index));
+            case LISTINGS -> {
+                long id = browseLines.get(index).id();
+                if (!Long.valueOf(id).equals(selectedListing)) {
+                    selectedListing = id;
+                    screen.setQuantity(1, Component.empty());
                 }
-                screen.setFocused(null);
-                return true;
+            }
+            case LIST -> {
+                int slot = listableSlots().get(index);
+                if (slot != listSlot) {
+                    listSlot = slot;
+                    listStack = slotStack(slot).copyWithCount(1);
+                    screen.setQuantity(Math.min(heldLike(listStack), listStack.getMaxStackSize()), Component.empty());
+                }
+            }
+            case ORDERS -> selectedOrder = index < orders ? orderLines().get(index).id() : myListings().get(index - orders).id();
+            // Clicking a box line takes that item out.
+            case BOX -> PacketDistributor.sendToServer(index < boxed
+                    ? MarketPayloads.ExchangeAction.collect(Optional.of(boxLines().get(index).item()))
+                    : MarketPayloads.ExchangeAction.collectParcel(parcelLines().get(index - boxed).id()));
+        }
+        screen.setFocused(null);
+        return true;
     }
 
     @Override
     boolean panelClicked(double mouseX, double mouseY) {
-            BookRow bookRow = bookRowAt(mouseX, mouseY);
-            if (bookRow != null) {
-                // Clicking a price in the book copies it into the price box.
-                screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                price.setValue(String.valueOf(bookRow.price()));
-                return true;
-            }
+        BookRow bookRow = bookRowAt(mouseX, mouseY);
+        if (bookRow != null) {
+            // Clicking a price in the book copies it into the price box.
+            screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            price.setValue(String.valueOf(bookRow.price()));
+            return true;
+        }
         return false;
     }
 

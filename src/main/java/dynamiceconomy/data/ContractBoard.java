@@ -1,5 +1,6 @@
 package dynamiceconomy.data;
 
+import dynamiceconomy.DynamicEconomy;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -9,6 +10,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -234,20 +237,43 @@ public final class ContractBoard extends SavedData {
         return board;
     }
 
+    /**
+     * A saved contract, or empty if it can't be used. A reward per unit that can't be read is rebuilt from the reward
+     * the contract offered, which never pays more. A contract whose item or status can't be read is dropped with an
+     * error naming its holder and deposit: its deposit isn't refunded automatically, since a completed contract has
+     * already had its deposit back and refunding it again would create money.
+     */
     private static Optional<Contract> readContract(CompoundTag c) {
         ResourceLocation item = ResourceLocation.tryParse(c.getString("item"));
-        Status status;
-        BigDecimal unitReward;
+        Status status = null;
         try {
             status = Status.valueOf(c.getString("status").toUpperCase(Locale.ROOT));
-            unitReward = new BigDecimal(c.getString("unit_reward"));
         } catch (IllegalArgumentException e) {
+            // Reported below.
+        }
+        int units = c.getInt("units");
+        if (item == null || status == null || units <= 0) {
+            if (c.hasUUID("holder")) {
+                DynamicEconomy.LOGGER.error("Saved contract {} can't be read (item \"{}\", status \"{}\", {} units), so it's dropped. "
+                        + "It was held by {} with a deposit of {}: if it was still claimed, refund the deposit by hand",
+                        c.getInt("id"), c.getString("item"), c.getString("status"), units, c.getUUID("holder"), c.getLong("deposit"));
+            } else {
+                DynamicEconomy.LOGGER.warn("Saved contract {} can't be read (item \"{}\", status \"{}\", {} units); nobody held it, so it's dropped",
+                        c.getInt("id"), c.getString("item"), c.getString("status"), units);
+            }
             return Optional.empty();
         }
-        if (item == null) {
-            return Optional.empty();
+        BigDecimal unitReward;
+        try {
+            unitReward = new BigDecimal(c.getString("unit_reward"));
+        } catch (NumberFormatException e) {
+            // Rounded up, so that payout(), which rounds down, pays the whole reward for every unit; it's capped at
+            // the reward anyway, so this can't pay more.
+            unitReward = BigDecimal.valueOf(c.getLong("reward")).divide(BigDecimal.valueOf(units), new MathContext(34, RoundingMode.CEILING));
+            DynamicEconomy.LOGGER.warn("Saved contract {}: its reward per unit \"{}\" can't be read, so it pays from the reward it offered "
+                    + "({} for {} units)", c.getInt("id"), c.getString("unit_reward"), c.getLong("reward"), units);
         }
-        return Optional.of(new Contract(c.getInt("id"), item, c.getInt("units"), unitReward, c.getLong("reward"),
+        return Optional.of(new Contract(c.getInt("id"), item, units, unitReward, c.getLong("reward"),
                 c.getLong("deposit"), c.getInt("delivered"), c.hasUUID("holder") ? Optional.of(c.getUUID("holder")) : Optional.empty(),
                 c.hasUUID("team") ? Optional.of(c.getUUID("team")) : Optional.empty(), status));
     }

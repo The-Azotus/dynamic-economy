@@ -1,6 +1,7 @@
 package dynamiceconomy.command;
 
 import com.google.gson.JsonPrimitive;
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -11,6 +12,7 @@ import dynamiceconomy.data.AuditLog;
 import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.ContractService;
+import dynamiceconomy.service.Leaderboard;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -115,10 +117,7 @@ final class ContractCommands {
                 + "Paid out so far: %d %s; deposits kept: %d %s").formatted(board.day(), board.contracts().size(), board.expiresDay(),
                 MarketConfig.contractsEnabled() ? "on" : "off", board.rewardsPaid(), unit, board.depositsLost(), unit)), false);
         for (ContractBoard.Contract c : board.contracts()) {
-            String holder = c.holder().map(id -> {
-                ServerPlayer online = server.getPlayerList().getPlayer(id);
-                return online != null ? online.getGameProfile().getName() : id.toString();
-            }).orElse("-");
+            String holder = c.holder().map(id -> Leaderboard.profile(server, id).map(GameProfile::getName).orElse(id.toString())).orElse("-");
             ctx.getSource().sendSuccess(() -> Component.literal("  #%d %s: %d/%d × %s, pays %d (offered %d), deposit %d, holder %s".formatted(
                     c.id(), c.status().name().toLowerCase(Locale.ROOT), c.delivered(), c.units(), c.item(),
                     ContractService.payout(server, c, c.units()), c.reward(), c.deposit(), holder)), false);

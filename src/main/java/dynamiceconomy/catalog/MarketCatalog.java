@@ -52,7 +52,7 @@ import java.util.stream.Stream;
  * <p>
  * The same pass reads the item classes ({@link ItemClasses}) from {@code data/<namespace>/market_classes/*.json}, and
  * uses them before decoding any entry. Both kinds of file are also read from {@link #configFolder()}, which applies to
- * every world and sits just below the world's own datapacks.
+ * every world and sits just above the built-in packs, below every other pack (see {@link #configOrder}).
  */
 public final class MarketCatalog extends SimplePreparableReloadListener<MarketCatalog.Prepared> {
     public static final MarketCatalog INSTANCE = new MarketCatalog();
@@ -227,24 +227,19 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
     }
 
     /**
-     * Where the config folder goes among packs listed lowest priority first, with pack {@code i} at {@code 2 * i}:
-     * just below the first world datapack ({@code file/...}) or the example catalog, so each world can still change
-     * its prices, but never below the built-in prices or the mods' own data (where the built-in classes are), even
-     * if a world datapack was moved below them. With neither, it's above every pack.
+     * Where the config folder goes among packs listed lowest priority first, with pack {@code i} at {@code 2 * i}: just
+     * above the highest built-in pack ({@link #isBuiltIn}: the built-in prices and the mods' own data, where the
+     * built-in classes are). Every other pack is above it, whichever mod adds it (world datapacks, the example
+     * catalog, global-pack mods), so its place never depends on which other packs a world has.
      */
     public static int configOrder(List<String> packIds) {
-        int below = packIds.size();
-        int lowest = -1;
+        int highest = -1;
         for (int i = 0; i < packIds.size(); i++) {
-            String id = packIds.get(i);
-            if (below == packIds.size() && (id.startsWith("file/") || id.equals(DynamicEconomy.EXAMPLE_PACK_ID))) {
-                below = i;
-            }
-            if (isBuiltIn(id)) {
-                lowest = i;
+            if (isBuiltIn(packIds.get(i))) {
+                highest = i;
             }
         }
-        return Math.max(2 * below - 1, 2 * lowest + 1);
+        return 2 * highest + 1;
     }
 
     /** {@code config/dynamic_economy/catalog/}: catalog files that apply to every world. */

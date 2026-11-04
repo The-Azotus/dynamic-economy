@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * The player exchange, saved with the world: open orders and listings, each player's collection box, and anything owed
@@ -44,10 +45,12 @@ public final class ExchangeData extends SavedData {
      *                  for a sell order, the account its proceeds go to
      * @param price     per unit, in bits
      * @param quantity  units ordered; {@code filled} of them have traded
+     * @param soldValue a sell order's takings so far, before tax (some units may have sold above its price when it was
+     *                  posted); 0 for a buy order. The tax is worked out on this total, so filling in pieces costs no more.
      * @param postedDay the contracts' day count when it was posted, for expiry
      */
     public record Order(long id, UUID owner, Optional<UUID> team, ResourceLocation item, boolean buy, long price, int quantity,
-                        int filled, long postedDay) {
+                        int filled, long soldValue, long postedDay) {
         public int remaining() {
             return quantity - filled;
         }
@@ -57,8 +60,9 @@ public final class ExchangeData extends SavedData {
             return buy ? price * remaining() : 0;
         }
 
-        public Order withFilled(int total) {
-            return new Order(id, owner, team, item, buy, price, quantity, total, postedDay);
+        /** After {@code units} more traded for {@code value} in all (counted as takings only for a sell order). */
+        public Order withFill(int units, long value) {
+            return new Order(id, owner, team, item, buy, price, quantity, filled + units, buy ? 0 : soldValue + value, postedDay);
         }
     }
 
@@ -370,16 +374,17 @@ public final class ExchangeData extends SavedData {
 
     /**
      * The money the exchange holds for each player's own account: what their open buy orders hold plus what they're
-     * owed. Money for team accounts isn't included, as team accounts aren't ranked.
+     * owed. Money for a team account isn't included, as team accounts aren't ranked; {@code paysTeam} says whether an
+     * order's or payout's team still takes its money (see {@code PayoutService.paysTeam}).
      */
-    public Map<UUID, Long> heldForPlayers() {
+    public Map<UUID, Long> heldForPlayers(Predicate<Optional<UUID>> paysTeam) {
         Map<UUID, Long> held = new LinkedHashMap<>();
         for (Order order : orders) {
-            if (order.team().isEmpty() && order.heldMoney() > 0) {
+            if (order.heldMoney() > 0 && !paysTeam.test(order.team())) {
                 held.merge(order.owner(), order.heldMoney(), Long::sum);
             }
         }
-        owed.forPlayers().forEach((player, amount) -> held.merge(player, amount, Long::sum));
+        owed.forPlayers(paysTeam).forEach((player, amount) -> held.merge(player, amount, Long::sum));
         return held;
     }
 
@@ -412,7 +417,9 @@ public final class ExchangeData extends SavedData {
             ResourceLocation item = ResourceLocation.tryParse(o.getString("item"));
             if (item != null && o.hasUUID("owner")) {
                 data.orders.add(new Order(o.getLong("id"), o.getUUID("owner"), o.hasUUID("team") ? Optional.of(o.getUUID("team")) : Optional.empty(),
-                        item, o.getBoolean("buy"), o.getLong("price"), o.getInt("quantity"), o.getInt("filled"), o.getLong("posted_day")));
+                        item, o.getBoolean("buy"), o.getLong("price"), o.getInt("quantity"), o.getInt("filled"),
+                        o.contains("sold_value") ? o.getLong("sold_value") : o.getBoolean("buy") ? 0 : o.getLong("price") * o.getInt("filled"),
+                        o.getLong("posted_day")));
             }
         }
         for (Tag element : tag.getList("listings", Tag.TAG_COMPOUND)) {
@@ -498,6 +505,7 @@ public final class ExchangeData extends SavedData {
             o.putLong("price", order.price());
             o.putInt("quantity", order.quantity());
             o.putInt("filled", order.filled());
+            o.putLong("sold_value", order.soldValue());
             o.putLong("posted_day", order.postedDay());
             orderList.add(o);
         }

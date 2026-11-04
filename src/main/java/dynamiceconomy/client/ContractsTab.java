@@ -80,18 +80,18 @@ final class ContractsTab extends ScreenTab {
 
     @Override
     boolean rowClicked(int index) {
-                screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                MarketPayloads.ContractLine line = contractLines().get(index);
-                if (!Integer.valueOf(line.id()).equals(selectedContract)) {
-                    selectedContract = line.id();
-                    abandonArmed = null;
-                    if (deliverable(line)) {
-                        // Start from what can be delivered now.
-                        startDeliveryQuantity(line);
-                    }
-                }
-                screen.setFocused(null);
-                return true;
+        screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        MarketPayloads.ContractLine line = contractLines().get(index);
+        if (!Integer.valueOf(line.id()).equals(selectedContract)) {
+            selectedContract = line.id();
+            abandonArmed = null;
+            if (deliverable(line)) {
+                // Start from what can be delivered now.
+                startDeliveryQuantity(line);
+            }
+        }
+        screen.setFocused(null);
+        return true;
     }
 
     @Override

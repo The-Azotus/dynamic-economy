@@ -52,8 +52,9 @@ public final class Leaderboard {
         Predicate<GameProfile> excluded = MarketConfig.leaderboardExcludeOperators()
                 ? profile -> server.getPlayerList().isOp(profile)
                 : profile -> false;
-        List<Entry> ranked = rank(withHeld(WorldBank.of(server).playerBalances(), ExchangeData.get(server).heldForPlayers(),
-                ContractBoard.get(server).owed().forPlayers()), profiles, excluded);
+        Predicate<Optional<UUID>> paysTeam = team -> PayoutService.paysTeam(server, team);
+        List<Entry> ranked = rank(withHeld(WorldBank.of(server).playerBalances(), ExchangeData.get(server).heldForPlayers(paysTeam),
+                ContractBoard.get(server).owed().forPlayers(paysTeam)), profiles, excluded);
         int ownRank = 0;
         for (int i = 0; i < ranked.size(); i++) {
             if (ranked.get(i).id().equals(viewer.getUUID())) {
