@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * Money owed to players while the bank couldn't be reached, kept in the saved data that owes it (the contract board,
@@ -24,6 +25,8 @@ public final class OwedPayouts {
 
     private final SavedData owner;
     private final List<Payout> owed = new ArrayList<>();
+    /** The server tick before which a payment that failed isn't tried again. Not saved: a restart tries at once. */
+    private long retryAt;
 
     OwedPayouts(SavedData owner) {
         this.owner = owner;
@@ -44,6 +47,16 @@ public final class OwedPayouts {
         return List.copyOf(owed);
     }
 
+    /** Whether payments may be tried at server tick {@code tick}. */
+    public boolean retryDue(long tick) {
+        return tick >= retryAt;
+    }
+
+    /** Waits until server tick {@code tick} before trying again, after a payment failed. */
+    public void retryAt(long tick) {
+        retryAt = tick;
+    }
+
     public boolean isEmpty() {
         return owed.isEmpty();
     }
@@ -52,11 +65,14 @@ public final class OwedPayouts {
         return owed.size();
     }
 
-    /** What each player's own account is owed. Team accounts aren't included, as they aren't ranked. */
-    public Map<UUID, Long> forPlayers() {
+    /**
+     * What each player's own account is owed. Money for a team account isn't included, as team accounts aren't
+     * ranked; {@code paysTeam} says whether a payout's team still takes it (see {@code PayoutService.paysTeam}).
+     */
+    public Map<UUID, Long> forPlayers(Predicate<Optional<UUID>> paysTeam) {
         Map<UUID, Long> held = new LinkedHashMap<>();
         for (Payout payout : owed) {
-            if (payout.team().isEmpty()) {
+            if (!paysTeam.test(payout.team())) {
                 held.merge(payout.player(), payout.amount(), Long::sum);
             }
         }

@@ -16,6 +16,7 @@ import dynamiceconomy.catalog.ItemClasses;
 import dynamiceconomy.data.MarketStockData;
 import dynamiceconomy.service.ContractPricing;
 import dynamiceconomy.service.ContractService;
+import dynamiceconomy.service.PayoutService;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketVisibility;
 import dynamiceconomy.service.MarketService.Result;
@@ -452,6 +453,51 @@ public final class ContractTests {
         helper.assertValueEqual(loaded.owed().list(), board.owed().list(), "money owed");
         helper.assertValueEqual(loaded.takeNotices(f.player.getUUID()), board.takeNotices(f.player.getUUID()), "notices");
         helper.assertTrue(loaded.takeId() > board.contracts().get(1).id(), "IDs never repeat");
+        helper.succeed();
+    }
+
+    /** After a payment fails, owed money waits before it's tried again, rather than asking the bank every tick. */
+    @GameTest(template = EMPTY)
+    public static void owedPayoutsWaitBeforeTryingAgain(GameTestHelper helper) {
+        net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
+        Fixture f = new Fixture(helper);
+        ContractBoard board = new ContractBoard();
+        board.owed().owe(new OwedPayouts.Payout(f.player.getUUID(), Optional.empty(), 25));
+        long tick = server.getTickCount();
+        PayoutService.payOwed(server, board.owed(), (player, team) -> Optional.empty());
+        helper.assertValueEqual(board.owed().size(), 1, "the bank couldn't be reached, so it's still owed");
+        helper.assertTrue(!board.owed().retryDue(tick) && board.owed().retryDue(tick + PayoutService.RETRY_TICKS),
+                "and the failure set the wait");
+        PayoutService.payOwed(server, board.owed());
+        helper.assertValueEqual(board.owed().size(), 1, "not tried again yet, though the bank is back");
+        helper.assertValueEqual(f.balance(), 0, "nothing paid");
+        board.owed().retryAt(server.getTickCount());
+        PayoutService.payOwed(server, board.owed());
+        helper.assertTrue(board.owed().isEmpty(), "paid once it's due");
+        helper.assertValueEqual(f.balance(), 25, "into the player's account");
+        helper.succeed();
+    }
+
+    /** A contract saved with a reward per unit that can't be read keeps working; one with an unknown status is dropped. */
+    @GameTest(template = EMPTY)
+    public static void unreadableSavedContractsAreRecoveredOrReported(GameTestHelper helper) {
+        // 100 for 3 units doesn't divide evenly, so a reward per unit rounded the wrong way would pay 99.
+        ContractBoard board = board(helper, b -> List.of(
+                new ContractBoard.Contract(b.takeId(), id(Items.OAK_LOG), 3, new BigDecimal("40"), 100, 10, 0, Optional.empty(),
+                        Optional.empty(), ContractBoard.Status.OPEN),
+                openContract(helper, b, Items.COBBLESTONE, 48, new BigDecimal("1.25"), 12)));
+        CompoundTag saved = board.save(new CompoundTag(), helper.getLevel().registryAccess());
+        net.minecraft.nbt.ListTag list = saved.getList("contracts", net.minecraft.nbt.Tag.TAG_COMPOUND);
+        list.getCompound(0).putString("unit_reward", "not a number");
+        list.getCompound(1).putString("status", "from_a_newer_version");
+        ContractBoard loaded = ContractBoard.fromTag(saved, helper.getLevel().registryAccess());
+        helper.assertValueEqual(loaded.contracts().size(), 1, "only the contract with an unknown status is dropped");
+        ContractBoard.Contract kept = loaded.contracts().get(0);
+        ContractBoard.Contract original = board.contracts().get(0);
+        helper.assertValueEqual(kept.id(), original.id(), "the one with the unreadable reward per unit is kept");
+        helper.assertValueEqual(ContractPricing.payout(kept.unitReward(), Optional.empty(), kept.units()), original.reward(),
+                "completing it pays the whole reward it offered");
+        helper.assertValueEqual(ContractPricing.payout(kept.unitReward(), Optional.empty(), 1), 33L, "one unit pays a third, rounded down");
         helper.succeed();
     }
 

@@ -20,6 +20,7 @@ import dynamiceconomy.network.MarketSync;
 import dynamiceconomy.service.ExchangeService;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.Leaderboard;
+import dynamiceconomy.service.PayoutService;
 import dynamiceconomy.service.MarketVisibility;
 import dynamiceconomy.service.MarketService.Result;
 import com.mojang.authlib.GameProfile;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.function.Function;
 
 import static dynamiceconomy.gametest.GameTestSupport.*;
@@ -269,17 +271,20 @@ public final class AccessTests {
             posted(helper, seller, data, Items.COBBLESTONE, false, 50, 5);
             data.owed().owe(new OwedPayouts.Payout(id, Optional.empty(), 7));
             data.owed().owe(new OwedPayouts.Payout(id, Optional.of(UUID.randomUUID()), 1000));
-            helper.assertValueEqual(data.heldForPlayers(), Map.of(id, 57L),
+            Predicate<Optional<UUID>> teamTakesIt = Optional::isPresent;
+            helper.assertValueEqual(data.heldForPlayers(teamTakesIt), Map.of(id, 57L),
                     "the bid's 50 and the 7 owed; not a sell order's items nor money for a team");
+            helper.assertValueEqual(data.heldForPlayers(team -> PayoutService.paysTeam(buyer.player.server, team)), Map.of(id, 1057L),
+                    "money for a team that doesn't exist goes to the player, so it counts for them");
 
             Map<UUID, Long> bank = Map.of(id, (long) buyer.balance());
-            List<Leaderboard.Entry> ranked = Leaderboard.rank(Leaderboard.withHeld(bank, data.heldForPlayers()), known, p -> false);
+            List<Leaderboard.Entry> ranked = Leaderboard.rank(Leaderboard.withHeld(bank, data.heldForPlayers(teamTakesIt)), known, p -> false);
             helper.assertValueEqual(ranked.get(0).balance(), 50L + 57L, "the bank's 50 plus what the exchange holds");
 
             helper.assertValueEqual(ExchangeService.cancel(buyer.player, data, bid).result(), Result.OK, "cancel the bid");
             data.owed().list().forEach(data.owed()::paid);
             bank = Map.of(id, (long) buyer.balance());
-            ranked = Leaderboard.rank(Leaderboard.withHeld(bank, data.heldForPlayers()), known, p -> false);
+            ranked = Leaderboard.rank(Leaderboard.withHeld(bank, data.heldForPlayers(teamTakesIt)), known, p -> false);
             helper.assertValueEqual(ranked.get(0).balance(), 100L, "the same money, now all in the bank");
         });
         helper.succeed();
@@ -291,8 +296,10 @@ public final class AccessTests {
         UUID id = UUID.randomUUID();
         board.owed().owe(new OwedPayouts.Payout(id, Optional.empty(), 40));
         board.owed().owe(new OwedPayouts.Payout(id, Optional.of(UUID.randomUUID()), 1000));
-        helper.assertValueEqual(board.owed().forPlayers(), Map.of(id, 40L), "the player's own 40, not money for a team");
-        helper.assertValueEqual(Leaderboard.withHeld(Map.of(id, 10L), Map.of(id, 5L), board.owed().forPlayers()), Map.of(id, 55L),
+        helper.assertValueEqual(board.owed().forPlayers(Optional::isPresent), Map.of(id, 40L), "the player's own 40, not money for a team");
+        helper.assertValueEqual(board.owed().forPlayers(team -> PayoutService.paysTeam(helper.getLevel().getServer(), team)),
+                Map.of(id, 1040L), "and the 1000 too once its team is gone, as it's paid to the player then");
+        helper.assertValueEqual(Leaderboard.withHeld(Map.of(id, 10L), Map.of(id, 5L), board.owed().forPlayers(Optional::isPresent)), Map.of(id, 55L),
                 "bank, exchange and owed contract money add up");
         helper.succeed();
     }

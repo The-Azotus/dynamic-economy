@@ -96,9 +96,9 @@ final class BankTab extends ScreenTab {
 
     @Override
     boolean rowClicked(int index) {
-                screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-                withdrawCoins(ClientMarketState.coins().get(index));
-                return true;
+        screen.minecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        withdrawCoins(ClientMarketState.coins().get(index));
+        return true;
     }
 
     @Override

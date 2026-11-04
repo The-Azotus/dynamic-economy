@@ -283,27 +283,25 @@ public final class CatalogTests {
     }
 
     @GameTest(template = EMPTY)
-    public static void configFolderSitsBetweenBuiltInsAndWorldPacks(GameTestHelper helper) {
+    public static void configFolderSitsJustAboveTheBuiltIns(GameTestHelper helper) {
         String prices = DynamicEconomy.DEFAULT_PRICES_PACK_ID;
         String example = DynamicEconomy.EXAMPLE_PACK_ID;
-        // Each pack i is at 2 * i, so 2 * i - 1 is just below pack i and 2 * i + 1 just above it.
-        // "other:pack" is neither built in nor a world pack, so "just below the world pack" and "just above the
-        // built-ins" give different answers.
-        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack")), 7,
-                "no world packs: above all");
-        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", "file/a", "file/b")), 7,
-                "just below the first world datapack");
-        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", example)), 7,
-                "below the example catalog with no world packs too");
-        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", example, "file/a")), 7,
-                "below the example catalog when it comes first");
-        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", "file/a", example)), 7,
-                "below the world pack when it comes first");
+        // Each pack i is at 2 * i, so 2 * i + 1 is just above pack i. "other:pack" stands for a pack another mod adds
+        // (OpenLoader, KubeJS): neither built in nor a world datapack.
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack")), 5,
+                "just above the built-ins, below another mod's pack");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "other:pack", "file/a", "file/b")), 5,
+                "the same with world datapacks: their presence doesn't move the folder");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "file/a", "other:pack")), 5,
+                "or their order");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", example)), 5,
+                "below the example catalog");
         helper.assertValueEqual(MarketCatalog.configOrder(List.of("file/a", prices, "vanilla", "mod_data")), 7,
-                "a world pack moved below the built-ins doesn't take the folder down with it");
-        // Each mod's own data is a pack of its own after mod_data, and the built-in classes are in mod/dynamic_economy.
-        helper.assertValueEqual(MarketCatalog.configOrder(List.of("file/a", prices, "vanilla", "mod_data", "mod/neoforge",
-                "mod/dynamic_economy")), 11, "never below a mod's own data");
+                "a world pack moved below the built-ins stays below the folder");
+        // Each mod's own data is a pack of its own after mod_data, and the built-in classes are in mod/dynamic_economy;
+        // a mod's optional packs (with a ':', like the example catalog) aren't built in.
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "mod/neoforge",
+                "mod/dynamic_economy", example, "file/a")), 9, "above every mod's own data, below its optional packs");
 
         // The real pack list: the folder sits above the pack the built-in classes come from, so they can be replaced.
         var resources = helper.getLevel().getServer().getResourceManager();
@@ -314,7 +312,13 @@ public final class CatalogTests {
         helper.assertValueEqual(classPack, "mod/" + DynamicEconomy.MOD_ID, "the built-in classes come from the mod's own pack");
         int classOrder = ids.indexOf(classPack) < 0 ? -1 : 2 * ids.indexOf(classPack);
         helper.assertTrue(classOrder < order, "built-in classes in " + classPack + " sit below the folder in " + ids);
-        // The same with a world pack moved to the bottom, which only the floor keeps the folder above.
+        helper.assertTrue(ids.contains(example), "the test server runs with the example catalog: " + ids);
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.get(i).startsWith("file/") || ids.get(i).equals(example)) {
+                helper.assertTrue(2 * i > order, ids.get(i) + " sits above the folder in " + ids);
+            }
+        }
+        // The same with a world pack moved to the bottom.
         List<String> moved = new ArrayList<>(ids);
         moved.removeIf(id -> id.startsWith("file/") || id.equals(example));
         moved.add(0, "file/moved");

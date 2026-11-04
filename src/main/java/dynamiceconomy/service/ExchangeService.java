@@ -156,6 +156,15 @@ public final class ExchangeService {
         return Math.min(value, BigDecimal.valueOf(value).multiply(BigDecimal.valueOf(rate)).setScale(0, RoundingMode.CEILING).longValueExact());
     }
 
+    /**
+     * The tax on one more piece of a sale, worth {@code value}, after {@code before} of the same order or listing has
+     * already sold: what the tax on the whole so far has grown by. However a sale is split, its pieces' taxes add up
+     * to {@link #tax} of its total, rounded up once.
+     */
+    public static long taxOnMore(long before, long value, double rate) {
+        return tax(before + value, rate) - tax(before, rate);
+    }
+
     /** The contracts' day count today, which order expiry uses. */
     public static long today(MinecraftServer server) {
         ContractBoard board = ContractBoard.get(server);
@@ -219,7 +228,7 @@ public final class ExchangeService {
 
         // The order's money or items are held now. Everything below always succeeds: every payment is one fill of
         // one order, which fits an int because that order's whole total did.
-        Order order = new Order(data.takeId(), player.getUUID(), team, id, buy, price, qty, 0, day);
+        Order order = new Order(data.takeId(), player.getUUID(), team, id, buy, price, qty, 0, 0, day);
         Fill fill = match(player.server, data, order, account.get());
         if (fill.order().remaining() > 0) {
             data.add(fill.order());
@@ -240,6 +249,7 @@ public final class ExchangeService {
         double rate = MarketConfig.exchangeTax();
         int filled = 0;
         long amount = 0;
+        long sold = 0;
         for (Order resting : data.side(incoming.item(), !incoming.buy())) {
             if (filled == incoming.quantity()) {
                 break;
@@ -252,8 +262,9 @@ public final class ExchangeService {
             }
             int units = Math.min(incoming.quantity() - filled, resting.remaining());
             long value = resting.price() * units;
-            long tax = tax(value, rate);
-            data.update(resting.withFilled(resting.filled() + units));
+            // The seller's whole sale so far is taxed: the resting order's, or this incoming one's.
+            long tax = taxOnMore(incoming.buy() ? resting.soldValue() : sold, value, rate);
+            data.update(resting.withFill(units, value));
             data.count(value, tax);
             if (incoming.buy()) {
                 // The resting seller is paid; the buyer's units wait in their box.
@@ -267,6 +278,7 @@ public final class ExchangeService {
                 data.addToBox(resting.owner(), resting.item(), units);
                 tell(server, data, new Notice(resting.owner(), resting.item(), NoticeKind.BOUGHT, units, value));
                 amount += value - tax;
+                sold += value;
             }
             filled += units;
         }
@@ -277,7 +289,7 @@ public final class ExchangeService {
                 account.deposit((int) refund);
             }
         }
-        return new Fill(incoming.withFilled(filled), amount);
+        return new Fill(incoming.withFill(filled, sold), amount);
     }
 
     // ---- Listings --------------------------------------------------------------------------------------------
@@ -385,7 +397,8 @@ public final class ExchangeService {
             return Outcome.fail(Action.BUY_LISTING, Result.NO_FUNDS, listing.item());
         }
 
-        long tax = tax(value, MarketConfig.exchangeTax());
+        // Every unit of a listing sells at its price, so what has sold so far is price × sold.
+        long tax = taxOnMore(listing.price() * listing.sold(), value, MarketConfig.exchangeTax());
         data.update(listing.withSold(listing.sold() + qty));
         data.count(value, tax);
         pay(player.server, data, listing.owner(), listing.team(), value - tax);
