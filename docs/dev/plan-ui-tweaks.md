@@ -7,6 +7,7 @@ The user made these decisions on 2026-11-04. Don't revisit them:
 1. **Out-of-stock items are always hidden** from the Market tab's **All** and **Buyable** views. They still appear under **Sellable** and **Held**, so players can sell into an empty market, which is how stock grows. The filter still starts on **All**.
 2. **The item tooltip says "Value: …".** One item: `Value: 32 bits`. A stack of more than one: `Value: 32 bits (636 for 20)`.
 3. **The grey trend line is dropped** ("Price at N% of normal").
+4. **The All button stays**, even though All and Buyable now differ only for sell-only items in stock. The user may revisit this later.
 
 ## Tweak 1: hide out-of-stock items
 
