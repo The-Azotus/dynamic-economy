@@ -178,9 +178,4 @@ public record CatalogEntry(Item item, ResourceLocation itemId, int basePrice, do
         }
         return true;
     }
-
-    /** Exactly as the market hands it out: bought items only ever join stacks like this. */
-    public boolean isFresh(ItemStack stack) {
-        return ItemStack.isSameItemSameComponents(stack, new ItemStack(item));
-    }
 }

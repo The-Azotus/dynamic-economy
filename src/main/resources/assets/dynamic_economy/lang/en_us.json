@@ -88,7 +88,6 @@
   "screen.dynamic_economy.tab.exchange": "Exchange",
   "screen.dynamic_economy.tab.leaderboard": "Leaderboard",
   "screen.dynamic_economy.tab.history": "History",
-  "screen.dynamic_economy.tab.coming_soon": "Coming in a later version",
   "screen.dynamic_economy.tab.turned_off": "Turned off on this server",
   "screen.dynamic_economy.contracts.title": "Contracts: new board in %s days",
   "screen.dynamic_economy.contracts.title_one": "Contracts: new board in %s day",

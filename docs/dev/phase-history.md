@@ -1,4 +1,4 @@
-# Phase history (Phases 0–15, done)
+# Phase history (Phases 0–17 and later changes)
 
 > **Development notes, not user documentation.** For how the mod works today, read the [admin guide](../admin-guide.md) and the [player guide](../player-guide.md).
 
@@ -322,3 +322,14 @@ Branch: `phase17` (from `phase15`). Decided by the user on 2026-10-31:
 6. **Collection box:** unlimited stacks kept with the world; "Take all" moves items only into free main-inventory space.
 7. **Listings** (user, 2026-10-31): items with their own components are listed, not put on the book: one stack's worth of one exact item at a fixed price each; buyers take all or part at that price into their collection box; the seller pays `exchange_tax`. Listings share `max_open_orders` with orders. Containers (shulker boxes, bundles) only when empty. Coins and locked items never.
 8. **Leaderboard** (user, 2026-10-31): a player's total includes money held by their open buy orders and payments owed to them (not team accounts').
+
+## After Phase 17: market list and tooltip tweaks (done, v0.4.2)
+
+Two client display changes the user asked for on 2026-11-04, built on branch `ui-tweaks` and released as v0.4.2 the same day after the user tested the jar. They change nothing about trading, prices or saved data. Decided by the user:
+
+1. **Out-of-stock items are always hidden** from the Market tab's **All** and **Buyable** views (`!row.hasStock(1)`: a tracked stock of 0; unlimited items always have stock), whether or not the market sells the item. They still appear under **Sellable** and **Held**, so players can sell into an empty market. The filter still starts on **All**.
+2. **The item tooltip says "Value: …"**: `Value: 32 bits` for one item, `Value: 32 bits (636 for 20)` for a stack. The unit follows the bank (spurs with Numismatics), cheap items show decimals, and the line shows at 0 stock too. The config key `show_sell_price_in_tooltips` keeps its name so saved settings still work.
+3. **The grey trend line is dropped** ("Price at N% of normal").
+4. **The All button stays**, even though All and Buyable now differ only for sell-only items in stock. The user may revisit this.
+
+How it was built: the rule lives in `MarketListing.shows` (in `service/`, so GameTests can check it). The list rebuilds when `ClientMarketState.version()` changes, so rows leave and return without reopening, and the selection reads `ClientMarketState.rows()`, so buying the last unit keeps the item selected. An empty list picks between `empty`, `none_in_stock` (empty search), `no_matches_in_stock` and `no_matches`; `MarketListing.hiddenForStock` counts only sold-out rows the market buys, so the "Sellable and Held show the rest" hint never points to a view that wouldn't show the item (a small refinement over the plan). The messages wrap to the list width. A sold-out item the market doesn't buy (`can_sell: false`) shows in no view; it can't be traded at 0 stock anyway. Two wording edge cases are accepted in `known-issues.md`.
