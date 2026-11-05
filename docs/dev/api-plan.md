@@ -1,6 +1,6 @@
-# Phase 18 — Add-on API (plan, not started)
+# Phase 18 — Add-on API (plan)
 
-Goal (user, 2026-11-05): let the user and other people build add-ons on Dynamic-Economy, and write proper API documentation for them. This file holds the survey of what exists today, a proposed scope, and the decisions the user still has to make. The scope and the open decisions are proposals: confirm them with the user before building.
+Goal (user, 2026-11-05): let the user and other people build add-ons on Dynamic-Economy, and write proper API documentation for them. This file holds the survey of what exists today, a proposed scope, and the decisions the user still has to make. The user answered the open decisions on 2026-11-05 (section 4); section 5 is the design built from them.
 
 Branch: `api` (from `main` at c5af065, v0.4.2 plus cleanup).
 
@@ -109,20 +109,71 @@ A multi-agent survey of `main` at c5af065: one reader per area, each report chec
 - **Javadoc** on every public type and method in the `api` package, published as a javadoc jar.
 - Links from `README.md` and `docs/admin-guide.md`; datapack details shared with the admin guide rather than duplicated.
 
-## 4. Open decisions for the user
+## 4. Decisions (user, 2026-11-05)
 
-Ask these before building:
+1. **Scope.** All of items 1–4, built in one go and reported once at the end.
+2. **Publishing.** JitPack: `com.github.The-Azotus:dynamic-economy:<tag>`, with sources and javadoc jars. Modrinth Maven can be documented once the mod is listed there.
+3. **Version.** The first API release is 0.5.0. The `api` package is `@ApiStatus.Experimental`: it may still change in a 0.x minor release, and every change is listed in the add-on guide's changelog. It becomes stable at 1.0.
+4. **Money commands.** `/market admin money balance|give|take <player> [<amount>]`, level 2 like the other admin edits. They work on a player's own account, online or not. If the bank can't be reached the command fails; nothing is owed.
+5. **`pay` when the bank can't be reached:** the money is owed, as contract payouts are. It is paid once the bank is back, and it counts on the leaderboard meanwhile.
+6. **Events.** Only after a change, never cancellable. Package `dynamiceconomy.api.event`.
+7. **Internals.** Every package except `api` gets `@ApiStatus.Internal` (on its `package-info.java`). Visibility is narrowed where the GameTests allow it. GameTests stay in `src/main`.
+8. **Docs.** `docs/api.md` plus javadoc on the `api` package. No example project. KubeJS stays out of scope.
 
-1. **Scope and order.** All of items 1–4, or a subset? Build in steps (money commands → publishing → events → `api` package), each tested and approved?
-2. **Publishing.** JitPack, Modrinth Maven, a GitHub Packages Maven, or several? Is or will the mod be on Modrinth or CurseForge? Maven coordinates (`group`, `artifactId`)?
-3. **Version and stability.** Next version (0.5.0?); what counts as a breaking change; whether `@ApiStatus.Experimental` is used for a first release.
-4. **Money command shape.** `/market admin money …`, `/bank admin …` or something else; permission level; whether `give` to an offline player is allowed (team or own account, owed if the bank can't be reached).
-5. **`pay` for offline players.** Should API payments use the existing owed-payout store, or fail when the bank can't be reached?
-6. **Events.** Post-change only, or also a cancellable pre-trade event? Event class names and package.
-7. **Test hooks and public mutators.** Leave them and mark them `@ApiStatus.Internal`, narrow their visibility where possible, or move the GameTests out of `src/main` (a bigger change)?
-8. **Docs.** File name and place for the add-on guide (for example `docs/api.md`); whether to include an example add-on project in the repo.
-9. **KubeJS.** Out of scope, or worth a small binding or events plugin later?
+## 5. Design
 
-## 5. First task in the new session
+Everything in `dynamiceconomy.api` keeps the transaction rules in CLAUDE.md. Every method that touches the market or the bank checks that it runs on the server thread and throws `IllegalStateException` otherwise.
 
-Per CLAUDE.md: read the code on `api`, re-check the line references above against it, report gaps or differences, then walk the user through section 4 and wait for their answers before building.
+### `DynamicEconomyApi` (static methods)
+
+| Method | Behaviour |
+|---|---|
+| `Optional<MarketQuote> quote(MinecraftServer, Item)` | The item's market terms for everyone; ignores visibility. |
+| `Optional<MarketQuote> quote(ServerPlayer, Item)` | The same, but empty if the item is hidden from the player. |
+| `List<Item> listedItems(MinecraftServer)` | Every listed item, for every player. |
+| `TradeResult sell(ServerPlayer, Item, int)` / `buy(...)` | `MarketService.trySell/tryBuy` at the current price, then the item's row goes out to every player and the player's balance to their open screen. Access mode (block-only) isn't checked: the add-on decides who may trade. |
+| `OptionalLong balance(ServerPlayer)` | The account the player trades with (their team's when they chose it). Empty if the bank can't be reached. |
+| `OptionalLong balance(MinecraftServer, UUID)` | A player's own account, online or not. |
+| `PaymentResult charge(ServerPlayer, long, ResourceLocation reason)` | Takes money from the account the player trades with: all or nothing. |
+| `PaymentResult charge(MinecraftServer, UUID, long, ResourceLocation reason)` | The same from a player's own account, online or not. |
+| `PaymentResult pay(ServerPlayer, long, ResourceLocation reason)` | Pays into the account the player trades with (owed to that team while it exists, if the bank can't be reached). |
+| `PaymentResult pay(MinecraftServer, UUID, long, ResourceLocation reason)` | Pays into a player's own account, or owes it. |
+| `Component formatMoney(MinecraftServer, long)`, `BankType bankType(MinecraftServer)`, `boolean bankAvailable(MinecraftServer)`, `boolean isCoin(Item)` | Helpers. |
+| `addVisibilityRule(ResourceLocation id, BiPredicate<ServerPlayer, Item> hides)`, `removeVisibilityRule(ResourceLocation)` | Thread-safe; may be called while mods load. A rule that throws is removed and logged. Catalogs are resent on the next tick when a server is running. |
+| `refreshVisibility(@Nullable ServerPlayer)`, `isHidden(ServerPlayer, Item)` | Call `refreshVisibility` when a rule's answer changes (null: anyone). |
+
+- Amounts are bits, `1 ≤ amount ≤ Integer.MAX_VALUE`. Otherwise the result is `INVALID_AMOUNT` or `TOO_LARGE`.
+- `pay` and `charge` write one audit line each (actor `api:<reason>`). An online player's open market screen gets the new balance.
+- `pay` creates money. The guide says so: swapping items for money goes through `sell`, so buying N then selling N can't profit.
+- Owed API payments are kept in their own saved data (`ApiPayments`, `dynamic_economy_api_payments`), paid on the server tick with the existing retry wait, and counted on the leaderboard.
+
+### Types
+
+- `MarketQuote(Item item, long basePrice, long sellPrice, long buyPrice, OptionalLong stock, boolean canSell, boolean canBuy, double factor)`. Prices are for the next single unit; `stock` is empty for unlimited items.
+- `TradeResult(MarketResult result, int quantity, long unitPrice, long total)` and `PaymentResult(MarketResult result, long amount, boolean owed)`, each with `ok()`.
+- `MarketResult`: the API's own enum: `OK, NOT_LISTED, SELL_DISABLED, BUY_DISABLED, NOT_ENOUGH_ITEMS, NO_STOCK, NO_FUNDS, NO_SPACE, PRICE_CHANGED, TOO_LARGE, INVALID_QUANTITY, BANK_UNAVAILABLE, INVALID_AMOUNT`. It is mapped from `MarketService.Result` by name, so internal values can change without breaking it.
+- `BankType { OWN, NUMISMATICS }`.
+
+### Events (`dynamiceconomy.api.event`, on `NeoForge.EVENT_BUS`, not cancellable)
+
+| Event | Fired |
+|---|---|
+| `MarketTradeEvent` (server, player, item, buy?, quantity, unit price, total) | After every market trade: screen, command or API. |
+| `ContractEvent.Claimed / Delivered / Completed / Abandoned / Expired` (server, contract ID, holder UUID, item ID, units, delivered so far, plus amounts) | After each action. `Expired` covers board replacement and contracts being turned off, with the deposit lost or returned. |
+| `ExchangeTradeEvent` (server, buyer, seller, item stack (one unit), quantity, unit price, value, tax, from a listing?) | Once per fill of an order, and per purchase from a listing. |
+| `CatalogReloadedEvent` (server) | At the end of every catalog rebuild. |
+
+- Every event is posted after its change is complete. When one action changes several things (a board replacement, an order filling against several others), its events are collected and posted after the last change, never in the middle.
+- A listener that throws is logged and ignored, so it can't undo or interrupt market work.
+
+### Commands
+
+- `/market admin money balance <player>` returns the balance (capped at `Integer.MAX_VALUE`) for `execute store`.
+- `give <player> <amount>` and `take <player> <amount>` return the amount moved. They act on a player's own account, online or not (`<player>` is a game profile), and on one player at a time.
+- Each writes an audit line with the balance before and after, and refreshes an open market screen.
+
+### Build
+
+- `maven-publish` with `withSourcesJar()` and `withJavadocJar()`. The javadoc covers only `dynamiceconomy.api` and its subpackages.
+- `jitpack.yml` uses JDK 21. Published coordinates: `com.github.The-Azotus:dynamic-economy:<tag>`.
+- `mod_version` goes to 0.5.0 at release, as before.

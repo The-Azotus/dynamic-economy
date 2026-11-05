@@ -3,6 +3,7 @@ package dynamiceconomy.service;
 import com.mojang.authlib.GameProfile;
 import dynamiceconomy.DynamicEconomy;
 import dynamiceconomy.MarketConfig;
+import dynamiceconomy.api.event.ContractEvent;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankTeam;
 import dynamiceconomy.bank.WorldBank;
@@ -45,6 +46,7 @@ import java.util.function.Predicate;
  *   <li>A payout is worked out when it's made ({@link ContractPricing#payout}), never above what was offered, so it
  *       stays below the lowest price the market can charge for those units even if the catalog changed meanwhile.</li>
  * </ul>
+ * Each action that succeeds, and each held contract that expires, posts a {@link ContractEvent} once it is complete.
  */
 public final class ContractService {
     private ContractService() {
@@ -89,8 +91,9 @@ public final class ContractService {
                 return false;
             }
             // Not the players' doing, so they keep their deposits.
-            settleHeld(server, board, true);
+            List<ContractEvent.Expired> expired = settleHeld(server, board, true);
             board.clear();
+            ApiEvents.postAll(expired);
             return true;
         }
         if (board.due()) {
@@ -102,9 +105,10 @@ public final class ContractService {
 
     /** Ends every held contract as expired, then puts up a new board. */
     public static void refresh(MinecraftServer server, ContractBoard board, RandomSource random) {
-        settleHeld(server, board, false);
+        List<ContractEvent.Expired> expired = settleHeld(server, board, false);
         board.replace(generate(MarketCatalog.INSTANCE.entries(), MarketStockData.get(server), MarketStockData.now(server), random,
                 MarketConfig.boardSize(), MarketConfig.depositFraction(), board::takeId), MarketConfig.refreshDays());
+        ApiEvents.postAll(expired);
         DynamicEconomy.LOGGER.debug("New contract board on day {}: {} contracts, until day {}", board.day(),
                 board.contracts().size(), board.expiresDay());
     }
@@ -161,9 +165,11 @@ public final class ContractService {
 
     /**
      * Ends every held contract: its holder is paid for the units delivered, and keeps the deposit only when
-     * {@code refundDeposits}. Each holder is told now, or when they next log in.
+     * {@code refundDeposits}. Each holder is told now, or when they next log in. Returns an event for each contract
+     * ended, for the caller to post once the board has changed too.
      */
-    static void settleHeld(MinecraftServer server, ContractBoard board, boolean refundDeposits) {
+    static List<ContractEvent.Expired> settleHeld(MinecraftServer server, ContractBoard board, boolean refundDeposits) {
+        List<ContractEvent.Expired> expired = new ArrayList<>();
         for (Contract contract : board.contracts()) {
             if (contract.status() != Status.CLAIMED || contract.holder().isEmpty()) {
                 continue;
@@ -175,7 +181,10 @@ public final class ContractService {
             board.count(paid, lost);
             tell(server, board, new ContractBoard.Notice(contract.holder().get(), contract.item(), contract.delivered(),
                     contract.units(), paid, lost));
+            expired.add(new ContractEvent.Expired(server, contract.id(), contract.holder().get(), contract.item(), contract.units(),
+                    contract.delivered(), paid, lost, refundDeposits));
         }
+        return expired;
     }
 
     /** Tells the holder how their contract ended: in chat if they're online, otherwise when they next log in. */
@@ -260,6 +269,8 @@ public final class ContractService {
         }
         Optional<UUID> team = bank.payingFromTeam(player) ? bank.team(player).map(BankTeam::id) : Optional.empty();
         board.update(contract.claimed(player.getUUID(), team));
+        ApiEvents.post(new ContractEvent.Claimed(player.server, contract.id(), player.getUUID(), contract.item(), contract.units(),
+                contract.delivered(), contract.deposit()));
         return new Outcome(Action.CLAIM, Result.OK, contract.item(), 0, contract.deposit());
     }
 
@@ -314,6 +325,13 @@ public final class ContractService {
             account.get().deposit((int) (paid + contract.deposit()));
             board.count(paid, 0);
         }
+        int delivered = contract.delivered() + qty;
+        ApiEvents.post(new ContractEvent.Delivered(player.server, contract.id(), player.getUUID(), contract.item(), contract.units(),
+                delivered, qty));
+        if (completes) {
+            ApiEvents.post(new ContractEvent.Completed(player.server, contract.id(), player.getUUID(), contract.item(),
+                    contract.units(), delivered, paid, contract.deposit()));
+        }
         return new Outcome(Action.DELIVER, Result.OK, contract.item(), qty, completes ? paid + contract.deposit() : 0);
     }
 
@@ -344,6 +362,8 @@ public final class ContractService {
             account.get().deposit((int) paid);
         }
         board.count(paid, contract.deposit());
+        ApiEvents.post(new ContractEvent.Abandoned(player.server, contract.id(), player.getUUID(), contract.item(), contract.units(),
+                contract.delivered(), paid, contract.deposit()));
         return new Outcome(Action.ABANDON, Result.OK, contract.item(), contract.delivered(), paid);
     }
 

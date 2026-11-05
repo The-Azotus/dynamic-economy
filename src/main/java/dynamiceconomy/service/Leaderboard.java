@@ -3,6 +3,7 @@ package dynamiceconomy.service;
 import com.mojang.authlib.GameProfile;
 import dynamiceconomy.MarketConfig;
 import dynamiceconomy.bank.WorldBank;
+import dynamiceconomy.data.ApiPayments;
 import dynamiceconomy.data.ContractBoard;
 import dynamiceconomy.data.ExchangeData;
 import net.minecraft.server.MinecraftServer;
@@ -21,8 +22,9 @@ import java.util.function.Predicate;
 
 /**
  * The richest players by balance in the world's bank, plus the money the exchange holds for them (open buy orders and
- * owed payments) and contract payouts owed to them. Only personal accounts of known players count: shared accounts (Numismatics' Blaze Bankers), team
- * accounts and accounts with no player profile never appear, nor do empty accounts. Bank balances are what the bank
+ * owed payments), contract payouts owed to them and add-on API payments owed to them. Only personal accounts of known
+ * players count: shared accounts (Numismatics' Blaze Bankers), team accounts and accounts with no player profile never
+ * appear, nor do empty accounts. Bank balances are what the bank
  * displays. Server thread only: it reads the bank.
  */
 public final class Leaderboard {
@@ -54,7 +56,8 @@ public final class Leaderboard {
                 : profile -> false;
         Predicate<Optional<UUID>> paysTeam = team -> PayoutService.paysTeam(server, team);
         List<Entry> ranked = rank(withHeld(WorldBank.of(server).playerBalances(), ExchangeData.get(server).heldForPlayers(paysTeam),
-                ContractBoard.get(server).owed().forPlayers(paysTeam)), profiles, excluded);
+                ContractBoard.get(server).owed().forPlayers(paysTeam), ApiPayments.get(server).owed().forPlayers(paysTeam)),
+                profiles, excluded);
         int ownRank = 0;
         for (int i = 0; i < ranked.size(); i++) {
             if (ranked.get(i).id().equals(viewer.getUUID())) {

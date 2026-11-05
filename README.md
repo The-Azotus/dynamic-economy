@@ -19,6 +19,7 @@ A server-wide market for Minecraft. Players sell items to the server for money a
 | --- | --- |
 | A player | [Player guide](docs/player-guide.md) |
 | A server admin | [Admin guide](docs/admin-guide.md) |
+| A mod or modpack author building on the market | [Add-on guide](docs/api.md) |
 
 ## Requirements
 
@@ -44,6 +45,10 @@ Install the mod on the **server and every client**. Clients need it for the mark
 5. To make terminals the only way in, set `access_mode = "BLOCK_ONLY"` in `config/dynamic_economy-server.toml`.
 
 The [admin guide](docs/admin-guide.md) covers every command, catalog field and setting.
+
+## For add-on authors
+
+Other mods can read prices, trade for players, pay and charge money, hide items and listen for trades through a Java API, published on JitPack as `com.github.The-Azotus:dynamic-economy:v0.5.0` and later. Price files and commands work without any Java. The [add-on guide](docs/api.md) covers both.
 
 ## Building from source
 

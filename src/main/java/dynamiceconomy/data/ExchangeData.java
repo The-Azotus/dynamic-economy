@@ -249,8 +249,11 @@ public final class ExchangeData extends SavedData {
         return Collections.unmodifiableMap(boxes.getOrDefault(player, Map.of()));
     }
 
+    /** A copy of every player's box, by item. */
     public Map<UUID, Map<ResourceLocation, Long>> boxes() {
-        return Collections.unmodifiableMap(boxes);
+        Map<UUID, Map<ResourceLocation, Long>> copy = new LinkedHashMap<>();
+        boxes.forEach((player, box) -> copy.put(player, Collections.unmodifiableMap(new LinkedHashMap<>(box))));
+        return Collections.unmodifiableMap(copy);
     }
 
     public void addToBox(UUID player, ResourceLocation item, long count) {

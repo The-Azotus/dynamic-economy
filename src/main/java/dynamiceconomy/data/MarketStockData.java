@@ -222,9 +222,10 @@ public final class MarketStockData extends SavedData {
         setDirty();
     }
 
-    /** An item's history, or an empty one. */
+    /** A copy of an item's history, or an empty one. */
     public History history(ResourceLocation item) {
-        return history.getOrDefault(item, new History(new long[0], new float[0]));
+        History stored = history.get(item);
+        return stored == null ? new History(new long[0], new float[0]) : new History(stored.ticks().clone(), stored.factors().clone());
     }
 
     /** Every item's history. A changed history is always a new {@link History} object, so identity shows change. */

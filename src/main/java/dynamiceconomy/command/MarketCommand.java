@@ -161,6 +161,7 @@ public final class MarketCommand {
         AdminCatalogCommands.addTo(admin, context);
         AdminRecoveryCommands.addTo(admin);
         AdminBankCommands.addTo(admin);
+        AdminMoneyCommands.addTo(admin);
         ContractCommands.addTo(admin);
         ExchangeCommands.addTo(admin);
         return admin;

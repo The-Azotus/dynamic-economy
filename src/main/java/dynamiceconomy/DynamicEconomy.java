@@ -1,6 +1,7 @@
 package dynamiceconomy;
 
 import com.mojang.logging.LogUtils;
+import dynamiceconomy.api.event.CatalogReloadedEvent;
 import dynamiceconomy.bank.BankKind;
 import dynamiceconomy.bank.OwnBank;
 import dynamiceconomy.bank.WorldBank;
@@ -12,14 +13,18 @@ import dynamiceconomy.command.MarketCommand;
 import dynamiceconomy.compat.FtbTeamsBridge;
 import dynamiceconomy.compat.StagesBridge;
 import dynamiceconomy.block.MarketBlocks;
+import dynamiceconomy.data.ApiPayments;
 import dynamiceconomy.data.MarketOverrides;
 import dynamiceconomy.data.MarketStockData;
+import dynamiceconomy.data.OwedPayouts;
 import dynamiceconomy.menu.MarketMenu;
 import dynamiceconomy.network.MarketNetwork;
 import dynamiceconomy.network.MarketSync;
+import dynamiceconomy.service.ApiEvents;
 import dynamiceconomy.service.ContractService;
 import dynamiceconomy.service.ExchangeService;
 import dynamiceconomy.service.MarketService;
+import dynamiceconomy.service.PayoutService;
 import dynamiceconomy.service.PriceModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -98,6 +103,11 @@ public final class DynamicEconomy {
             if (ExchangeService.tick(event.getServer())) {
                 MarketSync.broadcastExchange(event.getServer());
             }
+            // Add-on API payments owed while the bank couldn't be reached, as ContractService.tick pays the board's.
+            dynamiceconomy.data.OwedPayouts apiOwed = dynamiceconomy.data.ApiPayments.get(event.getServer()).owed();
+            if (!apiOwed.isEmpty()) {
+                dynamiceconomy.service.PayoutService.payOwed(event.getServer(), apiOwed);
+            }
         });
         // How a held contract or an exchange order ended while its owner was away.
         NeoForge.EVENT_BUS.addListener((PlayerEvent.PlayerLoggedInEvent event) -> {
@@ -137,6 +147,7 @@ public final class DynamicEconomy {
         MarketStockData.get(server).seed(MarketCatalog.INSTANCE.entries());
         warnAboutArbitrage();
         MarketSync.broadcastSnapshot(server);
+        ApiEvents.post(new CatalogReloadedEvent(server));
         return problems;
     }
 

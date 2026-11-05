@@ -1,6 +1,7 @@
 package dynamiceconomy.service;
 
 import dynamiceconomy.MarketConfig;
+import dynamiceconomy.api.event.MarketTradeEvent;
 import dynamiceconomy.catalog.CatalogEntry;
 import dynamiceconomy.catalog.MarketCatalog;
 import dynamiceconomy.bank.Bank;
@@ -28,6 +29,8 @@ import java.util.function.Predicate;
  * because everything runs on the server thread, so nothing else can touch the inventory, stock or bank in between.
  * Only the player's main inventory (hotbar plus the 27 storage slots) is read or written; armor, offhand and modded
  * slots are ignored.
+ * <p>
+ * Every trade that succeeds posts a {@link MarketTradeEvent} once it is complete.
  */
 public final class MarketService {
     private MarketService() {
@@ -171,6 +174,7 @@ public final class MarketService {
         TradeHistory.get(player.server).record(player.getUUID(),
                 new TradeHistory.Trade(System.currentTimeMillis(), entry.itemId(), false, qty, order.total()));
         account.get().deposit((int) order.total());
+        ApiEvents.post(new MarketTradeEvent(player, item, false, qty, unitPrice, order.total()));
         return new TradeResult(Result.OK, qty, unitPrice, order.total());
     }
 
@@ -236,6 +240,7 @@ public final class MarketService {
                 new TradeHistory.Trade(System.currentTimeMillis(), entry.itemId(), true, qty, order.total()));
         insert(items, entry, qty);
         player.getInventory().setChanged();
+        ApiEvents.post(new MarketTradeEvent(player, item, true, qty, unitPrice, order.total()));
         return new TradeResult(Result.OK, qty, unitPrice, order.total());
     }
 
