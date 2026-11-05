@@ -813,14 +813,34 @@ public final class ApiTests {
         } catch (IllegalArgumentException e) {
             helper.fail("ContractEvent can't be listened for as a whole: " + e.getMessage());
         }
+        ResourceLocation stone = ResourceLocation.withDefaultNamespace("stone");
+        ContractEvent claimed = new ContractEvent.Claimed(helper.getLevel().getServer(), 1, UUID.randomUUID(), stone, 1, 0, 0L);
+        ContractEvent expired = new ContractEvent.Expired(helper.getLevel().getServer(), 2, UUID.randomUUID(), stone, 1, 0, 0L, 0L, true);
+        heardByParent.clear();
+        hearingParent = true;
+        try {
+            NeoForge.EVENT_BUS.post(claimed);
+            NeoForge.EVENT_BUS.post(expired);
+        } finally {
+            hearingParent = false;
+        }
+        helper.assertTrue(heardByParent.equals(List.of(claimed, expired)),
+                "a listener for ContractEvent hears its nested events; heard " + heardByParent);
+        heardByParent.clear();
         helper.succeed();
     }
 
     private static boolean contractListener;
+    /** What the ContractEvent listener heard while {@link #hearingParent} was set. */
+    private static final List<ContractEvent> heardByParent = new ArrayList<>();
+    private static boolean hearingParent;
 
     private static void registerContractEventListener() {
         if (!contractListener) {
             NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, ContractEvent.class, event -> {
+                if (hearingParent) {
+                    heardByParent.add(event);
+                }
             });
             contractListener = true;
         }

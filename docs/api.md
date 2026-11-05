@@ -72,7 +72,7 @@ dependencies {
 - The `exclusiveContent` block sends only that group to JitPack, so Gradle doesn't ask JitPack for every other dependency.
 - JitPack builds a tag the first time anyone asks for it. That can take a few minutes, and the first Gradle run may time out; run it again.
 - The mod's own optional dependencies (Create, Numismatics, FTB Teams, ProgressiveStages) aren't pulled in. In your dev runs the mod uses its own bank. To test with Numismatics' bank, add Numismatics and Create to your dev runtime yourself.
-- To try your add-on against unreleased changes, clone the mod and run `gradlew publishToMavenLocal`. That publishes `com.github.The-Azotus:dynamic-economy:<mod_version>` (no `v`, such as `0.5.0`) to your local Maven; add `mavenLocal()` to your repositories.
+- To try your add-on against unreleased changes, clone the mod and run `gradlew publishToMavenLocal`. That publishes `com.github.The-Azotus:dynamic-economy:<mod_version>` (no `v`, such as `0.5.0`) to your local Maven. Add `mavenLocal()` inside the `exclusiveContent` block, since that block keeps the group away from every other repository: `forRepositories(maven { url = 'https://jitpack.io' }, mavenLocal())` in place of `forRepository { ... }` (Kotlin: `forRepositories(maven("https://jitpack.io"), mavenLocal())`).
 
 ### neoforge.mods.toml
 
@@ -173,7 +173,7 @@ Everything is in `dynamiceconomy.api.DynamicEconomyApi`, as static methods. The 
 ### Concepts
 
 - **Bits.** Every amount and price is a whole number of bits. A world keeps its money in one of two banks: the mod's own (bits), or Create: Numismatics' (spurs) when that mod is installed. 1 bit = 1 spur, so an amount means the same in both, and your code doesn't need to care which. `bankType` says which one, and `formatMoney` writes an amount in the right unit.
-- **Int-sized requests.** Both banks take at most 2,147,483,647 (`Integer.MAX_VALUE`) in one deposit or deduction. Amounts are `long`, but one call moves at most that much; more is refused as `TOO_LARGE`. Balances may be larger.
+- **Int-sized requests.** Both banks take at most 2,147,483,647 (`Integer.MAX_VALUE`) in one deposit or deduction. Amounts are `long`, but one call moves at most that much; more is refused as `TOO_LARGE`. Balances may be larger with the mod's own bank. With Numismatics' bank a balance reads at most 1,073,741,823, the most Numismatics shows: a balance at that value means at least that much, and the rest can still be spent.
 - **The server thread.** Every method that reads or changes the market or the bank must run on the server thread, and throws `IllegalStateException` otherwise. Neither bank is thread-safe. From a packet handler, use `IPayloadContext.enqueueWork`; from another thread, `server.execute`. The few methods that may run on any thread say so below.
 - **Every check before any change.** A call either does everything or changes nothing. Only `MarketResult.OK` changed anything; every other result left the market, the bank and the player's inventory as they were.
 - **Results, not exceptions.** Trades return a `TradeResult`, payments a `PaymentResult`, each with a `MarketResult` and `ok()`. Exceptions are only for programming errors: the wrong thread or a null argument.
@@ -213,7 +213,7 @@ Prices are the same for every player. They're for **one** unit: every unit in an
 - The server's `access_mode` isn't checked: your add-on decides who may trade, and where.
 - An item hidden from the player answers `NOT_LISTED`, the same as an unlisted one.
 
-`TradeResult` holds `result`, `quantity` (the units traded; 0 unless OK), `unitPrice` (what the first unit traded at, or would have) and `total` (what the whole order paid or cost, or would have). On `NO_FUNDS`, `NO_STOCK`, `NO_SPACE` and `NOT_ENOUGH_ITEMS`, `total` is what the order would have cost or paid; when a trade fails before it is priced, both prices are 0.
+`TradeResult` holds `result`, `quantity` (the units traded; 0 unless OK), `unitPrice` (what the first unit traded at, or would have) and `total` (what the whole order paid or cost, or would have). On `PRICE_CHANGED`, `NO_FUNDS`, `NO_STOCK`, `NO_SPACE` and `NOT_ENOUGH_ITEMS`, `total` is what the order would have cost or paid. On `TOO_LARGE` after pricing, `unitPrice` is set and `total` is 0. On `BANK_UNAVAILABLE`, and when a trade fails before it is priced, both are 0.
 
 ### Money
 
@@ -226,13 +226,13 @@ Prices are the same for every player. They're for **one** unit: every unit in an
 | `PaymentResult pay(ServerPlayer player, long amount, ResourceLocation reason)` | Pays into the account the player trades with. |
 | `PaymentResult pay(MinecraftServer server, UUID player, long amount, ResourceLocation reason)` | Pays into a player's own account, online or not. |
 
-- `balance` is empty when the bank can't be reached.
+- `balance` is empty when the bank can't be reached. With Numismatics' bank it is the balance Numismatics shows, at most 1,073,741,823; at that value, read it as "at least".
 - `amount` must be from 1 to 2,147,483,647: zero or less is `INVALID_AMOUNT`, more is `TOO_LARGE`.
 - `reason` names the payment in your namespace, such as `yourmod:quest_reward`. It shows in the audit log.
 - `charge` returns `NO_FUNDS` when the account can't cover the amount, and `BANK_UNAVAILABLE` when the bank can't be reached.
 - `pay` never fails for a valid amount: if the bank can't be reached, the money is owed (see [Owed payments](#owed-payments)).
 - An online player's open market screen shows the new balance. Neither method sends the player a message: tell them yourself.
-- Each successful `pay` or `charge` writes one line to the server's [audit log](admin-guide.md#audit-log): actor `api:<reason>`, action `api pay` or `api charge`, the player (and team account, if it was one), the amount, and `ok` or `owed: bank unreachable`.
+- Each successful `pay` or `charge` writes one line to the server's [audit log](admin-guide.md#audit-log): actor `api:<reason>`, action `api pay` or `api charge`, the player (and team account, if it was one), the amount, and `ok` or `owed: bank unreachable`. The log is size-capped and shared with admin actions, so pay many small rewards in one call rather than one per event.
 - These don't count in `/market admin stats`, which counts the market's own trades. `sell` and `buy` do count.
 
 `PaymentResult` holds `result`, `amount` (the amount asked for) and `owed` (true when a payment is owed rather than paid; always false for a charge). `ok()` is true when the money moved, or is owed.
@@ -273,7 +273,7 @@ Add-ons can hide items from players, as ProgressiveStages does with its locks (s
 - Prices and stock stay shared. A hidden item still moves in price when others trade it.
 - Admin commands and the server console see every item.
 - **Keep the rule cheap and free of side effects.** It runs on the server thread for every listed item each time a player's catalog is sent, and on every trade. Check the cheap condition (is this one of my items?) first.
-- A rule that throws is removed and logged, and the items it hid are shown again.
+- A rule that throws is removed and logged. The items it hid show again the next time each player's catalog is sent (on rejoining, a reload, or any rule change or `refreshVisibility` call).
 - Rules aren't saved. Add them while your mod loads (the mod constructor is fine) or when the server starts.
 - After `addVisibilityRule`, `removeVisibilityRule` or `refreshVisibility`, catalogs are sent again on the next tick, so many calls in one tick send once. `refreshVisibility` does nothing when no server is running.
 
@@ -321,7 +321,7 @@ Dynamic-Economy posts these on `NeoForge.EVENT_BUS` (the game bus), in the packa
 | `ContractEvent.Abandoned` | The holder gave it up: delivered units paid for, deposit lost. | common fields, plus `getPaid`, `getDepositLost` |
 | `ContractEvent.Expired` | A held contract ended unfinished: its board was replaced (time ran out, or an admin refreshed it) or contracts were turned off. Delivered units are paid for. | common fields, plus `getPaid`, `getDepositLost` (0 when returned), `isDepositReturned` (true when contracts were turned off) |
 | `ExchangeTradeEvent` | Two players traded on the player exchange: once per fill of an order (an order that fills against three others posts three), and once per purchase from a listing. | `getServer`, `getBuyer`, `getSeller` (UUIDs), `getItem` (one unit as an `ItemStack`, a new copy each call; a listing's keeps its components), `getQuantity`, `getUnitPrice`, `getValue` (what the buyer paid), `getTax` (destroyed), `isFromListing` |
-| `CatalogReloadedEvent` | The catalog was rebuilt: at server start, after `/reload` or `/market admin reload`, after an import or a backup restore, and after every in-game admin edit. | `getServer` |
+| `CatalogReloadedEvent` | The catalog was rebuilt: at server start, after `/reload` or `/market admin reload`, after an import or a restore of a backup's edits, and after every in-game admin edit. | `getServer` |
 
 The common contract fields are `getServer`, `getContractId` (as `/market contracts` shows it), `getHolder` (UUID; may be offline), `getItem` (a `ResourceLocation`, since a contract can outlive the mod that adds its item), `getUnits` (asked for in all) and `getDelivered` (delivered in all, counting this action). Listen for `ContractEvent` itself to hear all five.
 
@@ -331,7 +331,7 @@ Rules for all of them:
 - **Never cancellable.** To stop a trade before it happens, hide the item with a [visibility rule](#visibility), or decide in your own code whether to call the API.
 - **Only for actions that succeeded**, and always on the server thread, so a listener may call the API.
 - **A listener that throws is logged and ignored**, so it can't undo or interrupt market work. Listeners after it on the same event may then not run.
-- **`CatalogReloadedEvent` can fire more than once for one admin action** (an edit the catalog rules refuse is applied, then undone). Treat it as "the catalog may have changed", and re-read anything you cached from it, such as quotes or `listedItems`.
+- **`CatalogReloadedEvent` can fire more than once for one admin action** (an edit the catalog rules refuse is applied, then undone). Treat it as "the catalog may have changed", and re-read anything you cached from it, such as `listedItems`. Don't cache quotes: prices also move with trades, admin resets and recovery over time, which don't all post an event, so call `quote` when you need a price.
 - A `MarketTradeEvent` listener that trades through the API posts another `MarketTradeEvent`. Guard against looping.
 - With an exchange sale, the seller has been paid `getValue() − getTax()`, or is owed it if the bank couldn't be reached. The bought units are in the buyer's collection box. Either player may be offline.
 - When a contract expires and the bank can't be reached, its payment is owed and paid later; the event is posted either way.
@@ -370,16 +370,18 @@ import net.neoforged.fml.common.Mod;
 @Mod(QuestCoins.MOD_ID)
 public final class QuestCoins {
     public static final String MOD_ID = "questcoins";
+    /** Check this before calling anything in EconomyHooks. */
+    public static final boolean ECONOMY_LOADED = ModList.get().isLoaded("dynamic_economy");
 
     public QuestCoins(IEventBus modBus) {
-        if (ModList.get().isLoaded("dynamic_economy")) {
+        if (ECONOMY_LOADED) {
             EconomyHooks.register();
         }
     }
 }
 ```
 
-Every reference to the API is in one class, loaded only when the mod is there:
+Every reference to the API is in one class, loaded only when the mod is there. The rest of the quest code calls it only behind the same check, for example `if (QuestCoins.ECONOMY_LOADED) EconomyHooks.rewardQuest(player, 100);`:
 
 ```java
 package com.example.questcoins;

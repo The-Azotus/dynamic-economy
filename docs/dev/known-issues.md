@@ -48,6 +48,22 @@ Last full review: 2026-11-04, the whole codebase by area plus every money and it
 - **Sell orders saved before v0.4.0 rebuild their takings as price × units filled.** No public release had that format.
 - **Very large exchange packets aren't split.** This would take about 1,000 open orders, or a box with hundreds of different 8 KB parcels.
 
+### Add-on API (Phase 18 review, 2026-11-05)
+
+Six reviewers by area, each finding checked by a second; all minor. Factual errors in `docs/api.md`, the admin guide, the README and the API javadoc were corrected, since the docs are the phase's deliverable. These were accepted:
+
+- **Balances read through the API show Numismatics' display cap** (1,073,741,823). Documented in the javadoc and `docs/api.md`; there is no `balanceCap` helper. Only balances above about 1.07 billion are affected, and no money moves wrongly.
+- **`money give`/`take` audit lines record the displayed balance**, so at Numismatics' cap the before and after values can match. Audit detail only; the money moves correctly and the chat reply says "at least".
+- **Every API `pay` and `charge` writes an audit line**, so a very chatty add-on rotates older admin lines out of the 5 MB log sooner. By design; `docs/api.md` asks add-ons to batch small rewards.
+- **`ApiEvents` catches only `RuntimeException` and `LinkageError`.** A listener that sneaks out a checked exception or throws another `Error` reaches the caller. That needs a broken add-on.
+- **A visibility rule that throws is removed, but catalogs aren't resent at once.** The items it hid come back on the next catalog send (documented). That needs a broken add-on, and nothing is traded wrongly.
+- **`/market admin money` takes any name, as vanilla `/op` does.** A misspelled name gets an unused account of its own. This is documented, and the audit log shows it.
+- **The sources jar carries `neoforge.mods.toml`**, as Gradle's default sources jar does. The README says which jar goes in the mods folder.
+- **Test weaknesses:**
+  - The event tests check ordering after the call returns, not when each event fires.
+  - `adminMoneyCommandsNeedPermission` relies on a selector failing.
+  - Audit-line counts in the GameTests (here and in `AdminTests`) can fail once a test world's audit log rotates past five files; delete the test world.
+
 ## Not checked by the review
 
 These need a live game, or another mod's source:

@@ -52,7 +52,7 @@ Other mods can read prices, trade for players, pay and charge money, hide items 
 
 ## Building from source
 
-Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests. Create, Numismatics and FTB Teams are optional: add `-PwithoutMods=numismatics` to run without Numismatics, `-PwithoutMods=create` to run without both Create and Numismatics (Numismatics needs Create), or `-PwithoutMods=ftbteams` to run without FTB Teams; combine them with commas. Each such run uses its own test world, since a world remembers which bank it uses.
+Install a Java 21 JDK and run `gradlew build`; the mod jar is `build/libs/dynamic_economy-<version>.jar` (the `-sources` and `-javadoc` jars next to it are for add-on authors, not the mods folder). `gradlew runGameTestServer` runs the automated tests. Create, Numismatics and FTB Teams are optional: add `-PwithoutMods=numismatics` to run without Numismatics, `-PwithoutMods=create` to run without both Create and Numismatics (Numismatics needs Create), or `-PwithoutMods=ftbteams` to run without FTB Teams; combine them with commas. Each such run uses its own test world, since a world remembers which bank it uses.
 
 Released versions are tagged in git (for example `v0.4.0`). To find your way around the code, start with [docs/architecture.md](docs/architecture.md).
 

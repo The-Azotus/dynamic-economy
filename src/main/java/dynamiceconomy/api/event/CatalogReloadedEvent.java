@@ -5,8 +5,9 @@ import net.neoforged.bus.api.Event;
 
 /**
  * The market catalog was rebuilt: at server start, after {@code /reload} or {@code /market admin reload}, after an
- * import or a backup restore, and after every in-game admin edit. The new prices are live and have been sent to every
- * player. Listen for it to re-read anything you cached from the catalog, such as quotes or the list of listed items.
+ * import or a restore of a backup's edits, and after every in-game admin edit. The new prices are live and have been sent to every
+ * player. Listen for it to re-read anything you cached from the catalog, such as the list of listed items. Quotes
+ * also change with trades and over time, without this event: ask for one when it's needed.
  * <p>
  * One admin action can post it more than once (an edit the catalog rules refuse is applied, then undone), so treat it
  * as "the catalog may have changed", not as a count of changes.

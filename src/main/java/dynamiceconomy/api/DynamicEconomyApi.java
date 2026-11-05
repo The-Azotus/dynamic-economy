@@ -134,6 +134,9 @@ public final class DynamicEconomyApi {
     /**
      * The balance of the account the player trades with, in bits: their team's when they chose to pay from it,
      * otherwise their own. Server thread only.
+     * <p>
+     * With Numismatics' bank this is the balance Numismatics shows, at most 1,073,741,823: a balance at that value
+     * means at least that much, and the rest can still be spent.
      *
      * @return the balance, or empty if the bank can't be reached
      */
@@ -145,6 +148,9 @@ public final class DynamicEconomyApi {
     /**
      * The balance of a player's own account, in bits, online or not. A player with no account yet gets one, empty.
      * Server thread only.
+     * <p>
+     * With Numismatics' bank this is the balance Numismatics shows, at most 1,073,741,823: a balance at that value
+     * means at least that much, and the rest can still be spent.
      *
      * @return the balance, or empty if the bank can't be reached
      */

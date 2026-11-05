@@ -578,10 +578,10 @@ These commands read a player's balance and give or take money directly, outside 
 | `/market admin money take <player> <amount>` | Takes `amount` from the player's account, all or nothing: if they have less, nothing is taken. | The amount taken. |
 
 - **Own account only.** They act on the player's own account, never a team account. With Numismatics' bank, that's the player's Numismatics account.
-- **Online or offline.** `<player>` is a name or a selector. A selector must match exactly one player; offline players work by name.
+- **Online or offline.** `<player>` is a name or a selector. A selector must match exactly one player; offline players work by name. Names aren't checked against players who have joined, so a misspelled name gets an unused account of its own (the audit log shows it; `take` with the same name undoes it).
 - **Amounts** are whole bits, 1 to 2,147,483,647.
 - **When the bank can't be reached** (a world set to Numismatics' bank without Numismatics), the command fails and changes nothing. Nothing is owed for later.
-- **Failure returns 0**, so `execute store` can tell success from failure.
+- **Failure returns 0** for `give` and `take`, so `execute store` can tell success from failure. `balance` also returns 0 for an empty account, so it can't.
 - `give` and `take` write a line to the [audit log](#audit-log) with the balance before and after, and a player with the market open sees the new balance at once.
 - They don't count in `/market admin stats`, which counts market trades only.
 
