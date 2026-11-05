@@ -19,7 +19,7 @@ public final class BankTeams {
     /** The team with the ID {@code team}, if it still exists. */
     public static Optional<BankTeam> byId(MinecraftServer server, UUID team) {
         return fromFtbTeams() ? FtbTeamsBridge.teamById(team)
-                : OwnTeams.get(server).all().stream().filter(t -> t.id().equals(team)).findFirst();
+                : OwnTeams.get(server).byId(team);
     }
 
     public static Optional<BankTeam> teamOf(MinecraftServer server, UUID player) {

@@ -52,9 +52,7 @@ public final class Leaderboard {
         Predicate<GameProfile> excluded = MarketConfig.leaderboardExcludeOperators()
                 ? profile -> server.getPlayerList().isOp(profile)
                 : profile -> false;
-        // Many orders and payouts share a team, and each lookup scans the teams, so each team is checked once.
-        Map<Optional<UUID>, Boolean> teamPaid = new HashMap<>();
-        Predicate<Optional<UUID>> paysTeam = team -> teamPaid.computeIfAbsent(team, t -> PayoutService.paysTeam(server, t));
+        Predicate<Optional<UUID>> paysTeam = team -> PayoutService.paysTeam(server, team);
         List<Entry> ranked = rank(withHeld(WorldBank.of(server).playerBalances(), ExchangeData.get(server).heldForPlayers(paysTeam),
                 ContractBoard.get(server).owed().forPlayers(paysTeam)), profiles, excluded);
         int ownRank = 0;
