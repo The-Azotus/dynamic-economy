@@ -10,7 +10,7 @@ public final class ClientConfig {
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         SHOW_SELL_PRICE = builder
-                .comment("Show what the market pays for an item in its tooltip, wherever the item appears.")
+                .comment("Show an item's market value in its tooltip, wherever the item appears.")
                 .define("show_sell_price_in_tooltips", true);
         SPEC = builder.build();
     }

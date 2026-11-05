@@ -564,7 +564,7 @@ The market has **no balance of its own**. It's a source and a sink, not a bank:
 
 ## Tooltips
 
-Every player's item tooltips show what the market pays for items it buys, for example *"Market pays 32 bits each (636 for all 20)"*. Players can turn this off with `show_sell_price_in_tooltips = false` in their own `config/dynamic_economy-client.toml`. Items the market doesn't buy show nothing.
+Every player's item tooltips show what the market pays for items it buys, for example *"Value: 32 bits (636 for 20)"* on a stack of 20. Players can turn this off with `show_sell_price_in_tooltips = false` in their own `config/dynamic_economy-client.toml`. Items the market doesn't buy show nothing.
 
 ## Server config
 

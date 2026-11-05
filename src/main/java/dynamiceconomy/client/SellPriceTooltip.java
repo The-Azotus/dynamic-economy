@@ -10,16 +10,14 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.math.RoundingMode;
-import java.util.Locale;
 
 /**
- * Adds "Market pays X spurs" (bits with the mod's own bank) to the tooltip of every item the market buys, wherever
- * it appears. Items the market doesn't buy (not listed, selling disabled, or a modified copy such as an enchanted one)
- * get no line.
+ * Adds "Value: X spurs" (bits with the mod's own bank) to the tooltip of every item the market buys, wherever it
+ * appears, with the whole stack's value on a stack. It shows at 0 stock too, since the value doesn't depend on stock.
+ * Items the market doesn't buy (not listed, selling disabled, or a modified copy such as an enchanted one) get no line.
  */
 public final class SellPriceTooltip {
     private static final int GOLD = 0xF2C94C;
-    private static final int GREY = 0xA0A0A8;
 
     private SellPriceTooltip() {
     }
@@ -36,12 +34,8 @@ public final class SellPriceTooltip {
         Component each = PriceFormat.money(PriceFormat.unitPrice(row.exactSellPrice(), RoundingMode.FLOOR));
         Component line = stack.getCount() > 1
                 ? Component.translatable("tooltip.dynamic_economy.sell_price_stack", each,
-                PriceFormat.money(PriceFormat.amount(row.sellTotal(stack.getCount()))), stack.getCount())
+                PriceFormat.amount(row.sellTotal(stack.getCount())), stack.getCount())
                 : Component.translatable("tooltip.dynamic_economy.sell_price", each);
         event.getToolTip().add(line.copy().withColor(GOLD));
-        if (Math.abs(row.factor() - 1) > 0.005) {
-            event.getToolTip().add(Component.translatable("tooltip.dynamic_economy.sell_price_trend",
-                    String.format(Locale.ROOT, "%.0f", row.factor() * 100)).withColor(GREY));
-        }
     }
 }

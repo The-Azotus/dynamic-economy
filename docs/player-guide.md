@@ -20,8 +20,8 @@ Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see 
 | **Bank** (top right) | The balance of the account you're using, in bits (spurs with Numismatics). Numismatics only shows up to 1,073,741,823; above that you'll see a **+**, and the rest is still there to spend. On a narrow screen it sits at the end of the search row and large amounts are shortened, such as **123k**. |
 | **Search box** | Type part of an item's name to filter the list. **`@create`** shows only one mod's items (by its name or ID, so `@farmer` finds Farmer's Delight). **`#ingots`** shows items with a matching tag; `#c:ingots` matches that tag's full ID. Combine words to narrow it down: `@create #plates`, or `iron ingot` (both words must match). A mod ID followed by `:`, such as `create:`, still works too. |
 | **Sort button** | Click to cycle the order: **Name**, **Cheapest** (lowest buy price first), **Best pay** (highest sell price first), **Stock** (most first). |
-| **Filter button** | Click to cycle what's shown: **All**, **Buyable** (in stock and for sale), **Sellable** (the market buys it), **Held** (you have some it accepts). |
-| **Stock** | How many the market has. **∞** means it never runs out. **0** in red means it's sold out. |
+| **Filter button** | Click to cycle what's shown: **All** (every item in stock), **Buyable** (in stock and for sale), **Sellable** (the market buys it), **Held** (you have some it accepts). Sold-out items the market buys still appear under **Sellable** and **Held**, so you can sell them. |
+| **Stock** | How many the market has. **∞** means it never runs out. **0** in red (under **Sellable** and **Held**) means it's sold out. |
 | **Buy** | What the market charges you for one. Cheap items show decimals, such as **0.99**. **–** means the market doesn't sell this item. |
 | **Sell** | What the market pays you for one. **–** means the market doesn't buy this item. |
 | **Have** | How many you could sell right now. |
@@ -90,9 +90,9 @@ On a server using Numismatics' bank, recipe viewers such as JEI may still list t
 
 Hover over any item, in your inventory, a chest or a recipe viewer, to see what the market pays for it:
 
-> Market pays 32 bits each (636 for all 20)
+> Value: 32 bits (636 for 20)
 
-Cheap items show decimals, such as *"Market pays 0.99 bits each"*. Selling a whole stack still pays the exact total, rounded once.
+The first number is what one is worth; the one in brackets is the whole stack. A single item just shows *"Value: 32 bits"*. Cheap items show decimals, such as *"Value: 0.99 bits"*. Selling a whole stack still pays the exact total, rounded once. The line shows even when the market is sold out of the item, since what it pays doesn't depend on its stock.
 
 If an item has no such line, the market doesn't buy it. To turn the line off, set `show_sell_price_in_tooltips = false` in `config/dynamic_economy-client.toml`.
 

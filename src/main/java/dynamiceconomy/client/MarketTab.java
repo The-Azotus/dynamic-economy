@@ -40,6 +40,9 @@ final class MarketTab extends ScreenTab {
     private Button sellButton;
 
     private final List<MarketPayloads.Row> visible = new ArrayList<>();
+    /** Rows that match the search but are hidden only for having no stock, and whether there is a search. */
+    private int hiddenForStock;
+    private boolean searching;
     @Nullable
     private ResourceLocation selected;
     /** The item and factor the last history request was for, so a price change triggers a fresh request. */
@@ -130,9 +133,16 @@ final class MarketTab extends ScreenTab {
     /** The catalog rows that match the search and filter, in the chosen order. */
     void rebuildList(String query) {
         visible.clear();
+        hiddenForStock = 0;
+        searching = !query.isBlank();
         for (MarketPayloads.Row row : ClientMarketState.rows().values()) {
-            if (matches(row.item(), query) && MarketListing.shows(filter, row, ClientMarketState.held(row.item()))) {
+            if (!matches(row.item(), query)) {
+                continue;
+            }
+            if (MarketListing.shows(filter, row, ClientMarketState.held(row.item()))) {
                 visible.add(row);
+            } else if (MarketListing.hiddenForStock(filter, row)) {
+                hiddenForStock++;
             }
         }
         visible.sort(MarketListing.order(sort, MarketScreen::displayName));
@@ -344,9 +354,15 @@ final class MarketTab extends ScreenTab {
             renderRow(graphics, row, x, rowY);
         }
         if (visible.isEmpty()) {
-            Component empty = Component.translatable(ClientMarketState.rows().isEmpty()
-                    ? "screen.dynamic_economy.empty" : "screen.dynamic_economy.no_matches");
-            graphics.drawCenteredString(screen.font(), empty, x + LIST_X + screen.listWidth / 2, y + LIST_Y + 20, TEXT_DIM);
+            String key = ClientMarketState.rows().isEmpty() ? "empty"
+                    : hiddenForStock == 0 ? "no_matches"
+                    : searching ? "no_matches_in_stock" : "none_in_stock";
+            // The stock messages are long enough to need wrapping on a narrow list.
+            List<net.minecraft.util.FormattedCharSequence> lines = screen.font().split(
+                    Component.translatable("screen.dynamic_economy." + key), screen.listWidth - 8);
+            for (int i = 0; i < lines.size(); i++) {
+                graphics.drawCenteredString(screen.font(), lines.get(i), x + LIST_X + screen.listWidth / 2, y + LIST_Y + 20 + i * 10, TEXT_DIM);
+            }
         }
     }
 

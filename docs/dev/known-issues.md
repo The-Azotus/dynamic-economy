@@ -27,6 +27,7 @@ Last full review: 2026-11-04, the whole codebase by area plus every money and it
 - **A 1-bit item sold below base pays 0 for one unit.** Sales round down once per order, which is a design decision, and the button shows the 0 total before the sale.
 - **The client counts room in stacks that carry ignored components** (such as `relics:data`); the server doesn't. The worst case is a `NO_SPACE` reply, and nothing is lost.
 - **A client total can go stale when an item's price recovers to exactly base.** The server replies `PRICE_CHANGED` and resends the row, so the next click works.
+- **The Market tab's empty-list message can overstate under Buyable or for unsellable items** (v0.4.2 review). Buyable says "Nothing is in stock" when only sell-only items have stock, and a search matching only sold-out items the market doesn't buy says "No items match". Wording only; such items can't be traded at 0 stock anyway, and the texts are the ones the plan set.
 
 ### Catalog and import
 
