@@ -560,7 +560,7 @@ public final class BankTests {
             helper.succeed();
             return;
         }
-        helper.assertValueEqual(start, BankKind.NUMISMATICS, "the dev world uses Numismatics' bank");
+        helper.assertValueEqual(start, BankKind.NUMISMATICS, "a world with Numismatics uses its bank");
         helper.assertTrue(BankSwitch.plan(server, BankKind.NUMISMATICS).plan().isEmpty(), "no switch to the bank in use");
 
         Fixture rich = new Fixture(helper);
@@ -626,8 +626,8 @@ public final class BankTests {
 
     @GameTest(template = EMPTY)
     public static void worldUsesTheBankItsModsSuggest(GameTestHelper helper) {
-        // The dev world had a market before banks were recorded, so it uses Numismatics'; a fresh world without
-        // Numismatics (the run without optional mods) uses ours.
+        // A fresh world uses Numismatics' bank when Numismatics is installed, and ours without it (the run with
+        // -PwithoutMods=numismatics).
         net.minecraft.server.MinecraftServer server = helper.getLevel().getServer();
         BankKind expected = NumismaticsBridge.bank().isPresent() ? BankKind.NUMISMATICS : BankKind.OWN;
         helper.assertValueEqual(WorldBank.kind(server), expected, "the world's bank");

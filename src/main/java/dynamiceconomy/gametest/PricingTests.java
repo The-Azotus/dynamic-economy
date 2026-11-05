@@ -551,8 +551,8 @@ public final class PricingTests {
 
     @GameTest(template = EMPTY)
     public static void sellingThenBuyingBackIsCheckedForProfit(GameTestHelper helper) {
-        // Default settings except buy_impact 0. Before Phase 7 the check only looked at buying then reselling and
-        // called this safe, but crashing the price by selling and buying the same items back at the bottom pays.
+        // Default settings except buy_impact 0. A check that only looks at buying then reselling calls this safe, but
+        // crashing the price by selling and buying the same items back at the bottom pays.
         PriceModel.Inputs noBuyImpact = new PriceModel.Inputs(16, 0.5, 0.0, 0.5, false, true, MarketConfig.sellImpact(),
                 0.0, MarketConfig.floor(), MarketConfig.ceiling(), MarketConfig.recovery());
         PriceModel.Order sold = PriceModel.sell(noBuyImpact, 1.0, 3000);
@@ -609,7 +609,7 @@ public final class PricingTests {
                 expected.put(entry.itemId(), (int) count);
             }
         }
-        // Unlisted items count too (since Phase 17), for the exchange.
+        // Unlisted items count too, for the exchange.
         helper.assertTrue(MarketCatalog.INSTANCE.get(Items.STONE).isEmpty(), "stone isn't listed in the test catalog");
         expected.put(key(Items.STONE), 12);
         MarketPayloads.PlayerState state = MarketSync.playerState(f.player);

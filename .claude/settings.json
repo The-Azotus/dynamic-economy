@@ -6,7 +6,12 @@
       "Read(./run/**)",
       "Read(./run-client2/**)",
       "Read(./run-gametest/world/**)",
-      "Read(./run-gametest/crash-reports/**)"
+      "Read(./run-gametest/crash-reports/**)",
+      "Read(./run-gametest-without-*/world/**)",
+      "Read(./run-gametest-without-*/crash-reports/**)",
+      "Read(./run-mptest/world/**)",
+      "Read(./pricing-work/*.csv)",
+      "Read(./pricing-work/chain_*.txt)"
     ]
   }
 }
