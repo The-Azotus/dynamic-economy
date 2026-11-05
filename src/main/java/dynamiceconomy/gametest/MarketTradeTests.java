@@ -518,19 +518,35 @@ public final class MarketTradeTests {
         java.util.function.Function<MarketPayloads.Row, String> name = row -> row.item().getPath();
 
         java.util.function.BiFunction<MarketListing.Sort, MarketListing.Filter, List<String>> view = (sort, filter) ->
-                rows.stream().filter(row -> MarketListing.shows(filter, row, row == bread ? 3 : 0))
+                rows.stream().filter(row -> MarketListing.shows(filter, row, row == cake ? 0 : 3))
                         .sorted(MarketListing.order(sort, name)).map(name).toList();
-        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.ALL), List.of("apple", "bread", "cake"), "by name");
-        helper.assertValueEqual(view.apply(MarketListing.Sort.CHEAPEST, MarketListing.Filter.ALL), List.of("apple", "cake", "bread"),
+        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.ALL), List.of("bread", "cake"),
+                "by name; apple is out of stock so it's hidden");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.CHEAPEST, MarketListing.Filter.ALL), List.of("cake", "bread"),
                 "cheapest first; bread can't be bought so it goes last");
-        helper.assertValueEqual(view.apply(MarketListing.Sort.BEST_PAYOUT, MarketListing.Filter.ALL), List.of("bread", "apple", "cake"),
+        helper.assertValueEqual(view.apply(MarketListing.Sort.BEST_PAYOUT, MarketListing.Filter.ALL), List.of("bread", "cake"),
                 "best payout first; cake can't be sold so it goes last");
-        helper.assertValueEqual(view.apply(MarketListing.Sort.STOCK, MarketListing.Filter.ALL), List.of("cake", "bread", "apple"),
+        helper.assertValueEqual(view.apply(MarketListing.Sort.STOCK, MarketListing.Filter.ALL), List.of("cake", "bread"),
                 "unlimited first, then most stock");
         helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.CAN_BUY), List.of("cake"),
                 "buyable means sold and in stock");
-        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.CAN_SELL), List.of("apple", "bread"), "sellable");
-        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.HELD), List.of("bread"), "held");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.CAN_SELL), List.of("apple", "bread"),
+                "sellable, in stock or not");
+        helper.assertValueEqual(view.apply(MarketListing.Sort.NAME, MarketListing.Filter.HELD), List.of("apple", "bread"),
+                "held, so a sold-out item can still be sold");
+
+        java.util.function.Function<MarketListing.Filter, List<String>> hidden = filter ->
+                rows.stream().filter(row -> MarketListing.hiddenForStock(filter, row)).map(name).sorted().toList();
+        helper.assertValueEqual(hidden.apply(MarketListing.Filter.ALL), List.of("apple"), "All hides only apple for stock");
+        helper.assertValueEqual(hidden.apply(MarketListing.Filter.CAN_BUY), List.of("apple"),
+                "Buyable hides apple for stock, bread because it isn't sold");
+        helper.assertValueEqual(hidden.apply(MarketListing.Filter.CAN_SELL), List.of(), "Sellable hides nothing for stock");
+        helper.assertValueEqual(hidden.apply(MarketListing.Filter.HELD), List.of(), "Held hides nothing for stock");
+        MarketPayloads.Row lamp = new MarketPayloads.Row(ResourceLocation.withDefaultNamespace("lamp"), false, true,
+                OptionalLong.of(0), dear, 1.0);
+        helper.assertTrue(!MarketListing.shows(MarketListing.Filter.ALL, lamp, 0) && !MarketListing.hiddenForStock(MarketListing.Filter.ALL, lamp)
+                        && !MarketListing.hiddenForStock(MarketListing.Filter.CAN_BUY, lamp),
+                "a sold-out item the market doesn't buy isn't counted, since Sellable wouldn't show it either");
         helper.assertValueEqual(MarketListing.Sort.STOCK.next(), MarketListing.Sort.NAME, "sorts cycle");
         helper.assertValueEqual(MarketListing.Filter.HELD.next(), MarketListing.Filter.ALL, "filters cycle");
         helper.succeed();

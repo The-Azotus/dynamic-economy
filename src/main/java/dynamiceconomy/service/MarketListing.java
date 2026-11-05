@@ -7,7 +7,8 @@ import java.util.function.Function;
 
 /**
  * How the market screen sorts and filters its list. Display only: hiding an item changes nothing about whether it
- * can be traded. Kept out of the client package so GameTests can check it.
+ * can be traded. All and Buyable hide items the market has none of; Sellable and Held still show them, so players can
+ * sell into an empty market. Kept out of the client package so GameTests can check it.
  */
 public final class MarketListing {
     private MarketListing() {
@@ -30,15 +31,27 @@ public final class MarketListing {
     }
 
     /**
-     * Whether a row is shown. "Can buy" means the market sells it and has at least one; "held" means the player holds
-     * copies the market would accept.
+     * Whether a row is shown. "All" means the market has at least one (unlimited items always do); "can buy" means it
+     * also sells it; "held" means the player holds copies the market would accept.
      */
     public static boolean shows(Filter filter, MarketPayloads.Row row, int held) {
         return switch (filter) {
-            case ALL -> true;
+            case ALL -> row.hasStock(1);
             case CAN_BUY -> row.canBuy() && row.hasStock(1);
             case CAN_SELL -> row.canSell();
             case HELD -> held > 0;
+        };
+    }
+
+    /**
+     * Whether a row is hidden only because the market has none, and Sellable would show it. The screen uses this to
+     * point players to Sellable and Held instead of saying nothing matches.
+     */
+    public static boolean hiddenForStock(Filter filter, MarketPayloads.Row row) {
+        return switch (filter) {
+            case ALL -> !row.hasStock(1) && row.canSell();
+            case CAN_BUY -> row.canBuy() && !row.hasStock(1) && row.canSell();
+            case CAN_SELL, HELD -> false;
         };
     }
 
