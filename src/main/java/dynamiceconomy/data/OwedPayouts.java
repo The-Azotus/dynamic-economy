@@ -23,6 +23,9 @@ public final class OwedPayouts {
     public record Payout(UUID player, Optional<UUID> team, long amount) {
     }
 
+    /** How long to wait after a payment fails before trying again: 10 seconds, so a bank that's down isn't asked every tick. */
+    public static final int RETRY_TICKS = 200;
+
     private final SavedData owner;
     private final List<Payout> owed = new ArrayList<>();
     /** The server tick before which a payment that failed isn't tried again. Not saved: a restart tries at once. */
@@ -52,9 +55,14 @@ public final class OwedPayouts {
         return tick >= retryAt;
     }
 
-    /** Waits until server tick {@code tick} before trying again, after a payment failed. */
-    public void retryAt(long tick) {
-        retryAt = tick;
+    /** A payment failed at server tick {@code tick}: wait {@link #RETRY_TICKS} before trying again. */
+    public void failedAt(long tick) {
+        retryAt = tick + RETRY_TICKS;
+    }
+
+    /** Ends the wait after a failed payment. GameTests only. */
+    public void retryNowForTesting() {
+        retryAt = 0;
     }
 
     public boolean isEmpty() {

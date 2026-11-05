@@ -132,7 +132,8 @@ public record CatalogEntry(Item item, ResourceLocation itemId, int basePrice, do
                 Codec.BOOL.optionalFieldOf("unlimited_stock", false).forGetter(Raw::unlimitedStock),
                 Codec.doubleRange(0, 0.99).optionalFieldOf("sell_fee", 0.0).forGetter(Raw::sellFee),
                 Codec.BOOL.optionalFieldOf("dynamic", true).forGetter(Raw::dynamic),
-                Codec.DOUBLE.optionalFieldOf("min_buy_markup").forGetter(Raw::minBuyMarkup),
+                // A range, unlike a plain double, refuses NaN; resolve() checks > 0 and <= markup.
+                Codec.doubleRange(0, 1000).optionalFieldOf("min_buy_markup").forGetter(Raw::minBuyMarkup),
                 Codec.doubleRange(0, 0.5).optionalFieldOf("sell_impact").forGetter(Raw::sellImpact),
                 Codec.doubleRange(0, 0.5).optionalFieldOf("buy_impact").forGetter(Raw::buyImpact),
                 Codec.doubleRange(0, 1).optionalFieldOf("recovery").forGetter(Raw::recovery),

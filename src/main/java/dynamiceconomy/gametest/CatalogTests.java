@@ -130,14 +130,15 @@ public final class CatalogTests {
                 minecraft:brick,5,,,maybe,
                 Not An Id,5,,,,
                 minecraft:bone,5,,,,no
+                minecraft:glowstone_dust,5,0.5,NaN,true,
                 """;
         CatalogImport.Report report = CatalogImport.analyze(text);
         helper.assertValueEqual(report.toWrite(), 2, "stone and bone import");
         helper.assertValueEqual(report.skippedBlank(), 1, "dirt has no price");
-        helper.assertValueEqual(report.rejected().size(), 9, "rejections: " + report.rejected());
+        helper.assertValueEqual(report.rejected().size(), 10, "rejections: " + report.rejected());
         String all = String.join("\n", report.rejected());
         for (String expected : List.of("line 4", "unknown item", "line 5", "line 6", "line 7", "line 8", "min_buy_markup",
-                "duplicate of line 2", "must be true or false", "not a valid item ID")) {
+                "duplicate of line 2", "must be true or false", "not a valid item ID", "line 14")) {
             helper.assertTrue(all.contains(expected), "expected a rejection mentioning \"" + expected + "\" in:\n" + all);
         }
         CatalogEntry bone = report.decoded().stream().filter(e -> e.item() == Items.BONE).findFirst().orElseThrow();
@@ -298,6 +299,8 @@ public final class CatalogTests {
                 "below the example catalog");
         helper.assertValueEqual(MarketCatalog.configOrder(List.of("file/a", prices, "vanilla", "mod_data")), 7,
                 "a world pack moved below the built-ins stays below the folder");
+        helper.assertValueEqual(MarketCatalog.configOrder(List.of("vanilla", "mod_data", "file/a", prices)), 7,
+                "built-in prices moved above a world pack take the folder with them: it never goes below them");
         // Each mod's own data is a pack of its own after mod_data, and the built-in classes are in mod/dynamic_economy;
         // a mod's optional packs (with a ':', like the example catalog) aren't built in.
         helper.assertValueEqual(MarketCatalog.configOrder(List.of(prices, "vanilla", "mod_data", "mod/neoforge",

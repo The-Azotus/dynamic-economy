@@ -58,16 +58,21 @@ public final class PayoutService {
         }
     }
 
-    /** How long to wait after a payment fails before trying again: 10 seconds, so a bank that's down isn't asked every tick. */
-    public static final int RETRY_TICKS = 200;
-
-    /** Pays whatever of {@code owed} the bank can take now, unless a payment failed less than {@link #RETRY_TICKS} ago. */
+    /**
+     * Pays whatever of {@code owed} the bank can take now, unless a payment failed less than
+     * {@link OwedPayouts#RETRY_TICKS} ago.
+     */
     public static void payOwed(MinecraftServer server, OwedPayouts owed) {
         payOwed(server, owed, (player, team) -> payee(server, player, team));
     }
 
-    /** As {@link #payOwed(MinecraftServer, OwedPayouts)}, finding each account with {@code payee} (tests make it fail). */
-    public static void payOwed(MinecraftServer server, OwedPayouts owed, BiFunction<UUID, Optional<UUID>, Optional<Bank.Account>> payee) {
+    /** As {@link #payOwed(MinecraftServer, OwedPayouts)}, finding each account with {@code payee}. GameTests only (to make it fail). */
+    public static void payOwedForTesting(MinecraftServer server, OwedPayouts owed,
+            BiFunction<UUID, Optional<UUID>, Optional<Bank.Account>> payee) {
+        payOwed(server, owed, payee);
+    }
+
+    private static void payOwed(MinecraftServer server, OwedPayouts owed, BiFunction<UUID, Optional<UUID>, Optional<Bank.Account>> payee) {
         long tick = server.getTickCount();
         if (!owed.retryDue(tick)) {
             return;
@@ -83,7 +88,7 @@ public final class PayoutService {
             }
         }
         if (failed) {
-            owed.retryAt(tick + RETRY_TICKS);
+            owed.failedAt(tick);
         }
     }
 

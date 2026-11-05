@@ -69,6 +69,10 @@ public final class OwnTeams extends SavedData {
         return Optional.empty();
     }
 
+    public Optional<BankTeam> byId(UUID team) {
+        return Optional.ofNullable(teams.get(team)).map(Team::view);
+    }
+
     /** Names match ignoring case, so two teams can't differ only by it. */
     public Optional<BankTeam> byName(String name) {
         return teams.values().stream().filter(team -> team.name.equalsIgnoreCase(name)).findFirst().map(Team::view);

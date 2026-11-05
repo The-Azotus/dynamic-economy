@@ -52,7 +52,7 @@ import java.util.stream.Stream;
  * <p>
  * The same pass reads the item classes ({@link ItemClasses}) from {@code data/<namespace>/market_classes/*.json}, and
  * uses them before decoding any entry. Both kinds of file are also read from {@link #configFolder()}, which applies to
- * every world and sits just above the built-in packs, below every other pack (see {@link #configOrder}).
+ * every world and sits just above the built-in packs, normally below every other pack (see {@link #configOrder}).
  */
 public final class MarketCatalog extends SimplePreparableReloadListener<MarketCatalog.Prepared> {
     public static final MarketCatalog INSTANCE = new MarketCatalog();
@@ -201,7 +201,7 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
         ConfigFolder config = readConfigFolder(configFolder(), configOrder);
         found.addAll(config.files());
         unreadable.addAll(config.problems());
-        // A config class replaces a class from a pack below the folder, but not one from a world datapack.
+        // A config class replaces a class from a pack below the folder (a built-in one), but not one from a pack above it.
         config.classFiles().forEach((id, json) -> {
             if (!classOrder.containsKey(id) || classOrder.get(id) < configOrder) {
                 classFiles.put(id, json);
@@ -229,8 +229,11 @@ public final class MarketCatalog extends SimplePreparableReloadListener<MarketCa
     /**
      * Where the config folder goes among packs listed lowest priority first, with pack {@code i} at {@code 2 * i}: just
      * above the highest built-in pack ({@link #isBuiltIn}: the built-in prices and the mods' own data, where the
-     * built-in classes are). Every other pack is above it, whichever mod adds it (world datapacks, the example
-     * catalog, global-pack mods), so its place never depends on which other packs a world has.
+     * built-in classes are), so it never goes below them. Other packs (world datapacks, the example catalog,
+     * global-pack mods) are normally all above that: NeoForge puts a newly found built-in prices pack at the very
+     * bottom, even in an existing world, and so does a plain {@code /datapack enable}. A pack that sits below a
+     * built-in one is below the folder too: one an admin moved there, or another mod's optional pack added at the
+     * bottom like the built-in prices.
      */
     public static int configOrder(List<String> packIds) {
         int highest = -1;
