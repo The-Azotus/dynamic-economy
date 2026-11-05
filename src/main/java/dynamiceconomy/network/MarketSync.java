@@ -21,6 +21,7 @@ import dynamiceconomy.service.Leaderboard;
 import dynamiceconomy.service.MarketService;
 import dynamiceconomy.service.MarketVisibility;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -49,6 +50,10 @@ public final class MarketSync {
     private static final int PLAYER_STATE_INTERVAL_TICKS = 20;
 
     private static final Map<UUID, MarketPayloads.PlayerState> lastSentState = new HashMap<>();
+    /** Each viewer's main inventory as last sent to them (see {@link #syncInventory}). */
+    private static final Map<UUID, List<ItemStack>> lastSentItems = new HashMap<>();
+    /** The container ID that sets a slot of the client's own inventory, whatever menu is open. */
+    private static final int PLAYER_INVENTORY = -2;
     /** Players whose stages changed, so what they can see may have; their catalog is resent on the next tick. */
     private static final Set<UUID> staleCatalogs = new HashSet<>();
     private static boolean allCatalogsStale;
@@ -75,6 +80,7 @@ public final class MarketSync {
     public static void sendFullState(ServerPlayer player) {
         // A newly opened screen starts empty, so resend even if nothing changed since the last send.
         lastSentState.remove(player.getUUID());
+        lastSentItems.remove(player.getUUID());
         sendCatalog(player);
         sendPlayerState(player);
         watchedBooks.remove(player.getUUID());
@@ -169,10 +175,31 @@ public final class MarketSync {
 
     /** Sends a viewer their balance and held counts, but only if they changed since the last send. */
     public static void sendPlayerState(ServerPlayer player) {
+        syncInventory(player);
         MarketPayloads.PlayerState state = playerState(player);
         if (!state.equals(lastSentState.get(player.getUUID()))) {
             lastSentState.put(player.getUUID(), state);
             PacketDistributor.sendToPlayer(player, state);
+        }
+    }
+
+    /**
+     * Sends a viewer the main-inventory slots that changed since the last send (all of them the first time). Vanilla
+     * doesn't sync the inventory while a slotless menu is open, and the exchange tab reads the client's copy.
+     */
+    private static void syncInventory(ServerPlayer player) {
+        List<ItemStack> items = player.getInventory().items;
+        List<ItemStack> sent = lastSentItems.computeIfAbsent(player.getUUID(), id -> new ArrayList<>());
+        for (int i = 0; i < items.size(); i++) {
+            ItemStack stack = items.get(i);
+            if (i >= sent.size() || !ItemStack.matches(stack, sent.get(i))) {
+                if (i >= sent.size()) {
+                    sent.add(stack.copy());
+                } else {
+                    sent.set(i, stack.copy());
+                }
+                player.connection.send(new ClientboundContainerSetSlotPacket(PLAYER_INVENTORY, 0, i, stack.copy()));
+            }
         }
     }
 
@@ -188,6 +215,7 @@ public final class MarketSync {
         }
         List<ServerPlayer> viewers = viewers(server);
         lastSentState.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
+        lastSentItems.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         lastLeaderboardRequest.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         watchedBooks.keySet().removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
         watchingListings.removeIf(id -> viewers.stream().noneMatch(v -> v.getUUID().equals(id)));
@@ -532,7 +560,8 @@ public final class MarketSync {
     public static MarketPayloads.PlayerState playerState(ServerPlayer player) {
         Bank bank = WorldBank.of(player.server);
         long balance = bank.activeAccount(player).map(Bank.Account::balance).orElse(0L);
-        String team = bank.team(player).map(BankTeam::name).orElse("");
+        // PlayerState sends at most 64 characters; FTB Teams sets no limit on its names.
+        String team = bank.team(player).map(BankTeam::name).map(name -> name.length() > 64 ? name.substring(0, 64) : name).orElse("");
         List<Denomination> coins = bank.coins();
         Map<ResourceLocation, Integer> held = new HashMap<>();
         Map<ResourceLocation, Integer> stackRoom = new HashMap<>();

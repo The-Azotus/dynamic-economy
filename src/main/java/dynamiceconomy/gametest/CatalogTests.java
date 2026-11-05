@@ -130,14 +130,15 @@ public final class CatalogTests {
                 minecraft:brick,5,,,maybe,
                 Not An Id,5,,,,
                 minecraft:bone,5,,,,no
+                minecraft:glowstone_dust,5,0.5,NaN,true,
                 """;
         CatalogImport.Report report = CatalogImport.analyze(text);
         helper.assertValueEqual(report.toWrite(), 2, "stone and bone import");
         helper.assertValueEqual(report.skippedBlank(), 1, "dirt has no price");
-        helper.assertValueEqual(report.rejected().size(), 9, "rejections: " + report.rejected());
+        helper.assertValueEqual(report.rejected().size(), 10, "rejections: " + report.rejected());
         String all = String.join("\n", report.rejected());
         for (String expected : List.of("line 4", "unknown item", "line 5", "line 6", "line 7", "line 8", "min_buy_markup",
-                "duplicate of line 2", "must be true or false", "not a valid item ID")) {
+                "duplicate of line 2", "must be true or false", "not a valid item ID", "line 14")) {
             helper.assertTrue(all.contains(expected), "expected a rejection mentioning \"" + expected + "\" in:\n" + all);
         }
         CatalogEntry bone = report.decoded().stream().filter(e -> e.item() == Items.BONE).findFirst().orElseThrow();
