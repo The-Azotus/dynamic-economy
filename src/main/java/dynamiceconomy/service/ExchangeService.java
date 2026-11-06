@@ -1,6 +1,7 @@
 package dynamiceconomy.service;
 
 import dynamiceconomy.MarketConfig;
+import dynamiceconomy.api.event.ExchangeTradeEvent;
 import dynamiceconomy.bank.Bank;
 import dynamiceconomy.bank.BankTeam;
 import dynamiceconomy.bank.WorldBank;
@@ -62,6 +63,9 @@ import java.util.function.Predicate;
  *       {@code max_open_orders}, and are cancelled, expired and closed the same way.</li>
  * </ul>
  * The exchange creates no money: every bit paid to a seller was taken from a buyer, and the tax only removes some.
+ * <p>
+ * Every fill of an order, and every purchase from a listing, posts an {@link ExchangeTradeEvent} once the request is
+ * complete.
  */
 public final class ExchangeService {
     private ExchangeService() {
@@ -233,12 +237,16 @@ public final class ExchangeService {
         if (fill.order().remaining() > 0) {
             data.add(fill.order());
         }
+        ApiEvents.postAll(fill.events());
         return new Outcome(Action.POST, Result.OK, id, qty, fill.order().filled(), fill.amount(),
                 fill.order().remaining() > 0 ? order.id() : 0);
     }
 
-    /** What matching left of an incoming order, and the money it paid (buying) or received after tax (selling). */
-    private record Fill(Order order, long amount) {
+    /**
+     * What matching left of an incoming order, the money it paid (buying) or received after tax (selling), and an
+     * event for each fill, posted once the order is on the book.
+     */
+    private record Fill(Order order, long amount, List<ExchangeTradeEvent> events) {
     }
 
     /**
@@ -250,6 +258,8 @@ public final class ExchangeService {
         int filled = 0;
         long amount = 0;
         long sold = 0;
+        List<ExchangeTradeEvent> events = new ArrayList<>();
+        ItemStack traded = new ItemStack(BuiltInRegistries.ITEM.get(incoming.item()));
         for (Order resting : data.side(incoming.item(), !incoming.buy())) {
             if (filled == incoming.quantity()) {
                 break;
@@ -280,6 +290,9 @@ public final class ExchangeService {
                 amount += value - tax;
                 sold += value;
             }
+            UUID buyer = incoming.buy() ? incoming.owner() : resting.owner();
+            UUID seller = incoming.buy() ? resting.owner() : incoming.owner();
+            events.add(new ExchangeTradeEvent(server, buyer, seller, traded, units, resting.price(), value, tax, false));
             filled += units;
         }
         if (incoming.buy()) {
@@ -289,7 +302,7 @@ public final class ExchangeService {
                 account.deposit((int) refund);
             }
         }
-        return new Fill(incoming.withFill(filled, sold), amount);
+        return new Fill(incoming.withFill(filled, sold), amount, events);
     }
 
     // ---- Listings --------------------------------------------------------------------------------------------
@@ -405,6 +418,8 @@ public final class ExchangeService {
         tell(player.server, data, new Notice(listing.owner(), listing.item(), NoticeKind.SOLD, qty, value - tax,
                 customName(listing.stack())));
         data.addParcel(player.getUUID(), listing.stack(), qty);
+        ApiEvents.post(new ExchangeTradeEvent(player.server, player.getUUID(), listing.owner(), listing.stack(), qty,
+                listing.price(), value, tax, true));
         return new Outcome(Action.BUY_LISTING, Result.OK, listing.item(), qty, qty, value, listing.id(), listing.stack());
     }
 

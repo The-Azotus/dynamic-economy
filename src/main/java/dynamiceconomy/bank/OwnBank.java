@@ -120,7 +120,7 @@ public final class OwnBank extends SavedData implements Bank {
     }
 
     /** Adds to a player's personal balance, when moving money in from another bank. Can't fail. */
-    public void credit(UUID player, long amount) {
+    void credit(UUID player, long amount) {
         if (amount < 0) {
             throw new IllegalArgumentException("Negative credit: " + amount);
         }

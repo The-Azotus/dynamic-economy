@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 
 /**
- * Pays contract and exchange money to a player who may be offline: into the account it belongs to, or owed until the
+ * Pays contract, exchange and add-on API money to a player who may be offline: into the account it belongs to, or owed until the
  * bank can be reached again. Server thread only.
  */
 public final class PayoutService {
@@ -44,18 +44,21 @@ public final class PayoutService {
     /**
      * Pays {@code amount} into the account {@link #payee} picks, or records it in {@code owed} if the bank can't be
      * reached. {@code what} names the payment in the log. The amount fits an int: the caller has checked.
+     *
+     * @return true if it was paid now (or there was nothing to pay), false if it is owed
      */
-    public static void pay(MinecraftServer server, OwedPayouts owed, String what, UUID player, Optional<UUID> team, long amount) {
+    public static boolean pay(MinecraftServer server, OwedPayouts owed, String what, UUID player, Optional<UUID> team, long amount) {
         if (amount <= 0) {
-            return;
+            return true;
         }
         Optional<Bank.Account> account = payee(server, player, team);
         if (account.isPresent()) {
             account.get().deposit((int) amount);
-        } else {
-            DynamicEconomy.LOGGER.warn("{} of {} to {} is owed: the bank can't be reached", what, amount, player);
-            owed.owe(new OwedPayouts.Payout(player, team, amount));
+            return true;
         }
+        DynamicEconomy.LOGGER.warn("{} of {} to {} is owed: the bank can't be reached", what, amount, player);
+        owed.owe(new OwedPayouts.Payout(player, team, amount));
+        return false;
     }
 
     /**

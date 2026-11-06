@@ -19,6 +19,7 @@ A server-wide market for Minecraft. Players sell items to the server for money a
 | --- | --- |
 | A player | [Player guide](docs/player-guide.md) |
 | A server admin | [Admin guide](docs/admin-guide.md) |
+| A mod or modpack author building on the market | [Add-on guide](docs/api.md) |
 
 ## Requirements
 
@@ -45,9 +46,13 @@ Install the mod on the **server and every client**. Clients need it for the mark
 
 The [admin guide](docs/admin-guide.md) covers every command, catalog field and setting.
 
+## For add-on authors
+
+Other mods can read prices, trade for players, pay and charge money, hide items and listen for trades through a Java API, published on JitPack as `com.github.The-Azotus:dynamic-economy:v0.5.0` and later. Price files and commands work without any Java. The [add-on guide](docs/api.md) covers both.
+
 ## Building from source
 
-Install a Java 21 JDK and run `gradlew build`; the jar is written to `build/libs/`. `gradlew runGameTestServer` runs the automated tests. Create, Numismatics and FTB Teams are optional: add `-PwithoutMods=numismatics` to run without Numismatics, `-PwithoutMods=create` to run without both Create and Numismatics (Numismatics needs Create), or `-PwithoutMods=ftbteams` to run without FTB Teams; combine them with commas. Each such run uses its own test world, since a world remembers which bank it uses.
+Install a Java 21 JDK and run `gradlew build`; the mod jar is `build/libs/dynamic_economy-<version>.jar` (the `-sources` and `-javadoc` jars next to it are for add-on authors, not the mods folder). `gradlew runGameTestServer` runs the automated tests. Create, Numismatics and FTB Teams are optional: add `-PwithoutMods=numismatics` to run without Numismatics, `-PwithoutMods=create` to run without both Create and Numismatics (Numismatics needs Create), or `-PwithoutMods=ftbteams` to run without FTB Teams; combine them with commas. Each such run uses its own test world, since a world remembers which bank it uses.
 
 Released versions are tagged in git (for example `v0.4.0`). To find your way around the code, start with [docs/architecture.md](docs/architecture.md).
 

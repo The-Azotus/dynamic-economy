@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'net.neoforged.moddev' version '2.0.148'
     id 'idea'
+    id 'maven-publish'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -15,7 +16,19 @@ base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    // Published next to the mod jar for add-on authors. The javadoc covers only the API (see the javadoc task below).
+    withSourcesJar()
+    withJavadocJar()
+}
+
+// For mods the dev runs load but the published POM must not name: add-ons would otherwise inherit them as runtime
+// dependencies, from repositories they may not have. Runs use runtimeClasspath, so they still get them.
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom localRuntime
+}
 
 // `-PwithoutMods=numismatics`, `-PwithoutMods=create` or `-PwithoutMods=ftbteams` (comma-separated for several) leaves
 // those optional mods out of every run (the code is still compiled against them), to test the mod without them.
@@ -136,13 +149,13 @@ dependencies {
     ]
     create.each { compileOnly(it) { transitive = false } }
     if (!withoutMods.contains('create')) {
-        create.each { runtimeOnly(it) { transitive = false } }
+        create.each { localRuntime(it) { transitive = false } }
     }
 
     // Optional: only compat/NumismaticsBridge touches it, and only when it is loaded.
     compileOnly("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
     if (!withoutMods.contains('numismatics')) {
-        runtimeOnly("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
+        localRuntime("maven.modrinth:numismatics:${numismatics_version}") { transitive = false }
     }
     // Optional: only compat/FtbTeamsBridge touches FTB Teams, and only when it is loaded. FTB Library and Architectury
     // are what FTB Teams itself needs.
@@ -153,7 +166,7 @@ dependencies {
     ]
     ftbTeams.each { compileOnly(it) { transitive = false } }
     if (!withoutMods.contains('ftbteams')) {
-        ftbTeams.each { runtimeOnly(it) { transitive = false } }
+        ftbTeams.each { localRuntime(it) { transitive = false } }
     }
 
     // Optional: only compat/StagesBridge touches it, and only when the mod is loaded.
@@ -191,5 +204,49 @@ idea {
     module {
         downloadSources = true
         downloadJavadoc = true
+    }
+}
+
+// The javadoc jar documents only the add-on API; everything else is internal and may change in any release. The rest
+// of the code is still on the classpath, so links to it resolve. Doclint stays on (broken HTML or links fail the build)
+// except for missing comments.
+tasks.named('javadoc', Javadoc) {
+    include 'dynamiceconomy/api/**'
+    title = "${mod_name} ${mod_version} API"
+    options.encoding = 'UTF-8'
+    options.addBooleanOption('Xdoclint:all,-missing', true)
+}
+
+// Add-ons depend on com.github.The-Azotus:dynamic-economy:<tag> from JitPack, which runs publishToMavenLocal on a
+// release tag and serves what lands there. JitPack sets JITPACK, GROUP and VERSION (the tag, e.g. v0.5.0), so the
+// publication takes its coordinates from them there. Locally (`gradlew publishToMavenLocal`, to try an add-on against
+// unreleased changes) it uses the same group and mod_version. The project's own group and version stay as they are,
+// so the mod jar's name and the runs don't change.
+def onJitPack = providers.environmentVariable('JITPACK').orNull == 'true'
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            from components.java
+            groupId = onJitPack ? providers.environmentVariable('GROUP').get() : 'com.github.The-Azotus'
+            artifactId = 'dynamic-economy'
+            version = onJitPack ? providers.environmentVariable('VERSION').get() : mod_version
+            pom {
+                name = mod_name
+                description = 'A NeoForge mod: a server-owned market whose prices move with supply and demand. ' +
+                        'Add-ons use the dynamiceconomy.api package.'
+                url = 'https://github.com/The-Azotus/dynamic-economy'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/The-Azotus/dynamic-economy/blob/main/LICENSE'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/The-Azotus/dynamic-economy'
+                    connection = 'scm:git:https://github.com/The-Azotus/dynamic-economy.git'
+                    developerConnection = 'scm:git:ssh://git@github.com/The-Azotus/dynamic-economy.git'
+                }
+            }
+        }
     }
 }

@@ -1,0 +1,8 @@
+# JitPack builds a release tag for add-on authors: com.github.The-Azotus:dynamic-economy:<tag>.
+# It builds with Java 8 unless told otherwise; Gradle 9 and the mod need 21.
+jdk:
+  - openjdk21
+# gradlew is stored without the executable bit, and JitPack runs it as ./gradlew.
+before_install:
+  - chmod +x gradlew
+# No install step: with maven-publish, JitPack's default (./gradlew build publishToMavenLocal) is what we need.

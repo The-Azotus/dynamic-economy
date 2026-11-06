@@ -29,7 +29,7 @@ Tabs along the top: **Market** (the item list), **Bank** (coins in and out, see 
 
 The sort and filter you pick stay the same the next time you open the market, until you quit the game.
 
-The **Leaderboard** tab lists the server's richest players by bank balance (plus money held in their open exchange buy orders, and exchange or contract money still owed to them), with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker or team accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
+The **Leaderboard** tab lists the server's richest players by bank balance (plus money held in their open exchange buy orders, and exchange, contract or add-on money still owed to them), with your own line highlighted and your rank above the list (*You: #4 of 12*). It counts personal bank accounts only, not shared Blaze Banker or team accounts, and updates each time you open the tab. If the tab is greyed out, the server has turned it off.
 
 The **History** tab lists your own last 50 trades, newest first: what you bought or sold, how many, the total, and how long ago. Click a trade to go back to the Market tab with that item selected. Only you see your trades.
 

@@ -282,7 +282,7 @@ public final class MarketSync {
     }
 
     /** The player's own recent trades; nobody else's are ever sent. */
-    private static void sendTrades(ServerPlayer player) {
+    public static void sendTrades(ServerPlayer player) {
         PacketDistributor.sendToPlayer(player, new MarketPayloads.Trades(System.currentTimeMillis(),
                 TradeHistory.get(player.server).recent(player.getUUID())));
     }

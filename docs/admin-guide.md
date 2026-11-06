@@ -8,7 +8,7 @@ This guide is for server admins running the Dynamic-Economy market. It covers:
 - item classes, which give groups of items shared pricing behaviour
 - how prices move, every catalog field and config option, and every command
 
-For what players see, read the [player guide](player-guide.md).
+For what players see, read the [player guide](player-guide.md). For mods that build on the market, and for connecting other mods to it with data files, commands or Java, read the [add-on guide](api.md).
 
 ## How the market works
 
@@ -98,6 +98,8 @@ With [ProgressiveStages](https://modrinth.com/mod/progressivestages) 3.1.1 or a 
 - **Console and admins.** `/market admin` commands and the server console see every item.
 
 The log says `ProgressiveStages found: items locked for a player are hidden from them in the market` at startup. If a future ProgressiveStages version changes the lock API, the log shows an error and the market stops hiding items instead of breaking. Without ProgressiveStages, nothing changes.
+
+Other mods can hide items the same way through the [add-on API](api.md#visibility). An item is hidden when ProgressiveStages or any add-on hides it.
 
 ## Pricing items
 
@@ -437,10 +439,12 @@ Where rules overlap, rules created later win. Item edits always win over rules.
 
 ## Audit log
 
-Every admin change to the market is logged to `<world>/dynamic_economy/audit.log`, one JSON line each. Each line records when, who (player name and UUID, or `Server` for the console), the action, its target, the result, and the old and new values where that makes sense. Logged actions:
+Every admin change to the market, and all money that add-ons pay or charge, is logged to `<world>/dynamic_economy/audit.log`, one JSON line each. Each line records when, who (player name and UUID, or `Server` for the console), the action, its target, the result, and the old and new values where that makes sense. Logged actions:
 
 - catalog edits and tag-rule changes, including ones refused for breaking a rule
 - `setstock`, `clearstock`, `resetprice`, `reload`, `export`, `import` (with the files written), `prune` (with the items removed), `backup`, `restore`, `contracts refresh` and `exchange cancel`
+- `money give` and `money take` ([Giving and taking money](#giving-and-taking-money)), with the balance before and after
+- `api pay` and `api charge`: money an add-on paid a player or took from them through the [add-on API](api.md#money). The actor is `api:<reason>`, the add-on's own name for the payment, such as `api:questmod:quest_reward`; the line holds the amount, and a payment owed because the bank couldn't be reached says `owed: bank unreachable`.
 
 Previews and read-only commands (`info`, `diagnose`, `stats`) aren't logged.
 
@@ -556,11 +560,32 @@ The market has **no balance of its own**. It's a source and a sink, not a bank:
 - When a player **sells**, the payout is **new money** added to the economy.
 - When a player **buys**, what they pay **leaves the economy**. Nobody receives it.
 - `sell_fee` doesn't collect anything: it just means less new money is created per sale.
-- Admin commands (`setstock`, `clearstock`, `resetprice`, catalog edits) never create or remove money.
+- Admin commands (`setstock`, `clearstock`, `resetprice`, catalog edits) never create or remove money. Only `/market admin money give` and `take` do, outside the market (see [Giving and taking money](#giving-and-taking-money)).
+- Add-ons can pay players (new money) and charge them (money removed) through the [add-on API](api.md#money). Every such payment is in the [audit log](#audit-log).
 
-`/market admin stats` shows the lifetime totals: money paid to sellers (created), money paid by buyers (removed), items moved each way, and the net amount the market has added to (or removed from) the economy, plus the five busiest items. `/market admin stats <item>` shows one item. Counting starts when a world first runs a version with this command; earlier trades aren't included. A steadily growing net means players are mostly selling, so money is piling up. Raise markups, add a `sell_fee`, or lower base prices of farmable items to slow it.
+`/market admin stats` shows the lifetime totals: money paid to sellers (created), money paid by buyers (removed), items moved each way, and the net amount the market has added to (or removed from) the economy, plus the five busiest items. `/market admin stats <item>` shows one item. Counting starts when a world first runs a version with this command; earlier trades aren't included. Only market trades count (add-ons' trades for a player included); money given or taken by command, or paid and charged by add-ons, doesn't. A steadily growing net means players are mostly selling, so money is piling up. Raise markups, add a `sell_fee`, or lower base prices of farmable items to slow it.
 
 **Cheap items get coarse.** Payments are whole bits, so an item with a `base_price` of 1 or 2 has little room to move. A single unit sold below normal price rounds down to 0, though bulk orders still pay because the total is rounded only once. The screen and tooltips show such prices with decimals (e.g. *0.99*) so players can see what's happening. Give common items a base of 8 or 16 if you want their movements to show.
+
+## Giving and taking money
+
+These commands read a player's balance and give or take money directly, outside the market and its prices. Giving creates money and taking destroys it, so they need operator level 2 and every change is logged.
+
+| Command | What it does | Returns (for `execute store`) |
+| --- | --- | --- |
+| `/market admin money balance <player>` | Shows the player's balance. | The balance, capped at 2,147,483,647. |
+| `/market admin money give <player> <amount>` | Pays `amount` into the player's account. | The amount given. |
+| `/market admin money take <player> <amount>` | Takes `amount` from the player's account, all or nothing: if they have less, nothing is taken. | The amount taken. |
+
+- **Own account only.** They act on the player's own account, never a team account. With Numismatics' bank, that's the player's Numismatics account.
+- **Online or offline.** `<player>` is a name or a selector. A selector must match exactly one player; offline players work by name. Names aren't checked against players who have joined, so a misspelled name gets an unused account of its own (the audit log shows it; `take` with the same name undoes it).
+- **Amounts** are whole bits, 1 to 2,147,483,647.
+- **When the bank can't be reached** (a world set to Numismatics' bank without Numismatics), the command fails and changes nothing. Nothing is owed for later.
+- **Failure returns 0** for `give` and `take`, so `execute store` can tell success from failure. `balance` also returns 0 for an empty account, so it can't.
+- `give` and `take` write a line to the [audit log](#audit-log) with the balance before and after, and a player with the market open sees the new balance at once.
+- They don't count in `/market admin stats`, which counts market trades only.
+
+For example, `execute store result score @p balance run market admin money balance @p` puts the nearest player's balance in a scoreboard.
 
 ## Tooltips
 
@@ -596,7 +621,7 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `exchange.order_expiry_days` | 0 | 0 – 3650 | In-game days until an unfilled order expires and returns what it holds, counted like contracts. 0: orders never expire. |
 | `exchange.max_order_size` | 6400 | 1 – 1,000,000 | Largest quantity one order may ask for. `price × quantity` must also fit one bank transaction (2,147,483,647). |
 
-**The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows, plus the money the [exchange](#the-player-exchange) holds for them: what their open buy orders hold and anything it still owes them, plus contract payouts still owed to them (paid when the bank was unreachable). Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
+**The leaderboard** ranks players by their personal bank balance, the same number the market screen's Bank line shows, plus the money the [exchange](#the-player-exchange) holds for them: what their open buy orders hold and anything it still owes them, plus contract payouts and [add-on](api.md#owed-payments) payments still owed to them (paid when the bank was unreachable). Only personal accounts of players the server has seen count: shared Blaze Banker accounts and team accounts never appear, and neither do empty accounts. Offline players are listed under the name they last joined with. It's worked out when a player opens the tab, not continuously. With Numismatics' bank, balances above 1,073,741,823 show with a **+**, as Numismatics shows them.
 
 ## All commands
 
@@ -629,6 +654,8 @@ The file is `config/dynamic_economy-server.toml`, created on first start. Change
 | `/market admin import "<path>" [config] [preview]` | 4 | Imports a priced CSV into the world's datapack, or with `config` into the config folder for every world; `preview` writes nothing. The path is relative to `config/dynamic_economy/`. |
 | `/market admin bank` | 2 | Which bank the world uses and what its accounts hold. |
 | `/market admin bank switch <own\|numismatics> [confirm]` | 2 | Shows, then does, a move of every balance to the other bank; see [Banks and coins](#banks-and-coins). |
+| `/market admin money balance <player>` | 2 | A player's balance, online or offline; see [Giving and taking money](#giving-and-taking-money). |
+| `/market admin money give <player> <amount>`, `take <player> <amount>` | 2 | Gives or takes money (taking is all or nothing). Logged in the audit log. |
 | `/bank team ...` | everyone | The mod's own teams, for team accounts; see the [player guide](player-guide.md#the-bank-tab). Off with Numismatics' bank; with FTB Teams only the info line (`/bank team`) works, since parties are the teams. |
 | `/market admin suggest [modid]` | 4 | Works out prices for unlisted items from their recipes and writes `suggested.csv`; see [Suggesting prices from recipes](#suggesting-prices-from-recipes). |
 

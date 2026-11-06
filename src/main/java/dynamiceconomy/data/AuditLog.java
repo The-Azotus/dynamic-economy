@@ -20,9 +20,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
- * A record of admin actions on the market, one JSON object per line in {@code <world>/dynamic_economy/audit.log}:
+ * A record of admin actions on the market and of money add-ons move through the API, one JSON object per line in {@code <world>/dynamic_economy/audit.log}:
  * when, who, what, on what, the outcome, and the old and new values. It lives on the server's disk, out of players'
  * reach, and is size-capped: when the file would pass {@link #MAX_BYTES} it is renamed {@code audit.log.1} (older ones
  * shift up) and at most {@link #KEEP} files are kept. Writing never fails a command; problems are only logged.
@@ -53,12 +54,24 @@ public final class AuditLog {
      */
     public static void record(CommandSourceStack source, String action, String target, String result,
                               @Nullable JsonElement before, @Nullable JsonElement after) {
+        Entity entity = source.getEntity();
+        record(source.getServer(), source.getTextName(), entity == null ? null : entity.getUUID(), action, target, result,
+                before, after);
+    }
+
+    /**
+     * Records one action that didn't come from a command, such as an add-on's API call.
+     *
+     * @param actor     who did it, e.g. {@code api:mymod:quest_reward}
+     * @param actorUuid the acting player, if one did it
+     */
+    public static void record(MinecraftServer server, String actor, @Nullable UUID actorUuid, String action, String target,
+                              String result, @Nullable JsonElement before, @Nullable JsonElement after) {
         JsonObject line = new JsonObject();
         line.addProperty("time", Instant.now().toString());
-        line.addProperty("actor", source.getTextName());
-        Entity entity = source.getEntity();
-        if (entity != null) {
-            line.addProperty("actor_uuid", entity.getUUID().toString());
+        line.addProperty("actor", actor);
+        if (actorUuid != null) {
+            line.addProperty("actor_uuid", actorUuid.toString());
         }
         line.addProperty("action", action);
         line.addProperty("target", target);
@@ -70,7 +83,7 @@ public final class AuditLog {
             line.add("after", after);
         }
         try {
-            append(file(source.getServer()), line.toString(), MAX_BYTES, KEEP);
+            append(file(server), line.toString(), MAX_BYTES, KEEP);
         } catch (IOException e) {
             DynamicEconomy.LOGGER.warn("Could not write the market audit log: {}", e.getMessage());
         }
